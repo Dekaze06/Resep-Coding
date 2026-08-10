@@ -1,0 +1,21 @@
+{
+  "name": "orbital-osiris",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/vercel": "^11.0.5",
+    "@google/generative-ai": "^0.24.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.2.0",
+    "tailwindcss": "^4.3.3"
+  }
+}
