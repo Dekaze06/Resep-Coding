@@ -1,45 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PrdSheetViewer from '@/components/PrdSheetViewer';
 ---
 
 <Layout>
 
 
-    <!-- Dark Gradient Background (clean, elegant, monochrome) -->
-    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none bg-[#0a0a0a]">
-        <div class="absolute inset-0">
-            <div class="absolute inset-0 opacity-100"
-                 style="background: radial-gradient(100% 100% at 0% 0%, rgb(30, 30, 30) 0%, rgb(10, 10, 10) 100%); -webkit-mask: radial-gradient(125% 100% at 0% 0%, rgb(0,0,0) 0%, rgba(0,0,0,0.224) 88.2883%, rgba(0,0,0,0) 100%); mask: radial-gradient(125% 100% at 0% 0%, rgb(0,0,0) 0%, rgba(0,0,0,0.224) 88.2883%, rgba(0,0,0,0) 100%);">
 
-                <!-- Skewed fading monochrome streaks -->
-                <div class="absolute inset-0 opacity-20"
-                     style="background: linear-gradient(rgb(180,180,180) 0%, rgba(180,180,180,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0) 36%, rgb(0,0,0) 55%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0) 36%, rgb(0,0,0) 55%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
-
-                <div class="absolute inset-0 opacity-20"
-                     style="background: linear-gradient(rgb(150,150,150) 0%, rgba(150,150,150,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 11%, rgb(0,0,0) 25%, rgba(0,0,0,0.55) 41%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 11%, rgb(0,0,0) 25%, rgba(0,0,0,0.55) 41%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
-
-                <div class="absolute inset-0 opacity-20"
-                     style="background: linear-gradient(rgb(100,100,100) 0%, rgba(100,100,100,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 9%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 28%, rgba(0,0,0,0.424) 40%, rgb(0,0,0) 48%, rgba(0,0,0,0.267) 54%, rgba(0,0,0,0.13) 78%, rgb(0,0,0) 88%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 9%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 28%, rgba(0,0,0,0.424) 40%, rgb(0,0,0) 48%, rgba(0,0,0,0.267) 54%, rgba(0,0,0,0.13) 78%, rgb(0,0,0) 88%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
-
-                <div class="absolute inset-0 opacity-20"
-                     style="background: linear-gradient(rgb(180,180,180) 0%, rgba(180,180,180,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 17%, rgba(0,0,0,0.55) 26%, rgb(0,0,0) 35%, rgba(0,0,0,0) 47%, rgba(0,0,0,0.13) 69%, rgb(0,0,0) 79%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 17%, rgba(0,0,0,0.55) 26%, rgb(0,0,0) 35%, rgba(0,0,0,0) 47%, rgba(0,0,0,0.13) 69%, rgb(0,0,0) 79%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
-
-                <div class="absolute inset-0 opacity-20"
-                     style="background: linear-gradient(rgb(150,150,150) 0%, rgba(150,150,150,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 27%, rgb(0,0,0) 42%, rgba(0,0,0,0) 48%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 74%, rgb(0,0,0) 82%, rgba(0,0,0,0.47) 88%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 27%, rgb(0,0,0) 42%, rgba(0,0,0,0) 48%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 74%, rgb(0,0,0) 82%, rgba(0,0,0,0.47) 88%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
-            </div>
-        </div>
-
-        <!-- Subtle noise texture -->
-        <div class="absolute inset-0 opacity-5 bg-repeat"
-             style="background-image: url('https://framerusercontent.com/images/6mcf62RlDfRfU61Yg5vb2pefpi4.png'); background-size: 149.76px;"></div>
-
-        <!-- Subtle dot pattern overlay -->
-        <div class="absolute inset-0 opacity-20"
-             style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.25) 1px, transparent 0); background-size: 20px 20px;"></div>
-
-        <!-- Subtle radial highlight -->
-        <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.06) 0%, transparent 60%);"></div>
-    </div>
 
     <!-- Fluid Particles Background (Landing screen only) -->
     <!-- Sits above the dark gradient (-z-10) but below the page content. -->
@@ -51,18 +18,41 @@ import Layout from '../layouts/Layout.astro';
     <!-- ============================= -->
     <!-- SCREEN 1: LANDING / START     -->
     <!-- ============================= -->
-    <div id="screen-landing" class="min-h-screen w-full flex flex-col items-center justify-center px-6 relative z-10">
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-center reveal">
-            <span class="gradient-text">Resep Coding</span>
+    <div id="screen-landing" class="min-h-screen w-full flex flex-col items-center justify-center px-6 relative z-10 overflow-hidden">
+
+        <!-- ✦ Cinematic: Aurora Glow (breathing ambient light) -->
+        <div class="landing-aurora"></div>
+
+        <!-- ✦ Cinematic: Giant Background Text -->
+        <div class="landing-giant-text" id="landing-giant-text">RESEP</div>
+
+        <!-- ✦ Cinematic: Diagonal Scrolling Marquee -->
+        <div class="landing-marquee-wrapper">
+            <div class="landing-marquee-track">
+                <span>Susun Langkah</span> <span class="marquee-dot mx-8">✦</span>
+                <span>Pantau Progres</span> <span class="marquee-dot mx-8">✦</span>
+                <span>Bangun Website</span> <span class="marquee-dot mx-8">✦</span>
+                <span>PRD to Deploy</span> <span class="marquee-dot mx-8">✦</span>
+                <span>Checklist Coding</span> <span class="marquee-dot mx-8">✦</span>
+                <span>Susun Langkah</span> <span class="marquee-dot mx-8">✦</span>
+                <span>Pantau Progres</span> <span class="marquee-dot mx-8">✦</span>
+                <span>Bangun Website</span> <span class="marquee-dot mx-8">✦</span>
+                <span>PRD to Deploy</span> <span class="marquee-dot mx-8">✦</span>
+                <span>Checklist Coding</span> <span class="marquee-dot mx-8">✦</span>
+            </div>
+        </div>
+
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-center reveal relative z-10">
+            <span class="landing-text-glow">Resep Coding</span>
         </h1>
         
         <!-- Kalimat menarik yang baru ditambahkan -->
-        <p class="mt-6 text-gray-400 text-base md:text-lg text-center max-w-xl reveal" style="animation-delay: 0.1s;">
+        <p class="mt-6 text-gray-400 text-base md:text-lg text-center max-w-xl reveal relative z-10" style="animation-delay: 0.1s;">
             Susun langkah, pantau progres, dan ubah ide luar biasamu menjadi website yang nyata dengan checklist pengembangan web terstruktur ini.
         </p>
 
         <!-- Primary actions -->
-        <div class="flex items-center gap-3 mt-10 reveal" style="animation-delay: 0.2s;">
+        <div class="flex items-center gap-3 mt-10 reveal relative z-10" style="animation-delay: 0.2s;">
             <button id="btn-new-project" type="button" class="px-5 py-2.5 rounded-full glass-panel border border-white/10 text-sm font-semibold text-gray-200 hover:border-primary/50 hover:text-white transition-all duration-300 flex items-center gap-2">
                 <i class="fa-solid fa-plus text-xs"></i> New Project
             </button>
@@ -72,10 +62,10 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
         <!-- Dynamic panel: new project input OR load project list -->
-        <div id="landing-panel" class="w-full max-w-md mt-6 hidden"></div>
+        <div id="landing-panel" class="w-full max-w-md mt-6 hidden relative z-10"></div>
 
         <!-- Start button (Interactive Hover Button) -->
-        <button id="btn-start" type="button" data-status="idle" class="ihb-start hidden mt-8">
+        <button id="btn-start" type="button" data-status="idle" class="ihb-start hidden mt-8 relative z-10">
             <span class="ihb-dot"></span>
             <span class="ihb-idle-label">Mulai Develop</span>
             <span class="ihb-hover-layer">
@@ -98,7 +88,9 @@ import Layout from '../layouts/Layout.astro';
     <!-- ============================= -->
     <!-- SCREEN 2: STEP-BY-STEP APP    -->
     <!-- ============================= -->
-    <div id="screen-app" class="hidden">
+    <div id="screen-app" class="hidden relative min-h-screen">
+        <!-- ✦ Cinematic: Grid Background for app screen -->
+        <div class="app-bg-grid"></div>
 
     <!-- Hero Section -->
     <section class="relative pt-16 pb-16 lg:pt-20 lg:pb-24 overflow-hidden">
@@ -123,6 +115,31 @@ import Layout from '../layouts/Layout.astro';
     <!-- Main Content Container -->
     <div id="app-layout-wrapper" class="max-w-7xl mx-auto px-6 lg:px-8 relative pb-20 flex gap-6 transition-all duration-500">
     <div id="task-column" class="w-full max-w-4xl mx-auto transition-all duration-500">
+
+        <!-- Progres Proyek (Above navigation) -->
+        <div class="mb-6 md:mb-8">
+            <div class="glass-panel p-4 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] border-white/20">
+                <div class="flex justify-between items-end mb-2">
+                    <div>
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-spinner animate-spin text-gray-300" id="progress-spinner"></i>
+                            Progres Proyek
+                        </h3>
+                    </div>
+                    <span id="progress-text" class="text-xs font-bold text-gray-200 bg-white/10 px-2 py-1 rounded-md">0 / 22 Selesai</span>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-full h-2.5 bg-gray-800 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-white transition-all duration-500 ease-out" style="width: 0%;"></div>
+                </div>
+                
+                <!-- Congratulation Message (Hidden by default) -->
+                <div id="congrats-msg" class="hidden mt-3 text-center text-xs text-white font-medium animate-fade-in-up">
+                    <i class="fa-solid fa-party-horn mr-1"></i> Luar biasa! Semua proses telah selesai!
+                </div>
+            </div>
+        </div>
 
         <!-- Stepper Nav (Centered single item with animation) -->
         <div id="stepper-nav" class="mb-8 md:mb-12 select-none relative">
@@ -686,58 +703,12 @@ import Layout from '../layouts/Layout.astro';
 
     </div><!-- /#task-column -->
 
-    <!-- PRD Viewer/Editor Panel (Right Side) -->
-    <div id="prd-viewer-panel" class="hidden w-full max-w-xl shrink-0 sticky top-24 self-start opacity-0 translate-x-8 transition-all duration-500 ease-out">
-        <div class="glass-panel rounded-2xl border border-white/10 p-5 shadow-2xl h-[calc(100vh-8rem)] flex flex-col">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center">
-                        <i class="fa-solid fa-file-lines text-white text-sm"></i>
-                    </div>
-                    <h3 class="text-sm font-bold text-white">PRD Viewer & Editor</h3>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="downloadPrdFromViewer()" class="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-1.5" title="Download .md">
-                        <i class="fa-solid fa-download text-[10px]"></i> Download
-                    </button>
-                    <button type="button" onclick="completePrdAndNext()" class="px-3 py-1.5 rounded-lg bg-white text-black hover:bg-gray-200 transition-colors text-xs font-semibold flex items-center gap-1.5" title="Lanjut ke langkah berikutnya">
-                        Lanjut <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                    </button>
-                    <button type="button" onclick="closePrdViewer()" class="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Tutup">
-                        <i class="fa-solid fa-xmark text-sm"></i>
-                    </button>
-                </div>
-            </div>
-            <textarea id="prd-editor-textarea" class="flex-1 w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 font-mono leading-relaxed focus:outline-none focus:border-white/40 transition-colors resize-none" spellcheck="false"></textarea>
-        </div>
-    </div>
+    <!-- PRD Viewer/Editor Panel (React Component) -->
+    <PrdSheetViewer client:load />
 
     </div><!-- /#app-layout-wrapper -->
 
-    <!-- Floating Progress Tracker -->
-    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50">
-        <div class="glass-panel p-4 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] border-white/20">
-            <div class="flex justify-between items-end mb-2">
-                <div>
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-spinner animate-spin text-gray-300" id="progress-spinner"></i>
-                        Progres Proyek
-                    </h3>
-                </div>
-                <span id="progress-text" class="text-xs font-bold text-gray-200 bg-white/10 px-2 py-1 rounded-md">0 / 22 Selesai</span>
-            </div>
-            
-            <!-- Progress Bar -->
-            <div class="w-full h-2.5 bg-gray-800 rounded-full overflow-hidden">
-                <div id="progress-bar" class="h-full bg-white transition-all duration-500 ease-out" style="width: 0%;"></div>
-            </div>
-            
-            <!-- Congratulation Message (Hidden by default) -->
-            <div id="congrats-msg" class="hidden mt-3 text-center text-xs text-white font-medium animate-fade-in-up">
-                <i class="fa-solid fa-party-horn mr-1"></i> Luar biasa! Semua proses telah selesai!
-            </div>
-        </div>
-    </div>
+
 
     </div><!-- /#screen-app -->
 
@@ -1330,8 +1301,10 @@ import Layout from '../layouts/Layout.astro';
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Terjadi kesalahan pada server');
                 
-                // Save to localStorage
-                localStorage.setItem('saved_prd', data.markdown);
+                // Save to project store
+                if (window.updateActiveProjectPrd) {
+                    window.updateActiveProjectPrd(data.markdown);
+                }
                 // Show the "Buka PRD" buttons
                 document.querySelectorAll('.prd-view-btn').forEach(btn => btn.classList.remove('hidden'));
                 
@@ -1361,7 +1334,7 @@ import Layout from '../layouts/Layout.astro';
         };
 
         window.openSavedPrd = function() {
-            const saved = localStorage.getItem('saved_prd');
+            const saved = window.getActiveProjectPrd ? window.getActiveProjectPrd() : null;
             if (saved) {
                 showPrdViewer(saved);
             }
@@ -1369,36 +1342,20 @@ import Layout from '../layouts/Layout.astro';
 
         // --- PRD Viewer/Editor Panel ---
         window.showPrdViewer = function(markdown) {
-            const panel = document.getElementById('prd-viewer-panel');
-            const textarea = document.getElementById('prd-editor-textarea');
-            const taskCol = document.getElementById('task-column');
-            
-            textarea.value = markdown;
-            
-            // Show panel
-            panel.classList.remove('hidden');
-            void panel.offsetWidth;
-            
-            // Shift layout
-            taskCol.classList.remove('mx-auto', 'max-w-4xl');
-            taskCol.classList.add('max-w-2xl');
-            panel.classList.remove('opacity-0', 'translate-x-8');
-            panel.classList.add('opacity-100', 'translate-x-0');
+            window.dispatchEvent(new CustomEvent('open-prd-sheet', { detail: { markdown } }));
         };
 
         window.closePrdViewer = function() {
-            const panel = document.getElementById('prd-viewer-panel');
-            const taskCol = document.getElementById('task-column');
-            
-            panel.classList.add('opacity-0', 'translate-x-8');
-            panel.classList.remove('opacity-100', 'translate-x-0');
-            
-            setTimeout(() => {
-                panel.classList.add('hidden');
-                taskCol.classList.add('mx-auto', 'max-w-4xl');
-                taskCol.classList.remove('max-w-2xl');
-            }, 400);
+            window.dispatchEvent(new Event('close-prd-sheet'));
         };
+
+        // Note: savePrdManual, downloadPrdFromViewer, and completePrdAndNext are now 
+        // handled internally by the React component (PrdSheetViewer), so we don't need 
+        // to define them here for the UI, but they might still be called by legacy buttons 
+        // if any exist outside the React component. Since they don't, we can leave them out 
+        // or just let them be as stubs.
+        
+        // Remove old vanilla implementations that depended on #prd-editor-textarea
 
         window.downloadPrdFromViewer = function() {
             const textarea = document.getElementById('prd-editor-textarea');
@@ -1450,15 +1407,12 @@ import Layout from '../layouts/Layout.astro';
 
         // Initialize PRD Viewer/Editor state
         document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('saved_prd')) {
-                document.querySelectorAll('.prd-view-btn').forEach(btn => btn.classList.remove('hidden'));
-            }
             const prdTextarea = document.getElementById('prd-editor-textarea');
             if (prdTextarea) {
                 prdTextarea.addEventListener('input', (e) => {
                     // Update saved PRD if it exists
-                    if (localStorage.getItem('saved_prd') !== null) {
-                        localStorage.setItem('saved_prd', e.target.value);
+                    if (window.getActiveProjectPrd && window.getActiveProjectPrd() !== null) {
+                        window.updateActiveProjectPrd(e.target.value);
                     }
                 });
             }
@@ -1703,6 +1657,19 @@ import Layout from '../layouts/Layout.astro';
             saveProjectsStore(store);
         };
 
+        window.updateActiveProjectPrd = function (prdContent) {
+            const store = loadProjectsStore();
+            if (!store.activeId || !store.projects[store.activeId]) return;
+            store.projects[store.activeId].prd = prdContent;
+            saveProjectsStore(store);
+        };
+
+        window.getActiveProjectPrd = function () {
+            const store = loadProjectsStore();
+            if (!store.activeId || !store.projects[store.activeId]) return null;
+            return store.projects[store.activeId].prd || null;
+        };
+
         function calcProjectProgress(project, totalTasksCount) {
             if (!project || !project.tasks) return 0;
             const done = Object.values(project.tasks).filter(Boolean).length;
@@ -1855,6 +1822,9 @@ import Layout from '../layouts/Layout.astro';
 
                         if (window.applyProjectTasks) {
                             window.applyProjectTasks(project.tasks || {});
+                        }
+                        if (window.applyProjectPrd) {
+                            window.applyProjectPrd(project.prd || '');
                         }
 
                         screenLanding.classList.add('is-leaving');
@@ -2067,6 +2037,14 @@ import Layout from '../layouts/Layout.astro';
                     applyTaskStyle(cb);
                 });
                 updateProgress();
+            };
+
+            window.applyProjectPrd = function (prdContent) {
+                if (prdContent) {
+                    document.querySelectorAll('.prd-view-btn').forEach(btn => btn.classList.remove('hidden'));
+                } else {
+                    document.querySelectorAll('.prd-view-btn').forEach(btn => btn.classList.add('hidden'));
+                }
             };
             
             function applyTaskStyle(checkbox) {
