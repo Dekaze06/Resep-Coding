@@ -9,8 +9,8 @@
   --color-secondary: #a3a3a3;
   --color-accent: #737373;
   --color-success: #f4f4f5;
-  --color-navy: #16233f;
-  --color-navy-light: #3b5a8a;
+  --color-navy: #1a1a1a;
+  --color-navy-light: #525252;
   
   --animate-blob: blob 7s infinite;
   --animate-fade-in-up: fadeInUp 0.8s ease-out forwards;
@@ -34,9 +34,9 @@
 
 
         body {
-            background-color: #060b16;
-            background-image: radial-gradient(ellipse 80% 60% at 10% -10%, rgba(111, 147, 196, 0.10), transparent 60%),
-                               radial-gradient(ellipse 70% 55% at 100% 105%, rgba(59, 90, 138, 0.32), transparent 65%);
+            background-color: #0a0a0a;
+            background-image: radial-gradient(ellipse 80% 60% at 10% -10%, rgba(255, 255, 255, 0.03), transparent 60%),
+                               radial-gradient(ellipse 70% 55% at 100% 105%, rgba(255, 255, 255, 0.05), transparent 65%);
             background-attachment: fixed;
             color: #f3f4f6;
             overflow-x: hidden;
@@ -47,20 +47,76 @@
             background: rgba(20, 20, 20, 0.6);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(125, 152, 196, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .gradient-text {
-            background: linear-gradient(to right, #f4f4f5, #d4d4d4, #93a8c9, #a3a3a3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #f4f4f5;
         }
 
-        /* Custom Checkbox Styles */
+        /* ── Shimmer "Generating..." animation (edit-tool style) ── */
+        @keyframes prd-shimmer {
+          from { background-position: 100% center; }
+          to   { background-position: 0% center; }
+        }
+        .prd-shimmer-text {
+            display: inline-flex;
+            align-items: center;
+            background-size: 250% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(90deg, #a3a3a3 0%, #a3a3a3 40%, #525252 50%, #a3a3a3 60%, #a3a3a3 100%);
+            background-repeat: no-repeat;
+            animation: prd-shimmer 1.2s linear infinite;
+        }
+        @keyframes prd-dot-pulse {
+          0%, 100% { opacity: 0.2; }
+          50%      { opacity: 1; }
+        }
+        .prd-dot { animation: prd-dot-pulse 1.4s ease-in-out infinite; }
+        .prd-dot:nth-child(2) { animation-delay: 0.2s; }
+        .prd-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        .prd-gen-status {
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(10,10,10,0.7);
+            backdrop-filter: blur(8px);
+        }
+        .prd-gen-status .prd-gen-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            height: 28px;
+            background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .prd-gen-status .prd-gen-body {
+            padding: 12px;
+        }
+        .prd-gen-status .prd-gen-bar-track {
+            height: 4px;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+        @keyframes prd-bar-indeterminate {
+            0%   { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+        .prd-gen-status .prd-gen-bar-fill {
+            width: 40%;
+            height: 100%;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.45);
+            animation: prd-bar-indeterminate 1.5s ease-in-out infinite;
+        }
         .task-checkbox:checked + div {
-            background-color: #3d4f70;
-            border-color: #3d4f70;
+            background-color: #525252;
+            border-color: #525252;
         }
         
         .task-checkbox:checked + div i {
@@ -73,8 +129,8 @@
         }
         
         .task-container:hover {
-            border-color: rgba(129, 157, 202, 0.4);
-            box-shadow: 0 5px 20px -10px rgba(80, 120, 185, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 20px -10px rgba(255, 255, 255, 0.1);
             transform: translateX(5px);
         }
 
@@ -91,7 +147,7 @@
             inset: 0;
             border-radius: inherit;
             padding: 1.5px;
-            background: conic-gradient(from var(--beam-angle), transparent 0deg, transparent 300deg, #f4f4f5 322deg, #6f93c4 340deg, #a3a3a3 360deg);
+            background: conic-gradient(from var(--beam-angle), transparent 0deg, transparent 300deg, #f4f4f5 322deg, #a3a3a3 340deg, #737373 360deg);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
@@ -248,8 +304,8 @@
                         border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .ihb-start:hover {
-            border-color: rgba(147, 168, 201, 0.45);
-            box-shadow: 0 15px 40px -8px rgba(80, 120, 185, 0.35);
+            border-color: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 15px 40px -8px rgba(255, 255, 255, 0.12);
         }
         .ihb-start[data-status="loading"],
         .ihb-start[data-status="success"] {
@@ -266,7 +322,7 @@
             height: 8px;
             margin-top: -4px;
             border-radius: 9999px;
-            background: linear-gradient(to right, #f4f4f5, #d4d4d4, #a3a3a3);
+            background: linear-gradient(to right, #f4f4f5, #d4d4d4, #a3a3a3); /* monochrome dot */
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1;
         }

@@ -5,27 +5,27 @@ import Layout from '../layouts/Layout.astro';
 <Layout>
 
 
-    <!-- Dark Gradient Background (clean, elegant) -->
-    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none bg-[#050912]">
+    <!-- Dark Gradient Background (clean, elegant, monochrome) -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none bg-[#0a0a0a]">
         <div class="absolute inset-0">
             <div class="absolute inset-0 opacity-100"
-                 style="background: radial-gradient(100% 100% at 0% 0%, rgb(26, 42, 74) 0%, rgb(6, 9, 18) 100%); -webkit-mask: radial-gradient(125% 100% at 0% 0%, rgb(0,0,0) 0%, rgba(0,0,0,0.224) 88.2883%, rgba(0,0,0,0) 100%); mask: radial-gradient(125% 100% at 0% 0%, rgb(0,0,0) 0%, rgba(0,0,0,0.224) 88.2883%, rgba(0,0,0,0) 100%);">
+                 style="background: radial-gradient(100% 100% at 0% 0%, rgb(30, 30, 30) 0%, rgb(10, 10, 10) 100%); -webkit-mask: radial-gradient(125% 100% at 0% 0%, rgb(0,0,0) 0%, rgba(0,0,0,0.224) 88.2883%, rgba(0,0,0,0) 100%); mask: radial-gradient(125% 100% at 0% 0%, rgb(0,0,0) 0%, rgba(0,0,0,0.224) 88.2883%, rgba(0,0,0,0) 100%);">
 
-                <!-- Skewed fading dark-blue streaks (matches primary/secondary/accent) -->
+                <!-- Skewed fading monochrome streaks -->
                 <div class="absolute inset-0 opacity-20"
-                     style="background: linear-gradient(rgb(143,178,224) 0%, rgba(143,178,224,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0) 36%, rgb(0,0,0) 55%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0) 36%, rgb(0,0,0) 55%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
-
-                <div class="absolute inset-0 opacity-20"
-                     style="background: linear-gradient(rgb(111,147,196) 0%, rgba(111,147,196,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 11%, rgb(0,0,0) 25%, rgba(0,0,0,0.55) 41%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 11%, rgb(0,0,0) 25%, rgba(0,0,0,0.55) 41%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
+                     style="background: linear-gradient(rgb(180,180,180) 0%, rgba(180,180,180,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0) 36%, rgb(0,0,0) 55%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0) 36%, rgb(0,0,0) 55%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
 
                 <div class="absolute inset-0 opacity-20"
-                     style="background: linear-gradient(rgb(59,90,138) 0%, rgba(59,90,138,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 9%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 28%, rgba(0,0,0,0.424) 40%, rgb(0,0,0) 48%, rgba(0,0,0,0.267) 54%, rgba(0,0,0,0.13) 78%, rgb(0,0,0) 88%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 9%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 28%, rgba(0,0,0,0.424) 40%, rgb(0,0,0) 48%, rgba(0,0,0,0.267) 54%, rgba(0,0,0,0.13) 78%, rgb(0,0,0) 88%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
+                     style="background: linear-gradient(rgb(150,150,150) 0%, rgba(150,150,150,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 11%, rgb(0,0,0) 25%, rgba(0,0,0,0.55) 41%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 11%, rgb(0,0,0) 25%, rgba(0,0,0,0.55) 41%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 78%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
 
                 <div class="absolute inset-0 opacity-20"
-                     style="background: linear-gradient(rgb(143,178,224) 0%, rgba(143,178,224,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 17%, rgba(0,0,0,0.55) 26%, rgb(0,0,0) 35%, rgba(0,0,0,0) 47%, rgba(0,0,0,0.13) 69%, rgb(0,0,0) 79%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 17%, rgba(0,0,0,0.55) 26%, rgb(0,0,0) 35%, rgba(0,0,0,0) 47%, rgba(0,0,0,0.13) 69%, rgb(0,0,0) 79%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
+                     style="background: linear-gradient(rgb(100,100,100) 0%, rgba(100,100,100,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 9%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 28%, rgba(0,0,0,0.424) 40%, rgb(0,0,0) 48%, rgba(0,0,0,0.267) 54%, rgba(0,0,0,0.13) 78%, rgb(0,0,0) 88%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 9%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 28%, rgba(0,0,0,0.424) 40%, rgb(0,0,0) 48%, rgba(0,0,0,0.267) 54%, rgba(0,0,0,0.13) 78%, rgb(0,0,0) 88%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
 
                 <div class="absolute inset-0 opacity-20"
-                     style="background: linear-gradient(rgb(111,147,196) 0%, rgba(111,147,196,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 27%, rgb(0,0,0) 42%, rgba(0,0,0,0) 48%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 74%, rgb(0,0,0) 82%, rgba(0,0,0,0.47) 88%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 27%, rgb(0,0,0) 42%, rgba(0,0,0,0) 48%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 74%, rgb(0,0,0) 82%, rgba(0,0,0,0.47) 88%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
+                     style="background: linear-gradient(rgb(180,180,180) 0%, rgba(180,180,180,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 17%, rgba(0,0,0,0.55) 26%, rgb(0,0,0) 35%, rgba(0,0,0,0) 47%, rgba(0,0,0,0.13) 69%, rgb(0,0,0) 79%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 17%, rgba(0,0,0,0.55) 26%, rgb(0,0,0) 35%, rgba(0,0,0,0) 47%, rgba(0,0,0,0.13) 69%, rgb(0,0,0) 79%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
+
+                <div class="absolute inset-0 opacity-20"
+                     style="background: linear-gradient(rgb(150,150,150) 0%, rgba(150,150,150,0) 100%); -webkit-mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 27%, rgb(0,0,0) 42%, rgba(0,0,0,0) 48%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 74%, rgb(0,0,0) 82%, rgba(0,0,0,0.47) 88%, rgba(0,0,0,0) 97%); mask: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0,0,0) 20%, rgba(0,0,0,0.55) 27%, rgb(0,0,0) 42%, rgba(0,0,0,0) 48%, rgba(0,0,0,0.13) 67%, rgb(0,0,0) 74%, rgb(0,0,0) 82%, rgba(0,0,0,0.47) 88%, rgba(0,0,0,0) 97%); transform: skewX(45deg);"></div>
             </div>
         </div>
 
@@ -35,10 +35,10 @@ import Layout from '../layouts/Layout.astro';
 
         <!-- Subtle dot pattern overlay -->
         <div class="absolute inset-0 opacity-20"
-             style="background-image: radial-gradient(circle at 1px 1px, rgba(111,147,196,0.5) 1px, transparent 0); background-size: 20px 20px;"></div>
+             style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.25) 1px, transparent 0); background-size: 20px 20px;"></div>
 
         <!-- Subtle radial highlight -->
-        <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 0%, rgba(59,90,138,0.30) 0%, transparent 60%);"></div>
+        <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.06) 0%, transparent 60%);"></div>
     </div>
 
     <!-- Fluid Particles Background (Landing screen only) -->
@@ -154,8 +154,8 @@ import Layout from '../layouts/Layout.astro';
         <!-- 1. PRD Section -->
         <section id="prd" class="slide-panel slide-active relative z-10 pb-4">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-[#8fb2e0]/10 border border-[#8fb2e0]/30 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-file-lines text-[#8fb2e0] text-sm"></i>
+                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-file-lines text-white text-sm"></i>
                 </div>
                 <h2 class="text-2xl font-bold">1. Planning & PRD</h2>
             </div>
@@ -172,7 +172,7 @@ import Layout from '../layouts/Layout.astro';
                         <div class="flex-1 min-w-0">
                             <h4 class="task-title font-medium text-gray-200 transition-all duration-300">Pembuatan Manual</h4>
                             <p class="text-sm text-gray-400 mt-1 task-desc">Jelaskan visi, misi, target user, dan daftar fitur utama secara rinci. Biarkan Claude menstrukturkannya menjadi dokumen PRD standar.</p>
-                            <button type="button" class="prd-gen-toggle mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/30 text-blue-300 hover:text-white hover:border-blue-400 hover:from-blue-600/40 hover:to-indigo-600/40 transition-all shadow-[0_0_15px_rgba(59,130,246,0.15)] flex items-center gap-2" onclick="event.preventDefault(); event.stopPropagation(); togglePrdInput('manual')">
+                            <button type="button" class="prd-gen-toggle mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-white/5 border border-white/15 text-gray-300 hover:text-white hover:border-white/40 hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(255,255,255,0.05)] flex items-center gap-2" onclick="event.preventDefault(); event.stopPropagation(); togglePrdInput('manual')">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i> Generate PRD with AI
                             </button>
                         </div>
@@ -180,20 +180,38 @@ import Layout from '../layouts/Layout.astro';
                     </label>
                     <!-- Inline expandable input for Manual -->
                     <div id="prd-input-manual" class="prd-inline-input hidden overflow-hidden transition-all duration-400 ease-out" style="max-height:0; opacity:0;">
-                        <div class="mt-2 p-5 rounded-xl glass-panel border border-blue-500/20">
+                        <div class="mt-2 p-5 rounded-xl glass-panel border border-white/15">
                             <div class="flex items-center gap-2 mb-4">
-                                <i class="fa-solid fa-wand-magic-sparkles text-blue-400 text-sm"></i>
-                                <span class="text-sm font-semibold text-blue-300">AI PRD Generator — Manual</span>
+                                <i class="fa-solid fa-wand-magic-sparkles text-gray-300 text-sm"></i>
+                                <span class="text-sm font-semibold text-gray-200">AI PRD Generator — Manual</span>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-xs font-medium text-gray-400 mb-1">Deskripsi Aplikasi</label>
-                                <textarea id="prd-desc-manual" rows="3" required placeholder="Jelaskan visi, misi, target pengguna, dan fitur utama..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors resize-none"></textarea>
+                                <textarea id="prd-desc-manual" rows="3" required placeholder="Jelaskan visi, misi, target pengguna, dan fitur utama..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/40 transition-colors resize-none"></textarea>
                             </div>
                             <div class="flex items-center gap-3">
-                                <button type="button" class="prd-submit-btn px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors text-xs font-semibold flex items-center gap-2" onclick="handleInlineGenerate('manual')">
+                                <button type="button" class="prd-submit-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2" onclick="handleInlineGenerate('manual')">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Generate</span>
                                 </button>
+                                <button type="button" class="prd-view-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2 hidden" onclick="openSavedPrd()">
+                                    <i class="fa-solid fa-file-lines"></i> <span>Buka PRD</span>
+                                </button>
                                 <p class="prd-inline-error text-red-400 text-xs hidden"></p>
+                            </div>
+                            <!-- Shimmer status card (hidden by default) -->
+                            <div class="prd-gen-status-card hidden mt-4" style="opacity:0; transition: opacity 0.3s ease;">
+                                <div class="prd-gen-status">
+                                    <div class="prd-gen-header">
+                                        <span class="prd-shimmer-text text-xs">Generating PRD...</span>
+                                        <span class="text-[11px] text-gray-500 inline-flex items-center gap-0.5">
+                                            <span class="prd-dot">.</span><span class="prd-dot">.</span><span class="prd-dot">.</span>
+                                        </span>
+                                    </div>
+                                    <div class="prd-gen-body">
+                                        <p class="text-xs text-gray-400 mb-3">AI sedang menganalisis dan menyusun dokumen PRD...</p>
+                                        <div class="prd-gen-bar-track"><div class="prd-gen-bar-fill"></div></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -209,7 +227,7 @@ import Layout from '../layouts/Layout.astro';
                         <div class="flex-1 min-w-0">
                             <h4 class="task-title font-medium text-gray-200 transition-all duration-300">Cloning Ref Link Website Lain</h4>
                             <p class="text-sm text-gray-400 mt-1 task-desc">Berikan URL referensi kompetitor. Prompt: <i>"Analisis website [URL], dan buatkan PRD untuk membuat versi yang lebih baik dengan tambahan fitur khusus."</i></p>
-                            <button type="button" class="prd-gen-toggle mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/30 text-blue-300 hover:text-white hover:border-blue-400 hover:from-blue-600/40 hover:to-indigo-600/40 transition-all shadow-[0_0_15px_rgba(59,130,246,0.15)] flex items-center gap-2" onclick="event.preventDefault(); event.stopPropagation(); togglePrdInput('cloning')">
+                            <button type="button" class="prd-gen-toggle mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-white/5 border border-white/15 text-gray-300 hover:text-white hover:border-white/40 hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(255,255,255,0.05)] flex items-center gap-2" onclick="event.preventDefault(); event.stopPropagation(); togglePrdInput('cloning')">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i> Generate PRD with AI
                             </button>
                         </div>
@@ -217,24 +235,42 @@ import Layout from '../layouts/Layout.astro';
                     </label>
                     <!-- Inline expandable input for Cloning -->
                     <div id="prd-input-cloning" class="prd-inline-input hidden overflow-hidden transition-all duration-400 ease-out" style="max-height:0; opacity:0;">
-                        <div class="mt-2 p-5 rounded-xl glass-panel border border-blue-500/20">
+                        <div class="mt-2 p-5 rounded-xl glass-panel border border-white/15">
                             <div class="flex items-center gap-2 mb-4">
-                                <i class="fa-solid fa-wand-magic-sparkles text-blue-400 text-sm"></i>
-                                <span class="text-sm font-semibold text-blue-300">AI PRD Generator — Cloning</span>
+                                <i class="fa-solid fa-wand-magic-sparkles text-gray-300 text-sm"></i>
+                                <span class="text-sm font-semibold text-gray-200">AI PRD Generator — Cloning</span>
                             </div>
                             <div class="mb-3">
                                 <label class="block text-xs font-medium text-gray-400 mb-1">URL Referensi</label>
-                                <input type="url" id="prd-url-cloning" placeholder="https://..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors">
+                                <input type="url" id="prd-url-cloning" placeholder="https://..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/40 transition-colors">
                             </div>
                             <div class="mb-4">
                                 <label class="block text-xs font-medium text-gray-400 mb-1">Deskripsi / Fitur Tambahan</label>
-                                <textarea id="prd-desc-cloning" rows="3" required placeholder="Contoh: clone website ini, tambahkan fitur live chat dan dark mode..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors resize-none"></textarea>
+                                <textarea id="prd-desc-cloning" rows="3" required placeholder="Contoh: clone website ini, tambahkan fitur live chat dan dark mode..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/40 transition-colors resize-none"></textarea>
                             </div>
                             <div class="flex items-center gap-3">
-                                <button type="button" class="prd-submit-btn px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors text-xs font-semibold flex items-center gap-2" onclick="handleInlineGenerate('cloning')">
+                                <button type="button" class="prd-submit-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2" onclick="handleInlineGenerate('cloning')">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Generate</span>
                                 </button>
+                                <button type="button" class="prd-view-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2 hidden" onclick="openSavedPrd()">
+                                    <i class="fa-solid fa-file-lines"></i> <span>Buka PRD</span>
+                                </button>
                                 <p class="prd-inline-error text-red-400 text-xs hidden"></p>
+                            </div>
+                            <!-- Shimmer status card (hidden by default) -->
+                            <div class="prd-gen-status-card hidden mt-4" style="opacity:0; transition: opacity 0.3s ease;">
+                                <div class="prd-gen-status">
+                                    <div class="prd-gen-header">
+                                        <span class="prd-shimmer-text text-xs">Generating PRD...</span>
+                                        <span class="text-[11px] text-gray-500 inline-flex items-center gap-0.5">
+                                            <span class="prd-dot">.</span><span class="prd-dot">.</span><span class="prd-dot">.</span>
+                                        </span>
+                                    </div>
+                                    <div class="prd-gen-body">
+                                        <p class="text-xs text-gray-400 mb-3">AI sedang menganalisis dan menyusun dokumen PRD...</p>
+                                        <div class="prd-gen-bar-track"><div class="prd-gen-bar-fill"></div></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -245,8 +281,8 @@ import Layout from '../layouts/Layout.astro';
         <!-- 2. Front End Section -->
         <section id="frontend" class="slide-panel slide-next relative z-10 pb-4">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-[#6f93c4]/10 border border-[#6f93c4]/30 flex items-center justify-center shrink-0">
-                    <i class="fa-brands fa-react text-[#6f93c4] text-sm"></i>
+                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <i class="fa-brands fa-react text-white text-sm"></i>
                 </div>
                 <h2 class="text-2xl font-bold">2. Front-End (Claude/Gemini)</h2>
             </div>
@@ -367,9 +403,9 @@ import Layout from '../layouts/Layout.astro';
 
                 <!-- Special Pages -->
                 <div class="pt-4 mt-2 border-t border-white/5">
-                    <span class="text-xs font-bold text-red-400 uppercase tracking-wider mb-3 block"><i class="fa-solid fa-eye-slash mr-1"></i> Halaman Khusus (Hide Header/Footer)</span>
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 block"><i class="fa-solid fa-eye-slash mr-1"></i> Halaman Khusus (Hide Header/Footer)</span>
                     
-                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer mb-3 border-l-2 border-l-red-500/50">
+                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer mb-3 border-l-2 border-l-gray-500">
                         <input type="checkbox" id="task-fe-9" class="task-checkbox hidden">
                         <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors">
                             <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
@@ -382,7 +418,7 @@ import Layout from '../layouts/Layout.astro';
                         <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-9" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-9');" aria-label="Lihat detail proses task-fe-9"><i class="fa-solid fa-circle-info text-base"></i></button>
                     </label>
 
-                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer mb-3 border-l-2 border-l-red-500/50">
+                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer mb-3 border-l-2 border-l-gray-500">
                         <input type="checkbox" id="task-fe-10" class="task-checkbox hidden">
                         <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors">
                             <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
@@ -395,7 +431,7 @@ import Layout from '../layouts/Layout.astro';
                         <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-10" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-10');" aria-label="Lihat detail proses task-fe-10"><i class="fa-solid fa-circle-info text-base"></i></button>
                     </label>
 
-                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer border-l-2 border-l-red-500/50">
+                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer border-l-2 border-l-gray-500">
                         <input type="checkbox" id="task-fe-11" class="task-checkbox hidden">
                         <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors">
                             <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
@@ -414,8 +450,8 @@ import Layout from '../layouts/Layout.astro';
         <!-- 3. Backend Section -->
         <section id="backend" class="slide-panel slide-next relative z-10 pb-4">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-[#5b7fa6]/10 border border-[#5b7fa6]/30 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-database text-[#5b7fa6] text-sm"></i>
+                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-database text-white text-sm"></i>
                 </div>
                 <h2 class="text-2xl font-bold">3. Backend (PostgreSQL / Supabase)</h2>
             </div>
@@ -466,8 +502,8 @@ import Layout from '../layouts/Layout.astro';
         <!-- 4. Integration -->
         <section id="integration" class="slide-panel slide-next relative z-10 pb-4">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-[#3b5a8a]/10 border border-[#3b5a8a]/30 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-plug text-[#3b5a8a] text-sm"></i>
+                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-plug text-white text-sm"></i>
                 </div>
                 <h2 class="text-2xl font-bold">4. Integrasi</h2>
             </div>
@@ -515,8 +551,8 @@ import Layout from '../layouts/Layout.astro';
         <!-- 5. Deployment -->
         <section id="deploy" class="slide-panel slide-next relative z-10 pb-4">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-[#4f74ab]/10 border border-[#4f74ab]/30 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-rocket text-[#4f74ab] text-sm"></i>
+                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-rocket text-white text-sm"></i>
                 </div>
                 <h2 class="text-2xl font-bold">5. Deployment</h2>
             </div>
@@ -552,8 +588,8 @@ import Layout from '../layouts/Layout.astro';
         <!-- 6. Testing & QA Section -->
         <section id="testing" class="slide-panel slide-next relative z-10 pb-4">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-[#4a6da0]/10 border border-[#4a6da0]/30 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-vial text-[#4a6da0] text-sm"></i>
+                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-vial text-white text-sm"></i>
                 </div>
                 <h2 class="text-2xl font-bold">6. Testing & QA</h2>
             </div>
@@ -655,16 +691,16 @@ import Layout from '../layouts/Layout.astro';
         <div class="glass-panel rounded-2xl border border-white/10 p-5 shadow-2xl h-[calc(100vh-8rem)] flex flex-col">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
-                        <i class="fa-solid fa-file-lines text-blue-400 text-sm"></i>
+                    <div class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center">
+                        <i class="fa-solid fa-file-lines text-white text-sm"></i>
                     </div>
                     <h3 class="text-sm font-bold text-white">PRD Viewer & Editor</h3>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button type="button" onclick="downloadPrdFromViewer()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors text-xs font-semibold flex items-center gap-1.5" title="Download .md">
+                    <button type="button" onclick="downloadPrdFromViewer()" class="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-1.5" title="Download .md">
                         <i class="fa-solid fa-download text-[10px]"></i> Download
                     </button>
-                    <button type="button" onclick="completePrdAndNext()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors text-xs font-semibold flex items-center gap-1.5" title="Lanjut ke langkah berikutnya">
+                    <button type="button" onclick="completePrdAndNext()" class="px-3 py-1.5 rounded-lg bg-white text-black hover:bg-gray-200 transition-colors text-xs font-semibold flex items-center gap-1.5" title="Lanjut ke langkah berikutnya">
                         Lanjut <i class="fa-solid fa-arrow-right text-[10px]"></i>
                     </button>
                     <button type="button" onclick="closePrdViewer()" class="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Tutup">
@@ -672,7 +708,7 @@ import Layout from '../layouts/Layout.astro';
                     </button>
                 </div>
             </div>
-            <textarea id="prd-editor-textarea" class="flex-1 w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 font-mono leading-relaxed focus:outline-none focus:border-blue-500/50 transition-colors resize-none" spellcheck="false"></textarea>
+            <textarea id="prd-editor-textarea" class="flex-1 w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 font-mono leading-relaxed focus:outline-none focus:border-white/40 transition-colors resize-none" spellcheck="false"></textarea>
         </div>
     </div>
 
@@ -684,16 +720,16 @@ import Layout from '../layouts/Layout.astro';
             <div class="flex justify-between items-end mb-2">
                 <div>
                     <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-spinner animate-spin text-primary" id="progress-spinner"></i>
+                        <i class="fa-solid fa-spinner animate-spin text-gray-300" id="progress-spinner"></i>
                         Progres Proyek
                     </h3>
                 </div>
-                <span id="progress-text" class="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-md">0 / 22 Selesai</span>
+                <span id="progress-text" class="text-xs font-bold text-gray-200 bg-white/10 px-2 py-1 rounded-md">0 / 22 Selesai</span>
             </div>
             
             <!-- Progress Bar -->
             <div class="w-full h-2.5 bg-gray-800 rounded-full overflow-hidden">
-                <div id="progress-bar" class="h-full bg-gradient-to-r from-primary via-navyLight to-accent transition-all duration-500 ease-out" style="width: 0%;"></div>
+                <div id="progress-bar" class="h-full bg-white transition-all duration-500 ease-out" style="width: 0%;"></div>
             </div>
             
             <!-- Congratulation Message (Hidden by default) -->
@@ -710,17 +746,17 @@ import Layout from '../layouts/Layout.astro';
     <!-- ============================= -->
     <div id="screen-congrats" class="hidden min-h-screen w-full flex flex-col items-center justify-center px-6 relative z-10 text-center is-hidden-init">
 
-        <!-- Ambient sparkles (monochrome + a touch of dark blue) -->
+        <!-- Ambient sparkles (monochrome) -->
         <span class="congrats-sparkle w-2 h-2 bg-white/80" style="top: 18%; left: 22%; animation-delay: 0.1s;"></span>
-        <span class="congrats-sparkle w-1.5 h-1.5" style="top: 28%; left: 74%; background: #6f93c4; animation-delay: 0.6s;"></span>
+        <span class="congrats-sparkle w-1.5 h-1.5 bg-gray-400" style="top: 28%; left: 74%; animation-delay: 0.6s;"></span>
         <span class="congrats-sparkle w-1 h-1 bg-white/70" style="top: 68%; left: 18%; animation-delay: 1.1s;"></span>
-        <span class="congrats-sparkle w-2 h-2" style="top: 72%; left: 78%; background: #3b5a8a; animation-delay: 0.35s;"></span>
+        <span class="congrats-sparkle w-2 h-2 bg-gray-500" style="top: 72%; left: 78%; animation-delay: 0.35s;"></span>
         <span class="congrats-sparkle w-1.5 h-1.5 bg-white/60" style="top: 40%; left: 10%; animation-delay: 1.5s;"></span>
-        <span class="congrats-sparkle w-1.5 h-1.5" style="top: 14%; left: 60%; background: #93a8c9; animation-delay: 0.85s;"></span>
+        <span class="congrats-sparkle w-1.5 h-1.5 bg-gray-300" style="top: 14%; left: 60%; animation-delay: 0.85s;"></span>
 
         <!-- Success badge -->
         <div class="relative congrats-badge-glow mb-8">
-            <div class="absolute inset-0 rounded-full blur-2xl" style="background: radial-gradient(circle, rgba(80,120,185,0.35), transparent 70%);"></div>
+            <div class="absolute inset-0 rounded-full blur-2xl" style="background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);"></div>
             <svg width="120" height="120" viewBox="0 0 120 120" class="relative">
                 <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"></circle>
                 <circle class="congrats-ring" cx="60" cy="60" r="48" fill="none" stroke="url(#congratsRingGradient)" stroke-width="2.5" stroke-linecap="round" transform="rotate(-90 60 60)"></circle>
@@ -728,8 +764,8 @@ import Layout from '../layouts/Layout.astro';
                 <defs>
                     <linearGradient id="congratsRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stop-color="#f4f4f5"></stop>
-                        <stop offset="55%" stop-color="#93a8c9"></stop>
-                        <stop offset="100%" stop-color="#3b5a8a"></stop>
+                        <stop offset="55%" stop-color="#d4d4d4"></stop>
+                        <stop offset="100%" stop-color="#737373"></stop>
                     </linearGradient>
                 </defs>
             </svg>
@@ -745,11 +781,11 @@ import Layout from '../layouts/Layout.astro';
         </p>
 
         <div class="flex flex-col sm:flex-row items-center gap-3 mt-10 reveal" style="animation-delay: 0.2s;">
-            <button id="btn-congrats-review" type="button" class="px-5 py-2.5 rounded-full glass-panel border border-white/10 text-sm font-semibold text-gray-200 hover:border-primary/50 hover:text-white transition-all duration-300 flex items-center gap-2">
+            <button id="btn-congrats-review" type="button" class="px-5 py-2.5 rounded-full glass-panel border border-white/10 text-sm font-semibold text-gray-200 hover:border-white/30 hover:text-white transition-all duration-300 flex items-center gap-2">
                 <i class="fa-solid fa-arrow-rotate-left text-xs"></i> Tinjau Kembali
             </button>
-            <button id="btn-congrats-newproject" type="button" class="px-5 py-2.5 rounded-full glass-panel border border-white/10 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-300 flex items-center gap-2" style="border-color: rgba(147,168,201,0.35);">
-<i class="fa-solid fa-plus text-xs"></i> Project Baru
+            <button id="btn-congrats-newproject" type="button" class="px-5 py-2.5 rounded-full glass-panel border border-white/20 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-plus text-xs"></i> Project Baru
             </button>
         </div>
     </div>
@@ -763,11 +799,11 @@ import Layout from '../layouts/Layout.astro';
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div class="flex items-center gap-3 mb-4 pr-8">
-                <div id="task-modal-icon" class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-circle-info text-black"></i>
+                <div id="task-modal-icon" class="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-circle-info text-white"></i>
                 </div>
                 <div>
-                    <span id="task-modal-category" class="text-[11px] font-bold text-primary uppercase tracking-wider"></span>
+                    <span id="task-modal-category" class="text-[11px] font-bold text-gray-400 uppercase tracking-wider"></span>
                     <h3 id="task-modal-title" class="text-lg font-bold text-white leading-tight"></h3>
                 </div>
             </div>
@@ -1273,10 +1309,16 @@ import Layout from '../layouts/Layout.astro';
                 return;
             }
             
-            btn.disabled = true;
-            icon.className = 'fa-solid fa-spinner animate-spin';
-            text.innerText = 'Generating...';
+            btn.parentElement.classList.add('hidden');
             errorEl.classList.add('hidden');
+
+            // Show shimmer status card
+            const statusCard = wrapper.querySelector('.prd-gen-status-card');
+            if (statusCard) {
+                statusCard.classList.remove('hidden');
+                void statusCard.offsetWidth;
+                statusCard.style.opacity = '1';
+            }
             
             try {
                 const response = await fetch('/api/generate-prd', {
@@ -1287,6 +1329,11 @@ import Layout from '../layouts/Layout.astro';
                 
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Terjadi kesalahan pada server');
+                
+                // Save to localStorage
+                localStorage.setItem('saved_prd', data.markdown);
+                // Show the "Buka PRD" buttons
+                document.querySelectorAll('.prd-view-btn').forEach(btn => btn.classList.remove('hidden'));
                 
                 // Show in PRD viewer panel
                 showPrdViewer(data.markdown);
@@ -1300,9 +1347,23 @@ import Layout from '../layouts/Layout.astro';
                 errorEl.innerText = err.message;
                 errorEl.classList.remove('hidden');
             } finally {
-                btn.disabled = false;
-                icon.className = 'fa-solid fa-wand-magic-sparkles';
-                text.innerText = 'Generate';
+                // Hide shimmer status card and restore button
+                if (statusCard) {
+                    statusCard.style.opacity = '0';
+                    setTimeout(() => {
+                        statusCard.classList.add('hidden');
+                        btn.parentElement.classList.remove('hidden');
+                    }, 300);
+                } else {
+                    btn.parentElement.classList.remove('hidden');
+                }
+            }
+        };
+
+        window.openSavedPrd = function() {
+            const saved = localStorage.getItem('saved_prd');
+            if (saved) {
+                showPrdViewer(saved);
             }
         };
 
@@ -1386,6 +1447,22 @@ import Layout from '../layouts/Layout.astro';
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeTaskModal();
         });
+
+        // Initialize PRD Viewer/Editor state
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('saved_prd')) {
+                document.querySelectorAll('.prd-view-btn').forEach(btn => btn.classList.remove('hidden'));
+            }
+            const prdTextarea = document.getElementById('prd-editor-textarea');
+            if (prdTextarea) {
+                prdTextarea.addEventListener('input', (e) => {
+                    // Update saved PRD if it exists
+                    if (localStorage.getItem('saved_prd') !== null) {
+                        localStorage.setItem('saved_prd', e.target.value);
+                    }
+                });
+            }
+        });
     </script>
 
     <!-- ============================= -->
@@ -1407,12 +1484,12 @@ import Layout from '../layouts/Layout.astro';
             let currentSlide = 0;
 
             const stepsData = [
-                { label: 'PRD', icon: 'fa-file-lines', type: 'fa-solid', color: '#8fb2e0' },
-                { label: 'Front-End', icon: 'fa-react', type: 'fa-brands', color: '#6f93c4' },
-                { label: 'Backend', icon: 'fa-database', type: 'fa-solid', color: '#5b7fa6' },
-                { label: 'Integrasi', icon: 'fa-plug', type: 'fa-solid', color: '#3b5a8a' },
-                { label: 'Deploy', icon: 'fa-rocket', type: 'fa-solid', color: '#4f74ab' },
-                { label: 'Testing', icon: 'fa-vial', type: 'fa-solid', color: '#4a6da0' }
+                { label: 'PRD', icon: 'fa-file-lines', type: 'fa-solid', color: '#e5e5e5' },
+                { label: 'Front-End', icon: 'fa-react', type: 'fa-brands', color: '#d4d4d4' },
+                { label: 'Backend', icon: 'fa-database', type: 'fa-solid', color: '#a3a3a3' },
+                { label: 'Integrasi', icon: 'fa-plug', type: 'fa-solid', color: '#888888' },
+                { label: 'Deploy', icon: 'fa-rocket', type: 'fa-solid', color: '#a3a3a3' },
+                { label: 'Testing', icon: 'fa-vial', type: 'fa-solid', color: '#e5e5e5' }
             ];
 
             const navContainer = document.getElementById('dynamic-nav-container');
@@ -1711,7 +1788,7 @@ import Layout from '../layouts/Layout.astro';
                     const dateStr = new Date(p.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
                     return `
                         <div class="project-row flex items-center gap-3 p-3 rounded-lg cursor-pointer border border-transparent hover:bg-white/5 transition-colors" data-id="${id}">
-                            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0">
+                            <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-folder text-white text-sm"></i>
                             </div>
                             <div class="flex-1 min-w-0 text-left">

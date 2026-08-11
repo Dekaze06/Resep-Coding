@@ -16,6 +16,8 @@
     "@google/generative-ai": "^0.24.1",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.2.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.3"
   }
 }
