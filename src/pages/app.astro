@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PrdSheetViewer from '@/components/PrdSheetViewer';
+import FrontendCanvasViewer from '@/components/FrontendCanvasViewer';
 ---
 
 <Layout>
@@ -29,7 +30,7 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
                 </span>
             </h1>
             <p class="mt-4 max-w-2xl text-lg text-gray-400 mx-auto mb-10 reveal" style="animation-delay: 0.2s;">
-                Centang setiap prosesnya. Progres Anda akan otomatis tersimpan di browser. Mari kita bangun website luar biasa mulai dari PRD hingga Testing.
+                Centang setiap prosesnya. Progres Anda akan otomatis tersimpan di browser. Mari kita bangun website luar biasa mulai dari Planning hingga Testing.
             </p>
         </div>
     </section>
@@ -90,64 +91,137 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
         <!-- Slides Viewport -->
         <div id="slides-viewport" class="relative">
 
-        <!-- 1. PRD Section -->
+        <!-- 1. Planning Section -->
         <section id="prd" class="slide-panel slide-active relative z-10 pb-4">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-file-lines text-white text-sm"></i>
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center shrink-0 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                    <i class="fa-solid fa-lightbulb text-sm"></i>
                 </div>
-                <h2 class="text-2xl font-bold">1. Planning & PRD</h2>
+                <div>
+                    <h2 class="text-2xl font-bold text-white">1. Planning</h2>
+                    <span class="text-xs text-cyan-400 font-semibold tracking-wide">Konsep & Rencana Website</span>
+                </div>
             </div>
-            <p class="text-gray-400 mb-6 text-sm">Product Requirements Document adalah fondasi. Gunakan AI untuk mempercepat perumusan.</p>
+            <p class="text-gray-400 mb-6 text-sm">Susun konsep, halaman, dan fitur website impianmu secara instan bersama AI. Pilih salah satu metode di bawah.</p>
             
             <div class="flex flex-col gap-4">
-                <!-- Task PRD 1: Manual -->
+                
+                <!-- Task PRD 1: Wizard Kilat AI (⭐ Rekomendasi Utama) -->
                 <div class="prd-task-wrapper">
-                    <label class="task-container flex items-start gap-4 p-5 rounded-xl glass-panel cursor-pointer">
+                    <label class="task-container flex items-start gap-4 p-5 rounded-xl glass-panel cursor-pointer border border-cyan-500/30 bg-gradient-to-r from-cyan-950/20 via-neutral-900/40 to-neutral-900/60" onclick="togglePrdInput('wizard')">
                         <input type="checkbox" data-group="prd-method" id="task-prd-1" class="task-checkbox hidden">
-                        <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors mt-0.5">
-                            <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
+                        <div class="w-6 h-6 rounded border-2 border-cyan-400/60 flex items-center justify-center shrink-0 transition-colors mt-0.5">
+                            <i class="fa-solid fa-check text-cyan-400 text-xs opacity-0 transition-opacity"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">Pembuatan Manual</h4>
-                            <p class="text-sm text-gray-400 mt-1 task-desc">Jelaskan visi, misi, target user, dan daftar fitur utama secara rinci. Biarkan Claude menstrukturkannya menjadi dokumen PRD standar.</p>
-                            <button type="button" class="prd-gen-toggle mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-white/5 border border-white/15 text-gray-300 hover:text-white hover:border-white/40 hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(255,255,255,0.05)] flex items-center gap-2" onclick="event.preventDefault(); event.stopPropagation(); togglePrdInput('manual')">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> Generate PRD with AI
+                            <div class="flex items-center gap-2 mb-1">
+                                <h4 class="task-title font-bold text-white transition-all duration-300">Wizard Kilat AI</h4>
+                                <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-bold tracking-wide border border-cyan-500/30">⭐ Paling Mudah</span>
+                            </div>
+                            <p class="text-sm text-gray-300 mt-1 task-desc">Cukup pilih kategori, nama bisnis, dan fitur siap pakai. AI akan otomatis meracik Cetak Biru Planning lengkap dalam hitungan detik.</p>
+                            <button type="button" class="prd-gen-toggle mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-cyan-500 hover:bg-cyan-400 text-neutral-950 transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center gap-2" onclick="event.preventDefault(); event.stopPropagation(); togglePrdInput('wizard')">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Buka Wizard Kilat AI
                             </button>
                         </div>
-                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-prd-1" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-prd-1');" aria-label="Lihat detail proses task-prd-1"><i class="fa-solid fa-circle-info text-base"></i></button>
+                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all duration-300 self-center" data-task="task-prd-1" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-prd-1');" aria-label="Lihat detail proses Wizard Kilat AI"><i class="fa-solid fa-circle-info text-base"></i></button>
                     </label>
-                    <!-- Inline expandable input for Manual -->
-                    <div id="prd-input-manual" class="prd-inline-input hidden overflow-hidden transition-all duration-400 ease-out" style="max-height:0; opacity:0;">
-                        <div class="mt-2 p-5 rounded-xl glass-panel border border-white/15">
+
+                    <!-- Inline expandable input for Wizard -->
+                    <div id="prd-input-wizard" class="prd-inline-input hidden overflow-hidden transition-all duration-400 ease-out" style="max-height:0; opacity:0;">
+                        <div class="mt-2 p-5 rounded-xl glass-panel border border-cyan-500/30 bg-[#16161a]">
                             <div class="flex items-center gap-2 mb-4">
-                                <i class="fa-solid fa-wand-magic-sparkles text-gray-300 text-sm"></i>
-                                <span class="text-sm font-semibold text-gray-200">AI PRD Generator — Manual</span>
+                                <i class="fa-solid fa-wand-magic-sparkles text-cyan-400 text-sm"></i>
+                                <span class="text-sm font-bold text-white">AI Planning Wizard — 3 Langkah Mudah</span>
                             </div>
+
+                            <!-- Step 1: Category Chips -->
                             <div class="mb-4">
-                                <label class="block text-xs font-medium text-gray-400 mb-1">Deskripsi Aplikasi</label>
-                                <textarea id="prd-desc-manual" rows="3" required placeholder="Jelaskan visi, misi, target pengguna, dan fitur utama..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/40 transition-colors resize-none"></textarea>
+                                <label class="block text-xs font-semibold text-gray-300 mb-2">1. Pilih Kategori Website</label>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="wizard-category-group">
+                                    <button type="button" class="wizard-cat-btn px-3 py-2 rounded-lg border border-cyan-400/50 bg-cyan-500/15 text-cyan-300 text-xs font-semibold text-left transition-all" data-value="Toko Online & UMKM" onclick="selectWizardCat(this)">🏪 Toko & UMKM</button>
+                                    <button type="button" class="wizard-cat-btn px-3 py-2 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-xs font-semibold text-left hover:border-white/20 transition-all" data-value="Jasa & Profil Bisnis" onclick="selectWizardCat(this)">💼 Jasa & Bisnis</button>
+                                    <button type="button" class="wizard-cat-btn px-3 py-2 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-xs font-semibold text-left hover:border-white/20 transition-all" data-value="Portofolio & Kreatif" onclick="selectWizardCat(this)">🎨 Portofolio / CV</button>
+                                    <button type="button" class="wizard-cat-btn px-3 py-2 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-xs font-semibold text-left hover:border-white/20 transition-all" data-value="Resto, Cafe & Kuliner" onclick="selectWizardCat(this)">🍽️ Resto & Kafe</button>
+                                    <button type="button" class="wizard-cat-btn px-3 py-2 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-xs font-semibold text-left hover:border-white/20 transition-all" data-value="Sekolah & Edukasi" onclick="selectWizardCat(this)">🏫 Sekolah / Edukasi</button>
+                                    <button type="button" class="wizard-cat-btn px-3 py-2 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-xs font-semibold text-left hover:border-white/20 transition-all" data-value="Event & Undangan" onclick="selectWizardCat(this)">📅 Event & Undangan</button>
+                                </div>
+                                <input type="hidden" id="prd-wizard-category" value="Toko Online & UMKM">
                             </div>
+
+                            <!-- Step 2: Name & Brief Info -->
+                            <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">2. Nama Bisnis / Website</label>
+                                    <input type="text" id="prd-wizard-name" placeholder="Contoh: Kopi Senja Bandung" class="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">Gaya Desain & Nuansa Warna</label>
+                                    <select id="prd-wizard-style" class="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400 transition-colors">
+                                        <option value="Modern Cyan & Dark Luxury">🌙 Gelap & Mewah (Dark Luxury & Cyan)</option>
+                                        <option value="Clean Minimalist Light">☀️ Terang & Bersih (Clean Minimalist)</option>
+                                        <option value="Natural Organic Pastel">🌿 Natural & Pastel (Fresh Emerald)</option>
+                                        <option value="High-Tech Futuristic Neon">⚡ Modern High-Tech (Cyber Blue)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Feature Checkboxes -->
+                            <div class="mb-4">
+                                <label class="block text-xs font-semibold text-gray-300 mb-2">3. Centang Fitur yang Dibutuhkan</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-300" id="wizard-features-container">
+                                    <label class="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 cursor-pointer hover:bg-white/10">
+                                        <input type="checkbox" value="Tombol Order / Chat WhatsApp Langsung" checked class="wizard-feat-check rounded bg-black/40 border-white/20 text-cyan-500 focus:ring-0">
+                                        <span>💬 Tombol Chat / Order WhatsApp</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 cursor-pointer hover:bg-white/10">
+                                        <input type="checkbox" value="Galeri Foto & Showcase Produk" checked class="wizard-feat-check rounded bg-black/40 border-white/20 text-cyan-500 focus:ring-0">
+                                        <span>🖼️ Galeri Foto & Showcase</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 cursor-pointer hover:bg-white/10">
+                                        <input type="checkbox" value="Formulir Booking & Kontak" checked class="wizard-feat-check rounded bg-black/40 border-white/20 text-cyan-500 focus:ring-0">
+                                        <span>📝 Formulir Pesan / Booking</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 cursor-pointer hover:bg-white/10">
+                                        <input type="checkbox" value="Peta Google Maps & Jam Buka" checked class="wizard-feat-check rounded bg-black/40 border-white/20 text-cyan-500 focus:ring-0">
+                                        <span>📍 Peta Lokasi & Jam Buka</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 cursor-pointer hover:bg-white/10">
+                                        <input type="checkbox" value="Katalog Produk & Daftar Harga" checked class="wizard-feat-check rounded bg-black/40 border-white/20 text-cyan-500 focus:ring-0">
+                                        <span>📋 Katalog & Daftar Harga</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 cursor-pointer hover:bg-white/10">
+                                        <input type="checkbox" value="Ulasan & Testimoni Pelanggan" checked class="wizard-feat-check rounded bg-black/40 border-white/20 text-cyan-500 focus:ring-0">
+                                        <span>⭐ Ulasan & Testimoni</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Catatan Khusus (Opsional)</label>
+                                <textarea id="prd-wizard-notes" rows="2" placeholder="Contoh: Tambahkan info diskon 20% untuk pelanggan baru..." class="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-colors resize-none"></textarea>
+                            </div>
+
                             <div class="flex items-center gap-3">
-                                <button type="button" class="prd-submit-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2" onclick="handleInlineGenerate('manual')">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Generate</span>
+                                <button type="button" class="prd-submit-btn px-5 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold text-xs transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] flex items-center gap-2" onclick="handleInlineGenerate('wizard')">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Generate Planning Instan</span>
                                 </button>
-                                <button type="button" class="prd-view-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2 hidden" onclick="openSavedPrd()">
-                                    <i class="fa-solid fa-file-lines"></i> <span>Buka PRD</span>
+                                <button type="button" class="prd-view-btn px-4 py-2.5 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2 hidden" onclick="openSavedPrd()">
+                                    <i class="fa-solid fa-file-lines"></i> <span>Buka Planning</span>
                                 </button>
                                 <p class="prd-inline-error text-red-400 text-xs hidden"></p>
                             </div>
-                            <!-- Shimmer status card (hidden by default) -->
+
+                            <!-- Shimmer status card -->
                             <div class="prd-gen-status-card hidden mt-4" style="opacity:0; transition: opacity 0.3s ease;">
                                 <div class="prd-gen-status">
                                     <div class="prd-gen-header">
-                                        <span class="prd-shimmer-text text-xs">Generating PRD...</span>
+                                        <span class="prd-shimmer-text text-xs">Menyusun Cetak Biru Planning...</span>
                                         <span class="text-[11px] text-gray-500 inline-flex items-center gap-0.5">
                                             <span class="prd-dot">.</span><span class="prd-dot">.</span><span class="prd-dot">.</span>
                                         </span>
                                     </div>
                                     <div class="prd-gen-body">
-                                        <p class="text-xs text-gray-400 mb-3">AI sedang menganalisis dan menyusun dokumen PRD...</p>
+                                        <p class="text-xs text-gray-400 mb-3">AI sedang merancang sitemap, fitur, dan spesifikasi visual website Anda...</p>
                                         <div class="prd-gen-bar-track"><div class="prd-gen-bar-fill"></div></div>
                                     </div>
                                 </div>
@@ -156,57 +230,114 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
                     </div>
                 </div>
 
-                <!-- Task PRD 2: Cloning -->
+                <!-- Task PRD 2: Manual (Tulis Ide Bebas) -->
                 <div class="prd-task-wrapper">
-                    <label class="task-container flex items-start gap-4 p-5 rounded-xl glass-panel cursor-pointer">
+                    <label class="task-container flex items-start gap-4 p-5 rounded-xl glass-panel cursor-pointer" onclick="togglePrdInput('manual')">
                         <input type="checkbox" data-group="prd-method" id="task-prd-2" class="task-checkbox hidden">
                         <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors mt-0.5">
                             <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">Cloning Ref Link Website Lain</h4>
-                            <p class="text-sm text-gray-400 mt-1 task-desc">Berikan URL referensi kompetitor. Prompt: <i>"Analisis website [URL], dan buatkan PRD untuk membuat versi yang lebih baik dengan tambahan fitur khusus."</i></p>
-                            <button type="button" class="prd-gen-toggle mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-white/5 border border-white/15 text-gray-300 hover:text-white hover:border-white/40 hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(255,255,255,0.05)] flex items-center gap-2" onclick="event.preventDefault(); event.stopPropagation(); togglePrdInput('cloning')">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> Generate PRD with AI
+                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">Tulis Ide Bebas</h4>
+                            <p class="text-sm text-gray-400 mt-1 task-desc">Sudah punya gambaran detail? Tuliskan ide, visi, atau fitur impianmu secara bebas. AI akan merapikannya menjadi rencana terstruktur.</p>
+                            <button type="button" class="prd-gen-toggle mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-white/5 border border-white/15 text-gray-300 hover:text-white hover:border-white/40 hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(255,255,255,0.05)] flex items-center gap-2" onclick="event.preventDefault(); event.stopPropagation(); togglePrdInput('manual')">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Tulis Ide dengan AI
                             </button>
                         </div>
                         <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-prd-2" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-prd-2');" aria-label="Lihat detail proses task-prd-2"><i class="fa-solid fa-circle-info text-base"></i></button>
                     </label>
-                    <!-- Inline expandable input for Cloning -->
-                    <div id="prd-input-cloning" class="prd-inline-input hidden overflow-hidden transition-all duration-400 ease-out" style="max-height:0; opacity:0;">
+
+                    <!-- Inline expandable input for Manual -->
+                    <div id="prd-input-manual" class="prd-inline-input hidden overflow-hidden transition-all duration-400 ease-out" style="max-height:0; opacity:0;">
                         <div class="mt-2 p-5 rounded-xl glass-panel border border-white/15">
                             <div class="flex items-center gap-2 mb-4">
                                 <i class="fa-solid fa-wand-magic-sparkles text-gray-300 text-sm"></i>
-                                <span class="text-sm font-semibold text-gray-200">AI PRD Generator — Cloning</span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="block text-xs font-medium text-gray-400 mb-1">URL Referensi</label>
-                                <input type="url" id="prd-url-cloning" placeholder="https://..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/40 transition-colors">
+                                <span class="text-sm font-semibold text-gray-200">AI Planning Generator — Tulis Ide Bebas</span>
                             </div>
                             <div class="mb-4">
-                                <label class="block text-xs font-medium text-gray-400 mb-1">Deskripsi / Fitur Tambahan</label>
-                                <textarea id="prd-desc-cloning" rows="3" required placeholder="Contoh: clone website ini, tambahkan fitur live chat dan dark mode..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/40 transition-colors resize-none"></textarea>
+                                <label class="block text-xs font-medium text-gray-400 mb-1">Ceritakan Ide Website Anda</label>
+                                <textarea id="prd-desc-manual" rows="3" required placeholder="Contoh: Saya ingin membuat website untuk salon kecantikan 'Glow Up' di Jakarta. Ada menu perawatan, galeri foto ruangan, testimoni, dan tombol booking jadwal via WhatsApp..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/40 transition-colors resize-none"></textarea>
                             </div>
                             <div class="flex items-center gap-3">
-                                <button type="button" class="prd-submit-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2" onclick="handleInlineGenerate('cloning')">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Generate</span>
+                                <button type="button" class="prd-submit-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2" onclick="handleInlineGenerate('manual')">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Generate Planning</span>
                                 </button>
                                 <button type="button" class="prd-view-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2 hidden" onclick="openSavedPrd()">
-                                    <i class="fa-solid fa-file-lines"></i> <span>Buka PRD</span>
+                                    <i class="fa-solid fa-file-lines"></i> <span>Buka Planning</span>
                                 </button>
                                 <p class="prd-inline-error text-red-400 text-xs hidden"></p>
                             </div>
-                            <!-- Shimmer status card (hidden by default) -->
+                            <!-- Shimmer status card -->
                             <div class="prd-gen-status-card hidden mt-4" style="opacity:0; transition: opacity 0.3s ease;">
                                 <div class="prd-gen-status">
                                     <div class="prd-gen-header">
-                                        <span class="prd-shimmer-text text-xs">Generating PRD...</span>
+                                        <span class="prd-shimmer-text text-xs">Generating Planning Blueprint...</span>
                                         <span class="text-[11px] text-gray-500 inline-flex items-center gap-0.5">
                                             <span class="prd-dot">.</span><span class="prd-dot">.</span><span class="prd-dot">.</span>
                                         </span>
                                     </div>
                                     <div class="prd-gen-body">
-                                        <p class="text-xs text-gray-400 mb-3">AI sedang menganalisis dan menyusun dokumen PRD...</p>
+                                        <p class="text-xs text-gray-400 mb-3">AI sedang menganalisis dan menyusun dokumen planning...</p>
+                                        <div class="prd-gen-bar-track"><div class="prd-gen-bar-fill"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task PRD 3: Cloning -->
+                <div class="prd-task-wrapper">
+                    <label class="task-container flex items-start gap-4 p-5 rounded-xl glass-panel cursor-pointer" onclick="togglePrdInput('cloning')">
+                        <input type="checkbox" data-group="prd-method" id="task-prd-3" class="task-checkbox hidden">
+                        <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors mt-0.5">
+                            <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">Tiru / Referensi Website Lain</h4>
+                            <p class="text-sm text-gray-400 mt-1 task-desc">Punya contoh website kompetitor atau favorit? Masukkan link URL-nya, lalu minta AI membuatkan versi yang lebih baik dengan penyesuaian khusus.</p>
+                            <button type="button" class="prd-gen-toggle mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-white/5 border border-white/15 text-gray-300 hover:text-white hover:border-white/40 hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(255,255,255,0.05)] flex items-center gap-2" onclick="event.preventDefault(); event.stopPropagation(); togglePrdInput('cloning')">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Analisis Link Website
+                            </button>
+                        </div>
+                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-prd-3" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-prd-3');" aria-label="Lihat detail proses task-prd-3"><i class="fa-solid fa-circle-info text-base"></i></button>
+                    </label>
+
+                    <!-- Inline expandable input for Cloning -->
+                    <div id="prd-input-cloning" class="prd-inline-input hidden overflow-hidden transition-all duration-400 ease-out" style="max-height:0; opacity:0;">
+                        <div class="mt-2 p-5 rounded-xl glass-panel border border-white/15">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i class="fa-solid fa-wand-magic-sparkles text-gray-300 text-sm"></i>
+                                <span class="text-sm font-semibold text-gray-200">AI Planning Generator — Referensi Link</span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="block text-xs font-medium text-gray-400 mb-1">URL Website Referensi</label>
+                                <input type="url" id="prd-url-cloning" placeholder="https://contoh-website.com" class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/40 transition-colors">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-xs font-medium text-gray-400 mb-1">Deskripsi / Perubahan Khusus</label>
+                                <textarea id="prd-desc-cloning" rows="3" required placeholder="Contoh: Tiru struktur website ini untuk klinik hewan saya, tambahkan tombol chat dokter online dan daftar paket vaksin..." class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/40 transition-colors resize-none"></textarea>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button type="button" class="prd-submit-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2" onclick="handleInlineGenerate('cloning')">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Generate Planning</span>
+                                </button>
+                                <button type="button" class="prd-view-btn px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-white/15 text-white transition-colors text-xs font-semibold flex items-center gap-2 hidden" onclick="openSavedPrd()">
+                                    <i class="fa-solid fa-file-lines"></i> <span>Buka Planning</span>
+                                </button>
+                                <p class="prd-inline-error text-red-400 text-xs hidden"></p>
+                            </div>
+                            <!-- Shimmer status card -->
+                            <div class="prd-gen-status-card hidden mt-4" style="opacity:0; transition: opacity 0.3s ease;">
+                                <div class="prd-gen-status">
+                                    <div class="prd-gen-header">
+                                        <span class="prd-shimmer-text text-xs">Menganalisis & Menyusun Planning...</span>
+                                        <span class="text-[11px] text-gray-500 inline-flex items-center gap-0.5">
+                                            <span class="prd-dot">.</span><span class="prd-dot">.</span><span class="prd-dot">.</span>
+                                        </span>
+                                    </div>
+                                    <div class="prd-gen-body">
+                                        <p class="text-xs text-gray-400 mb-3">AI sedang memproses fitur referensi dan menyusun dokumen planning...</p>
                                         <div class="prd-gen-bar-track"><div class="prd-gen-bar-fill"></div></div>
                                     </div>
                                 </div>
@@ -220,12 +351,47 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
         <!-- 2. Front End Section -->
         <section id="frontend" class="slide-panel slide-next relative z-10 pb-4">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
-                    <i class="fa-brands fa-react text-white text-sm"></i>
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-paintbrush text-cyan-400 text-sm"></i>
                 </div>
-                <h2 class="text-2xl font-bold">2. Front-End (Claude/Gemini)</h2>
+                <h2 class="text-2xl font-bold">2. Desain & Visual Web</h2>
             </div>
-            <p class="text-gray-400 mb-6 text-sm">Menerjemahkan PRD menjadi antarmuka visual. Gunakan AI untuk generate boilerplate code & komponen.</p>
+            <p class="text-gray-400 mb-6 text-sm">Rancang dan susun tampilan website impianmu secara nyata dengan bantuan AI Web Canvas Studio.</p>
+
+            <!-- ✦ AI Web Canvas Studio Banner ✦ -->
+            <div class="mb-6 p-5 rounded-2xl glass-panel border border-cyan-500/30 relative overflow-hidden shadow-[0_10px_35px_-10px_rgba(6,182,212,0.25)] bg-gradient-to-r from-cyan-950/20 via-neutral-900/60 to-blue-950/20">
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-[11px] font-semibold text-cyan-300 mb-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                            AI Web Canvas Studio
+                        </div>
+                        <h3 class="text-base font-bold text-white tracking-tight">Pembuat & Penampil Web Interaktif</h3>
+                        <p class="text-xs text-gray-400 mt-1 max-w-xl">
+                            Rancang, edit teks langsung di pratinjau, dan tinjau live preview website Anda secara real-time bersama Gemini AI Agent.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+                        <button
+                            type="button"
+                            onclick="window.openFrontendCanvas ? window.openFrontendCanvas() : null"
+                            class="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold text-xs transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] flex items-center gap-2 cursor-pointer"
+                        >
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>Buka Canvas Studio</span>
+                        </button>
+                        <button
+                            type="button"
+                            onclick="window.openFrontendCanvas ? window.openFrontendCanvas('Buatkan halaman Landing Page web lengkap dan responsif sesuai spesifikasi Planning aktif') : null"
+                            class="px-3.5 py-2.5 rounded-xl glass-panel hover:bg-white/10 text-neutral-200 font-semibold text-xs border border-white/15 transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                            <i class="fa-solid fa-bolt text-cyan-400"></i>
+                            <span>Bangun dari Planning</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
             
             <div class="flex flex-col gap-3">
                 <!-- Task FE 1 -->
@@ -235,12 +401,17 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
                         <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="task-title font-medium text-gray-200 transition-all duration-300">1. UI/UX</h4>
-                        <p class="text-xs text-gray-400 mt-1 task-desc">Tentukan Wireframing & Design System (Warna primer, sekunder, dan Spasi).</p>
+                        <div class="flex items-center justify-between gap-2">
+                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">1. Halaman Pembuka (Hero & Judul)</h4>
+                            <button type="button" class="px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1 shrink-0" onclick="event.preventDefault(); event.stopPropagation(); window.openFrontendCanvas ? window.openFrontendCanvas('Rancang bagian Pembuka (Hero Section) dengan Headline memikat, subheadline penjelasan, tombol aksi CTA, dan visual showcase modern sesuai rencana') : null">
+                                <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Canvas
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1 task-desc">Rancang headline memikat, tombol ajakan bertindak (CTA), dan visual pembuka bisnis.</p>
                     </div>
                 
-                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-1" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-1');" aria-label="Lihat detail proses task-fe-1"><i class="fa-solid fa-circle-info text-base"></i></button>
-                    </label>
+                    <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-1" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-1');" aria-label="Lihat detail proses task-fe-1"><i class="fa-solid fa-circle-info text-base"></i></button>
+                </label>
 
                 <!-- Task FE 2 -->
                 <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer">
@@ -249,12 +420,17 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
                         <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="task-title font-medium text-gray-200 transition-all duration-300">2. Header</h4>
-                        <p class="text-xs text-gray-400 mt-1 task-desc">Buat Navigasi Utama yang responsif (Hamburger menu di mobile).</p>
+                        <div class="flex items-center justify-between gap-2">
+                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">2. Navigasi & Menu Mobile</h4>
+                            <button type="button" class="px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1 shrink-0" onclick="event.preventDefault(); event.stopPropagation(); window.openFrontendCanvas ? window.openFrontendCanvas('Buatkan komponen Header Navigasi responsif dengan logo brand, link menu penting, tombol aksi, dan menu mobile hamburger drawer') : null">
+                                <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Canvas
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1 task-desc">Menu navigasi yang bersih dan drawer hamburger responsif saat dibuka di layar HP.</p>
                     </div>
                 
-                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-2" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-2');" aria-label="Lihat detail proses task-fe-2"><i class="fa-solid fa-circle-info text-base"></i></button>
-                    </label>
+                    <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-2" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-2');" aria-label="Lihat detail proses task-fe-2"><i class="fa-solid fa-circle-info text-base"></i></button>
+                </label>
 
                 <!-- Task FE 3 -->
                 <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer">
@@ -263,12 +439,17 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
                         <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="task-title font-medium text-gray-200 transition-all duration-300">3. Title / Hero</h4>
-                        <p class="text-xs text-gray-400 mt-1 task-desc">Rancang Hero section dengan Headline yang memikat dan CTA jelas.</p>
+                        <div class="flex items-center justify-between gap-2">
+                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">3. Showcase Layanan & Produk</h4>
+                            <button type="button" class="px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1 shrink-0" onclick="event.preventDefault(); event.stopPropagation(); window.openFrontendCanvas ? window.openFrontendCanvas('Buatkan bagian Showcase Produk & Katalog Layanan dengan kartu modern, foto produk, deskripsi singkat, dan tombol pesan') : null">
+                                <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Canvas
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1 task-desc">Tampilkan produk, paket layanan, atau galeri karya terbaik bisnis Anda.</p>
                     </div>
                 
-                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-3" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-3');" aria-label="Lihat detail proses task-fe-3"><i class="fa-solid fa-circle-info text-base"></i></button>
-                    </label>
+                    <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-3" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-3');" aria-label="Lihat detail proses task-fe-3"><i class="fa-solid fa-circle-info text-base"></i></button>
+                </label>
 
                 <!-- Task FE 4 -->
                 <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer">
@@ -277,12 +458,17 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
                         <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="task-title font-medium text-gray-200 transition-all duration-300">4. Layout</h4>
-                        <p class="text-xs text-gray-400 mt-1 task-desc">Implementasi Grid System, Container, dan Card components.</p>
+                        <div class="flex items-center justify-between gap-2">
+                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">4. Fitur Aksi (WhatsApp & Form Booking)</h4>
+                            <button type="button" class="px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1 shrink-0" onclick="event.preventDefault(); event.stopPropagation(); window.openFrontendCanvas ? window.openFrontendCanvas('Sisipkan tombol WhatsApp melayang dan formulir booking/pesan interaktif yang mudah diisi oleh calon pelanggan') : null">
+                                <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Canvas
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1 task-desc">Fasilitasi pengunjung untuk chat WhatsApp langsung, order, dan formulir booking.</p>
                     </div>
                 
-                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-4" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-4');" aria-label="Lihat detail proses task-fe-4"><i class="fa-solid fa-circle-info text-base"></i></button>
-                    </label>
+                    <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-4" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-4');" aria-label="Lihat detail proses task-fe-4"><i class="fa-solid fa-circle-info text-base"></i></button>
+                </label>
 
                 <!-- Task FE 5 -->
                 <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer">
@@ -291,12 +477,17 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
                         <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="task-title font-medium text-gray-200 transition-all duration-300">5. Fitur Utama</h4>
-                        <p class="text-xs text-gray-400 mt-1 task-desc">Bangun komponen interaktif inti sesuai PRD (Tabel, Form, Grafik).</p>
+                        <div class="flex items-center justify-between gap-2">
+                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">5. Kustomisasi Gaya, Warna & Animasi</h4>
+                            <button type="button" class="px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1 shrink-0" onclick="event.preventDefault(); event.stopPropagation(); window.openFrontendCanvas ? window.openFrontendCanvas('Poles estetika website: harmonisasikan palet warna brand, efek hover, micro-interactions, dan animasi scroll halus') : null">
+                                <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Canvas
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1 task-desc">Terapkan palet warna brand, tipografi modern, dan animasi mikro yang memukau.</p>
                     </div>
                 
-                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-5" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-5');" aria-label="Lihat detail proses task-fe-5"><i class="fa-solid fa-circle-info text-base"></i></button>
-                    </label>
+                    <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-5" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-5');" aria-label="Lihat detail proses task-fe-5"><i class="fa-solid fa-circle-info text-base"></i></button>
+                </label>
 
                 <!-- Task FE 6 -->
                 <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer">
@@ -305,79 +496,71 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
                         <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="task-title font-medium text-gray-200 transition-all duration-300">6. Typography</h4>
-                        <p class="text-xs text-gray-400 mt-1 task-desc">Atur hierarki font (H1-H6) dan pastikan readability tinggi.</p>
+                        <div class="flex items-center justify-between gap-2">
+                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">6. Tinjau Tampilan di HP & Komputer</h4>
+                            <button type="button" class="px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1 shrink-0" onclick="event.preventDefault(); event.stopPropagation(); window.openFrontendCanvas ? window.openFrontendCanvas('Optimalkan responsivitas layout agar 100% sempurna di layar HP mobile (375px), tablet (768px), dan laptop desktop') : null">
+                                <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Canvas
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1 task-desc">Uji kenyamanan dan kerapian tata letak di berbagai ukuran layar perangkat.</p>
                     </div>
                 
-                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-6" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-6');" aria-label="Lihat detail proses task-fe-6"><i class="fa-solid fa-circle-info text-base"></i></button>
-                    </label>
-
-                <!-- Task FE 7 -->
-                <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer">
-                    <input type="checkbox" id="task-fe-7" class="task-checkbox hidden">
-                    <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors">
-                        <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="task-title font-medium text-gray-200 transition-all duration-300">7. Animasi</h4>
-                        <p class="text-xs text-gray-400 mt-1 task-desc">Tambahkan micro-interactions (Hover efek, framer-motion/CSS transition).</p>
-                    </div>
-                
-                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-7" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-7');" aria-label="Lihat detail proses task-fe-7"><i class="fa-solid fa-circle-info text-base"></i></button>
-                    </label>
-
-                <!-- Task FE 8 -->
-                <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer">
-                    <input type="checkbox" id="task-fe-8" class="task-checkbox hidden">
-                    <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors">
-                        <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="task-title font-medium text-gray-200 transition-all duration-300">8. Footer</h4>
-                        <p class="text-xs text-gray-400 mt-1 task-desc">Desain footer dengan link navigasi pelengkap dan informasi hak cipta.</p>
-                    </div>
-                
-                        <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-8" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-8');" aria-label="Lihat detail proses task-fe-8"><i class="fa-solid fa-circle-info text-base"></i></button>
-                    </label>
+                    <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-6" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-6');" aria-label="Lihat detail proses task-fe-6"><i class="fa-solid fa-circle-info text-base"></i></button>
+                </label>
 
                 <!-- Special Pages -->
                 <div class="pt-4 mt-2 border-t border-white/5">
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 block"><i class="fa-solid fa-eye-slash mr-1"></i> Halaman Khusus (Hide Header/Footer)</span>
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 block"><i class="fa-solid fa-layer-group mr-1"></i> Halaman Lanjutan / Khusus (Opsional)</span>
                     
-                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer mb-3 border-l-2 border-l-gray-500">
+                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer mb-3 border-l-2 border-l-cyan-500">
                         <input type="checkbox" id="task-fe-9" class="task-checkbox hidden">
                         <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors">
                             <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">9. Login Page</h4>
-                            <p class="text-xs text-gray-400 mt-1 task-desc">Desain form autentikasi bersih, fokus tanpa gangguan navigasi utama.</p>
+                            <div class="flex items-center justify-between gap-2">
+                                <h4 class="task-title font-medium text-gray-200 transition-all duration-300">7. Halaman Login & Registrasi</h4>
+                                <button type="button" class="px-2 py-0.5 text-[10px] font-semibold rounded bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1 shrink-0" onclick="event.preventDefault(); event.stopPropagation(); window.openFrontendCanvas ? window.openFrontendCanvas('Buatkan halaman Login & Registrasi modern yang bersih dengan validasi form dan toggle lihat password') : null">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Canvas
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1 task-desc">Form login/masuk akun yang bersih dan terisolasi tanpa gangguan menu lain.</p>
                         </div>
                     
                         <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-9" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-9');" aria-label="Lihat detail proses task-fe-9"><i class="fa-solid fa-circle-info text-base"></i></button>
                     </label>
 
-                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer mb-3 border-l-2 border-l-gray-500">
+                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer mb-3 border-l-2 border-l-cyan-500">
                         <input type="checkbox" id="task-fe-10" class="task-checkbox hidden">
                         <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors">
                             <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">10. Profil Client</h4>
-                            <p class="text-xs text-gray-400 mt-1 task-desc">Dashboard user dengan navigasi sidebar mandiri setelah login.</p>
+                            <div class="flex items-center justify-between gap-2">
+                                <h4 class="task-title font-medium text-gray-200 transition-all duration-300">8. Profil / Dashboard Pelanggan</h4>
+                                <button type="button" class="px-2 py-0.5 text-[10px] font-semibold rounded bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1 shrink-0" onclick="event.preventDefault(); event.stopPropagation(); window.openFrontendCanvas ? window.openFrontendCanvas('Buatkan dashboard profil user/pelanggan dengan riwayat pesanan, profil info, dan menu pengaturan akun') : null">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Canvas
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1 task-desc">Area khusus anggota/pelanggan untuk melihat status transaksi dan profil.</p>
                         </div>
                     
                         <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-10" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-10');" aria-label="Lihat detail proses task-fe-10"><i class="fa-solid fa-circle-info text-base"></i></button>
                     </label>
 
-                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer border-l-2 border-l-gray-500">
+                    <label class="task-container flex items-center gap-4 p-4 rounded-xl glass-panel cursor-pointer border-l-2 border-l-cyan-500">
                         <input type="checkbox" id="task-fe-11" class="task-checkbox hidden">
                         <div class="w-6 h-6 rounded border-2 border-gray-500 flex items-center justify-center shrink-0 transition-colors">
                             <i class="fa-solid fa-check text-white text-xs opacity-0 transition-opacity"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="task-title font-medium text-gray-200 transition-all duration-300">11. CMS Admin</h4>
-                            <p class="text-xs text-gray-400 mt-1 task-desc">Panel admin terpisah untuk manajemen data, dengan table & form CRUD.</p>
+                            <div class="flex items-center justify-between gap-2">
+                                <h4 class="task-title font-medium text-gray-200 transition-all duration-300">9. Panel Pengelola Konten (CMS)</h4>
+                                <button type="button" class="px-2 py-0.5 text-[10px] font-semibold rounded bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1 shrink-0" onclick="event.preventDefault(); event.stopPropagation(); window.openFrontendCanvas ? window.openFrontendCanvas('Buatkan panel Admin CMS lengkap dengan ringkasan statistik, tabel kelola produk/pesanan, dan modal edit data') : null">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Canvas
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1 task-desc">Panel admin sederhana bagi pemilik web untuk menambah produk atau melihat pesan masuk.</p>
                         </div>
                     
                         <button type="button" class="task-detail-btn shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 self-center" data-task="task-fe-11" onclick="event.preventDefault(); event.stopPropagation(); openTaskModal('task-fe-11');" aria-label="Lihat detail proses task-fe-11"><i class="fa-solid fa-circle-info text-base"></i></button>
@@ -628,6 +811,9 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
     <!-- PRD Viewer/Editor Panel (React Component) -->
     <PrdSheetViewer client:load />
 
+    <!-- Frontend Web Canvas Viewer & AI Studio (React Component) -->
+    <FrontendCanvasViewer client:load />
+
     </div><!-- /#app-layout-wrapper -->
 
 
@@ -684,8 +870,6 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
         </div>
     </div>
 
-    <!-- AI Generator Modal removed (replaced by inline expandable inputs) -->
-
     <!-- Task Detail Modal -->
     <div id="task-modal-overlay" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
         <div id="task-modal-box" class="glass-panel bg-card/95 max-w-lg w-full rounded-2xl p-6 md:p-8 relative border border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.9)] max-h-[85vh] overflow-y-auto">
@@ -709,162 +893,130 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
         // --- DATA PENJELASAN DETAIL SETIAP PROSES ---
         const taskDetails = {
             'task-prd-1': {
-                category: '1. Planning & PRD',
-                icon: 'fa-solid fa-pen-nib',
-                title: 'Pembuatan Manual',
+                category: '1. Planning',
+                icon: 'fa-solid fa-wand-magic-sparkles',
+                title: 'Wizard Kilat AI (3 Langkah)',
                 detail: `
-                    <p>Cara ini mengharuskan kamu menuliskan sendiri kebutuhan proyek secara rinci sebelum diserahkan ke AI untuk dirapikan menjadi dokumen PRD yang terstruktur.</p>
-                    <p><b>Langkah yang disarankan:</b></p>
+                    <p>Metode tercepat dan termudah bagi siapa saja yang ingin membuat website tanpa perlu pusing memikirkan istilah teknis.</p>
+                    <p><b>Keunggulan Wizard Kilat:</b></p>
                     <ul class="list-disc list-inside space-y-1">
-                        <li>Tulis latar belakang masalah dan tujuan proyek.</li>
-                        <li>Definisikan target pengguna / persona.</li>
-                        <li>Buat daftar fitur wajib (must-have) dan fitur tambahan (nice-to-have).</li>
-                        <li>Susun alur pengguna (user flow) secara singkat.</li>
+                        <li>Pilih kategori bisnis (Toko, Jasa, Resto, Portofolio, dll).</li>
+                        <li>Centang fitur yang dibutuhkan (WhatsApp Order, Galeri, Form Booking, Maps).</li>
+                        <li>Pilih nuansa warna & gaya desain impianmu.</li>
+                        <li>AI akan langsung membuatkan Cetak Biru Rencana Web lengkap siap bangun!</li>
                     </ul>
-                    <p><b>Contoh prompt:</b> "Berikut catatan kasar kebutuhan produk saya: [tempel catatan]. Rapikan menjadi dokumen PRD standar dengan bagian tujuan, target user, fitur, dan batasan proyek."</p>
                 `
             },
             'task-prd-2': {
-                category: '1. Planning & PRD',
-                icon: 'fa-solid fa-link',
-                title: 'Cloning Ref Link Website Lain',
+                category: '1. Planning',
+                icon: 'fa-solid fa-pen-nib',
+                title: 'Tulis Ide Bebas',
                 detail: `
-                    <p>Gunakan website kompetitor atau referensi sebagai titik awal riset agar proses perumusan kebutuhan jauh lebih cepat, tanpa harus memulai dari nol.</p>
-                    <p><b>Langkah yang disarankan:</b></p>
+                    <p>Punya konsep unik atau detail khusus? Tuliskan ide bebasmu, dan AI akan merapikannya menjadi Cetak Biru Planning yang komprehensif.</p>
+                    <p><b>Tips menulis ide:</b></p>
                     <ul class="list-disc list-inside space-y-1">
-                        <li>Kumpulkan 2-3 URL website kompetitor atau inspirasi.</li>
-                        <li>Minta AI menganalisis struktur halaman, alur, dan fitur utamanya.</li>
-                        <li>Minta AI mengusulkan diferensiasi atau fitur tambahan.</li>
+                        <li>Sebutkan nama bisnis dan bidang usahanya.</li>
+                        <li>Jelaskan siapa calon pelanggan / pengunjung websitemu.</li>
+                        <li>Sebutkan halaman atau menu utama yang ingin ditampilkan.</li>
                     </ul>
-                    <p><b>Peringatan:</b> gunakan hasil analisis sebagai inspirasi, bukan untuk meniru identik desain, teks, atau branding milik orang lain.</p>
+                `
+            },
+            'task-prd-3': {
+                category: '1. Planning',
+                icon: 'fa-solid fa-link',
+                title: 'Tiru / Referensi Website Lain',
+                detail: `
+                    <p>Gunakan website favorit atau kompetitor sebagai acuan agar proses perancangan lebih cepat dan terarah.</p>
+                    <p><b>Langkah:</b></p>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Masukkan URL website referensi (misal: https://contoh-toko.com).</li>
+                        <li>Tuliskan apa saja fitur atau perubahan yang ingin kamu adaptasi untuk websitemu.</li>
+                        <li>AI akan menyusun rencana versi terbaik untuk produkmu.</li>
+                    </ul>
                 `
             },
             'task-fe-1': {
-                category: '2. Front-End',
-                icon: 'fa-solid fa-swatchbook',
-                title: '1. UI/UX',
+                category: '2. Desain & Visual Web',
+                icon: 'fa-solid fa-star',
+                title: '1. Halaman Pembuka (Hero & Judul)',
                 detail: `
-                    <p>Tahap ini menentukan fondasi visual seluruh website: wireframe kasar tiap halaman dan design system (warna primer/sekunder, skala spasi, tipografi dasar, dan komponen inti seperti tombol, input, dan card).</p>
-                    <p><b>Langkah yang disarankan:</b></p>
+                    <p>Bagian pertama yang dilihat pengunjung saat membuka website Anda. Sangat krusial untuk menarik perhatian dalam 3 detik pertama.</p>
+                    <p><b>Elemen Kunci:</b></p>
                     <ul class="list-disc list-inside space-y-1">
-                        <li>Tentukan satu warna primer, satu warna aksen, dan warna netral pendukung.</li>
-                        <li>Gunakan skala spasi konsisten (kelipatan 4px atau 8px) untuk margin & padding.</li>
-                        <li>Rancang komponen dasar reusable: button, input, card, dan badge.</li>
-                        <li>Sketsa wireframe kasar tiap halaman utama sebelum mulai coding.</li>
+                        <li><b>Headline Memikat:</b> Jelaskan apa yang bisnis Anda tawarkan secara singkat dan jelas.</li>
+                        <li><b>Tombol Aksi Utama (CTA):</b> Tombol 'Pesan Sekarang', 'Konsultasi Gratis', atau 'Hubungi Kami'.</li>
+                        <li><b>Visual Menarik:</b> Foto produk unggulan, ilustrasi modern, atau mockup interaktif.</li>
                     </ul>
-                    <p><b>Contoh prompt:</b> "Buatkan design system sederhana untuk website [jenis website]: palet warna (primary, secondary, neutral), skala spasi, dan style dasar untuk button, input, dan card menggunakan Tailwind CSS."</p>
                 `
             },
             'task-fe-2': {
-                category: '2. Front-End',
+                category: '2. Desain & Visual Web',
                 icon: 'fa-solid fa-bars',
-                title: '2. Header',
+                title: '2. Navigasi & Menu Mobile',
                 detail: `
-                    <p>Header berisi navigasi utama situs. Pastikan responsif: menampilkan menu horizontal di desktop dan berubah menjadi hamburger menu di layar mobile.</p>
-                    <p><b>Langkah yang disarankan:</b></p>
+                    <p>Memastikan pengunjung dapat dengan mudah berpindah antar bagian website baik saat membuka lewat komputer maupun layar HP smartphone.</p>
+                    <p><b>Tips Navigasi Ramah Pengunjung:</b></p>
                     <ul class="list-disc list-inside space-y-1">
-                        <li>Tempatkan logo/branding di kiri, tautan navigasi di tengah atau kanan.</li>
-                        <li>Buat CTA button (misal "Daftar"/"Login") yang menonjol di sisi kanan.</li>
-                        <li>Buat versi mobile dengan hamburger menu yang membuka drawer/overlay.</li>
-                        <li>Pertimbangkan header sticky agar navigasi mudah diakses saat scroll.</li>
+                        <li>Taruh logo toko/bisnis di bagian kiri atas.</li>
+                        <li>Sediakan tautan cepat ke 'Layanan', 'Galeri', 'Harga', dan 'Kontak'.</li>
+                        <li>Gunakan menu hamburger otomatis saat dibuka di layar HP.</li>
                     </ul>
-                    <p><b>Contoh prompt:</b> "Buatkan komponen Header responsif dengan React + Tailwind: logo di kiri, menu navigasi [daftar menu] di tengah, tombol CTA '[teks]' di kanan, dan hamburger menu saat mobile."</p>
                 `
             },
             'task-fe-3': {
-                category: '2. Front-End',
-                icon: 'fa-solid fa-star',
-                title: '3. Title / Hero',
+                category: '2. Desain & Visual Web',
+                icon: 'fa-solid fa-tags',
+                title: '3. Showcase Layanan & Produk',
                 detail: `
-                    <p>Hero section adalah kesan pertama pengunjung. Harus berisi headline yang jelas menjelaskan value proposition, sub-headline pendukung, serta CTA (call-to-action) yang mengarahkan pengguna ke tindakan berikutnya.</p>
-                    <p><b>Langkah yang disarankan:</b></p>
+                    <p>Tempat memajang karya terbaik, katalog produk, atau paket jasa yang Anda sediakan kepada calon pelanggan.</p>
+                    <p><b>Rekomendasi Isi:</b></p>
                     <ul class="list-disc list-inside space-y-1">
-                        <li>Tulis headline singkat yang langsung menjelaskan value proposition utama.</li>
-                        <li>Tambahkan sub-headline pendukung 1-2 kalimat.</li>
-                        <li>Sertakan satu CTA button utama dengan tujuan yang jelas.</li>
-                        <li>Tambahkan visual pendukung (ilustrasi, screenshot, atau mockup produk).</li>
+                        <li>Kartu produk dengan foto tajam dan deskripsi singkat.</li>
+                        <li>Informasi harga atau paket hemat yang jelas.</li>
+                        <li>Tombol langsung 'Pesan Produk Ini' via WhatsApp.</li>
                     </ul>
-                    <p><b>Contoh prompt:</b> "Buatkan copy Hero section untuk landing page [nama produk]: headline menarik, sub-headline pendukung, dan teks CTA button yang persuasif."</p>
                 `
             },
             'task-fe-4': {
-                category: '2. Front-End',
-                icon: 'fa-solid fa-table-cells-large',
-                title: '4. Layout',
+                category: '2. Desain & Visual Web',
+                icon: 'fa-brands fa-whatsapp',
+                title: '4. Fitur Aksi (WhatsApp & Form Booking)',
                 detail: `
-                    <p>Implementasikan sistem grid (umumnya 12 kolom), container dengan lebar maksimum yang konsisten, serta komponen card yang dapat dipakai ulang di berbagai halaman.</p>
-                    <p><b>Langkah yang disarankan:</b></p>
+                    <p>Memudahkan pengunjung yang tertarik untuk langsung melakukan transaksi atau bertanya kepada Anda.</p>
+                    <p><b>Fitur Interaktif:</b></p>
                     <ul class="list-disc list-inside space-y-1">
-                        <li>Tentukan lebar container maksimum (misal <code class="text-xs">max-w-7xl</code>) dan padding konsisten.</li>
-                        <li>Terapkan grid system untuk menyusun konten secara rapi.</li>
-                        <li>Buat komponen Card reusable dengan beberapa varian (dengan/tanpa gambar).</li>
-                        <li>Uji tampilan di breakpoint mobile, tablet, dan desktop.</li>
+                        <li><b>Tombol WhatsApp Melayang:</b> Tombol chat yang selalu terlihat di pojok bawah layar.</li>
+                        <li><b>Formulir Pemesanan:</b> Input nama, nomor telepon, tanggal, dan pesan.</li>
+                        <li><b>Peta Google Maps:</b> Menunjukkan lokasi toko fisik / kantor Anda secara interaktif.</li>
                     </ul>
-                    <p><b>Contoh prompt:</b> "Buatkan komponen Card reusable dengan Tailwind CSS yang responsif, mendukung gambar opsional, judul, deskripsi singkat, dan tombol aksi."</p>
                 `
             },
             'task-fe-5': {
-                category: '2. Front-End',
-                icon: 'fa-solid fa-cubes',
-                title: '5. Fitur Utama',
+                category: '2. Desain & Visual Web',
+                icon: 'fa-solid fa-palette',
+                title: '5. Kustomisasi Gaya, Warna & Animasi',
                 detail: `
-                    <p>Bangun komponen interaktif inti sesuai daftar fitur di PRD, misalnya tabel data, form input, grafik/chart, atau fitur pencarian.</p>
-                    <p><b>Langkah yang disarankan:</b></p>
+                    <p>Memberikan sentuhan estetika agar website terlihat mewah, kredibel, dan sesuai karakter brand bisnis Anda.</p>
+                    <p><b>Fitur di Canvas Studio:</b></p>
                     <ul class="list-disc list-inside space-y-1">
-                        <li>Buka kembali daftar fitur di PRD, urutkan berdasarkan prioritas.</li>
-                        <li>Bangun satu per satu komponen interaktif inti (tabel, form, grafik, pencarian).</li>
-                        <li>Sertakan state loading, empty state, dan error state pada tiap komponen.</li>
-                        <li>Hubungkan dulu ke data dummy sebelum integrasi ke backend asli.</li>
+                        <li>Pilihan tema 1-klik (Dark Luxury, Clean Minimalist, Natural Emerald, Cyber Neon, dll).</li>
+                        <li>Efek hover halus saat kursor mengarah ke tombol atau kartu.</li>
+                        <li>Edit teks instan langsung pada layar pratinjau.</li>
                     </ul>
-                    <p><b>Contoh prompt:</b> "Buatkan komponen tabel data React dengan Tailwind yang mendukung sorting, pagination, state loading (skeleton), dan empty state jika data kosong."</p>
                 `
             },
             'task-fe-6': {
-                category: '2. Front-End',
-                icon: 'fa-solid fa-font',
-                title: '6. Typography',
+                category: '2. Desain & Visual Web',
+                icon: 'fa-solid fa-mobile-screen',
+                title: '6. Tinjau Tampilan di HP & Komputer',
                 detail: `
-                    <p>Tentukan hierarki font dari H1 hingga H6 beserta body text, termasuk ukuran, line-height, dan font-weight masing-masing level.</p>
-                    <p><b>Langkah yang disarankan:</b></p>
+                    <p>Mayoritas pengunjung membuka website dari smartphone. Memastikan tata letak tetap rapi dan tidak berantakan di HP adalah prioritas utama.</p>
+                    <p><b>Cara Menguji di Canvas Studio:</b></p>
                     <ul class="list-disc list-inside space-y-1">
-                        <li>Tentukan font family utama (dan font sekunder jika perlu).</li>
-                        <li>Atur skala ukuran H1-H6 dan body text secara konsisten.</li>
-                        <li>Gunakan line-height nyaman baca, umumnya 1.4-1.6 untuk body text.</li>
-                        <li>Cek kontras warna teks terhadap background sesuai standar WCAG AA.</li>
+                        <li>Klik ikon 📱 <b>Mobile (375px)</b> pada toolbar Canvas untuk melihat tampilan HP.</li>
+                        <li>Klik ikon 📲 <b>Tablet (768px)</b> untuk melihat tampilan tablet/iPad.</li>
+                        <li>Klik ikon 💻 <b>Desktop (100%)</b> untuk tampilan laptop/komputer.</li>
                     </ul>
-                    <p><b>Contoh prompt:</b> "Buatkan skala tipografi Tailwind (H1-H6, body, caption) untuk website [jenis website] dengan font '[nama font]', pastikan hierarkinya jelas dan mudah dibaca."</p>
-                `
-            },
-            'task-fe-7': {
-                category: '2. Front-End',
-                icon: 'fa-solid fa-wand-magic-sparkles',
-                title: '7. Animasi',
-                detail: `
-                    <p>Tambahkan micro-interaction seperti efek hover, transisi perpindahan state, atau animasi saat elemen muncul di layar, menggunakan CSS transition atau library seperti Framer Motion.</p>
-                    <p><b>Langkah yang disarankan:</b></p>
-                    <ul class="list-disc list-inside space-y-1">
-                        <li>Identifikasi elemen yang butuh micro-interaction (tombol, card hover, modal).</li>
-                        <li>Gunakan CSS transition untuk animasi ringan, Framer Motion untuk yang kompleks.</li>
-                        <li>Tambahkan animasi saat elemen muncul di layar (fade in, slide up).</li>
-                        <li>Uji performa; hindari animasi berlebihan yang membuat halaman terasa berat.</li>
-                    </ul>
-                    <p><b>Contoh prompt:</b> "Tambahkan micro-interaction hover dan animasi fade-in-up menggunakan Framer Motion pada komponen berikut: [tempel kode komponen]."</p>
-                `
-            },
-            'task-fe-8': {
-                category: '2. Front-End',
-                icon: 'fa-solid fa-shoe-prints',
-                title: '8. Footer',
-                detail: `
-                    <p>Footer berisi link navigasi pelengkap (bukan navigasi utama), tautan media sosial, informasi kontak, dan baris hak cipta.</p>
-                    <p><b>Langkah yang disarankan:</b></p>
-                    <ul class="list-disc list-inside space-y-1">
-                        <li>Susun kolom info: tentang situs, tautan cepat, kontak, dan sosial media.</li>
-                        <li>Tambahkan baris copyright dengan tahun berjalan.</li>
-                        <li>Sertakan link ke halaman legal (Privacy Policy, Terms) bila relevan.</li>
-                        <li>Opsional: tambahkan form berlangganan newsletter singkat.</li>
-                    </ul>
-                    <p><b>Contoh prompt:</b> "Buatkan komponen Footer responsif dengan Tailwind CSS berisi 4 kolom (tentang, tautan cepat, kontak, sosial media) dan baris copyright di bagian bawah."</p>
                 `
             },
             'task-fe-9': {
@@ -1154,96 +1306,145 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
         };
 
         // --- AI Generator Logic (Inline Expandable + PRD Viewer Panel) ---
+                // --- Wizard Category Selector Helper ---
+        window.selectWizardCat = function(btn) {
+            const container = document.getElementById('wizard-category-group');
+            if (!container) return;
+            container.querySelectorAll('.wizard-cat-btn').forEach(b => {
+                b.className = 'wizard-cat-btn px-3 py-2 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-xs font-semibold text-left hover:border-white/20 transition-all';
+            });
+            btn.className = 'wizard-cat-btn px-3 py-2 rounded-lg border border-cyan-400/50 bg-cyan-500/15 text-cyan-300 text-xs font-semibold text-left transition-all';
+            const input = document.getElementById('prd-wizard-category');
+            if (input) input.value = btn.getAttribute('data-value');
+        };
+
+        // --- AI Generator Logic (Inline Expandable + Planning Viewer Panel) ---
         window.togglePrdInput = function(type) {
-            const wrapper = document.getElementById('prd-input-' + type).closest('.prd-task-wrapper');
-            const btn = wrapper.querySelector('.prd-gen-toggle');
-            if (btn && btn.disabled) return;
-            
-            const panel = document.getElementById('prd-input-' + type);
-            const otherType = type === 'manual' ? 'cloning' : 'manual';
-            const otherPanel = document.getElementById('prd-input-' + otherType);
-            
-            // Close the other panel first
-            if (otherPanel && !otherPanel.classList.contains('hidden')) {
-                otherPanel.style.maxHeight = '0';
-                otherPanel.style.opacity = '0';
-                setTimeout(() => otherPanel.classList.add('hidden'), 400);
-            }
-            
+            const allTypes = ['wizard', 'manual', 'cloning'];
+            const currentPanel = document.getElementById('prd-input-' + type);
+            if (!currentPanel) return;
+
+            const isCurrentlyHidden = currentPanel.classList.contains('hidden');
+
+            // Close other panels
+            allTypes.filter(t => t !== type).forEach(t => {
+                const other = document.getElementById('prd-input-' + t);
+                if (other && !other.classList.contains('hidden')) {
+                    other.style.maxHeight = '0';
+                    other.style.opacity = '0';
+                    setTimeout(() => other.classList.add('hidden'), 400);
+                }
+            });
+
             // Toggle current panel
-            if (panel.classList.contains('hidden')) {
-                panel.classList.remove('hidden');
-                void panel.offsetWidth; // reflow
-                panel.style.maxHeight = panel.scrollHeight + 40 + 'px';
-                panel.style.opacity = '1';
+            if (isCurrentlyHidden) {
+                currentPanel.classList.remove('hidden');
+                void currentPanel.offsetWidth; // reflow
+                currentPanel.style.maxHeight = (currentPanel.scrollHeight + 120) + 'px';
+                currentPanel.style.opacity = '1';
+                
+                // Focus & smooth scroll
+                setTimeout(() => {
+                    currentPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    const firstInput = currentPanel.querySelector('input[type="text"], textarea');
+                    if (firstInput) firstInput.focus();
+                }, 150);
             } else {
-                panel.style.maxHeight = '0';
-                panel.style.opacity = '0';
-                setTimeout(() => panel.classList.add('hidden'), 400);
+                currentPanel.style.maxHeight = '0';
+                currentPanel.style.opacity = '0';
+                setTimeout(() => currentPanel.classList.add('hidden'), 400);
             }
         };
 
         window.handleInlineGenerate = async function(type) {
             const wrapper = document.getElementById('prd-input-' + type);
+            if (!wrapper) return;
             const btn = wrapper.querySelector('.prd-submit-btn');
-            const icon = btn.querySelector('i');
-            const text = btn.querySelector('span');
             const errorEl = wrapper.querySelector('.prd-inline-error');
-            
-            const desc = type === 'manual'
-                ? document.getElementById('prd-desc-manual').value
-                : document.getElementById('prd-desc-cloning').value;
-            const url = type === 'cloning'
-                ? document.getElementById('prd-url-cloning').value
-                : '';
-            
-            if (!desc.trim()) {
-                errorEl.innerText = 'Deskripsi tidak boleh kosong.';
-                errorEl.classList.remove('hidden');
-                return;
+
+            let payload = { type };
+
+            if (type === 'wizard') {
+                const category = document.getElementById('prd-wizard-category')?.value || 'Toko Online & UMKM';
+                const businessName = document.getElementById('prd-wizard-name')?.value || '';
+                const colorStyle = document.getElementById('prd-wizard-style')?.value || 'Modern Cyan & Dark Luxury';
+                const notes = document.getElementById('prd-wizard-notes')?.value || '';
+
+                const checkedBoxes = wrapper.querySelectorAll('.wizard-feat-check:checked');
+                const features = Array.from(checkedBoxes).map(cb => cb.value);
+
+                if (!businessName.trim()) {
+                    errorEl.innerText = 'Mohon isi Nama Bisnis / Website terlebih dahulu.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                payload = {
+                    type: 'wizard',
+                    category,
+                    businessName,
+                    colorStyle,
+                    features,
+                    notes
+                };
+            } else if (type === 'manual') {
+                const desc = document.getElementById('prd-desc-manual')?.value || '';
+                if (!desc.trim()) {
+                    errorEl.innerText = 'Deskripsi ide tidak boleh kosong.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                payload = { type: 'manual', desc };
+            } else if (type === 'cloning') {
+                const url = document.getElementById('prd-url-cloning')?.value || '';
+                const desc = document.getElementById('prd-desc-cloning')?.value || '';
+                if (!desc.trim()) {
+                    errorEl.innerText = 'Deskripsi / instruksi tidak boleh kosong.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                payload = { type: 'cloning', url, desc };
             }
-            
+
             btn.parentElement.classList.add('hidden');
             errorEl.classList.add('hidden');
 
-            // Show shimmer status card
             const statusCard = wrapper.querySelector('.prd-gen-status-card');
             if (statusCard) {
                 statusCard.classList.remove('hidden');
                 void statusCard.offsetWidth;
                 statusCard.style.opacity = '1';
             }
-            
+
             try {
                 const response = await fetch('/api/generate-prd', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type, url, desc })
+                    body: JSON.stringify(payload)
                 });
-                
+
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Terjadi kesalahan pada server');
-                
+
                 // Save to project store
                 if (window.updateActiveProjectPrd) {
                     window.updateActiveProjectPrd(data.markdown);
                 }
-                // Show the "Buka PRD" buttons
-                document.querySelectorAll('.prd-view-btn').forEach(btn => btn.classList.remove('hidden'));
-                
-                // Show in PRD viewer panel
+                // Show the "Buka Planning" buttons
+                document.querySelectorAll('.prd-view-btn').forEach(b => b.classList.remove('hidden'));
+
+                // Show in Planning viewer panel
                 showPrdViewer(data.markdown);
-                
+
                 // Auto-check task
-                const taskId = type === 'manual' ? 'task-prd-1' : 'task-prd-2';
+                const taskId = type === 'wizard' ? 'task-prd-1' : type === 'manual' ? 'task-prd-2' : 'task-prd-3';
                 const cb = document.getElementById(taskId);
                 if (cb && !cb.checked) cb.click();
-                
+
             } catch (err) {
                 errorEl.innerText = err.message;
                 errorEl.classList.remove('hidden');
             } finally {
-                // Hide shimmer status card and restore button
                 if (statusCard) {
                     statusCard.style.opacity = '0';
                     setTimeout(() => {
@@ -1361,8 +1562,8 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
             let currentSlide = 0;
 
             const stepsData = [
-                { label: 'PRD', icon: 'fa-file-lines', type: 'fa-solid', color: '#e5e5e5' },
-                { label: 'Front-End', icon: 'fa-react', type: 'fa-brands', color: '#d4d4d4' },
+                { label: 'Planning', icon: 'fa-lightbulb', type: 'fa-solid', color: '#38bdf8' },
+                { label: 'Desain Web', icon: 'fa-paintbrush', type: 'fa-solid', color: '#38bdf8' },
                 { label: 'Backend', icon: 'fa-database', type: 'fa-solid', color: '#a3a3a3' },
                 { label: 'Integrasi', icon: 'fa-plug', type: 'fa-solid', color: '#888888' },
                 { label: 'Deploy', icon: 'fa-rocket', type: 'fa-solid', color: '#a3a3a3' },
@@ -1583,6 +1784,52 @@ import PrdSheetViewer from '@/components/PrdSheetViewer';
             const store = loadProjectsStore();
             if (!store.activeId || !store.projects[store.activeId]) return null;
             return store.projects[store.activeId].prd || null;
+        };
+
+        window.openFrontendCanvas = function (prompt) {
+            window.dispatchEvent(new CustomEvent('open-frontend-canvas', { detail: { prompt } }));
+        };
+
+        window.closeFrontendCanvas = function () {
+            window.dispatchEvent(new Event('close-frontend-canvas'));
+        };
+
+        window.getActiveProjectName = function () {
+            const store = loadProjectsStore();
+            if (!store.activeId || !store.projects[store.activeId]) return 'Web App';
+            return store.projects[store.activeId].name || 'Web App';
+        };
+
+        window.getActiveProjectCanvasState = function () {
+            const store = loadProjectsStore();
+            if (!store.activeId || !store.projects[store.activeId]) return null;
+            const proj = store.projects[store.activeId];
+            let rawCode = proj.canvasCode || '';
+            
+            if (rawCode) {
+                const docTypeIdx = rawCode.indexOf('<!DOCTYPE html>');
+                const htmlIdx = rawCode.indexOf('<html');
+                const startIdx = docTypeIdx !== -1 ? docTypeIdx : htmlIdx;
+                if (startIdx > 0) {
+                    rawCode = rawCode.slice(startIdx);
+                }
+                rawCode = rawCode.replace(/```(?:html|HTML)?/gi, '').replace(/```\s*$/g, '').trim();
+            }
+
+            return {
+                code: rawCode,
+                messages: proj.canvasMessages || [],
+                title: proj.canvasTitle || (proj.name ? proj.name + ' - Web Canvas' : 'Web Canvas')
+            };
+        };
+
+        window.updateActiveProjectCanvasState = function (state) {
+            const store = loadProjectsStore();
+            if (!store.activeId || !store.projects[store.activeId]) return;
+            store.projects[store.activeId].canvasCode = state.code;
+            store.projects[store.activeId].canvasMessages = state.messages;
+            store.projects[store.activeId].canvasTitle = state.title;
+            saveProjectsStore(store);
         };
 
         // Restore project on page load + guard redirect

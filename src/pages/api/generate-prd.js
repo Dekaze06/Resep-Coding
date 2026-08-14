@@ -13,7 +13,6 @@ export async function POST({ request }) {
             });
         }
 
-        // Membaca API Key dari Environment Variable (Server-side)
         const apiKey = import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
         if (!apiKey) {
             return new Response(JSON.stringify({
@@ -24,44 +23,67 @@ export async function POST({ request }) {
             });
         }
 
-        const aiAgentInstructions = `
-Instruksi Tambahan AI Agent untuk Integrasi & Arsitektur Komponen:
-- Pastikan proyek mendukung struktur shadcn, Tailwind CSS, dan TypeScript. Jika belum, berikan panduan setup via shadcn CLI, Tailwind, atau TypeScript.
-- Jalur default komponen adalah /components/ui (jelaskan pentingnya folder ini jika belum ada).
-- Sertakan acuan komponen berikut pada /components/ui/edit-tool.tsx dan demo.tsx bila relevan untuk pelacak proses/editing:
-  - Dependency: clsx, tailwind-merge
-  - Pedoman Implementasi: Analisis dependensi, props/state, responsive design, serta penempatan komponen terbaik dalam aplikasi.
+        const systemInstructions = `Anda adalah Senior Product Strategist dan Lead UI/UX Architect kelas dunia.
+Tugas Anda adalah membuat dokumen Rencana & Cetak Biru Website ("Planning Blueprint") yang profesional, rapi, dan mudah dipahami oleh orang awam maupun developer.
+
+FORMAT OUTPUT (MARKDOWN):
+Pastikan output Anda berformat Markdown terstruktur rapi dengan bagian-bagian berikut:
+
+# Planning Blueprint: [Nama Website / Bisnis]
+
+> **Tagline / Slogan**: [Slogan singkat & menarik]
+> **Kategori**: [Kategori Web] | **Target Pengunjung**: [Target audiens utama]
+
+---
+
+## 1. 📌 Ringkasan Konsep & Visi
+[Jelaskan tujuan utama website, nilai unik (unique selling point), dan kesan visual yang ingin diciptakan dalam 2-3 paragraf ramah].
+
+## 2. 📑 Peta Halaman (Sitemap)
+- **Beranda (Home)**: Hero banner, sambutan, keunggulan utama, ringkasan produk/layanan, ulasan testimoni, CTA kontak.
+- **Layanan / Katalog Produk**: Daftar produk/layanan dengan foto, deskripsi singkat, dan tombol pemesanan/detail.
+- **Tentang Kami**: Cerita singkat bisnis/organisasi, visi-misi, dan tim/lokasi.
+- **Kontak & Lokasi**: Informasi jam buka, peta lokasi, formulir pesan, dan tautan media sosial.
+
+## 3. ⚡ Fitur Utama & Interaktivitas
+- [x] **Pemesanan / Chat WhatsApp Langsung**: Tombol cepat untuk langsung terhubung ke admin WhatsApp dengan pesan template otomatis.
+- [x] **Galeri Foto & Showcase Responsif**: Tampilan grid visual dengan animasi hover halus dan filter kategori.
+- [x] **Formulir Interaktif / Booking**: Form pendaftaran atau pesan dengan validasi instan.
+- [x] **Tampilan Responsif Mobile-First**: Sempurna saat diakses melalui smartphone, tablet, maupun laptop.
+
+## 4. 🎨 Rekomendasi Desain & Gaya Visual
+- **Nuansa Gaya**: [Misal: Modern Clean / Dark Luxury / Natural Pastel]
+- **Palet Warna Utama**:
+  - Warna Primer: \`[HEX, misal: #06b6d4 - Cyan]\` (Warna tombol & highlight)
+  - Warna Latar: \`[HEX, misal: #09090b - Dark Slate]\` (Latar belakang utama)
+  - Warna Aksen/Teks: \`[HEX, misal: #f8fafc - Bright White]\`
+- **Tipografi Font**:
+  - Judul / Headline: Plus Jakarta Sans / Inter (Tegas & modern)
+  - Aksen Tambahan: Dancing Script (Opsional untuk sentuhan hangat)
+
+## 5. 🚀 Panduan Eksekusi Desain (Siap untuk Web Canvas)
+1. **Hero Section**: Headline memikat + sub-headline persuasif + 2 tombol CTA (Pesan Sekarang & Lihat Katalog).
+2. **Katalog & Pricing**: Grid cards dengan efek glassmorphism atau border glow.
+3. **Social Proof**: Kartu testimoni dengan rating bintang ⭐⭐⭐⭐⭐.
+4. **Footer**: Navigasi lengkap, hak cipta, dan link WhatsApp.
 `;
 
         let prompt = '';
-        if (body.type === 'manual') {
-            prompt = `Bertindaklah sebagai Senior Product Manager & Lead Architect. Buatkan Product Requirements Document (PRD) yang profesional dan terstruktur dengan rapi dalam format Markdown berdasarkan deskripsi aplikasi berikut:
-
-Deskripsi Aplikasi:
-${body.desc}
-
-${aiAgentInstructions}
-
-Pastikan PRD mencakup bagian-bagian standar berikut:
-1. Ringkasan Eksekutif (Visi & Tujuan)
-2. Target Pengguna
-3. Fitur Utama (Minimum Viable Product)
-4. Kebutuhan Non-Fungsional & Arsitektur Komponen (shadcn UI, Tailwind, TypeScript)
-5. Rencana Pengembangan (Roadmap)`;
+        if (body.type === 'wizard') {
+            const { category = 'Bisnis & Jasa', businessName = '', features = [], colorStyle = 'Modern Cyan', notes = '' } = body;
+            prompt = `Buatkan Dokumen Planning Blueprint Website berdasarkan informasi wizard berikut:
+- **Kategori Website**: ${category}
+- **Nama Bisnis / Website**: ${businessName || 'Web Project'}
+- **Fitur yang Diinginkan**: ${Array.isArray(features) && features.length > 0 ? features.join(', ') : 'WhatsApp Order, Galeri Foto, Form Kontak, Mobile Responsif'}
+- **Gaya Desain & Warna**: ${colorStyle}
+- **Catatan / Deskripsi Tambahan**: ${notes || 'Buatkan website yang profesional, modern, dan menarik bagi pelanggan.'}`;
+        } else if (body.type === 'manual') {
+            prompt = `Buatkan Dokumen Planning Blueprint Website berdasarkan deskripsi aplikasi berikut:
+${body.desc}`;
         } else if (body.type === 'cloning') {
-            prompt = `Bertindaklah sebagai Senior Product Manager & Lead Architect. Buatkan Product Requirements Document (PRD) yang profesional dalam format Markdown untuk membuat versi *clone* atau aplikasi serupa dari website referensi berikut.
-
-URL Referensi: ${body.url}
-Deskripsi Khusus / Fitur Tambahan: ${body.desc}
-
-${aiAgentInstructions}
-
-Pastikan PRD mencakup:
-1. Ringkasan Eksekutif & Tujuan Utama
-2. Target Pengguna
-3. Analisis Fungsionalitas dari Referensi Utama
-4. Fitur Utama yang akan dibuat (Termasuk fitur tambahan yang direquest)
-5. Kebutuhan Spesifikasi Teknis & Arsitektur Komponen (shadcn UI, Tailwind, TypeScript)`;
+            prompt = `Buatkan Dokumen Planning Blueprint Website untuk membuat versi website yang lebih baik dari referensi berikut:
+- **URL Referensi**: ${body.url}
+- **Deskripsi Khusus & Fitur Tambahan**: ${body.desc}`;
         } else {
             return new Response(JSON.stringify({ error: 'Tipe request tidak valid.' }), {
                 status: 400,
@@ -69,44 +91,68 @@ Pastikan PRD mencakup:
             });
         }
 
-        // Call Gemini REST API directly (compatible with X-goog-api-key)
-        const geminiResponse = await fetch(
-            'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-goog-api-key': apiKey,
-                },
-                body: JSON.stringify({
-                    contents: [
-                        {
-                            parts: [
-                                { text: prompt }
-                            ]
-                        }
-                    ]
-                })
-            }
-        );
+        const candidateModels = [
+            'gemini-3.6-flash',
+            'gemini-3.7-flash',
+            'gemini-3.5-flash',
+            'gemini-flash-latest'
+        ];
 
-        if (!geminiResponse.ok) {
-            const errData = await geminiResponse.text();
-            console.error('Gemini API Error:', geminiResponse.status, errData);
+        let geminiData = null;
+        let lastError = '';
+
+        for (const model of candidateModels) {
+            try {
+                const geminiResponse = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-goog-api-key': apiKey,
+                        },
+                        body: JSON.stringify({
+                            contents: [
+                                {
+                                    parts: [
+                                        { text: `${systemInstructions}\n\n${prompt}` }
+                                    ]
+                                }
+                            ],
+                            generationConfig: {
+                                temperature: 0.7,
+                                maxOutputTokens: 4096,
+                            }
+                        })
+                    }
+                );
+
+                if (geminiResponse.ok) {
+                    geminiData = await geminiResponse.json();
+                    break;
+                } else {
+                    lastError = await geminiResponse.text();
+                    console.warn(`Planning Gen: Model ${model} returned ${geminiResponse.status}:`, lastError.slice(0, 150));
+                }
+            } catch (fetchErr) {
+                console.warn(`Planning Gen: Failed calling ${model}:`, fetchErr.message);
+            }
+        }
+
+        if (!geminiData) {
             return new Response(JSON.stringify({
-                error: `Gemini API Error (${geminiResponse.status}): ${errData}`
+                error: `Gagal memproses via AI Gemini. Detail: ${lastError || 'Koneksi gagal'}`
             }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' }
             });
         }
 
-        const geminiData = await geminiResponse.json();
         const markdown = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
         if (!markdown) {
             return new Response(JSON.stringify({
-                error: 'AI tidak mengembalikan teks. Coba lagi.'
+                error: 'AI tidak mengembalikan teks. Silakan coba lagi.'
             }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' }
@@ -118,7 +164,7 @@ Pastikan PRD mencakup:
             headers: { 'Content-Type': 'application/json' }
         });
     } catch (e) {
-        console.error("Error generating PRD via Gemini:", e);
+        console.error("Error generating Planning via Gemini:", e);
         return new Response(JSON.stringify({
             error: 'Terjadi kesalahan pada server AI: ' + (e.message || e)
         }), {
