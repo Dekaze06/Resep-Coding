@@ -91,11 +91,10 @@ ${body.desc}`;
             });
         }
 
+        // List of candidate models: Gemini 3.7 Flash as primary, Gemini 3.6 Flash as fallback
         const candidateModels = [
-            'gemini-3.6-flash',
             'gemini-3.7-flash',
-            'gemini-3.5-flash',
-            'gemini-flash-latest'
+            'gemini-3.6-flash'
         ];
 
         let geminiData = null;
@@ -121,7 +120,7 @@ ${body.desc}`;
                             ],
                             generationConfig: {
                                 temperature: 0.7,
-                                maxOutputTokens: 4096,
+                                maxOutputTokens: 8192,
                             }
                         })
                     }

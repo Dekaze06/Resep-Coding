@@ -101,12 +101,10 @@ FORMAT RESPONSE:
             parts: [{ text: fullUserPrompt }]
         });
 
-        // List of candidate models in order of priority
+        // List of candidate models in order of priority: Gemini 3.7 Flash as primary, Gemini 3.6 Flash as fallback
         const candidateModels = [
-            'gemini-3.6-flash',
             'gemini-3.7-flash',
-            'gemini-3.5-flash',
-            'gemini-flash-latest'
+            'gemini-3.6-flash'
         ];
 
         let geminiResponse = null;

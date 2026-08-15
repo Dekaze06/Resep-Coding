@@ -138,7 +138,7 @@ const DEFAULT_SAMPLE_HTML = `<!DOCTYPE html>
 
   <!-- Footer -->
   <footer class="border-t border-white/5 py-6 text-center text-xs text-neutral-500">
-    Dibuat dengan SASITE Studio & Gemini Canvas Assistant
+    Dibuat dengan SATU SITE Studio & Gemini 3.7 Flash Assistant
   </footer>
 </body>
 </html>`;
@@ -346,10 +346,10 @@ export default function FrontendCanvasViewer() {
           doc.body.contentEditable = "true";
           doc.designMode = "on";
           
-          let styleEl = doc.getElementById("sasite-edit-style");
+          let styleEl = doc.getElementById("satusite-edit-style");
           if (!styleEl) {
             styleEl = doc.createElement("style");
-            styleEl.id = "sasite-edit-style";
+            styleEl.id = "satusite-edit-style";
             styleEl.innerHTML = `
               [contenteditable="true"] :hover {
                 outline: 1.5px dashed #06b6d4 !important;
@@ -378,7 +378,7 @@ export default function FrontendCanvasViewer() {
         } else {
           doc.body.contentEditable = "false";
           doc.designMode = "off";
-          const styleEl = doc.getElementById("sasite-edit-style");
+          const styleEl = doc.getElementById("satusite-edit-style");
           if (styleEl) styleEl.remove();
         }
       } catch (err) {
@@ -401,7 +401,7 @@ export default function FrontendCanvasViewer() {
     
     // Script to intercept navigation clicks and prevent navigating the host window
     const interceptorScript = `
-<script id="sasite-nav-sandbox">
+<script id="satusite-nav-sandbox">
 (function() {
   document.addEventListener('click', function(e) {
     var a = e.target.closest('a');
@@ -433,7 +433,7 @@ export default function FrontendCanvasViewer() {
       return;
     }
     
-    // Local / relative path: prevent iframe from reloading the parent SASITE app
+    // Local / relative path: prevent iframe from reloading the parent SATU SITE app
     e.preventDefault();
   }, true);
 })();
@@ -717,9 +717,9 @@ export default function FrontendCanvasViewer() {
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-bold text-xs text-white tracking-tight">Gemini AI Assistant</span>
-                    <span className="px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-semibold border border-cyan-500/30">
-                      ⚡ Flash
+                    <span className="font-bold text-xs text-white tracking-tight">Gemini 3.7 Flash Assistant</span>
+                    <span className="px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-semibold border border-cyan-500/30 shadow-[0_0_8px_rgba(6,182,212,0.3)]">
+                      ⚡ 3.7 Flash
                     </span>
                   </div>
                   <p className="text-[10px] text-neutral-400">Diskusi & Generator Web Visual</p>
@@ -777,7 +777,7 @@ export default function FrontendCanvasViewer() {
                 >
                   <div className="flex items-center gap-1.5 mb-1 px-1">
                     <span className="text-[10px] font-semibold text-neutral-400">
-                      {msg.role === "user" ? "Anda" : "Gemini AI"}
+                      {msg.role === "user" ? "Anda" : "Gemini 3.7 Flash"}
                     </span>
                     <span className="text-[9px] text-neutral-500">• {msg.timestamp}</span>
                   </div>
@@ -812,7 +812,7 @@ export default function FrontendCanvasViewer() {
               {isGenerating && (
                 <div className="flex flex-col items-start animate-fade-in">
                   <div className="flex items-center gap-1.5 mb-1 px-1">
-                    <span className="text-[10px] font-semibold text-cyan-400">Gemini Assistant</span>
+                    <span className="text-[10px] font-semibold text-cyan-400">Gemini 3.7 Flash Assistant</span>
                     <span className="text-[9px] text-neutral-500">• Sedang menyusun...</span>
                   </div>
                   <div className="p-3.5 rounded-2xl rounded-tl-sm bg-[#202025] border border-cyan-500/30 text-xs text-neutral-300 flex items-center gap-2.5 shadow-lg">
@@ -1139,7 +1139,7 @@ export default function FrontendCanvasViewer() {
                         {generationStep || "Mengompilasi Antarmuka Web..."}
                       </h3>
                       <p className="text-xs text-neutral-400 max-w-md mb-6 leading-relaxed">
-                        Gemini sedang meracik kode HTML & Tailwind CSS berkualitas tinggi...
+                        Gemini 3.7 Flash sedang meracik kode HTML & Tailwind CSS berkualitas tinggi...
                       </p>
                       <div className="w-48 h-1.5 bg-white/10 rounded-full overflow-hidden">
                         <div className="h-full bg-cyan-400 rounded-full animate-pulse w-3/4"></div>
@@ -1193,7 +1193,7 @@ export default function FrontendCanvasViewer() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="hidden sm:inline">Tekan Escape untuk menutup</span>
-                <span className="text-cyan-400 font-medium">SASITE Studio Canvas Engine</span>
+                <span className="text-cyan-400 font-medium">SATU SITE Studio Canvas Engine</span>
               </div>
             </div>
           </div>

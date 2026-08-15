@@ -142,7 +142,7 @@ const DEFAULT_SAMPLE_HTML = \`<!DOCTYPE html>
 
   <!-- Footer -->
   <footer class="border-t border-white/5 py-6 text-center text-xs text-neutral-500">
-    Dibuat dengan SASITE Studio & Gemini Canvas Assistant
+    Dibuat dengan SATU SITE Studio & Gemini Canvas Assistant
   </footer>
 </body>
 </html>\`;
