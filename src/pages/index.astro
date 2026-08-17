@@ -135,15 +135,13 @@ import Layout from "../layouts/Layout.astro";
                     <a href="#faq" class="hover:text-white transition-colors"
                         >FAQ</a
                     >
-                    <a href="/portal" class="text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                        <span>Portal Klien</span>
-                    </a>
                 </nav>
 
                 <!-- Right Action Items -->
                 <div class="flex items-center gap-2.5">
+                    <!-- 1. Logged-out Login Button -->
                     <a
+                        id="nav-btn-login"
                         href="/login"
                         class="px-3 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-900/60 text-xs font-medium text-zinc-300 hover:text-white transition-all flex items-center gap-1.5"
                     >
@@ -151,21 +149,73 @@ import Layout from "../layouts/Layout.astro";
                         <span>Masuk</span>
                     </a>
 
-                    <button
-                        id="btn-open-projects"
-                        type="button"
-                        class="px-3 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-900/60 text-xs font-medium text-zinc-300 hover:text-white transition-all flex items-center gap-2"
-                    >
-                        <i class="fa-regular fa-folder text-zinc-400"></i>
-                        <span class="hidden sm:inline">Aplikasi Saya</span>
-                    </button>
+                    <!-- 2. Logged-in Account Dropdown Menu (Hidden if not logged in) -->
+                    <div class="relative hidden" id="nav-account-dropdown-container">
+                        <button
+                            type="button"
+                            id="nav-btn-account"
+                            class="h-8 px-2.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-medium text-zinc-200 flex items-center gap-2 transition-all cursor-pointer shadow-sm"
+                        >
+                            <img
+                                id="nav-user-avatar"
+                                src="https://api.dicebear.com/7.x/initials/svg?seed=User&backgroundColor=27272a"
+                                alt="Avatar"
+                                class="w-4 h-4 rounded-md object-cover bg-zinc-800 shrink-0"
+                            />
+                            <span id="nav-user-name" class="max-w-[100px] truncate text-xs font-medium text-zinc-200">Akun</span>
+                            <i class="fa-solid fa-chevron-down text-[9px] text-zinc-500 transition-transform duration-200" id="nav-account-chevron"></i>
+                        </button>
 
+                        <!-- Dropdown Popover Menu -->
+                        <div
+                            id="nav-account-menu"
+                            class="hidden absolute right-0 mt-2 w-52 p-1.5 bg-[#121215] border border-zinc-800 rounded-xl shadow-[0_10px_38px_rgba(0,0,0,0.85)] z-50 text-left font-sans animate-fade-in-up"
+                        >
+                            <div class="px-2.5 py-1.5 border-b border-zinc-800/60 mb-1">
+                                <p id="nav-menu-user-name" class="text-xs font-bold text-white truncate">Klien SatuSite</p>
+                                <p id="nav-menu-user-email" class="text-[10px] text-zinc-500 truncate">demo@satusite.studio</p>
+                            </div>
+                            
+                            <!-- Aplikasi Saya in Dropdown -->
+                            <button
+                                type="button"
+                                id="nav-menu-btn-projects"
+                                class="w-full px-2.5 py-2 rounded-lg text-xs text-zinc-300 hover:text-white hover:bg-zinc-800/80 flex items-center gap-2.5 transition-colors cursor-pointer text-left"
+                            >
+                                <i class="fa-regular fa-folder text-zinc-400 w-3.5 text-center"></i>
+                                <span>Aplikasi Saya</span>
+                            </button>
+
+                            <!-- Portal Klien in Dropdown -->
+                            <a
+                                href="/portal"
+                                class="w-full px-2.5 py-2 rounded-lg text-xs text-zinc-300 hover:text-white hover:bg-zinc-800/80 flex items-center gap-2.5 transition-colors text-left"
+                            >
+                                <i class="fa-solid fa-layer-group text-zinc-400 w-3.5 text-center"></i>
+                                <span>Portal Klien</span>
+                            </a>
+
+                            <!-- Logout Action in Dropdown -->
+                            <div class="border-t border-zinc-800/60 mt-1 pt-1">
+                                <button
+                                    type="button"
+                                    id="nav-menu-btn-logout"
+                                    class="w-full px-2.5 py-1.5 rounded-lg text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center gap-2.5 transition-colors cursor-pointer text-left"
+                                >
+                                    <i class="fa-solid fa-arrow-right-from-bracket w-3.5 text-center"></i>
+                                    <span>Keluar (Logout)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Buka Studio Button (Dark Grey) -->
                     <a
                         href="/app"
-                        class="px-4 py-1.5 rounded-lg bg-[#1e3a8a] hover:bg-[#1d4ed8] border border-blue-900/60 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm shadow-blue-950/40"
+                        class="px-4 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"
                     >
                         <span>Buka Studio</span>
-                        <i class="fa-solid fa-arrow-right text-[10px] text-zinc-300"></i>
+                        <i class="fa-solid fa-arrow-right text-[10px] text-zinc-400"></i>
                     </a>
                 </div>
             </div>
@@ -285,17 +335,10 @@ import Layout from "../layouts/Layout.astro";
                                                 ></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <div
-                                                    class="flex items-center justify-between"
+                                                <span
+                                                    class="text-xs font-semibold text-zinc-100"
+                                                    >Fullstack</span
                                                 >
-                                                    <span
-                                                        class="text-xs font-semibold text-zinc-100"
-                                                        >Fullstack</span
-                                                    >
-                                                    <i
-                                                        class="hero-check-icon fa-solid fa-check text-xs text-blue-400"
-                                                    ></i>
-                                                </div>
                                                 <p
                                                     class="text-[10px] text-zinc-400 leading-snug mt-0.5"
                                                 >
@@ -319,23 +362,42 @@ import Layout from "../layouts/Layout.astro";
                                                 ></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <div
-                                                    class="flex items-center justify-between"
+                                                <span
+                                                    class="text-xs font-semibold text-zinc-100"
+                                                    >Frontend</span
                                                 >
-                                                    <span
-                                                        class="text-xs font-semibold text-zinc-100"
-                                                        >Frontend</span
-                                                    >
-                                                    <i
-                                                        class="hero-check-icon fa-solid fa-check text-xs text-blue-400 hidden"
-                                                    ></i>
-                                                </div>
                                                 <p
                                                     class="text-[10px] text-zinc-400 leading-snug mt-0.5"
                                                 >
                                                     Tampilan antarmuka visual
                                                     lengkap, estetik &
                                                     responsif.
+                                                </p>
+                                            </div>
+                                        </button>
+
+                                        <!-- Option PRD -->
+                                        <button
+                                            type="button"
+                                            data-mode="prd"
+                                            class="hero-mode-item w-full p-2 rounded-lg flex items-start gap-2.5 text-left transition-colors cursor-pointer mt-1 text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
+                                        >
+                                            <div
+                                                class="p-1.5 rounded-md bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 mt-0.5 shrink-0"
+                                            >
+                                                <i
+                                                    class="fa-solid fa-file-lines text-xs text-zinc-400"
+                                                ></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <span
+                                                    class="text-xs font-semibold text-zinc-100"
+                                                    >PRD Blueprint</span
+                                                >
+                                                <p
+                                                    class="text-[10px] text-zinc-400 leading-snug mt-0.5"
+                                                >
+                                                    Dokumen spesifikasi & arsitektur sistem komprehensif.
                                                 </p>
                                             </div>
                                         </button>
@@ -358,16 +420,16 @@ import Layout from "../layouts/Layout.astro";
                                     ></i>
                                 </button>
 
-                                <!-- Generate Arrow-Up / Stop Icon Button (Single Dynamic Icon) -->
+                                <!-- Generate Arrow-Up / Stop Icon Button (Single Dynamic Icon, Borderless) -->
                                 <button
                                      type="submit"
                                      id="btn-hero-generate"
-                                     class="w-8 h-8 rounded-lg bg-[#1e3a8a] hover:bg-[#1d4ed8] border border-blue-900/60 text-white transition-colors flex items-center justify-center cursor-pointer group shadow-sm shadow-blue-950/40"
+                                     class="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white transition-colors flex items-center justify-center cursor-pointer group shadow-sm border-0 outline-none"
                                      title="Generate Website"
                                 >
                                      <i
                                          id="btn-hero-generate-icon"
-                                         class="fa-solid fa-arrow-up text-xs group-hover:-translate-y-0.5 transition-transform"
+                                         class="fa-solid fa-arrow-up text-xs text-zinc-300 group-hover:text-white group-hover:-translate-y-0.5 transition-transform"
                                      ></i>
                                 </button>
                             </div>
@@ -1369,6 +1431,16 @@ import Layout from "../layouts/Layout.astro";
                                     "placeholder",
                                     "Tuliskan ide aplikasi fullstack... (Contoh: 'Buat aplikasi kasir toko kopi dengan pencarian produk, ringkasan transaksi & ekspor CSV')",
                                 );
+                        } else if (mode === "prd") {
+                            if (modeLabel) modeLabel.textContent = "PRD";
+                            if (modeIcon)
+                                modeIcon.className =
+                                    "fa-solid fa-file-lines text-xs text-zinc-400 shrink-0";
+                            if (input)
+                                input.setAttribute(
+                                    "placeholder",
+                                    "Tuliskan konsep atau fitur aplikasi yang ingin dibuatkan dokumen PRD & Blueprint arsitektur...",
+                                );
                         } else {
                             if (modeLabel) modeLabel.textContent = "Frontend";
                             if (modeIcon)
@@ -1385,7 +1457,6 @@ import Layout from "../layouts/Layout.astro";
                         modeItems.forEach((btn) => {
                             const isSelected =
                                 btn.getAttribute("data-mode") === mode;
-                            const check = btn.querySelector(".hero-check-icon");
                             if (isSelected) {
                                 btn.classList.add(
                                     "bg-zinc-800/90",
@@ -1396,7 +1467,6 @@ import Layout from "../layouts/Layout.astro";
                                     "hover:bg-zinc-800/40",
                                     "hover:text-zinc-200",
                                 );
-                                if (check) check.classList.remove("hidden");
                             } else {
                                 btn.classList.remove(
                                     "bg-zinc-800/90",
@@ -1407,7 +1477,6 @@ import Layout from "../layouts/Layout.astro";
                                     "hover:bg-zinc-800/40",
                                     "hover:text-zinc-200",
                                 );
-                                if (check) check.classList.add("hidden");
                             }
                         });
 
@@ -1582,6 +1651,78 @@ import Layout from "../layouts/Layout.astro";
                 btnClose2.addEventListener("click", () =>
                     modal.classList.add("hidden"),
                 );
+
+            // =========================================================
+            // Account Navigation Dropdown & Auth State Initializer
+            // =========================================================
+            (function initAuthNav() {
+                try {
+                    const userRaw = localStorage.getItem("satusite_auth_user");
+                    const btnLogin = document.getElementById("nav-btn-login");
+                    const accountContainer = document.getElementById("nav-account-dropdown-container");
+                    const accountBtn = document.getElementById("nav-btn-account");
+                    const accountMenu = document.getElementById("nav-account-menu");
+                    const accountChevron = document.getElementById("nav-account-chevron");
+                    const userNameEl = document.getElementById("nav-user-name");
+                    const userAvatarEl = document.getElementById("nav-user-avatar");
+                    const menuUserName = document.getElementById("nav-menu-user-name");
+                    const menuUserEmail = document.getElementById("nav-menu-user-email");
+                    const menuBtnProjects = document.getElementById("nav-menu-btn-projects");
+                    const menuBtnLogout = document.getElementById("nav-menu-btn-logout");
+
+                    if (userRaw) {
+                        const user = JSON.parse(userRaw);
+                        if (btnLogin) btnLogin.classList.add("hidden");
+                        if (accountContainer) accountContainer.classList.remove("hidden");
+                        if (userNameEl) userNameEl.textContent = user.name || "Akun";
+                        if (userAvatarEl && user.avatar) userAvatarEl.src = user.avatar;
+                        if (menuUserName) menuUserName.textContent = user.name || "Klien";
+                        if (menuUserEmail) menuUserEmail.textContent = user.email || "";
+                    } else {
+                        if (btnLogin) btnLogin.classList.remove("hidden");
+                        if (accountContainer) accountContainer.classList.add("hidden");
+                    }
+
+                    if (accountBtn && accountMenu) {
+                        accountBtn.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            const isHidden = accountMenu.classList.contains("hidden");
+                            if (isHidden) {
+                                accountMenu.classList.remove("hidden");
+                                if (accountChevron) accountChevron.classList.add("rotate-180");
+                            } else {
+                                accountMenu.classList.add("hidden");
+                                if (accountChevron) accountChevron.classList.remove("rotate-180");
+                            }
+                        });
+
+                        document.addEventListener("click", (e) => {
+                            if (accountContainer && !accountContainer.contains(e.target)) {
+                                accountMenu.classList.add("hidden");
+                                if (accountChevron) accountChevron.classList.remove("rotate-180");
+                            }
+                        });
+                    }
+
+                    if (menuBtnProjects) {
+                        menuBtnProjects.addEventListener("click", () => {
+                            if (accountMenu) accountMenu.classList.add("hidden");
+                            if (accountChevron) accountChevron.classList.remove("rotate-180");
+                            renderProjectsList();
+                            if (modal) modal.classList.remove("hidden");
+                        });
+                    }
+
+                    if (menuBtnLogout) {
+                        menuBtnLogout.addEventListener("click", () => {
+                            localStorage.removeItem("satusite_auth_user");
+                            window.location.reload();
+                        });
+                    }
+                } catch (err) {
+                    console.warn("Auth nav init error:", err);
+                }
+            })();
         });
     </script>
 
