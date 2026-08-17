@@ -36,36 +36,35 @@ Pastikan output Anda berformat Markdown terstruktur rapi dengan bagian-bagian be
 
 ---
 
-## 1. 📌 Ringkasan Konsep & Visi
+## 1. Ringkasan Konsep & Visi
 [Jelaskan tujuan utama website, nilai unik (unique selling point), dan kesan visual yang ingin diciptakan dalam 2-3 paragraf ramah].
 
-## 2. 📑 Peta Halaman (Sitemap)
+## 2. Peta Halaman (Sitemap)
 - **Beranda (Home)**: Hero banner, sambutan, keunggulan utama, ringkasan produk/layanan, ulasan testimoni, CTA kontak.
 - **Layanan / Katalog Produk**: Daftar produk/layanan dengan foto, deskripsi singkat, dan tombol pemesanan/detail.
 - **Tentang Kami**: Cerita singkat bisnis/organisasi, visi-misi, dan tim/lokasi.
 - **Kontak & Lokasi**: Informasi jam buka, peta lokasi, formulir pesan, dan tautan media sosial.
 
-## 3. ⚡ Fitur Utama & Interaktivitas
+## 3. Fitur Utama & Interaktivitas
 - [x] **Pemesanan / Chat WhatsApp Langsung**: Tombol cepat untuk langsung terhubung ke admin WhatsApp dengan pesan template otomatis.
 - [x] **Galeri Foto & Showcase Responsif**: Tampilan grid visual dengan animasi hover halus dan filter kategori.
 - [x] **Formulir Interaktif / Booking**: Form pendaftaran atau pesan dengan validasi instan.
 - [x] **Tampilan Responsif Mobile-First**: Sempurna saat diakses melalui smartphone, tablet, maupun laptop.
 
-## 4. 🎨 Rekomendasi Desain & Gaya Visual
-- **Nuansa Gaya**: [Misal: Modern Clean / Dark Luxury / Natural Pastel]
+## 4. Rekomendasi Desain & Gaya Visual
+- **Nuansa Gaya**: [Misal: Modern Clean / Dark Luxury / Minimalist]
 - **Palet Warna Utama**:
-  - Warna Primer: \`[HEX, misal: #06b6d4 - Cyan]\` (Warna tombol & highlight)
+  - Warna Primer: \`[HEX, misal: #10b981 - Emerald]\` (Warna tombol & highlight)
   - Warna Latar: \`[HEX, misal: #09090b - Dark Slate]\` (Latar belakang utama)
-  - Warna Aksen/Teks: \`[HEX, misal: #f8fafc - Bright White]\`
+  - Warna Aksen/Teks: \`[HEX, misal: #f4f4f5 - Bright White]\`
 - **Tipografi Font**:
-  - Judul / Headline: Plus Jakarta Sans / Inter (Tegas & modern)
-  - Aksen Tambahan: Dancing Script (Opsional untuk sentuhan hangat)
+  - Judul / Headline: Geist Sans / Inter (Tegas & modern)
 
-## 5. 🚀 Panduan Eksekusi Desain (Siap untuk Web Canvas)
-1. **Hero Section**: Headline memikat + sub-headline persuasif + 2 tombol CTA (Pesan Sekarang & Lihat Katalog).
-2. **Katalog & Pricing**: Grid cards dengan efek glassmorphism atau border glow.
-3. **Social Proof**: Kartu testimoni dengan rating bintang ⭐⭐⭐⭐⭐.
-4. **Footer**: Navigasi lengkap, hak cipta, dan link WhatsApp.
+## 5. Panduan Eksekusi Desain (Siap untuk Web Canvas)
+1. **Hero Section**: Headline memikat + sub-headline persuasif + 2 tombol CTA.
+2. **Katalog & Pricing**: Grid cards dengan efek border subtle atau glassmorphism.
+3. **Social Proof**: Kartu testimoni dan rating review.
+4. **Footer**: Navigasi lengkap, hak cipta, dan link kontak.
 `;
 
         let prompt = '';

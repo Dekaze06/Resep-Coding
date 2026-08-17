@@ -70,9 +70,9 @@ const DEFAULT_SAMPLE_HTML = `<!DOCTYPE html>
     }
   </script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+    body { font-family: 'Geist', sans-serif; scroll-behavior: smooth; }
     .glass-card { background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
   </style>
 </head>
@@ -84,7 +84,7 @@ const DEFAULT_SAMPLE_HTML = `<!DOCTYPE html>
         <span class="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-400 font-bold">
           <i class="fa-solid fa-code"></i>
         </span>
-        <span class="font-bold text-lg tracking-tight">Web Canvas <span class="text-cyan-400" style="font-family: 'Dancing Script', cursive;">Live</span></span>
+        <span class="font-bold text-lg tracking-tight">Web Canvas <span class="text-cyan-400 font-semibold">Live</span></span>
       </div>
       <nav class="hidden md:flex items-center gap-6 text-sm text-neutral-400">
         <a href="#fitur" class="hover:text-cyan-400 transition-colors">Fitur</a>
@@ -138,7 +138,7 @@ const DEFAULT_SAMPLE_HTML = `<!DOCTYPE html>
 
   <!-- Footer -->
   <footer class="border-t border-white/5 py-6 text-center text-xs text-neutral-500">
-    Dibuat dengan SATU SITE Studio & Gemini 3.7 Flash Assistant
+    Dibuat dengan Satusite Studio & AI Agent
   </footer>
 </body>
 </html>`;
@@ -213,31 +213,31 @@ const cleanHtmlCode = (raw: string): string => {
 const THEME_PRESETS = [
   {
     id: "dark_luxury",
-    name: "🌙 Dark Luxury",
-    desc: "Hitam pekat, glassmorphism & cyan glow",
-    prompt: "Ubah seluruh gaya tema visual dan palet warna website menjadi tema 'Dark Luxury': background #09090b pekat, teks putih bersih, kartu glassmorphism modern, dan aksen warna cyan neon #06b6d4 yang mewah tanpa menghapus konten yang ada.",
+    name: "Dark Minimalist",
+    desc: "Hitam pekat, sleek zinc borders & emerald glow",
+    prompt: "Ubah seluruh gaya tema visual dan palet warna website menjadi tema 'Dark Minimalist': background #09090b pekat, teks putih bersih, kartu sleek zinc modern, dan aksen warna emerald #10b981 yang elegan tanpa menghapus konten yang ada.",
   },
   {
     id: "clean_light",
-    name: "☀️ Clean Minimalist",
+    name: "Clean Minimalist Light",
     desc: "Putih bersih, abu-abu modern & royal blue",
     prompt: "Ubah seluruh gaya tema visual dan palet warna website menjadi tema 'Clean Minimalist Light': background putih bersih #ffffff / neutral-50, teks gelap kontras #0f172a, kartu berbayang halus, dan aksen warna royal blue #2563eb yang profesional tanpa menghapus konten.",
   },
   {
     id: "emerald_nature",
-    name: "🌿 Natural Emerald",
+    name: "Natural Emerald",
     desc: "Nuansa alam segar, hijau & warna bumi",
     prompt: "Ubah seluruh gaya tema visual dan palet warna website menjadi tema 'Natural Emerald & Organic': palet warna bernuansa hijau zamrud #10b981, latar lembut ramah lingkungan, dan elemen visual segar natural tanpa menghapus konten yang ada.",
   },
   {
     id: "cyber_neon",
-    name: "⚡ High-Tech Neon",
+    name: "High-Tech Dark",
     desc: "Cyberpunk violet & neon gradient",
-    prompt: "Ubah seluruh gaya tema visual dan palet warna website menjadi tema 'High-Tech Futuristic Neon': background cyberpunk gelap #030712, gradien ungu violet #a855f7 dan cyan menyala, serta micro-interactions futuristik tanpa menghapus konten.",
+    prompt: "Ubah seluruh gaya tema visual dan palet warna website menjadi tema 'High-Tech Futuristic Dark': background cyberpunk gelap #030712, gradien ungu violet #a855f7 dan cyan menyala, serta micro-interactions futuristik tanpa menghapus konten.",
   },
   {
     id: "warm_boutique",
-    name: "🌸 Warm Boutique",
+    name: "Warm Boutique",
     desc: "Rose gold, peach lembut & cozy aesthetic",
     prompt: "Ubah seluruh gaya tema visual dan palet warna website menjadi tema 'Warm Boutique & Cafe Chic': palet warna rose gold & peach lembut #f43f5e, font estetik, dan nuansa hangat nyaman untuk resto/kafe/fashion tanpa menghapus konten.",
   },
@@ -638,7 +638,7 @@ export default function FrontendCanvasViewer() {
       const errorMsg: ChatMessage = {
         id: "msg_err_" + Date.now(),
         role: "agent",
-        text: `⚠️ Maaf, terjadi kesalahan: ${err.message || err}. Silakan coba lagi.`,
+        text: `Notice: ${err.message || err}. Silakan coba lagi.`,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
       setMessages([...updatedMessages, errorMsg]);
@@ -717,9 +717,9 @@ export default function FrontendCanvasViewer() {
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-bold text-xs text-white tracking-tight">Gemini 3.7 Flash Assistant</span>
-                    <span className="px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-semibold border border-cyan-500/30 shadow-[0_0_8px_rgba(6,182,212,0.3)]">
-                      ⚡ 3.7 Flash
+                    <span className="font-bold text-xs text-white tracking-tight">AI Agent</span>
+                    <span className="px-1.5 py-0.2 rounded bg-blue-600/20 text-blue-300 text-[10px] font-semibold border border-blue-500/30">
+                      Autonomous
                     </span>
                   </div>
                   <p className="text-[10px] text-neutral-400">Diskusi & Generator Web Visual</p>
@@ -733,7 +733,7 @@ export default function FrontendCanvasViewer() {
                   onClick={() => setIncludePrd(!includePrd)}
                   className={`px-2.5 py-1 rounded-full text-[10px] font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                     includePrd && prdAvailable
-                      ? "bg-cyan-500/20 text-cyan-300 border border-cyan-400/40"
+                      ? "bg-blue-600/20 text-blue-300 border border-blue-400/40"
                       : "bg-white/5 text-neutral-400 border border-white/10 hover:text-neutral-300"
                   }`}
                   title={prdAvailable ? "Konteks Planning aktif disertakan" : "Belum ada dokumen Planning tersimpan"}
@@ -748,7 +748,7 @@ export default function FrontendCanvasViewer() {
             <div className="px-3 py-2 border-b border-white/8 bg-[#141416] shrink-0">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
-                  <PlusCircle className="w-3 h-3 text-cyan-400" /> Tambah Bagian Web (1-Klik)
+                  <PlusCircle className="w-3 h-3 text-blue-400" /> Tambah Bagian Web
                 </span>
                 <span className="text-[9px] text-neutral-500">Sisipkan Instan</span>
               </div>
@@ -777,7 +777,7 @@ export default function FrontendCanvasViewer() {
                 >
                   <div className="flex items-center gap-1.5 mb-1 px-1">
                     <span className="text-[10px] font-semibold text-neutral-400">
-                      {msg.role === "user" ? "Anda" : "Gemini 3.7 Flash"}
+                      {msg.role === "user" ? "Anda" : "AI Agent"}
                     </span>
                     <span className="text-[9px] text-neutral-500">• {msg.timestamp}</span>
                   </div>
@@ -785,23 +785,23 @@ export default function FrontendCanvasViewer() {
                   <div
                     className={`max-w-[88%] p-3.5 rounded-2xl text-xs leading-relaxed break-words shadow-md ${
                       msg.role === "user"
-                        ? "bg-cyan-600 text-white rounded-tr-sm"
+                        ? "bg-blue-600 text-white rounded-tr-sm"
                         : "bg-[#202025] text-neutral-200 border border-white/10 rounded-tl-sm"
                     }`}
                   >
                     <p className="whitespace-pre-wrap">{msg.text}</p>
                     
                     {msg.hasCodeUpdate && (
-                      <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-cyan-300">
+                      <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-blue-300">
                         <span className="flex items-center gap-1">
-                          <Check className="w-3 h-3 text-emerald-400" /> Tampilan di Canvas diperbarui
+                          <Check className="w-3 h-3 text-blue-400" /> Tampilan di Canvas diperbarui
                         </span>
                         <button
                           type="button"
                           onClick={() => setActiveTab("preview")}
                           className="hover:underline font-semibold cursor-pointer"
                         >
-                          Lihat Pratinjau ➜
+                          Lihat Pratinjau
                         </button>
                       </div>
                     )}
@@ -812,11 +812,11 @@ export default function FrontendCanvasViewer() {
               {isGenerating && (
                 <div className="flex flex-col items-start animate-fade-in">
                   <div className="flex items-center gap-1.5 mb-1 px-1">
-                    <span className="text-[10px] font-semibold text-cyan-400">Gemini 3.7 Flash Assistant</span>
+                    <span className="text-[10px] font-semibold text-blue-400">AI Agent</span>
                     <span className="text-[9px] text-neutral-500">• Sedang menyusun...</span>
                   </div>
-                  <div className="p-3.5 rounded-2xl rounded-tl-sm bg-[#202025] border border-cyan-500/30 text-xs text-neutral-300 flex items-center gap-2.5 shadow-lg">
-                    <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
+                  <div className="p-3.5 rounded-2xl rounded-tl-sm bg-[#202025] border border-blue-500/30 text-xs text-neutral-300 flex items-center gap-2.5 shadow-lg">
+                    <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
                     <span>{generationStep || "Sedang memproses..."}</span>
                   </div>
                 </div>
@@ -1139,13 +1139,13 @@ export default function FrontendCanvasViewer() {
                         {generationStep || "Mengompilasi Antarmuka Web..."}
                       </h3>
                       <p className="text-xs text-neutral-400 max-w-md mb-6 leading-relaxed">
-                        Gemini 3.7 Flash sedang meracik kode HTML & Tailwind CSS berkualitas tinggi...
+                        AI Agent sedang meracik kode HTML & Tailwind CSS berkualitas tinggi...
                       </p>
                       <div className="w-48 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                        <div className="h-full bg-cyan-400 rounded-full animate-pulse w-3/4"></div>
+                        <div className="h-full bg-blue-500 rounded-full animate-pulse w-3/4"></div>
                       </div>
                       <span className="text-[11px] text-neutral-500 mt-3 flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-cyan-400" /> Segera siap
+                        <Sparkles className="w-3 h-3 text-blue-400" /> Segera siap
                       </span>
                     </div>
                   )}

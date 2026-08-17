@@ -18,7 +18,10 @@ export async function POST({ request }) {
             chatHistory = [],
             currentCode = '',
             prdContext = '',
-            projectName = 'Web App',
+            projectName = 'Emergent App',
+            activeAgent = 'all',
+            mode = 'fullstack', // 'fullstack' | 'frontend'
+            modelChoice = 'auto'
         } = body;
 
         if (!prompt || !prompt.trim()) {
@@ -38,47 +41,63 @@ export async function POST({ request }) {
             });
         }
 
-        // System instructions to act as elite Senior Frontend Architect & UI/UX Designer
-        const systemPrompt = `Anda adalah Senior Lead Frontend Engineer dan UI/UX Designer kelas dunia di Web Canvas Studio.
-Tugas Anda adalah:
-1. Berdiskusi, memberi saran, dan menjawab pertanyaan pengguna tentang desain, fitur, konten, dan arsitektur website mereka secara ramah dan profesional.
-2. Jika pengguna meminta membuat, memperbarui, menambah bagian, atau mengubah tema website, buatkan/perbarui kode antarmuka web (Frontend) lengkap, mandiri, responsif, dan interaktif (Single-File Complete HTML5).
+        // Specialized system instructions based on mode
+        const isFullstack = mode === 'fullstack';
+        
+        const systemPrompt = `Anda adalah AI Agent di SATUSITE STUDIO — Platform Pengembangan Aplikasi Otonom kelas dunia.
+Mode Aktif: ${isFullstack ? 'FULLSTACK APPLICATION ARCHITECTURE' : 'FRONTEND POLISHED INTERFACE'}
 
-PEDOMAN KODE:
-1. Kode HARUS mandiri (Self-contained HTML5 file) yang menggabungkan struktur HTML, styling Tailwind CSS via CDN (Tailwind v3/v4 standalone), ikon (Font Awesome 6 & Lucide CDN jika perlu), dan script Vanilla JS interaktif.
-2. Desain HARUS WOW, modern, estetik tinggi (Glassmorphism, dark/light mode harmonis, mikro-animasi, typography Google Fonts seperti Plus Jakarta Sans/Inter/Dancing Script, card glow, gradient cantik). JANGAN buat desain kaku atau membosankan.
-3. Semua komponen interaktif (tombol, modal dialog, dropdown filter, tab switcher, form input, kalkulasi, slider, accordion FAQ, data table, floating WhatsApp chat) HARUS berfungsi aktif dengan Vanilla JavaScript di dalam tag <script>.
-4. Jika diberikan Dokumen Planning/PRD proyek, terjemahkan fitur dan kebutuhan perencanaan tersebut secara akurat ke dalam komponen visual web.
-5. Jika pengguna meminta penambahan bagian/fitur khusus (seperti: Tombol WhatsApp Melayang, Galeri Foto Grid, Daftar Harga & Paket, Form Booking, Google Maps, Testimoni Bintang 5, FAQ Accordion), SISIPKAN bagian tersebut di posisi yang tepat pada dokumen HTML tanpa menghapus bagian halaman yang sudah ada.
-6. Jika pengguna meminta ganti tema warna atau gaya desain, sesuaikan konfigurasi warna brand pada Tailwind config, background body, teks, dan aksen kartu secara menyeluruh dan harmonis dengan tetap mempertahankan konten yang ada.
-7. Jika pengguna meminta revisi pada kode yang sudah ada (currentCode), pertahankan fitur yang sudah bagus dan modifikasi/tambahkan bagian yang diminta secara rapi dan konsisten.
-8. PENTING: Untuk tautan navigasi internal (menu Header/Footer), gunakan format anchor href="#nama-bagian" (misal href="#fitur", href="#layanan", href="#kontak") dan buat id yang sesuai pada section tersebut. Jangan gunakan link kosong href="#" atau link yang me-refresh halaman.
+PEDOMAN KODE & ESTETIKA:
+1. Desain HARUS DARK MODE CLEAN MINIMALIS (Zinc/Obsidian dark theme, sleek borders, tipografi bersih Geist Sans/Inter, layout terstruktur rapi).
+2. Gunakan aksen warna Dark Blue / Royal Blue (#2563eb, #1d4ed8, blue-600, blue-500) yang elegan dan profesional.
+3. DILARANG KERAS menggunakan icon emoji/emoticon Unicode warna-warni pada teks maupun tombol (gunakan FontAwesome/SVG/Lucide minimalis).
+4. Kode HARUS mandiri (Self-contained HTML5 file) yang menggabungkan struktur HTML lengkap, Tailwind CSS CDN (v3/v4), Font Awesome 6/Lucide jika perlu, Chart.js (jika ada chart/metrik), dan Vanilla JS interaktif.
+${isFullstack ? `
+SPESIFIKASI MODE FULLSTACK:
+- Bangun arsitektur data lengkap in-memory dengan auto-sync ke browser localStorage.
+- Sediakan fungsionalitas CRUD lengkap (Create, Read, Update, Delete) dengan modal form interaktif dan feedback toast/alert.
+- Sediakan fitur pencarian / filter data real-time, pengurutan, dan tombol Ekspor Data (CSV atau JSON).
+- Buat penanganan state yang kokoh layaknya aplikasi backend/fullstack modern.
+- Script JavaScript harus memuat handler data terstruktur dengan objek model yang jelas.
+` : `
+SPESIFIKASI MODE FRONTEND:
+- Fokus pada desain tampilan antarmuka visual yang sangat lengkap, presisi, estetik, dan responsif (Desktop, Tablet, Mobile).
+- Bangun seluruh section halaman secara utuh: Header Navigasi responsif, Hero Section, Feature Highlights, Showcase Grid / Galeri, Testimonial/FAQ Accordion, Formulir Kontak dengan validasi visual, dan Footer.
+- Tambahkan animasi halus, efek hover, modal popups, dan transisi CSS yang responsif.
+`}
+5. Jika pengguna meminta revisi pada kode yang sudah ada (currentCode), pertahankan fitur yang sudah bagus dan modifikasi/tambahkan bagian yang diminta secara konsisten.
+6. Untuk tautan navigasi internal (menu Header/Footer), gunakan format anchor href="#nama-bagian" dan buat id yang sesuai pada section tersebut.
 
 FORMAT RESPONSE:
 - Jika permintaan memerlukan pembuatan/pembaruan kode web:
-  1. Tulis penjelasan ramah dan ringkas mengenai perubahan/fitur yang dibuat untuk ditampilkan di panel CHAT.
-  2. Letakkan SELURUH kode HTML5 lengkap HANYA di dalam blok markdown:\n\`\`\`html\n<!DOCTYPE html>\n<html lang="id">\n...\n</html>\n\`\`\`
-- Jika pengguna HANYA ingin berdiskusi, bertanya saran/konsultasi tanpa meminta update kode (misal: "menurutmu apa nama yang bagus?", "warna apa yang cocok?", dll):
-  Jawablah secara langsung dan informatif tanpa menyertakan blok kode HTML.`;
+  1. Tulis ringkasan penjelasan teknis singkat untuk ditampilkan di panel percakapan chat (bersih, profesional, tanpa emoji).
+  2. Letakkan SELURUH kode HTML5 lengkap HANYA di dalam blok markdown:
+\`\`\`html
+<!DOCTYPE html>
+<html lang="id">
+...
+</html>
+\`\`\`
+- Jika pengguna HANYA ingin konsultasi/bertanya tanpa kode:
+  Jawablah secara informatif, profesional, dan to the point tanpa blok kode.`;
 
         // Assemble conversational prompt context
-        let fullUserPrompt = `Proyek: ${projectName}\n\n`;
+        let fullUserPrompt = `Proyek: ${projectName}\nActive Agent: ${activeAgent}\n\n`;
 
         if (prdContext && prdContext.trim()) {
-            fullUserPrompt += `=== DOKUMEN PLANNING PROYEK TERKAIT ===\n${prdContext.slice(0, 5000)}\n\n`;
+            fullUserPrompt += `=== DOKUMEN ARSITEKTUR / PRD ===\n${prdContext.slice(0, 5000)}\n\n`;
         }
 
         if (currentCode && currentCode.trim()) {
-            fullUserPrompt += `=== KODE CANVAS SAAT INI (REFERENSI UPDATE) ===\n\`\`\`html\n${currentCode.slice(0, 10000)}\n\`\`\`\n\n`;
+            fullUserPrompt += `=== KODE TERKINI (REFERENSI UPDATE) ===\n\`\`\`html\n${currentCode.slice(0, 12000)}\n\`\`\`\n\n`;
         }
 
-        fullUserPrompt += `=== PERTANYAAN / INSTRUKSI PENGGUNA ===\n${prompt}`;
+        fullUserPrompt += `=== INSTRUKSI PENGGUNA ===\n${prompt}`;
 
         // Build contents payload with past history ensuring proper alternation
         const contents = [];
         
         if (Array.isArray(chatHistory) && chatHistory.length > 0) {
-            // Exclude last message if it matches current prompt to prevent duplicates
             const pastMessages = chatHistory.filter((m, idx) => {
                 if (idx === chatHistory.length - 1 && m.role === 'user' && m.text.trim() === prompt.trim()) {
                     return false;
@@ -86,7 +105,6 @@ FORMAT RESPONSE:
                 return true;
             });
 
-            // Take up to 6 past messages
             const recent = pastMessages.slice(-6);
             for (const msg of recent) {
                 contents.push({
@@ -101,9 +119,10 @@ FORMAT RESPONSE:
             parts: [{ text: fullUserPrompt }]
         });
 
-        // List of candidate models in order of priority: Gemini 3.7 Flash as primary, Gemini 3.6 Flash as fallback
+        // Use Gemini 3.7 Flash as dedicated engine
         const candidateModels = [
             'gemini-3.7-flash',
+            'gemini-2.5-flash',
             'gemini-3.6-flash'
         ];
 
@@ -164,23 +183,18 @@ FORMAT RESPONSE:
             });
         }
 
-        // =========================================================================
-        // ROBUST SEPARATION: Pure Chat Explanation vs Clean HTML Code
-        // =========================================================================
+        // Separate explanation and clean HTML code
         let extractedCode = '';
         let messageText = '';
         let hasCodeUpdate = false;
 
-        // 1. Try finding ```html ... ``` or unclosed ```html ...
         const fencedMatch = rawReply.match(/```(?:html|HTML|xml)?\s*\n?([\s\S]*?)(?:```|$)/i);
 
         if (fencedMatch && fencedMatch[1] && (fencedMatch[1].includes('<html') || fencedMatch[1].includes('<!DOCTYPE') || fencedMatch[1].includes('<body'))) {
             extractedCode = fencedMatch[1].trim();
-            // Remove code block from rawReply to get pure explanation for chat
             messageText = rawReply.replace(/```(?:html|HTML|xml)?[\s\S]*?(?:```|$)/gi, '').trim();
             hasCodeUpdate = true;
         } else {
-            // 2. Check if <!DOCTYPE html> or <html is in rawReply without markdown fences
             const docTypeIdx = rawReply.indexOf('<!DOCTYPE html>');
             const htmlIdx = rawReply.indexOf('<html');
             const startIdx = docTypeIdx !== -1 ? docTypeIdx : htmlIdx;
@@ -195,21 +209,18 @@ FORMAT RESPONSE:
                 extractedCode = codePart.trim();
                 hasCodeUpdate = true;
             } else {
-                // Pure conversational discussion (no new code generated)
                 messageText = rawReply.trim();
                 extractedCode = currentCode || '';
                 hasCodeUpdate = false;
             }
         }
 
-        // Clean up messageText: remove leftover backticks or "Berikut kode:" hanging markers
         messageText = messageText
             .replace(/```(?:html|HTML)?/gi, '')
             .replace(/```/g, '')
             .replace(/Berikut (?:adalah )?kode(?: HTML5)?(?: mandiri)?[^:\n]*:[\s\n]*$/gi, '')
             .trim();
 
-        // Ensure extractedCode is 100% clean HTML without conversational text preamble
         if (extractedCode && hasCodeUpdate) {
             const firstDocType = extractedCode.indexOf('<!DOCTYPE html>');
             const firstHtml = extractedCode.indexOf('<html');
@@ -220,14 +231,12 @@ FORMAT RESPONSE:
                 if (!messageText) messageText = leakedHeader;
                 extractedCode = extractedCode.slice(validStart).trim();
             }
-
-            // Remove any trailing backticks
             extractedCode = extractedCode.replace(/```\s*$/g, '').trim();
         }
 
         if (!messageText) {
             messageText = hasCodeUpdate
-                ? 'Tentu, saya telah memperbarui antarmuka website di Canvas Studio sesuai instruksi Anda.'
+                ? 'Aplikasi telah berhasil diperbarui dengan fitur dan komponen interaktif baru.'
                 : rawReply;
         }
 
@@ -236,6 +245,7 @@ FORMAT RESPONSE:
             message: messageText,
             code: extractedCode,
             hasCodeUpdate: hasCodeUpdate,
+            agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester'],
             raw: rawReply
         }), {
             status: 200,

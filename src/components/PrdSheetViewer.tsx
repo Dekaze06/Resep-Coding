@@ -415,7 +415,7 @@ export default function PrdSheetViewer() {
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider">Rekomendasi Desain & Gaya</h3>
                 </div>
                 <div className="whitespace-pre-wrap text-neutral-300 leading-relaxed text-[11px] bg-black/20 p-3 rounded-xl border border-white/5">
-                  {parsedBlueprint.designNotes || "Gaya Modern & Responsif, tipografi Plus Jakarta Sans, palet warna elegan."}
+                  {parsedBlueprint.designNotes || "Gaya Modern & Responsif, tipografi Geist Sans, palet warna elegan."}
                 </div>
               </div>
             </div>
@@ -449,7 +449,7 @@ export default function PrdSheetViewer() {
             className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-neutral-950 font-bold text-xs transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2 cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5 text-neutral-950" />
-            <span>Mulai Bangun di Web Canvas ➜</span>
+            <span>Mulai Bangun di Web Canvas</span>
           </button>
         </div>
       </div>

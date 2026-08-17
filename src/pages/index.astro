@@ -1,457 +1,1645 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout>
+<Layout title="Satusite Studio - Platform Pembuat Website AI Otonom">
+    <!-- ========================================== -->
+    <!-- 0. 3D NODE & WELCOME SCREEN (INITIAL LOAD) -->
+    <!-- ========================================== -->
+    <div
+        id="welcome-screen"
+        class="fixed inset-0 z-50 bg-[#09090b] flex flex-col items-center justify-center transition-opacity duration-700 pointer-events-auto select-none"
+    >
+        <!-- 3D Node Mesh Canvas -->
+        <canvas
+            id="welcome-3d-canvas"
+            class="absolute inset-0 w-full h-full pointer-events-none opacity-50"
+        ></canvas>
 
+        <!-- Center Content with 3D Floating Logo -->
+        <div
+            class="relative z-10 flex flex-col items-center text-center space-y-4 px-6"
+        >
+            <div class="relative">
+                <div
+                    class="absolute -inset-4 bg-blue-600/15 rounded-full blur-2xl animate-pulse"
+                >
+                </div>
+                <img
+                    src="/logo.png"
+                    alt="Satusite Logo"
+                    class="w-16 h-16 sm:w-20 sm:h-20 object-contain relative animate-logo-float drop-shadow-[0_15px_35px_rgba(0,0,0,0.9)]"
+                />
+            </div>
 
+            <div class="space-y-1">
+                <h2
+                    id="welcome-text-title"
+                    class="text-lg sm:text-xl font-bold text-white tracking-tight"
+                >
+                    Halo..
+                </h2>
+                <p
+                    id="welcome-text-sub"
+                    class="text-xs text-zinc-400 font-medium"
+                >
+                    Menyiapkan Satusite Studio
+                </p>
+            </div>
 
-
-    <!-- Fluid Particles Background (Landing screen only) -->
-    <!-- Sits above the dark gradient (-z-10) but below the page content. -->
-    <!-- Fades/slides out in sync with #screen-landing when moving to the app screen. -->
-    <div id="particles-bg" class="fixed top-0 left-0 w-full h-full overflow-hidden z-[-5] pointer-events-none">
-        <canvas id="particles-canvas" class="absolute inset-0 w-full h-full"></canvas>
-    </div>
-    
-    <!-- ============================= -->
-    <!-- SCREEN 1: LANDING / START     -->
-    <!-- ============================= -->
-    <div id="screen-landing" class="min-h-screen w-full flex flex-col items-center justify-center px-6 relative z-10 overflow-hidden">
-
-        <!-- ✦ Cinematic: Aurora Glow (breathing ambient light) -->
-        <div class="landing-aurora"></div>
-
-        <!-- ✦ Cinematic: Giant Background Text -->
-        <div class="landing-giant-text" id="landing-giant-text">
-            <span class="font-sans">SATU SITE</span>
-        </div>
-
-        <!-- ✦ Cinematic: Diagonal Scrolling Marquee -->
-        <div class="landing-marquee-wrapper">
-            <div class="landing-marquee-track">
-                <span>Susun Langkah</span> <span class="marquee-dot mx-8">✦</span>
-                <span>Pantau Progres</span> <span class="marquee-dot mx-8">✦</span>
-                <span>Bangun Website</span> <span class="marquee-dot mx-8">✦</span>
-                <span>Planning to Deploy</span> <span class="marquee-dot mx-8">✦</span>
-                <span>Checklist Coding</span> <span class="marquee-dot mx-8">✦</span>
-                <span>Susun Langkah</span> <span class="marquee-dot mx-8">✦</span>
-                <span>Pantau Progres</span> <span class="marquee-dot mx-8">✦</span>
-                <span>Bangun Website</span> <span class="marquee-dot mx-8">✦</span>
-                <span>Planning to Deploy</span> <span class="marquee-dot mx-8">✦</span>
-                <span>Checklist Coding</span> <span class="marquee-dot mx-8">✦</span>
+            <!-- Sleek Minimalist Progress Bar -->
+            <div
+                class="w-32 h-1 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/80 mt-2"
+            >
+                <div
+                    id="welcome-progress-bar"
+                    class="h-full bg-blue-500 rounded-full w-0 transition-all duration-700 ease-out"
+                >
+                </div>
             </div>
         </div>
 
-
-
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-center reveal relative z-10 flex flex-col items-center justify-center">
-            <span class="landing-text-glow font-sans uppercase">SATU SITE</span>
-            <span class="text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]" style="font-family: 'Dancing Script', cursive; font-weight: 400; font-size: 0.7em; margin-top: -0.45em; z-index: 10;">Studio</span>
-        </h1>
-        
-        <!-- Kalimat menarik yang baru ditambahkan -->
-        <p class="mt-6 text-gray-400 text-base md:text-lg text-center max-w-xl reveal relative z-10" style="animation-delay: 0.1s;">
-            Susun langkah, pantau progres, dan ubah ide luar biasamu menjadi website yang nyata dengan checklist pengembangan web terstruktur ini.
-        </p>
-
-        <!-- Primary actions -->
-        <div class="flex items-center gap-3 mt-10 reveal relative z-10" style="animation-delay: 0.2s;">
-            <button id="btn-new-project" type="button" class="px-5 py-2.5 rounded-full glass-panel border border-white/10 text-sm font-semibold text-gray-200 hover:border-primary/50 hover:text-white transition-all duration-300 flex items-center gap-2">
-                <i class="fa-solid fa-plus text-xs"></i> New Project
-            </button>
-            <button id="btn-load-project" type="button" class="px-5 py-2.5 rounded-full glass-panel border border-white/10 text-sm font-semibold text-gray-200 hover:border-primary/50 hover:text-white transition-all duration-300 flex items-center gap-2">
-                <i class="fa-solid fa-folder-open text-xs"></i> Load Project
-            </button>
-        </div>
-
-        <!-- Dynamic panel: new project input OR load project list -->
-        <div id="landing-panel" class="w-full max-w-md mt-6 hidden relative z-10"></div>
-
-        <!-- Start button (Interactive Hover Button) -->
-        <button id="btn-start" type="button" data-status="idle" class="ihb-start hidden mt-8 relative z-10">
-            <span class="ihb-dot"></span>
-            <span class="ihb-idle-label">Mulai Develop</span>
-            <span class="ihb-hover-layer">
-                <span class="ihb-state ihb-state-idle">
-                    <span>Mulai Develop</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </span>
-                <span class="ihb-state ihb-state-loading">
-                    <span class="ihb-spinner"></span>
-                    <span>Menyiapkan...</span>
-                </span>
-                <span class="ihb-state ihb-state-success">
-                    <i class="fa-solid fa-check"></i>
-                    <span>Siap!</span>
-                </span>
-            </span>
+        <!-- Skip Button -->
+        <button
+            id="btn-skip-welcome"
+            class="absolute bottom-6 text-[10px] font-medium text-zinc-600 hover:text-zinc-400 transition-colors z-20 cursor-pointer"
+        >
+            Lewati
         </button>
     </div>
 
-    <!-- ============================= -->
+    <!-- Fluid Ambient Canvas Particles Background -->
+    <div
+        id="particles-bg"
+        class="fixed top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none"
+    >
+        <canvas
+            id="particles-canvas"
+            class="absolute inset-0 w-full h-full opacity-20"></canvas>
+    </div>
 
-    <!-- PROJECT STORE + SCREEN LOGIC  -->
-    <!-- ============================= -->
-    <script is:inline>
-        const PROJECTS_KEY = 'webDevProjectsStore';
+    <!-- Subtle Ambient Dark Blue Gradients -->
+    <div
+        class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-blue-600/5 rounded-full blur-[140px] pointer-events-none z-0"
+    >
+    </div>
+    <div
+        class="fixed bottom-[-10%] right-[15%] w-[500px] h-[400px] bg-blue-500/5 rounded-full blur-[140px] pointer-events-none z-0"
+    >
+    </div>
 
-        function loadProjectsStore() {
-            try {
-                const raw = localStorage.getItem(PROJECTS_KEY);
-                return raw ? JSON.parse(raw) : { projects: {}, activeId: null };
-            } catch (e) {
-                return { projects: {}, activeId: null };
-            }
-        }
+    <div class="relative z-10 flex flex-col min-h-screen">
+        <!-- ========================================== -->
+        <!-- 1. SEAMLESS TOP NAVBAR                     -->
+        <!-- ========================================== -->
+        <header
+            class="sticky top-0 z-40 px-6 py-4 bg-[#09090b]/40 backdrop-blur-md transition-all"
+        >
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <!-- Brand Logo (Border-less) with Typography -->
+                <a href="/" class="flex items-center gap-2.5 group">
+                    <img
+                        src="/logo.png"
+                        alt="satusitE Logo"
+                        class="w-5 h-5 sm:w-5.5 sm:h-5.5 object-contain transition-transform group-hover:scale-105"
+                    />
+                    <span
+                        class="font-agus text-sm sm:text-base font-normal tracking-[0.35em] text-white"
+                    >
+                        satusitE
+                    </span>
+                </a>
 
-        function saveProjectsStore(store) {
-            localStorage.setItem(PROJECTS_KEY, JSON.stringify(store));
-        }
+                <!-- Navigation Links -->
+                <nav
+                    class="hidden md:flex items-center gap-8 text-xs font-medium text-zinc-400"
+                >
+                    <a
+                        href="#prompt-builder"
+                        class="hover:text-white transition-colors">Studio</a
+                    >
+                    <a
+                        href="#how-it-works"
+                        class="hover:text-white transition-colors">Cara Kerja</a
+                    >
+                    <a
+                        href="#for-who"
+                        class="hover:text-white transition-colors"
+                        >Untuk Siapa</a
+                    >
+                    <a
+                        href="#showcase"
+                        class="hover:text-white transition-colors"
+                        >Contoh Website</a
+                    >
+                    <a href="#faq" class="hover:text-white transition-colors"
+                        >FAQ</a
+                    >
+                    <a href="/portal" class="text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                        <span>Portal Klien</span>
+                    </a>
+                </nav>
 
-        function createProject(name) {
-            const store = loadProjectsStore();
-            const id = 'proj_' + Date.now();
-            store.projects[id] = { name: name, createdAt: Date.now(), tasks: {} };
-            store.activeId = id;
-            saveProjectsStore(store);
-            return id;
-        }
+                <!-- Right Action Items -->
+                <div class="flex items-center gap-2.5">
+                    <a
+                        href="/login"
+                        class="px-3 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-900/60 text-xs font-medium text-zinc-300 hover:text-white transition-all flex items-center gap-1.5"
+                    >
+                        <i class="fa-regular fa-user text-zinc-400 text-xs"></i>
+                        <span>Masuk</span>
+                    </a>
 
-        function setActiveProjectId(id) {
-            const store = loadProjectsStore();
-            store.activeId = id;
-            saveProjectsStore(store);
-        }
+                    <button
+                        id="btn-open-projects"
+                        type="button"
+                        class="px-3 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-900/60 text-xs font-medium text-zinc-300 hover:text-white transition-all flex items-center gap-2"
+                    >
+                        <i class="fa-regular fa-folder text-zinc-400"></i>
+                        <span class="hidden sm:inline">Aplikasi Saya</span>
+                    </button>
 
-        function deleteProject(id) {
-            const store = loadProjectsStore();
-            delete store.projects[id];
-            if (store.activeId === id) store.activeId = null;
-            saveProjectsStore(store);
-        }
+                    <a
+                        href="/app"
+                        class="px-4 py-1.5 rounded-lg bg-[#1e3a8a] hover:bg-[#1d4ed8] border border-blue-900/60 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm shadow-blue-950/40"
+                    >
+                        <span>Buka Studio</span>
+                        <i class="fa-solid fa-arrow-right text-[10px] text-zinc-300"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
 
-        window.updateActiveProjectSlide = function (slideIndex) {
-            const store = loadProjectsStore();
-            if (!store.activeId || !store.projects[store.activeId]) return;
-            store.projects[store.activeId].currentSlide = slideIndex;
-            saveProjectsStore(store);
-        };
+        <!-- ========================================== -->
+        <!-- 2. HERO SECTION: PROMPT BUILDER            -->
+        <!-- ========================================== -->
+        <section
+            id="prompt-builder"
+            class="min-h-[72vh] md:min-h-[78vh] flex flex-col justify-center pt-28 pb-32 md:pt-40 md:pb-44 px-6 text-center"
+        >
+            <div class="max-w-4xl mx-auto w-full space-y-6 sm:space-y-7">
+                <!-- Alternating 1-Line Semi-Bold Information Banner (Fade in/out Up) -->
+                <div
+                    class="relative h-9 sm:h-10 flex items-center justify-center overflow-hidden"
+                >
+                    <div
+                        id="hero-ticker-container"
+                        class="w-full flex items-center justify-center"
+                    >
+                        <h1
+                            id="hero-ticker-text"
+                            class="hero-slide text-sm sm:text-base md:text-lg font-medium tracking-tight text-zinc-300 transition-all duration-500 ease-out truncate px-2"
+                        >
+                            Bangun Aplikasi & Website Lengkap With AI Agent
+                        </h1>
+                    </div>
+                </div>
 
-        window.updateActiveProjectTasks = function (tasks) {
-            const store = loadProjectsStore();
-            if (!store.activeId || !store.projects[store.activeId]) return;
-            store.projects[store.activeId].tasks = tasks;
-            saveProjectsStore(store);
-        };
+                <!-- PROMPT STUDIO BOX (Positioned Lower) -->
+                <div
+                    class="mt-8 sm:mt-12 max-w-3xl mx-auto bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 text-left shadow-2xl backdrop-blur-xl"
+                >
+                    <form id="hero-prompt-form" class="space-y-3.5">
+                        <div class="relative">
+                            <textarea
+                                id="hero-prompt-input"
+                                rows="3"
+                                placeholder="Tuliskan website yang ingin Anda buat... (Contoh: 'Buatkan landing page toko kopi lokal dengan menu lengkap, tombol pesan WhatsApp langsung, galeri foto, dan peta lokasi')"
+                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-700 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none transition-all resize-none font-sans"
+                            ></textarea>
+                        </div>
 
-        window.updateActiveProjectPrd = function (prdContent) {
-            const store = loadProjectsStore();
-            if (!store.activeId || !store.projects[store.activeId]) return;
-            store.projects[store.activeId].prd = prdContent;
-            saveProjectsStore(store);
-        };
+                        <!-- Prompt controls bar -->
+                        <div
+                            class="flex items-center justify-between gap-3 pt-1"
+                        >
+                            <!-- Left: File Upload & Dark Mode Dropdown -->
+                            <div class="flex items-center gap-1.5">
+                                <label
+                                    for="hero-file-upload"
+                                    class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
+                                    title="Upload Dokumen / Gambar"
+                                >
+                                    <i class="fa-solid fa-paperclip text-xs"
+                                    ></i>
+                                    <input
+                                        id="hero-file-upload"
+                                        type="file"
+                                        class="hidden"
+                                        accept="image/*,.txt,.pdf,.json"
+                                    />
+                                </label>
+                                <span
+                                    id="hero-file-indicator"
+                                    class="hidden text-[11px] text-zinc-300 bg-zinc-800 px-2 py-0.5 rounded truncate max-w-[140px]"
+                                ></span>
 
-        window.getActiveProjectPrd = function () {
-            const store = loadProjectsStore();
-            if (!store.activeId || !store.projects[store.activeId]) return null;
-            return store.projects[store.activeId].prd || null;
-        };
+                                <!-- Dark Minimalist Mode Dropdown (Fullstack / Frontend) -->
+                                <div
+                                    class="relative"
+                                    id="hero-mode-dropdown-container"
+                                >
+                                    <button
+                                        type="button"
+                                        id="hero-btn-mode-dropdown"
+                                        class="h-8 px-2.5 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                                        title="Pilih Mode Pengembangan"
+                                    >
+                                        <i
+                                            id="hero-mode-icon"
+                                            class="fa-solid fa-database text-xs text-blue-400 shrink-0"
+                                        ></i>
+                                        <span
+                                            id="hero-mode-label"
+                                            class="capitalize">Fullstack</span
+                                        >
+                                        <i
+                                            id="hero-mode-chevron"
+                                            class="fa-solid fa-chevron-down text-[9px] text-zinc-500 transition-transform duration-200"
+                                        ></i>
+                                    </button>
 
-        function calcProjectProgress(project, totalTasksCount) {
-            if (!project || !project.tasks) return 0;
-            const done = Object.values(project.tasks).filter(Boolean).length;
-            return totalTasksCount === 0 ? 0 : Math.round((done / totalTasksCount) * 100);
-        }
+                                    <!-- Dropdown Popover Menu -->
+                                    <div
+                                        id="hero-mode-menu"
+                                        class="hidden absolute bottom-full left-0 mb-2 w-64 p-1.5 bg-[#121215] border border-zinc-800 rounded-xl shadow-[0_10px_38px_rgba(0,0,0,0.85)] z-50 font-sans text-left"
+                                    >
+                                        <div
+                                            class="px-2.5 py-1 text-[9px] font-semibold text-zinc-500 uppercase tracking-wider border-b border-zinc-800/50 mb-1"
+                                        >
+                                            Pilih Mode Pengembangan
+                                        </div>
 
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
+                                        <!-- Option Fullstack -->
+                                        <button
+                                            type="button"
+                                            data-mode="fullstack"
+                                            class="hero-mode-item w-full p-2 rounded-lg flex items-start gap-2.5 text-left transition-colors cursor-pointer bg-zinc-800/90 text-white"
+                                        >
+                                            <div
+                                                class="p-1.5 rounded-md bg-blue-950/70 border border-blue-800/30 text-blue-400 mt-0.5 shrink-0"
+                                            >
+                                                <i
+                                                    class="fa-solid fa-database text-xs"
+                                                ></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div
+                                                    class="flex items-center justify-between"
+                                                >
+                                                    <span
+                                                        class="text-xs font-semibold text-zinc-100"
+                                                        >Fullstack</span
+                                                    >
+                                                    <i
+                                                        class="hero-check-icon fa-solid fa-check text-xs text-blue-400"
+                                                    ></i>
+                                                </div>
+                                                <p
+                                                    class="text-[10px] text-zinc-400 leading-snug mt-0.5"
+                                                >
+                                                    Skema data, operasi CRUD,
+                                                    storage sync & UI lengkap.
+                                                </p>
+                                            </div>
+                                        </button>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const btnNew = document.getElementById('btn-new-project');
-            const btnLoad = document.getElementById('btn-load-project');
-            const panel = document.getElementById('landing-panel');
-            const btnStart = document.getElementById('btn-start');
-
-            let pendingMode = null; // 'new' | 'load'
-            let pendingNewName = '';
-            let pendingLoadId = null;
-
-            function showStartButton(show) {
-                btnStart.classList.toggle('hidden', !show);
-                btnStart.dataset.status = 'idle';
-            }
-
-            function renderNewPanel() {
-                pendingMode = 'new';
-                pendingLoadId = null;
-                panel.classList.remove('hidden');
-                panel.innerHTML = `
-                    <div class="glass-panel rounded-xl p-4 animate-fade-in-up">
-                        <label class="text-xs text-gray-400 mb-2 block">Nama Project</label>
-                        <input id="input-project-name" type="text" placeholder="cth. Website Toko Kopi" maxlength="60"
-                            class="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-primary/60 transition-colors">
-                    </div>`;
-                const input = document.getElementById('input-project-name');
-                input.focus();
-                input.addEventListener('input', (e) => {
-                    pendingNewName = e.target.value.trim();
-                    showStartButton(pendingNewName.length > 0);
-                });
-                showStartButton(false);
-            }
-
-            function renderLoadPanel() {
-                pendingMode = 'load';
-                pendingNewName = '';
-                pendingLoadId = null;
-                panel.classList.remove('hidden');
-
-                const store = loadProjectsStore();
-                const ids = Object.keys(store.projects).sort((a, b) => store.projects[b].createdAt - store.projects[a].createdAt);
-
-                if (ids.length === 0) {
-                    panel.innerHTML = `
-                        <div class="glass-panel rounded-xl p-6 text-center animate-fade-in-up">
-                            <p class="text-xs text-gray-500">Belum ada project tersimpan. Coba "New Project" dulu, ya.</p>
-                        </div>`;
-                    showStartButton(false);
-                    return;
-                }
-
-                const totalTasks = 22; // Fixed total task count
-                panel.innerHTML = `<div class="glass-panel rounded-xl p-2 max-h-64 overflow-y-auto space-y-1 animate-fade-in-up">${ids.map(id => {
-                    const p = store.projects[id];
-                    const pct = calcProjectProgress(p, totalTasks);
-                    const dateStr = new Date(p.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-                    return `
-                        <div class="project-row flex items-center gap-3 p-3 rounded-lg cursor-pointer border border-transparent hover:bg-white/5 transition-colors" data-id="${id}">
-                            <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-folder text-white text-sm"></i>
+                                        <!-- Option Frontend -->
+                                        <button
+                                            type="button"
+                                            data-mode="frontend"
+                                            class="hero-mode-item w-full p-2 rounded-lg flex items-start gap-2.5 text-left transition-colors cursor-pointer mt-1 text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
+                                        >
+                                            <div
+                                                class="p-1.5 rounded-md bg-blue-950/70 border border-blue-800/30 text-blue-400 mt-0.5 shrink-0"
+                                            >
+                                                <i
+                                                    class="fa-solid fa-table-columns text-xs"
+                                                ></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div
+                                                    class="flex items-center justify-between"
+                                                >
+                                                    <span
+                                                        class="text-xs font-semibold text-zinc-100"
+                                                        >Frontend</span
+                                                    >
+                                                    <i
+                                                        class="hero-check-icon fa-solid fa-check text-xs text-blue-400 hidden"
+                                                    ></i>
+                                                </div>
+                                                <p
+                                                    class="text-[10px] text-zinc-400 leading-snug mt-0.5"
+                                                >
+                                                    Tampilan antarmuka visual
+                                                    lengkap, estetik &
+                                                    responsif.
+                                                </p>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex-1 min-w-0 text-left">
-                                <p class="text-sm font-medium text-gray-200 truncate">${escapeHtml(p.name)}</p>
-                                <p class="text-[11px] text-gray-500">${pct}% selesai &middot; ${dateStr}</p>
+
+                            <!-- Right: Voice Icon & Generate Arrow-Up / Stop Button (Borderless) -->
+                            <div class="flex items-center gap-1.5">
+                                <!-- Voice Dictation Icon -->
+                                <button
+                                    type="button"
+                                    id="btn-hero-voice"
+                                    class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
+                                    title="Input Suara"
+                                >
+                                    <i
+                                        id="icon-voice"
+                                        class="fa-solid fa-microphone text-xs"
+                                    ></i>
+                                </button>
+
+                                <!-- Generate Arrow-Up / Stop Icon Button (Single Dynamic Icon) -->
+                                <button
+                                     type="submit"
+                                     id="btn-hero-generate"
+                                     class="w-8 h-8 rounded-lg bg-[#1e3a8a] hover:bg-[#1d4ed8] border border-blue-900/60 text-white transition-colors flex items-center justify-center cursor-pointer group shadow-sm shadow-blue-950/40"
+                                     title="Generate Website"
+                                >
+                                     <i
+                                         id="btn-hero-generate-icon"
+                                         class="fa-solid fa-arrow-up text-xs group-hover:-translate-y-0.5 transition-transform"
+                                     ></i>
+                                </button>
                             </div>
-                            <button type="button" class="project-delete-btn w-7 h-7 rounded-lg flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors" data-id="${id}" aria-label="Hapus project">
-                                <i class="fa-solid fa-trash text-xs"></i>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 3. HOW IT WORKS (3 LANGKAH MUDAH)          -->
+        <!-- ========================================== -->
+        <section
+            id="how-it-works"
+            class="py-16 px-6 border-t border-zinc-800/80 bg-zinc-950/40"
+        >
+            <div class="max-w-7xl mx-auto space-y-10">
+                <div class="text-center max-w-xl mx-auto space-y-2">
+                    <h2
+                        class="text-[11px] font-semibold uppercase tracking-wider text-blue-400"
+                    >
+                        Proses Sangat Sederhana
+                    </h2>
+                    <h3 class="text-2xl md:text-3xl font-bold text-white">
+                        Cara Kerja dalam 3 Langkah
+                    </h3>
+                    <p class="text-xs text-zinc-400">
+                        Dari sekadar ide di kepala hingga menjadi website
+                        fungsional yang siap digunakan.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Step 1 -->
+                    <div
+                        class="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-6 space-y-3 relative"
+                    >
+                        <div
+                            class="w-9 h-9 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white font-bold text-sm"
+                        >
+                            01
+                        </div>
+                        <h4 class="text-sm font-bold text-white">
+                            Tulis Keinginan Anda
+                        </h4>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Cukup ketik jenis website, warna, dan fitur apa saja
+                            yang Anda butuhkan menggunakan bahasa Indonesia
+                            sehari-hari.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div
+                        class="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-6 space-y-3 relative"
+                    >
+                        <div
+                            class="w-9 h-9 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-blue-400 font-bold text-sm"
+                        >
+                            02
+                        </div>
+                        <h4 class="text-sm font-bold text-white">
+                            AI Agent Merancang & Membangun
+                        </h4>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            AI Agent menyusun tata letak antarmuka responsif,
+                            merangkai logika tombol dan form, lalu menyajikannya
+                            secara instan.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div
+                        class="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-6 space-y-3 relative"
+                    >
+                        <div
+                            class="w-9 h-9 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white font-bold text-sm"
+                        >
+                            03
+                        </div>
+                        <h4 class="text-sm font-bold text-white">
+                            Pakai & Unduh File Website
+                        </h4>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Uji coba tampilan di HP dan laptop. Unduh file HTML
+                            mandiri untuk diunggah ke hosting atau dipakai
+                            langsung tanpa batasan.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 4. FOR WHO: PEMULA VS DEVELOPER MATRIX     -->
+        <!-- ========================================== -->
+        <section id="for-who" class="py-16 px-6 border-t border-zinc-800/80">
+            <div class="max-w-7xl mx-auto space-y-10">
+                <div class="text-center max-w-xl mx-auto space-y-2">
+                    <h2
+                        class="text-[11px] font-semibold uppercase tracking-wider text-blue-400"
+                    >
+                        Fleksibel & Terbuka
+                    </h2>
+                    <h3 class="text-2xl md:text-3xl font-bold text-white">
+                        Didesain untuk Pemula & Developer
+                    </h3>
+                    <p class="text-xs text-zinc-400">
+                        Solusi tanpa hambatan untuk non-teknis, sekaligus kanvas
+                        fleksibel untuk programmer.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Card 1: For Laypersons / Business -->
+                    <div
+                        class="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 space-y-5"
+                    >
+                        <div
+                            class="flex items-center gap-3 pb-3 border-b border-zinc-800"
+                        >
+                            <div
+                                class="w-9 h-9 rounded-lg bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400"
+                            >
+                                <i class="fa-solid fa-store text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-base">
+                                    Untuk Pemula & Pelaku Usaha
+                                </h4>
+                                <p class="text-zinc-500 text-[11px]">
+                                    Kemudahan tanpa perlu belajar coding
+                                </p>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-3 text-xs text-zinc-300">
+                            <li class="flex items-start gap-2.5">
+                                <i
+                                    class="fa-solid fa-check text-blue-400 text-xs mt-0.5"
+                                ></i>
+                                <span
+                                    ><strong>Pemesanan WhatsApp Otomatis</strong
+                                    >: Tombol langsung terhubung ke nomor
+                                    WhatsApp admin dengan template pesan siap
+                                    kirim.</span
+                                >
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i
+                                    class="fa-solid fa-check text-blue-400 text-xs mt-0.5"
+                                ></i>
+                                <span
+                                    ><strong>Desain Rapi & Responsif</strong>:
+                                    Tampilan otomatis menyesuaikan layar
+                                    smartphone, tablet, dan laptop pelanggan.</span
+                                >
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i
+                                    class="fa-solid fa-check text-blue-400 text-xs mt-0.5"
+                                ></i>
+                                <span
+                                    ><strong>Revisi Lewat Chat</strong>: Mau
+                                    ganti warna atau ubah tulisan? Cukup ketik
+                                    permintaannya di chat asisten.</span
+                                >
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i
+                                    class="fa-solid fa-check text-blue-400 text-xs mt-0.5"
+                                ></i>
+                                <span
+                                    ><strong
+                                        >Bebas Biaya Berlangganan Ekspor</strong
+                                    >: File website bisa Anda download gratis
+                                    dan menjadi milik Anda 100%.</span
+                                >
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 2: For Developers -->
+                    <div
+                        class="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 space-y-5"
+                    >
+                        <div
+                            class="flex items-center gap-3 pb-3 border-b border-zinc-800"
+                        >
+                            <div
+                                class="w-9 h-9 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-300"
+                            >
+                                <i class="fa-solid fa-code text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-base">
+                                    Untuk Developer & Tech Leads
+                                </h4>
+                                <p class="text-zinc-500 text-[11px]">
+                                    Kecepatan prototyping dengan kode bersih
+                                </p>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-3 text-xs text-zinc-300">
+                            <li class="flex items-start gap-2.5">
+                                <i
+                                    class="fa-solid fa-check text-zinc-400 text-xs mt-0.5"
+                                ></i>
+                                <span
+                                    ><strong
+                                        >Standard Clean HTML5 & Tailwind CSS</strong
+                                    >: Struktur kode modern tanpa dependensi
+                                    berat yang membingungkan.</span
+                                >
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i
+                                    class="fa-solid fa-check text-zinc-400 text-xs mt-0.5"
+                                ></i>
+                                <span
+                                    ><strong>Live Code Editor</strong>: Edit
+                                    kode secara langsung di tab Code dengan
+                                    hot-reload pratinjau seketika.</span
+                                >
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i
+                                    class="fa-solid fa-check text-zinc-400 text-xs mt-0.5"
+                                ></i>
+                                <span
+                                    ><strong>Mock Database JSON</strong>:
+                                    Struktur data in-memory yang mudah
+                                    di-mapping ke REST API atau backend SQL
+                                    Anda.</span
+                                >
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i
+                                    class="fa-solid fa-check text-zinc-400 text-xs mt-0.5"
+                                ></i>
+                                <span
+                                    ><strong>Single-File Portable Bundle</strong
+                                    >: Mudah di-deploy ke Vercel, Netlify,
+                                    cPanel, atau GitHub Pages dalam hitungan
+                                    detik.</span
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 5. SHOWCASE GALLERY                        -->
+        <!-- ========================================== -->
+        <section
+            id="showcase"
+            class="py-16 px-6 border-t border-zinc-800/80 bg-zinc-950/40"
+        >
+            <div class="max-w-7xl mx-auto space-y-10">
+                <div
+                    class="flex flex-col md:flex-row md:items-end justify-between gap-4"
+                >
+                    <div>
+                        <h2
+                            class="text-[11px] font-semibold uppercase tracking-wider text-blue-400 mb-1"
+                        >
+                            Galeri Inspirasi
+                        </h2>
+                        <h3 class="text-2xl md:text-3xl font-bold text-white">
+                            Contoh Template Siap Clone
+                        </h3>
+                    </div>
+                    <a
+                        href="/app"
+                        class="text-xs font-medium text-zinc-400 hover:text-white flex items-center gap-1.5 transition-colors"
+                    >
+                        <span>Buka Studio Workspace</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div
+                        class="bg-zinc-900/60 border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col justify-between group hover:border-zinc-700 transition-colors"
+                    >
+                        <div class="p-5 space-y-2.5">
+                            <span
+                                class="px-2 py-0.5 rounded bg-zinc-800 text-blue-400 text-[10px] font-medium"
+                            >
+                                SaaS & Analytics
+                            </span>
+                            <h4
+                                class="text-sm font-bold text-white group-hover:text-blue-400 transition-colors"
+                            >
+                                Nexus Business Suite
+                            </h4>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Dashboard metrik pendapatan, grafik pelanggan
+                                Chart.js, tabel transaksi filterable, dan ekspor
+                                CSV.
+                            </p>
+                        </div>
+                        <div
+                            class="p-4 bg-zinc-950 border-t border-zinc-800 flex items-center justify-between"
+                        >
+                            <span class="text-[11px] text-zinc-500"
+                                >HTML5 / Chart.js</span
+                            >
+                            <button
+                                type="button"
+                                class="clone-showcase-btn px-3 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-zinc-200 transition-all flex items-center gap-1.5 border border-zinc-700 cursor-pointer"
+                                data-prompt="Buatkan dashboard analitik manajemen bisnis dengan grafik pendapatan bulanan Chart.js, tabel transaksi pelanggan, filter pencarian, dan tombol ekspor CSV."
+                            >
+                                <i class="fa-solid fa-clone text-[10px]"></i>
+                                <span>Gunakan Template</span>
                             </button>
-                        </div>`;
-                }).join('')}</div>`;
+                        </div>
+                    </div>
 
-                panel.querySelectorAll('.project-row').forEach(row => {
-                    row.addEventListener('click', () => {
-                        panel.querySelectorAll('.project-row').forEach(r => r.classList.remove('is-selected'));
-                        row.classList.add('is-selected');
-                        pendingLoadId = row.dataset.id;
-                        showStartButton(true);
-                    });
+                    <div
+                        class="bg-zinc-900/60 border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col justify-between group hover:border-zinc-700 transition-colors"
+                    >
+                        <div class="p-5 space-y-2.5">
+                            <span
+                                class="px-2 py-0.5 rounded bg-zinc-800 text-blue-400 text-[10px] font-medium"
+                            >
+                                Toko Online
+                            </span>
+                            <h4
+                                class="text-sm font-bold text-white group-hover:text-blue-400 transition-colors"
+                            >
+                                Aura Commerce
+                            </h4>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Katalog grid produk modern, keranjang belanja
+                                interaktif sliding drawer, dan modal checkout.
+                            </p>
+                        </div>
+                        <div
+                            class="p-4 bg-zinc-950 border-t border-zinc-800 flex items-center justify-between"
+                        >
+                            <span class="text-[11px] text-zinc-500"
+                                >Responsive / Cart</span
+                            >
+                            <button
+                                type="button"
+                                class="clone-showcase-btn px-3 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-zinc-200 transition-all flex items-center gap-1.5 border border-zinc-700 cursor-pointer"
+                                data-prompt="Buatkan toko online minimalis dengan grid produk, keranjang belanja interaktif, filter kategori harga, dan formulir checkout."
+                            >
+                                <i class="fa-solid fa-clone text-[10px]"></i>
+                                <span>Gunakan Template</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-zinc-900/60 border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col justify-between group hover:border-zinc-700 transition-colors"
+                    >
+                        <div class="p-5 space-y-2.5">
+                            <span
+                                class="px-2 py-0.5 rounded bg-zinc-800 text-blue-400 text-[10px] font-medium"
+                            >
+                                Produktivitas
+                            </span>
+                            <h4
+                                class="text-sm font-bold text-white group-hover:text-blue-400 transition-colors"
+                            >
+                                Vortex Task Board
+                            </h4>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Papan kerja Kanban (To Do, In Progress, Done),
+                                modal detail tugas, label prioritas, dan simpan
+                                data lokal.
+                            </p>
+                        </div>
+                        <div
+                            class="p-4 bg-zinc-950 border-t border-zinc-800 flex items-center justify-between"
+                        >
+                            <span class="text-[11px] text-zinc-500"
+                                >State / Local Storage</span
+                            >
+                            <button
+                                type="button"
+                                class="clone-showcase-btn px-3 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-zinc-200 transition-all flex items-center gap-1.5 border border-zinc-700 cursor-pointer"
+                                data-prompt="Buatkan task management Kanban board dengan kolom (To Do, In Progress, Done), priority tags, task editor modal, dan JSON export."
+                            >
+                                <i class="fa-solid fa-clone text-[10px]"></i>
+                                <span>Gunakan Template</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 6. FAQ SECTION                             -->
+        <!-- ========================================== -->
+        <section id="faq" class="py-16 px-6 border-t border-zinc-800/80">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="text-center space-y-2">
+                    <h2
+                        class="text-[11px] font-semibold uppercase tracking-wider text-blue-400"
+                    >
+                        Pertanyaan Umum
+                    </h2>
+                    <h3 class="text-2xl md:text-3xl font-bold text-white">
+                        Sering Ditanyakan (FAQ)
+                    </h3>
+                </div>
+
+                <div class="space-y-3 text-xs">
+                    <details
+                        class="group bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-4 cursor-pointer"
+                    >
+                        <summary
+                            class="font-bold text-white flex items-center justify-between list-none"
+                        >
+                            <span
+                                >Apakah saya harus bisa koding untuk memakai
+                                Satusite Studio?</span
+                            >
+                            <i
+                                class="fa-solid fa-chevron-down text-zinc-500 group-open:rotate-180 transition-transform"
+                            ></i>
+                        </summary>
+                        <p class="text-zinc-400 mt-3 leading-relaxed">
+                            Sama sekali tidak! Anda cukup mengetikkan apa yang
+                            ingin Anda buat dalam kalimat biasa (misal: "Buatkan
+                            landing page jasa fotografi dengan galeri dan tombol
+                            WhatsApp"). AI Agent akan otomatis menyusun kode dan
+                            menampilkannya untuk Anda.
+                        </p>
+                    </details>
+
+                    <details
+                        class="group bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-4 cursor-pointer"
+                    >
+                        <summary
+                            class="font-bold text-white flex items-center justify-between list-none"
+                        >
+                            <span
+                                >Bagaimana cara menggunakan file website setelah
+                                diunduh?</span
+                            >
+                            <i
+                                class="fa-solid fa-chevron-down text-zinc-500 group-open:rotate-180 transition-transform"
+                            ></i>
+                        </summary>
+                        <p class="text-zinc-400 mt-3 leading-relaxed">
+                            File yang diunduh berformat <code>.html</code> mandiri
+                            (standalone). Anda cukup mengklik dua kali file tersebut
+                            di komputer Anda untuk langsung membukanya di browser
+                            (Chrome, Safari, Edge), atau mengunggahnya ke hosting
+                            gratis seperti Vercel, Netlify, maupun cPanel.
+                        </p>
+                    </details>
+
+                    <details
+                        class="group bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-4 cursor-pointer"
+                    >
+                        <summary
+                            class="font-bold text-white flex items-center justify-between list-none"
+                        >
+                            <span
+                                >Apakah saya bisa mengedit kodenya secara
+                                manual?</span
+                            >
+                            <i
+                                class="fa-solid fa-chevron-down text-zinc-500 group-open:rotate-180 transition-transform"
+                            ></i>
+                        </summary>
+                        <p class="text-zinc-400 mt-3 leading-relaxed">
+                            Tentu saja. Di dalam Studio Workspace, terdapat tab <strong
+                                >Kode</strong
+                            > di mana developer dapat melihat, menyalin, atau langsung
+                            mengedit kode HTML, CSS, dan JavaScript secara real-time.
+                        </p>
+                    </details>
+
+                    <details
+                        class="group bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-4 cursor-pointer"
+                    >
+                        <summary
+                            class="font-bold text-white flex items-center justify-between list-none"
+                        >
+                            <span
+                                >Apakah website yang dihasilkan sudah responsif
+                                di smartphone?</span
+                            >
+                            <i
+                                class="fa-solid fa-chevron-down text-zinc-500 group-open:rotate-180 transition-transform"
+                            ></i>
+                        </summary>
+                        <p class="text-zinc-400 mt-3 leading-relaxed">
+                            Ya, seluruh desain yang dibuat oleh AI Agent sudah
+                            mengadopsi standar mobile-first Tailwind CSS
+                            sehingga tampil proporsional dan rapi saat dibuka di
+                            HP, tablet, maupun layar komputer.
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 7. MY PROJECTS MODAL                       -->
+        <!-- ========================================== -->
+        <div
+            id="projects-modal"
+            class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4"
+        >
+            <div
+                class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in-up space-y-4"
+            >
+                <div
+                    class="flex justify-between items-center pb-3 border-b border-zinc-800"
+                >
+                    <h3
+                        class="font-bold text-white text-sm flex items-center gap-2"
+                    >
+                        <i class="fa-regular fa-folder text-blue-400"></i> Aplikasi
+                        Tersimpan
+                    </h3>
+                    <button
+                        id="btn-close-projects-modal"
+                        class="text-zinc-400 hover:text-white cursor-pointer"
+                    >
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                </div>
+
+                <div
+                    id="projects-list-container"
+                    class="max-h-72 overflow-y-auto space-y-2 pr-1"
+                >
+                    <!-- Injected via JS -->
+                </div>
+
+                <div
+                    class="flex justify-between items-center pt-3 border-t border-zinc-800"
+                >
+                    <a
+                        href="/app"
+                        class="px-3.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs flex items-center gap-1.5 border border-zinc-700"
+                    >
+                        <i class="fa-solid fa-plus text-xs"></i> Buat Baru
+                    </a>
+                    <button
+                        id="btn-close-projects"
+                        class="px-3.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-zinc-200 border border-zinc-700 cursor-pointer"
+                    >
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 8. MINIMALIST FOOTER                       -->
+        <!-- ========================================== -->
+        <footer
+            class="border-t border-zinc-800/80 py-8 px-6 mt-auto bg-zinc-950 text-xs text-zinc-500"
+        >
+            <div
+                class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"
+            >
+                <div class="flex items-center gap-2.5">
+                    <img
+                        src="/logo.png"
+                        alt="satusitE Logo"
+                        class="w-5 h-5 object-contain"
+                    />
+                    <div class="flex items-center gap-1.5 select-none text-xs">
+                        <span
+                            class="font-agus text-sm font-normal tracking-[0.4em] text-zinc-300"
+                        >
+                            satusitE
+                        </span>
+                        <span
+                            class="text-white font-light text-[11px] opacity-80"
+                            >/</span
+                        >
+                        <span
+                            class="font-syne font-bold text-[11px] text-zinc-300 tracking-tight"
+                        >
+                            Studio.
+                        </span>
+                    </div>
+                    <span>&middot;</span>
+                    <span>Platform Pembuat Aplikasi AI Otonom</span>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <a
+                        href="#prompt-builder"
+                        class="hover:text-zinc-300 transition-colors">Studio</a
+                    >
+                    <a
+                        href="#how-it-works"
+                        class="hover:text-zinc-300 transition-colors"
+                        >Cara Kerja</a
+                    >
+                    <a
+                        href="#for-who"
+                        class="hover:text-zinc-300 transition-colors"
+                        >Untuk Siapa</a
+                    >
+                    <a href="#faq" class="hover:text-zinc-300 transition-colors"
+                        >FAQ</a
+                    >
+                    <a href="/portal" class="text-zinc-400 hover:text-white transition-colors"
+                        >Portal Klien</a
+                    >
+                    <a href="/login" class="text-zinc-400 hover:text-white transition-colors"
+                        >Masuk</a
+                    >
+                    <a href="/app" class="text-blue-400 hover:underline"
+                        >Buka Studio</a
+                    >
+                </div>
+
+                <div>&copy; 2026 Satusite Studio.</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 3D Node Mesh & Welcome Screen Script -->
+    <script is:inline>
+        (function () {
+            const welcomeScreen = document.getElementById("welcome-screen");
+            const welcomeCanvas = document.getElementById("welcome-3d-canvas");
+            const progressBar = document.getElementById("welcome-progress-bar");
+            const skipBtn = document.getElementById("btn-skip-welcome");
+            const titleEl = document.getElementById("welcome-text-title");
+            const subEl = document.getElementById("welcome-text-sub");
+
+            if (!welcomeScreen || !welcomeCanvas) return;
+
+            const ctx = welcomeCanvas.getContext("2d");
+            let animId;
+            let width, height;
+            let rotX = 0.2;
+            let rotY = 0.3;
+
+            // 3D Nodes setup
+            const nodeCount = 38;
+            const nodes = [];
+            const radius = 130;
+
+            for (let i = 0; i < nodeCount; i++) {
+                const theta = Math.acos(2 * Math.random() - 1);
+                const phi = 2 * Math.PI * Math.random();
+                nodes.push({
+                    x: radius * Math.sin(theta) * Math.cos(phi),
+                    y: radius * Math.sin(theta) * Math.sin(phi),
+                    z: radius * Math.cos(theta),
+                    size: Math.random() * 2 + 1.5,
                 });
-
-                panel.querySelectorAll('.project-delete-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        deleteProject(btn.dataset.id);
-                        if (pendingLoadId === btn.dataset.id) {
-                            pendingLoadId = null;
-                            showStartButton(false);
-                        }
-                        renderLoadPanel();
-                    });
-                });
-
-                showStartButton(false);
             }
 
-            btnNew.addEventListener('click', renderNewPanel);
-            btnLoad.addEventListener('click', renderLoadPanel);
+            function resizeCanvas() {
+                width = welcomeCanvas.width = window.innerWidth;
+                height = welcomeCanvas.height = window.innerHeight;
+            }
 
-            btnStart.addEventListener('click', () => {
-                if (btnStart.dataset.status !== 'idle') return;
+            function render3DNodes() {
+                ctx.clearRect(0, 0, width, height);
 
-                let activeId = null;
-                if (pendingMode === 'new' && pendingNewName) {
-                    activeId = createProject(pendingNewName);
-                } else if (pendingMode === 'load' && pendingLoadId) {
-                    activeId = pendingLoadId;
-                    setActiveProjectId(activeId);
+                const cx = width / 2;
+                const cy = height / 2;
+                const fov = 400;
+
+                rotX += 0.003;
+                rotY += 0.004;
+
+                const cosX = Math.cos(rotX);
+                const sinX = Math.sin(rotX);
+                const cosY = Math.cos(rotY);
+                const sinY = Math.sin(rotY);
+
+                const projected = [];
+
+                for (let i = 0; i < nodes.length; i++) {
+                    const n = nodes[i];
+
+                    // 3D Rotation Y
+                    let x1 = n.x * cosY - n.z * sinY;
+                    let z1 = n.z * cosY + n.x * sinY;
+
+                    // 3D Rotation X
+                    let y1 = n.y * cosX - z1 * sinX;
+                    let z2 = z1 * cosX + n.y * sinX;
+
+                    // Perspective projection
+                    const scale = fov / (fov + z2 + 200);
+                    const px = cx + x1 * scale;
+                    const py = cy + y1 * scale;
+                    const alpha = Math.max(
+                        0.1,
+                        Math.min(1, (z2 + radius) / (radius * 2)),
+                    );
+
+                    projected.push({
+                        x: px,
+                        y: py,
+                        z: z2,
+                        scale,
+                        alpha,
+                        size: n.size * scale,
+                    });
                 }
-                if (!activeId) return;
 
-                btnStart.dataset.status = 'loading';
+                // Draw connections between nearby nodes
+                ctx.lineWidth = 0.75;
+                for (let i = 0; i < projected.length; i++) {
+                    for (let j = i + 1; j < projected.length; j++) {
+                        const p1 = projected[i];
+                        const p2 = projected[j];
+                        const dx = p1.x - p2.x;
+                        const dy = p1.y - p2.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < 85) {
+                            const lineAlpha =
+                                (1 - dist / 85) *
+                                0.25 *
+                                ((p1.alpha + p2.alpha) / 2);
+                            ctx.strokeStyle = `rgba(59, 130, 246, ${lineAlpha})`;
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // Draw glowing nodes
+                for (let i = 0; i < projected.length; i++) {
+                    const p = projected[i];
+                    ctx.fillStyle = `rgba(96, 165, 250, ${p.alpha * 0.7})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, Math.max(1, p.size), 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                animId = requestAnimationFrame(render3DNodes);
+            }
+
+            window.addEventListener("resize", resizeCanvas);
+            resizeCanvas();
+            render3DNodes();
+
+            // Progress bar and staged welcome text
+            setTimeout(() => {
+                if (progressBar) progressBar.style.width = "75%";
+            }, 300);
+
+            setTimeout(() => {
+                if (titleEl)
+                    titleEl.textContent =
+                        "Halo, selamat datang di Satusite Studio";
+                if (subEl)
+                    subEl.textContent = "Platform AI Otonom siap digunakan";
+                if (progressBar) progressBar.style.width = "100%";
+            }, 900);
+
+            function dismissWelcome() {
+                welcomeScreen.style.opacity = "0";
+                welcomeScreen.style.pointerEvents = "none";
                 setTimeout(() => {
-                    btnStart.dataset.status = 'success';
+                    welcomeScreen.style.display = "none";
+                    cancelAnimationFrame(animId);
+                }, 750);
+            }
+
+            // Auto dismiss after 1.9s
+            const autoTimer = setTimeout(dismissWelcome, 1900);
+
+            if (skipBtn) {
+                skipBtn.addEventListener("click", () => {
+                    clearTimeout(autoTimer);
+                    dismissWelcome();
+                });
+            }
+        })();
+    </script>
+
+    <!-- Client Scripts -->
+    <script is:inline>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Alternating 1-Line Semi-Bold Information Banner (Smooth Blur & Fade in/out Up)
+            const tickerText = document.getElementById("hero-ticker-text");
+            const phrases = [
+                "Bangun Aplikasi & Website Lengkap With AI Agent",
+                "Ketik Ide Bisnis Anda & Dapatkan Pratinjau Instan",
+                "Rancang Antarmuka Responsif & Kode Bersih Otomatis",
+                "Ekspor File HTML Mandiri Siap Digunakan Kapan Saja",
+            ];
+            let phraseIdx = 0;
+
+            if (tickerText) {
+                tickerText.style.filter = "blur(0px)";
+                tickerText.style.opacity = "1";
+                tickerText.style.transform = "translateY(0px)";
+
+                setInterval(() => {
+                    // 1. Smooth Fade out UP with BLUR
+                    tickerText.style.filter = "blur(8px)";
+                    tickerText.style.opacity = "0";
+                    tickerText.style.transform = "translateY(-16px)";
+
+                    // 2. Prepare next phrase from bottom
                     setTimeout(() => {
-                        window.location.href = '/app';
-                    }, 400);
-                }, 400);
+                        phraseIdx = (phraseIdx + 1) % phrases.length;
+                        tickerText.textContent = phrases[phraseIdx];
+
+                        // Reset position at bottom with blur and zero opacity without animation
+                        tickerText.style.transition = "none";
+                        tickerText.style.transform = "translateY(16px)";
+                        tickerText.style.filter = "blur(8px)";
+                        tickerText.style.opacity = "0";
+
+                        // Force reflow
+                        void tickerText.offsetWidth;
+
+                        // Re-enable transition
+                        tickerText.style.transition = "";
+
+                        // 3. Smoothly animate into sharp focus at center
+                        requestAnimationFrame(() => {
+                            tickerText.style.filter = "blur(0px)";
+                            tickerText.style.opacity = "1";
+                            tickerText.style.transform = "translateY(0px)";
+                        });
+                    }, 850);
+                }, 5200);
+            }
+
+            // File Upload Indicator
+            const fileInput = document.getElementById("hero-file-upload");
+            const fileIndicator = document.getElementById(
+                "hero-file-indicator",
+            );
+            let attachedFileName = null;
+
+            if (fileInput && fileIndicator) {
+                fileInput.addEventListener("change", (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                        attachedFileName = file.name;
+                        fileIndicator.textContent = file.name;
+                        fileIndicator.classList.remove("hidden");
+                    } else {
+                        attachedFileName = null;
+                        fileIndicator.classList.add("hidden");
+                    }
+                });
+            }
+
+            // Voice Dictation (Speech Recognition)
+            const voiceBtn = document.getElementById("btn-hero-voice");
+            const voiceIcon = document.getElementById("icon-voice");
+            let recognition = null;
+            let isListening = false;
+
+            if (voiceBtn && voiceIcon) {
+                const SpeechRecognition =
+                    window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (SpeechRecognition) {
+                    recognition = new SpeechRecognition();
+                    recognition.lang = "id-ID";
+                    recognition.interimResults = false;
+
+                    recognition.onstart = () => {
+                        isListening = true;
+                        voiceBtn.classList.add(
+                            "bg-red-500/10",
+                            "border-red-500/40",
+                        );
+                        voiceIcon.classList.add(
+                            "text-red-400",
+                            "animate-pulse",
+                        );
+                    };
+
+                    recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        if (input) {
+                            input.value =
+                                (input.value ? input.value + " " : "") +
+                                transcript;
+                            input.focus();
+                        }
+                    };
+
+                    recognition.onerror = () => {
+                        isListening = false;
+                        voiceBtn.classList.remove(
+                            "bg-red-500/10",
+                            "border-red-500/40",
+                        );
+                        voiceIcon.classList.remove(
+                            "text-red-400",
+                            "animate-pulse",
+                        );
+                    };
+
+                    recognition.onend = () => {
+                        isListening = false;
+                        voiceBtn.classList.remove(
+                            "bg-red-500/10",
+                            "border-red-500/40",
+                        );
+                        voiceIcon.classList.remove(
+                            "text-red-400",
+                            "animate-pulse",
+                        );
+                    };
+
+                    voiceBtn.addEventListener("click", () => {
+                        if (!isListening) {
+                            try {
+                                recognition.start();
+                            } catch (err) {
+                                console.warn(err);
+                            }
+                        } else {
+                            recognition.stop();
+                        }
+                    });
+                } else {
+                    voiceBtn.addEventListener("click", () => {
+                        if (input) {
+                            input.focus();
+                            input.setAttribute(
+                                "placeholder",
+                                "Mikrofon tidak didukung di browser ini. Silakan ketik langsung ide Anda...",
+                            );
+                        }
+                    });
+                }
+            }
+
+            // Mode Dropdown Switcher (Fullstack vs Frontend)
+            const modeDropdownBtn = document.getElementById(
+                "hero-btn-mode-dropdown",
+            );
+            const modeMenu = document.getElementById("hero-mode-menu");
+            const modeChevron = document.getElementById("hero-mode-chevron");
+            const modeLabel = document.getElementById("hero-mode-label");
+            const modeIcon = document.getElementById("hero-mode-icon");
+            const modeItems = document.querySelectorAll(".hero-mode-item");
+            let selectedMode = "fullstack";
+
+            if (modeDropdownBtn && modeMenu) {
+                modeDropdownBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const isOpen = !modeMenu.classList.contains("hidden");
+                    if (isOpen) {
+                        modeMenu.classList.add("hidden");
+                        if (modeChevron)
+                            modeChevron.classList.remove("rotate-180");
+                    } else {
+                        modeMenu.classList.remove("hidden");
+                        if (modeChevron)
+                            modeChevron.classList.add("rotate-180");
+                    }
+                });
+
+                document.addEventListener("click", (e) => {
+                    const container = document.getElementById(
+                        "hero-mode-dropdown-container",
+                    );
+                    if (container && !container.contains(e.target)) {
+                        modeMenu.classList.add("hidden");
+                        if (modeChevron)
+                            modeChevron.classList.remove("rotate-180");
+                    }
+                });
+
+                modeItems.forEach((item) => {
+                    item.addEventListener("click", () => {
+                        const mode = item.getAttribute("data-mode");
+                        if (!mode) return;
+                        selectedMode = mode;
+
+                        // Update label and icon
+                        if (mode === "fullstack") {
+                            if (modeLabel) modeLabel.textContent = "Fullstack";
+                            if (modeIcon)
+                                modeIcon.className =
+                                    "fa-solid fa-database text-xs text-blue-400 shrink-0";
+                            if (input)
+                                input.setAttribute(
+                                    "placeholder",
+                                    "Tuliskan ide aplikasi fullstack... (Contoh: 'Buat aplikasi kasir toko kopi dengan pencarian produk, ringkasan transaksi & ekspor CSV')",
+                                );
+                        } else {
+                            if (modeLabel) modeLabel.textContent = "Frontend";
+                            if (modeIcon)
+                                modeIcon.className =
+                                    "fa-solid fa-table-columns text-xs text-blue-400 shrink-0";
+                            if (input)
+                                input.setAttribute(
+                                    "placeholder",
+                                    "Tuliskan ide desain frontend... (Contoh: 'Buat landing page kafe modern dengan daftar menu, galeri foto & form kontak')",
+                                );
+                        }
+
+                        // Update active styles
+                        modeItems.forEach((btn) => {
+                            const isSelected =
+                                btn.getAttribute("data-mode") === mode;
+                            const check = btn.querySelector(".hero-check-icon");
+                            if (isSelected) {
+                                btn.classList.add(
+                                    "bg-zinc-800/90",
+                                    "text-white",
+                                );
+                                btn.classList.remove(
+                                    "text-zinc-400",
+                                    "hover:bg-zinc-800/40",
+                                    "hover:text-zinc-200",
+                                );
+                                if (check) check.classList.remove("hidden");
+                            } else {
+                                btn.classList.remove(
+                                    "bg-zinc-800/90",
+                                    "text-white",
+                                );
+                                btn.classList.add(
+                                    "text-zinc-400",
+                                    "hover:bg-zinc-800/40",
+                                    "hover:text-zinc-200",
+                                );
+                                if (check) check.classList.add("hidden");
+                            }
+                        });
+
+                        modeMenu.classList.add("hidden");
+                        if (modeChevron)
+                            modeChevron.classList.remove("rotate-180");
+                    });
+                });
+            }
+
+            // Form Submit with Arrow-Up to Stop Icon Dynamic Transition
+            const form = document.getElementById("hero-prompt-form");
+            const input = document.getElementById("hero-prompt-input");
+            const generateIcon = document.getElementById(
+                "btn-hero-generate-icon",
+            );
+            let isGeneratingPrompt = false;
+            let navTimer = null;
+
+            function setGenerateBtnState(generating) {
+                isGeneratingPrompt = generating;
+                if (!generateIcon) return;
+                if (generating) {
+                    generateIcon.className =
+                        "fa-solid fa-square text-[10px] text-zinc-300";
+                } else {
+                    generateIcon.className =
+                        "fa-solid fa-arrow-up text-xs group-hover:-translate-y-0.5 transition-transform";
+                }
+            }
+
+            if (form && input) {
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    if (isGeneratingPrompt) {
+                        // Stop clicked -> cancel
+                        if (navTimer) clearTimeout(navTimer);
+                        setGenerateBtnState(false);
+                        return;
+                    }
+
+                    let promptText = input.value.trim();
+                    if (attachedFileName) {
+                        promptText =
+                            `[Lampiran: ${attachedFileName}] ` + promptText;
+                    }
+                    if (!promptText) return;
+
+                    setGenerateBtnState(true);
+
+                    navTimer = setTimeout(() => {
+                        window.location.href = `/app?prompt=${encodeURIComponent(promptText)}&mode=${encodeURIComponent(selectedMode)}`;
+                    }, 500);
+                });
+            }
+
+            document.querySelectorAll(".clone-showcase-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const prompt = btn.getAttribute("data-prompt");
+                    if (prompt) {
+                        window.location.href = `/app?prompt=${encodeURIComponent(prompt)}&mode=frontend`;
+                    }
+                });
             });
+
+            const modal = document.getElementById("projects-modal");
+            const btnOpen = document.getElementById("btn-open-projects");
+            const btnClose1 = document.getElementById(
+                "btn-close-projects-modal",
+            );
+            const btnClose2 = document.getElementById("btn-close-projects");
+            const listContainer = document.getElementById(
+                "projects-list-container",
+            );
+
+            function renderProjectsList() {
+                if (!listContainer) return;
+                try {
+                    const storeRaw =
+                        localStorage.getItem("satusite_projects_store") ||
+                        localStorage.getItem("emergent_projects_store") ||
+                        localStorage.getItem("webDevProjectsStore");
+                    const store = storeRaw
+                        ? JSON.parse(storeRaw)
+                        : { projects: {} };
+                    const projects = store.projects || {};
+                    const ids = Object.keys(projects).sort(
+                        (a, b) =>
+                            (projects[b].updatedAt || 0) -
+                            (projects[a].updatedAt || 0),
+                    );
+
+                    if (ids.length === 0) {
+                        listContainer.innerHTML = `
+                            <div class="text-center py-6 text-zinc-500 text-xs font-mono">
+                                Belum ada aplikasi yang tersimpan. Mulai buat aplikasi pertama Anda di studio!
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    listContainer.innerHTML = ids
+                        .map((id) => {
+                            const p = projects[id];
+                            const dateStr = new Date(
+                                p.updatedAt || p.createdAt || Date.now(),
+                            ).toLocaleDateString("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                            });
+                            return `
+                            <div class="flex items-center justify-between p-3 rounded-lg bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 transition-all group">
+                                <div class="flex-1 min-w-0 pr-3 cursor-pointer" onclick="window.location.href='/app?id=${id}'">
+                                    <h4 class="font-bold text-white text-xs truncate group-hover:text-blue-400 transition-colors">${escapeHtml(p.name || "Aplikasi Tanpa Judul")}</h4>
+                                    <p class="text-[11px] text-zinc-500 font-mono">${dateStr}</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <a href="/app?id=${id}" class="px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 font-bold text-[11px] text-zinc-200 transition-colors border border-zinc-700">
+                                        Buka
+                                    </a>
+                                    <button type="button" onclick="deleteSavedProject('${id}')" class="p-1 rounded hover:bg-red-500/10 text-zinc-500 hover:text-red-400 transition-colors">
+                                        <i class="fa-solid fa-trash text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        })
+                        .join("");
+                } catch (e) {
+                    console.warn("Error rendering projects:", e);
+                }
+            }
+
+            window.deleteSavedProject = function (id) {
+                try {
+                    const storeRaw =
+                        localStorage.getItem("satusite_projects_store") ||
+                        localStorage.getItem("emergent_projects_store");
+                    if (storeRaw) {
+                        const store = JSON.parse(storeRaw);
+                        delete store.projects[id];
+                        localStorage.setItem(
+                            "satusite_projects_store",
+                            JSON.stringify(store),
+                        );
+                    }
+                    renderProjectsList();
+                } catch (e) {
+                    console.warn("Error deleting project:", e);
+                }
+            };
+
+            function escapeHtml(str) {
+                const div = document.createElement("div");
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            if (btnOpen && modal) {
+                btnOpen.addEventListener("click", () => {
+                    renderProjectsList();
+                    modal.classList.remove("hidden");
+                });
+            }
+
+            if (btnClose1 && modal)
+                btnClose1.addEventListener("click", () =>
+                    modal.classList.add("hidden"),
+                );
+            if (btnClose2 && modal)
+                btnClose2.addEventListener("click", () =>
+                    modal.classList.add("hidden"),
+                );
         });
     </script>
 
-    <!-- FLUID PARTICLES BACKGROUND    -->
-    <!-- (Landing screen only, monochrome, Perlin-noise driven) -->
-    <!-- ============================= -->
+    <!-- Canvas Particles -->
     <script is:inline>
         (function () {
-            // --- Perlin noise helper (vanilla JS port) ---
-            function createNoise() {
-                const permutation = [
-                    151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140,
-                    36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120,
-                    234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33,
-                    88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175, 74, 165, 71,
-                    134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122, 60, 211, 133,
-                    230, 220, 105, 92, 41, 55, 46, 245, 40, 244, 102, 143, 54, 65, 25, 63, 161,
-                    1, 216, 80, 73, 209, 76, 132, 187, 208, 89, 18, 169, 200, 196, 135, 130,
-                    116, 188, 159, 86, 164, 100, 109, 198, 173, 186, 3, 64, 52, 217, 226, 250,
-                    124, 123, 5, 202, 38, 147, 118, 126, 255, 82, 85, 212, 207, 206, 59, 227,
-                    47, 16, 58, 17, 182, 189, 28, 42, 223, 183, 170, 213, 119, 248, 152, 2, 44,
-                    154, 163, 70, 221, 153, 101, 155, 167, 43, 172, 9, 129, 22, 39, 253, 19, 98,
-                    108, 110, 79, 113, 224, 232, 178, 185, 112, 104, 218, 246, 97, 228, 251, 34,
-                    242, 193, 238, 210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235, 249, 14,
-                    239, 107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115, 121,
-                    50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243,
-                    141, 128, 195, 78, 66, 215, 61, 156, 180,
-                ];
-                const p = new Array(512);
-                for (let i = 0; i < 256; i++) p[256 + i] = p[i] = permutation[i];
-
-                function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-                function lerp(t, a, b) { return a + t * (b - a); }
-                function grad(hash, x, y, z) {
-                    const h = hash & 15;
-                    const u = h < 8 ? x : y;
-                    const v = h < 4 ? y : (h === 12 || h === 14 ? x : z);
-                    return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
-                }
-
-                return {
-                    simplex3: function (x, y, z) {
-                        const X = Math.floor(x) & 255;
-                        const Y = Math.floor(y) & 255;
-                        const Z = Math.floor(z) & 255;
-                        x -= Math.floor(x); y -= Math.floor(y); z -= Math.floor(z);
-                        const u = fade(x), v = fade(y), w = fade(z);
-                        const A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z;
-                        const B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
-                        return lerp(w,
-                            lerp(v, lerp(u, grad(p[AA], x, y, z), grad(p[BA], x - 1, y, z)),
-                                    lerp(u, grad(p[AB], x, y - 1, z), grad(p[BB], x - 1, y - 1, z))),
-                            lerp(v, lerp(u, grad(p[AA + 1], x, y, z - 1), grad(p[BA + 1], x - 1, y, z - 1)),
-                                    lerp(u, grad(p[AB + 1], x, y - 1, z - 1), grad(p[BB + 1], x - 1, y - 1, z - 1)))
-                        );
-                    }
-                };
-            }
-
-            const canvas = document.getElementById('particles-canvas');
+            const canvas = document.getElementById("particles-canvas");
             if (!canvas) return;
-            const ctx = canvas.getContext('2d', { alpha: true });
+            const ctx = canvas.getContext("2d");
             if (!ctx) return;
 
-            const noise = createNoise();
-            const PARTICLE_COUNT = window.innerWidth < 768 ? 70 : 140;
-            const NOISE_INTENSITY = 0.003;
-            const SIZE_MIN = 0.5, SIZE_MAX = 2;
-
             let particles = [];
-            let rafId = null;
-            let running = false;
+            const count = 45;
 
-            function resizeCanvas() {
+            function resize() {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
             }
 
-            function makeParticle() {
-                return {
+            function init() {
+                resize();
+                particles = Array.from({ length: count }, () => ({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    size: Math.random() * (SIZE_MAX - SIZE_MIN) + SIZE_MIN,
-                    vx: 0, vy: 0,
-                    life: Math.random() * 100,
-                    maxLife: 100 + Math.random() * 50,
-                };
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
+                    size: Math.random() * 1.5 + 0.5,
+                    opacity: Math.random() * 0.3 + 0.1,
+                }));
             }
 
-            function initParticles() {
-                resizeCanvas();
-                particles = Array.from({ length: PARTICLE_COUNT }, makeParticle);
-            }
+            function loop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            function tick() {
-                // Monochrome: near-black wash for trails + soft white particles,
-                // matching the site's dark/grayscale theme regardless of OS color scheme.
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
 
-                for (const particle of particles) {
-                    particle.life += 1;
-                    if (particle.life > particle.maxLife) {
-                        particle.life = 0;
-                        particle.x = Math.random() * canvas.width;
-                        particle.y = Math.random() * canvas.height;
-                    }
+                    if (p.x < 0) p.x = canvas.width;
+                    if (p.x > canvas.width) p.x = 0;
+                    if (p.y < 0) p.y = canvas.height;
+                    if (p.y > canvas.height) p.y = 0;
 
-                    const opacity = Math.sin((particle.life / particle.maxLife) * Math.PI) * 0.35;
-
-                    const n = noise.simplex3(
-                        particle.x * NOISE_INTENSITY,
-                        particle.y * NOISE_INTENSITY,
-                        Date.now() * 0.0001
-                    );
-                    const angle = n * Math.PI * 4;
-                    particle.vx = Math.cos(angle) * 2;
-                    particle.vy = Math.sin(angle) * 2;
-
-                    particle.x += particle.vx;
-                    particle.y += particle.vy;
-
-                    if (particle.x < 0) particle.x = canvas.width;
-                    if (particle.x > canvas.width) particle.x = 0;
-                    if (particle.y < 0) particle.y = canvas.height;
-                    if (particle.y > canvas.height) particle.y = 0;
-
-                    ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                    ctx.fillStyle = `rgba(59, 130, 246, ${p.opacity * 0.35})`;
                     ctx.beginPath();
-                    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                     ctx.fill();
                 }
 
-                if (running) rafId = requestAnimationFrame(tick);
+                requestAnimationFrame(loop);
             }
 
-            function start() {
-                if (running) return;
-                running = true;
-                rafId = requestAnimationFrame(tick);
-            }
-
-            function stop() {
-                running = false;
-                if (rafId) cancelAnimationFrame(rafId);
-                rafId = null;
-            }
-
-            // Exposed so the landing <-> app screen transition can pause/resume
-            // the animation loop (saves CPU/battery while the app screen is active).
-            window.pauseParticlesAnimation = stop;
-            window.resumeParticlesAnimation = start;
-
-            window.addEventListener('resize', () => {
-                resizeCanvas();
-            });
-
-            document.addEventListener('DOMContentLoaded', () => {
-                initParticles();
-                start();
+            window.addEventListener("resize", resize);
+            document.addEventListener("DOMContentLoaded", () => {
+                init();
+                loop();
             });
         })();
     </script>
-
 </Layout>
-

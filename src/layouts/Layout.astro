@@ -1,18 +1,36 @@
 ---
 import '../styles/global.css';
+
+interface Props {
+    title?: string;
+    description?: string;
+}
+
+const {
+    title = "Satusite Studio - Autonomous AI App Development Platform",
+    description = "Build full-stack production-ready web and mobile apps with AI Agent."
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SATU SITE Studio</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <meta name="theme-color" content="#09090b">
+    
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="apple-touch-icon" href="/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Syne:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body class="antialiased relative">
+<body class="bg-[#09090b] text-neutral-100 antialiased relative selection:bg-blue-600/30 selection:text-blue-200">
     <slot />
 </body>
 </html>
+
