@@ -1,8 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import AuthPage from '../components/AuthPage';
+
+const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || import.meta.env.GOOGLE_CLIENT_ID || "392320873628-8ndje66v8i2t5svo36985atrope592q5.apps.googleusercontent.com";
 ---
 
 <Layout title="Masuk / Portal Klien | satusitE Studio">
-    <AuthPage client:only="react" />
+    <AuthPage client:only="react" googleClientId={googleClientId} />
 </Layout>
+

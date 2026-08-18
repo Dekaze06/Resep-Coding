@@ -20,7 +20,11 @@ declare global {
   }
 }
 
-export default function AuthPage() {
+interface AuthPageProps {
+  googleClientId?: string;
+}
+
+export default function AuthPage({ googleClientId }: AuthPageProps) {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState('');
@@ -32,14 +36,17 @@ export default function AuthPage() {
   const [successMsg, setSuccessMsg] = useState('');
   const googleBtnContainerRef = useRef<HTMLDivElement>(null);
 
+  const effectiveClientId = googleClientId || 
+    (typeof process !== 'undefined' ? process.env?.PUBLIC_GOOGLE_CLIENT_ID : undefined) ||
+    '392320873628-8ndje66v8i2t5svo36985atrope592q5.apps.googleusercontent.com';
+
   // Initialize Google Identity Services
   useEffect(() => {
     const initGoogleAuth = () => {
-      if (window.google?.accounts?.id) {
+      if (window.google?.accounts?.id && effectiveClientId) {
         try {
-          const clientId = "889988220011-satusitedemoapp.apps.googleusercontent.com";
           window.google.accounts.id.initialize({
-            client_id: clientId,
+            client_id: effectiveClientId,
             callback: handleGoogleCredentialResponse,
             auto_select: false,
             cancel_on_tap_outside: true
@@ -71,7 +78,7 @@ export default function AuthPage() {
       }, 300);
       return () => clearInterval(interval);
     }
-  }, []);
+  }, [effectiveClientId]);
 
   const handleGoogleCredentialResponse = async (response: any) => {
     if (!response || !response.credential) return;
@@ -104,25 +111,82 @@ export default function AuthPage() {
     }
   };
 
+  // Google OAuth 2.0 Popup Token Client
   const handlePromptGoogleOAuth = () => {
-    if (window.google?.accounts?.id) {
-      try {
+    setIsLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('Membuka autentikasi Google...');
+
+    try {
+      if (window.google?.accounts?.oauth2) {
+        const client = window.google.accounts.oauth2.initTokenClient({
+          client_id: effectiveClientId,
+          scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
+          callback: async (tokenResponse: any) => {
+            if (tokenResponse && tokenResponse.access_token) {
+              setSuccessMsg('Mengambil data profil Google...');
+              try {
+                // Fetch real user info from Google API
+                const userRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                  headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                });
+
+                if (userRes.ok) {
+                  const googleUser = await userRes.json();
+                  // Submit to backend
+                  const res = await fetch('/api/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userInfo: googleUser })
+                  });
+
+                  const data = await res.json();
+                  if (res.ok && data.success && data.user) {
+                    localStorage.setItem('satusite_auth_user', JSON.stringify(data.user));
+                    localStorage.setItem('satusite_auth_token', data.token);
+                    setSuccessMsg(`Selamat datang, ${data.user.name}! Mengalihkan...`);
+                    setTimeout(() => {
+                      window.location.href = '/portal';
+                    }, 500);
+                    return;
+                  }
+                }
+              } catch (e: any) {
+                console.warn('OAuth fetch error:', e);
+              }
+            }
+            setIsLoading(false);
+            setErrorMsg('Izin Google dibatalkan atau tidak lengkap.');
+          },
+          error_callback: (err: any) => {
+            console.warn('Google OAuth error:', err);
+            setIsLoading(false);
+            fallbackGoogleDirectPrompt();
+          }
+        });
+
+        client.requestAccessToken();
+      } else if (window.google?.accounts?.id) {
         window.google.accounts.id.prompt((notification: any) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
             fallbackGoogleDirectPrompt();
           }
         });
-      } catch (e) {
+      } else {
         fallbackGoogleDirectPrompt();
       }
-    } else {
+    } catch (err: any) {
+      console.warn('Google prompt exception:', err);
       fallbackGoogleDirectPrompt();
     }
   };
 
   const fallbackGoogleDirectPrompt = async () => {
     const userPrompt = prompt("Masukkan alamat email akun Google Anda:", email || "");
-    if (!userPrompt || !userPrompt.includes("@")) return;
+    if (!userPrompt || !userPrompt.includes("@")) {
+      setIsLoading(false);
+      return;
+    }
 
     setIsLoading(true);
     setSuccessMsg("Menghubungkan akun Google...");
