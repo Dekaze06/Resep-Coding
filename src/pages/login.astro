@@ -6,6 +6,16 @@ const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || import.meta.en
 ---
 
 <Layout title="Masuk / Portal Klien | satusitE Studio">
+    <script is:inline>
+        try {
+            const user = localStorage.getItem("satusite_auth_user");
+            if (user) {
+                const params = new URLSearchParams(window.location.search);
+                const redirect = params.get("redirect") || "/";
+                window.location.replace(redirect.startsWith("/") ? redirect : "/");
+            }
+        } catch (e) {}
+    </script>
     <AuthPage client:only="react" googleClientId={googleClientId} />
 </Layout>
 

@@ -10,7 +10,7 @@
     "projectsCount": 0,
     "authProvider": "google",
     "joinedAt": "18 Agu 2026",
-    "lastLoginAt": "2026-08-18T14:45:02.718Z"
+    "lastLoginAt": "2026-08-18T16:14:26.946Z"
   },
   {
     "id": "usr_g_1787064311005",
@@ -23,7 +23,7 @@
     "projectsCount": 0,
     "authProvider": "google",
     "joinedAt": "18 Agu 2026",
-    "lastLoginAt": "2026-08-18T15:51:40.961Z"
+    "lastLoginAt": "2026-08-18T16:19:26.664Z"
   },
   {
     "name": "dekaze06",
@@ -36,18 +36,20 @@
     "joinedAt": "18 Agu 2026"
   },
   {
-    "name": "Fajar",
+    "name": "Dekaze Admin",
     "email": "dekaze08@gmail.com",
-    "role": "Gratis",
+    "role": "Superadmin",
     "status": "pending",
     "isVerified": false,
     "verificationToken": "e59e899b-cc45-44dc-88cb-15f45443e929",
     "verificationExpires": 1787153193184,
     "quota": 15,
     "projectsCount": 0,
-    "authProvider": "email",
+    "authProvider": "google",
     "id": "usr_1787066793184",
-    "joinedAt": "18 Agu 2026"
+    "joinedAt": "18 Agu 2026",
+    "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Dekaze",
+    "lastLoginAt": "2026-08-18T16:12:01.188Z"
   },
   {
     "id": "usr_g_1787067726457",
@@ -61,5 +63,38 @@
     "authProvider": "google",
     "joinedAt": "18 Agu 2026",
     "lastLoginAt": "2026-08-18T15:42:06.457Z"
+  },
+  {
+    "name": "testuser",
+    "email": "testuser@gmail.com",
+    "role": "Gratis",
+    "status": "active",
+    "quota": 1,
+    "projectsCount": 0,
+    "id": "usr_1787068747203",
+    "joinedAt": "18 Agu 2026"
+  },
+  {
+    "name": "testuser2",
+    "email": "testuser2@gmail.com",
+    "role": "Gratis",
+    "status": "active",
+    "quota": 1,
+    "projectsCount": 0,
+    "id": "usr_1787069092898",
+    "joinedAt": "18 Agu 2026"
+  },
+  {
+    "id": "usr_g_1787069354336",
+    "name": "Akmal Saepuloh",
+    "email": "akmalsf0@gmail.com",
+    "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKp_SuLSMrUfVrJLYFshDkDgQl33RUudquyab8U05EEIrvp6F_g=s96-c",
+    "role": "Gratis",
+    "status": "active",
+    "quota": 1,
+    "projectsCount": 0,
+    "authProvider": "google",
+    "joinedAt": "18 Agu 2026",
+    "lastLoginAt": "2026-08-18T16:17:47.734Z"
   }
 ]

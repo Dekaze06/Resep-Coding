@@ -143,6 +143,13 @@ export default function ClientPortal() {
   };
 
   useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam && ['overview', 'projects', 'quota', 'activity', 'settings', 'docs'].includes(tabParam)) {
+        setActiveTab(tabParam as any);
+      }
+    } catch (e) {}
     fetchAllData();
   }, []);
 

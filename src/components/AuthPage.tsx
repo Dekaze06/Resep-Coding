@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Lock, 
   Mail, 
@@ -11,7 +11,8 @@ import {
   Zap,
   Edit2,
   Sparkles,
-  User
+  User,
+  Loader2
 } from 'lucide-react';
 
 declare global {
@@ -34,6 +35,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [isAlreadyAuthed, setIsAlreadyAuthed] = useState(false);
   const [hasGoogleNativeButton, setHasGoogleNativeButton] = useState(false);
   const [verificationSentEmail, setVerificationSentEmail] = useState<string | null>(null);
   const [directVerifyUrl, setDirectVerifyUrl] = useState<string | null>(null);
@@ -45,6 +47,64 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
     (typeof process !== 'undefined' ? process.env?.PUBLIC_GOOGLE_CLIENT_ID : undefined) ||
     '392320873628-8ndje66v8i2t5svo36985atrope592q5.apps.googleusercontent.com';
 
+  const getRedirectUrl = useCallback(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect");
+      if (redirect && redirect.startsWith("/")) {
+        return redirect;
+      }
+    } catch (e) {}
+    return "/";
+  }, []);
+
+  // If already authenticated, redirect immediately
+  useEffect(() => {
+    try {
+      const existing = localStorage.getItem('satusite_auth_user');
+      if (existing) {
+        setIsAlreadyAuthed(true);
+        const parsed = JSON.parse(existing);
+        setSuccessMsg(`Anda sudah masuk sebagai ${parsed.name || 'Pengguna'}. Mengalihkan...`);
+        const target = getRedirectUrl();
+        window.location.replace(target);
+      }
+    } catch (e) {}
+  }, [getRedirectUrl]);
+
+  // Handle Google auth success - stable callback for GIS
+  const handleGoogleAuthSuccess = useCallback(async (credential: string) => {
+    setIsLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('Memverifikasi akun Google...');
+
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.user) {
+        localStorage.setItem('satusite_auth_user', JSON.stringify(data.user));
+        localStorage.setItem('satusite_auth_token', data.token);
+        setSuccessMsg(`Selamat datang, ${data.user.name}! Mengalihkan ke Beranda...`);
+        const target = getRedirectUrl();
+        setTimeout(() => { window.location.replace(target); }, 300);
+        return;
+      } else {
+        setErrorMsg(data.error || 'Gagal login dengan akun Google.');
+        setSuccessMsg('');
+        setIsLoading(false);
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Terjadi kesalahan saat menghubungkan ke Google.');
+      setSuccessMsg('');
+      setIsLoading(false);
+    }
+  }, [getRedirectUrl]);
+
   // Initialize Google Identity Services
   useEffect(() => {
     const initGoogleAuth = () => {
@@ -52,7 +112,16 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
         try {
           window.google.accounts.id.initialize({
             client_id: effectiveClientId,
-            callback: handleGoogleCredentialResponse,
+            callback: (response: any) => {
+              if (response && response.credential) {
+                handleGoogleAuthSuccess(response.credential);
+              } else {
+                // Google callback returned without credential — user cancelled or error
+                setErrorMsg('Login Google dibatalkan atau tidak berhasil. Silakan coba lagi.');
+                setSuccessMsg('');
+                setIsLoading(false);
+              }
+            },
             auto_select: false,
             cancel_on_tap_outside: true
           });
@@ -84,46 +153,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
       }, 300);
       return () => clearInterval(interval);
     }
-  }, [effectiveClientId]);
-
-  const getRedirectUrl = () => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const redir = params.get('redirect');
-      if (redir && redir.startsWith('/')) return redir;
-    } catch (e) {}
-    return '/portal';
-  };
-
-  const handleGoogleAuthSuccess = async (credential: string) => {
-    setIsLoading(true);
-    setErrorMsg('');
-    setSuccessMsg('Memverifikasi akun Google...');
-
-    try {
-      const res = await fetch('/api/auth/google', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ credential })
-      });
-
-      const data = await res.json();
-      if (res.ok && data.success && data.user) {
-        localStorage.setItem('satusite_auth_user', JSON.stringify(data.user));
-        localStorage.setItem('satusite_auth_token', data.token);
-        setSuccessMsg(`Selamat datang, ${data.user.name}! Mengalihkan...`);
-        setTimeout(() => {
-          window.location.href = getRedirectUrl();
-        }, 600);
-      } else {
-        setErrorMsg(data.error || 'Gagal login dengan akun Google.');
-        setIsLoading(false);
-      }
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Terjadi kesalahan saat menghubungkan ke Google.');
-      setIsLoading(false);
-    }
-  };
+  }, [effectiveClientId, handleGoogleAuthSuccess]);
 
   // Google OAuth 2.0 Popup Token Client
   const handlePromptGoogleOAuth = () => {
@@ -138,43 +168,44 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
           scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
           callback: async (tokenResponse: any) => {
             if (tokenResponse && tokenResponse.access_token) {
-              setSuccessMsg('Mengambil data profil Google...');
+              setSuccessMsg('Memverifikasi akun Google...');
               try {
-                // Fetch real user info from Google API
-                const userRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                  headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                const res = await fetch('/api/auth/google', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ accessToken: tokenResponse.access_token })
                 });
 
-                if (userRes.ok) {
-                  const googleUser = await userRes.json();
-                  // Submit to backend
-                  const res = await fetch('/api/auth/google', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userInfo: googleUser })
-                  });
-
-                  const data = await res.json();
-                  if (res.ok && data.success && data.user) {
-                    localStorage.setItem('satusite_auth_user', JSON.stringify(data.user));
-                    localStorage.setItem('satusite_auth_token', data.token);
-                    setSuccessMsg(`Selamat datang, ${data.user.name}! Mengalihkan...`);
-                    setTimeout(() => {
-                      window.location.href = getRedirectUrl();
-                    }, 500);
-                    return;
-                  }
+                const data = await res.json();
+                if (res.ok && data.success && data.user) {
+                  localStorage.setItem('satusite_auth_user', JSON.stringify(data.user));
+                  localStorage.setItem('satusite_auth_token', data.token);
+                  setSuccessMsg(`Selamat datang, ${data.user.name}! Mengalihkan ke Beranda...`);
+                  const target = getRedirectUrl();
+                  setTimeout(() => { window.location.replace(target); }, 300);
+                  return;
+                } else {
+                  setErrorMsg(data.error || 'Gagal memproses login Google.');
+                  setSuccessMsg('');
+                  setIsLoading(false);
+                  return;
                 }
               } catch (e: any) {
                 console.warn('OAuth fetch error:', e);
+                setErrorMsg(e.message || 'Gagal menghubungkan ke server.');
+                setSuccessMsg('');
+                setIsLoading(false);
+                return;
               }
             }
             setIsLoading(false);
+            setSuccessMsg('');
             setErrorMsg('Izin Google dibatalkan atau tidak lengkap.');
           },
           error_callback: (err: any) => {
             console.warn('Google OAuth error:', err);
             setIsLoading(false);
+            setSuccessMsg('');
             fallbackGoogleDirectPrompt();
           }
         });
@@ -183,6 +214,8 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
       } else if (window.google?.accounts?.id) {
         window.google.accounts.id.prompt((notification: any) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            setIsLoading(false);
+            setSuccessMsg('');
             fallbackGoogleDirectPrompt();
           }
         });
@@ -191,6 +224,8 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
       }
     } catch (err: any) {
       console.warn('Google prompt exception:', err);
+      setIsLoading(false);
+      setSuccessMsg('');
       fallbackGoogleDirectPrompt();
     }
   };
@@ -224,10 +259,10 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
       if (res.ok && data.success && data.user) {
         localStorage.setItem('satusite_auth_user', JSON.stringify(data.user));
         localStorage.setItem('satusite_auth_token', data.token);
-        setSuccessMsg(`Login berhasil sebagai ${data.user.name}! Mengalihkan...`);
-        setTimeout(() => {
-          window.location.href = getRedirectUrl();
-        }, 600);
+        setSuccessMsg(`Login berhasil sebagai ${data.user.name}! Mengalihkan ke Beranda...`);
+        const target = getRedirectUrl();
+        window.location.replace(target);
+        return;
       } else {
         setErrorMsg(data.error || 'Gagal masuk akun Google.');
         setIsLoading(false);
@@ -283,10 +318,10 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
           if (data.user) {
             localStorage.setItem('satusite_auth_user', JSON.stringify(data.user));
             localStorage.setItem('satusite_auth_token', data.token);
-            setSuccessMsg('Pendaftaran akun berhasil! Mengalihkan...');
-            setTimeout(() => {
-              window.location.href = getRedirectUrl();
-            }, 600);
+            setSuccessMsg('Pendaftaran akun berhasil! Mengalihkan ke Beranda...');
+            const target = getRedirectUrl();
+            window.location.replace(target);
+            return;
           }
         } else {
           setErrorMsg(data.error || 'Gagal mendaftarkan akun.');
@@ -306,10 +341,10 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
         if (res.ok && data.success && data.user) {
           localStorage.setItem('satusite_auth_user', JSON.stringify(data.user));
           localStorage.setItem('satusite_auth_token', data.token);
-          setSuccessMsg('Login berhasil! Mengalihkan...');
-          setTimeout(() => {
-            window.location.href = getRedirectUrl();
-          }, 600);
+          setSuccessMsg('Login berhasil! Mengalihkan ke Beranda...');
+          const target = getRedirectUrl();
+          window.location.replace(target);
+          return;
         } else {
           setErrorMsg(data.error || 'Gagal memproses login.');
           setIsLoading(false);
@@ -370,7 +405,21 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
 
       {/* Main Form Box */}
       <main className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-6 my-auto">
-        {verificationSentEmail ? (
+        {isAlreadyAuthed ? (
+          <div className="w-full max-w-[400px] bg-zinc-950 border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6 text-center animate-fade-in-up">
+            <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-300">
+              <Loader2 className="w-7 h-7 animate-spin text-white" />
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-xl font-bold tracking-tight text-white">
+                Sesi Aktif Ditemukan
+              </h1>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                {successMsg || 'Mengalihkan Anda ke Beranda...'}
+              </p>
+            </div>
+          </div>
+        ) : verificationSentEmail ? (
           <div className="w-full max-w-[400px] bg-zinc-950 border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6 text-center animate-fade-in-up">
             <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-300">
               <Mail className="w-7 h-7" />

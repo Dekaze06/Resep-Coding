@@ -56,7 +56,24 @@ export const POST: APIRoute = async ({ request }) => {
       }
     }
 
-    // 2. If access token / client userInfo is passed
+    // 2. If access token is passed directly
+    if (!email && accessToken) {
+      try {
+        const userRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        if (userRes.ok) {
+          const googleData = await userRes.json();
+          email = googleData.email;
+          name = googleData.name || googleData.email?.split('@')[0];
+          avatar = googleData.picture;
+        }
+      } catch (err) {
+        console.warn('[Google Auth] Fetch with accessToken failed:', err);
+      }
+    }
+
+    // 3. If client userInfo is passed
     if (!email && userInfo && userInfo.email) {
       email = userInfo.email;
       name = userInfo.name || email.split('@')[0];
