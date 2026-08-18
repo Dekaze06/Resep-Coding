@@ -446,6 +446,15 @@ export default function SatusiteStudioWorkspace() {
   }, [savedProjectsList, historySearch]);
 
   useEffect(() => {
+    // Auth Guard: Require login before accessing studio
+    try {
+      const authUser = localStorage.getItem("satusite_auth_user");
+      if (!authUser) {
+        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+        return;
+      }
+    } catch (e) {}
+
     try {
       const params = new URLSearchParams(window.location.search);
       const qPrompt = params.get("prompt");
@@ -1305,28 +1314,28 @@ export default function SatusiteStudioWorkspace() {
 
           <a
             href={`/testing?id=${projectId}`}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1 text-[11px]"
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px]"
             title="Uji Kualitas & Testing Suite"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
             <span className="hidden sm:inline">Testing</span>
           </a>
 
           <a
             href={`/github?id=${projectId}`}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1 text-[11px]"
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px]"
             title="Push ke GitHub Repository"
           >
-            <i className="fa-brands fa-github text-sm text-zinc-300"></i>
+            <i className="fa-brands fa-github text-sm text-zinc-400"></i>
             <span className="hidden sm:inline">GitHub</span>
           </a>
 
           <a
             href={`/deploy?id=${projectId}`}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1 text-[11px]"
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px]"
             title="Publikasikan ke Vercel/Netlify"
           >
-            <Rocket className="w-3.5 h-3.5 text-blue-400" />
+            <Rocket className="w-3.5 h-3.5 text-zinc-400" />
             <span className="hidden sm:inline">Deploy</span>
           </a>
 
@@ -1335,10 +1344,10 @@ export default function SatusiteStudioWorkspace() {
               loadSavedProjects();
               setShowHistoryModal(true);
             }}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1 text-[11px]"
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px]"
             title="Riwayat Chat & Proyek"
           >
-            <History className="w-3.5 h-3.5" />
+            <History className="w-3.5 h-3.5 text-zinc-400" />
             <span className="hidden sm:inline">Riwayat</span>
           </button>
 
@@ -1362,10 +1371,10 @@ export default function SatusiteStudioWorkspace() {
 
               <a
                 href={`/deploy?id=${projectId}`}
-                className="ml-1 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-semibold transition-colors shadow-sm"
+                className="ml-1 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white text-[11px] font-medium transition-colors border border-zinc-700/80 shadow-sm"
                 title="Deploy ke Cloud"
               >
-                <Rocket className="w-3 h-3 text-white" />
+                <Rocket className="w-3 h-3 text-zinc-400" />
                 <span>Deploy</span>
               </a>
             </>

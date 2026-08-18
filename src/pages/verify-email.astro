@@ -1,0 +1,10 @@
+---
+import Layout from '../layouts/Layout.astro';
+import VerifyEmailPage from '../components/VerifyEmailPage';
+
+export const prerender = false;
+---
+
+<Layout title="Verifikasi Akun | satusitE" description="Konfirmasi alamat email dan aktivasi akun satusitE Studio Anda.">
+  <VerifyEmailPage client:only="react" />
+</Layout>

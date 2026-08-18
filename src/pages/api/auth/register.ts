@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
 import { UsersDB } from '../../../lib/db';
+import { sendVerificationEmail } from '../../../lib/email';
+import crypto from 'crypto';
 
 export const prerender = false;
 
@@ -18,32 +20,49 @@ export const POST: APIRoute = async ({ request }) => {
 
     const existing = await UsersDB.getByEmailAsync(email);
     if (existing) {
-      return new Response(JSON.stringify({ success: false, error: 'Email sudah terdaftar. Silakan login.' }), {
+      return new Response(JSON.stringify({ success: false, error: 'Email sudah terdaftar. Silakan masuk.' }), {
         status: 409,
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
+    const verificationToken = crypto.randomUUID();
+    const verificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+
     const user = UsersDB.create({
       name,
       email,
       role: 'Gratis',
-      status: 'active',
+      status: 'pending',
+      isVerified: false,
+      verificationToken,
+      verificationExpires,
       quota: 15,
-      projectsCount: 0
+      projectsCount: 0,
+      authProvider: 'email'
+    });
+
+    const origin = new URL(request.url).origin;
+    const verificationUrl = `${origin}/verify-email?token=${verificationToken}`;
+
+    const emailResult = await sendVerificationEmail({
+      to: email,
+      name,
+      verificationUrl
     });
 
     return new Response(JSON.stringify({
       success: true,
-      message: 'Pendaftaran akun berhasil!',
-      token: `sat_token_${Buffer.from(email).toString('base64')}_${Date.now()}`,
+      requiresVerification: true,
+      message: 'Pendaftaran berhasil! Kami telah mengirimkan email verifikasi ke alamat Anda.',
+      emailSent: emailResult.success,
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
-        quota: user.quota,
-        projectsCount: user.projectsCount
+        status: user.status,
+        quota: user.quota
       }
     }), {
       status: 201,

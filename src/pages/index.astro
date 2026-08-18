@@ -174,6 +174,7 @@ import Footer from "../components/ui/footer-section";
 
                     <!-- 3. Buka Studio Button (Dark Grey) -->
                     <a
+                        id="btn-header-open-studio"
                         href="/app"
                         class="px-3.5 sm:px-4 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
                     >
@@ -2077,6 +2078,30 @@ import Footer from "../components/ui/footer-section";
                             window.location.reload();
                         });
                     }
+
+                    // Studio Auth Gate for Header and CTA Links
+                    const btnHeaderStudio = document.getElementById("btn-header-open-studio");
+                    if (btnHeaderStudio) {
+                        btnHeaderStudio.addEventListener("click", (e) => {
+                            const isAuthed = localStorage.getItem("satusite_auth_user");
+                            if (!isAuthed) {
+                                e.preventDefault();
+                                window.location.href = "/login?redirect=/app";
+                            }
+                        });
+                    }
+
+                    // Global interceptor for all studio entry points on landing page
+                    document.querySelectorAll('a[href="/app"], a[href^="/app?"]').forEach((link) => {
+                        link.addEventListener("click", (e) => {
+                            const isAuthed = localStorage.getItem("satusite_auth_user");
+                            if (!isAuthed) {
+                                e.preventDefault();
+                                const targetHref = link.getAttribute("href") || "/app";
+                                window.location.href = `/login?redirect=${encodeURIComponent(targetHref)}`;
+                            }
+                        });
+                    });
                 } catch (err) {
                     console.warn("Auth nav init error:", err);
                 }

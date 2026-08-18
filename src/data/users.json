@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "id": "usr_g_1787064302718",
+    "name": "dekaze 01",
+    "email": "dekaze01@gmail.com",
+    "avatar": "https://lh3.googleusercontent.com/a/ACg8ocJY3PRWQDy0nME4Y3Lzzt-nGzmIPKtDYNGNognW_sukk7_Dcd5X=s96-c",
+    "role": "Gratis",
+    "status": "active",
+    "quota": 15,
+    "projectsCount": 0,
+    "authProvider": "google",
+    "joinedAt": "18 Agu 2026",
+    "lastLoginAt": "2026-08-18T14:45:02.718Z"
+  },
+  {
+    "id": "usr_g_1787064311005",
+    "name": "Anisa Nurhasanah",
+    "email": "annisafir01@gmail.com",
+    "avatar": "https://lh3.googleusercontent.com/a/ACg8ocJQkYRGVz1H6oCoFBz2JFa4s6QMR_WAQgcYazt0bVbhNGyMCXZJ=s96-c",
+    "role": "Gratis",
+    "status": "active",
+    "quota": 15,
+    "projectsCount": 0,
+    "authProvider": "google",
+    "joinedAt": "18 Agu 2026",
+    "lastLoginAt": "2026-08-18T14:45:11.005Z"
+  }
+]

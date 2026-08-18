@@ -25,8 +25,11 @@ export interface UserData {
   email: string;
   avatar?: string;
   authProvider?: 'google' | 'email';
-  role: 'Superadmin' | 'Developer' | 'Client Pro' | 'Free User';
+  role: 'Superadmin' | 'Gratis' | 'Pro' | 'Max' | string;
   status: 'active' | 'suspended' | 'pending';
+  isVerified?: boolean;
+  verificationToken?: string;
+  verificationExpires?: number;
   quota: number;
   projectsCount: number;
   joinedAt: string;
@@ -417,6 +420,41 @@ export const UsersDB = {
     }
 
     return user;
+  },
+
+  async findByVerificationToken(token: string): Promise<UserData | null> {
+    if (isMongoConfigured()) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          const user = await db.collection<UserData>('users').findOne({ verificationToken: token });
+          if (user) {
+            const { _id, ...rest } = user as any;
+            return rest as UserData;
+          }
+        }
+      } catch (e) {
+        console.warn('[DB] Error finding verification token in Mongo:', e);
+      }
+    }
+    const list = this.getAll();
+    return list.find(u => u.verificationToken === token) || null;
+  },
+
+  async verifyUser(token: string): Promise<UserData | null> {
+    const user = await this.findByVerificationToken(token);
+    if (!user) return null;
+
+    if (user.verificationExpires && user.verificationExpires < Date.now()) {
+      return null;
+    }
+
+    return await this.updateUser(user.id, {
+      status: 'active',
+      isVerified: true,
+      verificationToken: undefined,
+      verificationExpires: undefined
+    });
   },
 
   delete(id: string): boolean {
