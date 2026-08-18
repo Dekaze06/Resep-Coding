@@ -36,6 +36,9 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
   const [successMsg, setSuccessMsg] = useState('');
   const [hasGoogleNativeButton, setHasGoogleNativeButton] = useState(false);
   const [verificationSentEmail, setVerificationSentEmail] = useState<string | null>(null);
+  const [directVerifyUrl, setDirectVerifyUrl] = useState<string | null>(null);
+  const [isResending, setIsResending] = useState(false);
+  const [resendMsg, setResendMsg] = useState('');
   const googleBtnContainerRef = useRef<HTMLDivElement>(null);
 
   const effectiveClientId = googleClientId || 
@@ -273,6 +276,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
         if (res.ok && data.success) {
           if (data.requiresVerification) {
             setVerificationSentEmail(email);
+            if (data.verificationUrl) setDirectVerifyUrl(data.verificationUrl);
             setIsLoading(false);
             return;
           }
@@ -314,6 +318,30 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
     } catch (err: any) {
       setErrorMsg(err.message || 'Terjadi kesalahan koneksi.');
       setIsLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!verificationSentEmail) return;
+    setIsResending(true);
+    setResendMsg('');
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name || verificationSentEmail.split('@')[0],
+          email: verificationSentEmail,
+          password: password || 'default123'
+        })
+      });
+      const data = await res.json();
+      if (data.verificationUrl) setDirectVerifyUrl(data.verificationUrl);
+      setResendMsg('Tautan verifikasi baru berhasil dibuat!');
+    } catch (e) {
+      setResendMsg('Gagal mengirim ulang email.');
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -372,7 +400,39 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
               </div>
             </div>
 
+            {resendMsg && (
+              <div className="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 text-center font-medium animate-fade-in-up">
+                {resendMsg}
+              </div>
+            )}
+
             <div className="space-y-2 pt-2">
+              {directVerifyUrl && (
+                <a
+                  href={directVerifyUrl}
+                  className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Verifikasi Akun Ini Sekarang &rarr;</span>
+                </a>
+              )}
+
+              <button
+                type="button"
+                onClick={handleResendVerification}
+                disabled={isResending}
+                className="w-full py-2 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                {isResending ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Mengirim Ulang...</span>
+                  </>
+                ) : (
+                  <span>Kirim Ulang Email Verifikasi</span>
+                )}
+              </button>
+
               <button
                 type="button"
                 onClick={() => {
@@ -380,7 +440,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
                   setAuthMode('login');
                   setStep(1);
                 }}
-                className="w-full py-2.5 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors cursor-pointer"
+                className="w-full py-2 px-4 rounded-xl text-zinc-500 hover:text-zinc-300 text-[11px] transition-colors cursor-pointer"
               >
                 Kembali ke Halaman Masuk
               </button>

@@ -1,3 +1,5 @@
+import { UsersDB } from '../../lib/db';
+
 export const prerender = false;
 
 export async function POST({ request }) {
@@ -21,7 +23,8 @@ export async function POST({ request }) {
             projectName = 'Emergent App',
             activeAgent = 'all',
             mode = 'fullstack', // 'fullstack' | 'frontend'
-            modelChoice = 'auto'
+            modelChoice = 'auto',
+            userEmail = ''
         } = body;
 
         if (!prompt || !prompt.trim()) {
@@ -29,6 +32,27 @@ export async function POST({ request }) {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' }
             });
+        }
+
+        // Quota & Free Tier Rule Check:
+        // Free version gets 1st project generation unlimited. Once finished, quota expires (0).
+        let user = null;
+        if (userEmail) {
+            user = await UsersDB.getByEmailAsync(userEmail);
+            if (user) {
+                const role = (user.role || 'Gratis').toLowerCase();
+                const isFree = role === 'gratis' || role === 'free';
+                if (isFree && user.quota !== undefined && user.quota <= 0 && user.projectsCount >= 1) {
+                    return new Response(JSON.stringify({
+                        success: false,
+                        requiresUpgrade: true,
+                        error: 'Kuota generate gratis Anda telah selesai digunakan (1/1 proyek). Untuk melanjutkan iterasi, download kode sumber (.html/.zip), deploy, dan sinkronisasi GitHub, silakan berlangganan ke paket Pro atau Max.'
+                    }), {
+                        status: 403,
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                }
+            }
         }
 
         const apiKey = import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
@@ -354,12 +378,26 @@ FORMAT RESPONSE:
                 : rawReply;
         }
 
+        let quotaRemaining = user ? user.quota : 1;
+        if (user && hasCodeUpdate) {
+            const role = (user.role || 'Gratis').toLowerCase();
+            const isFree = role === 'gratis' || role === 'free';
+            if (isFree) {
+                quotaRemaining = 0;
+                await UsersDB.updateUser(user.id, {
+                    quota: 0,
+                    projectsCount: Math.max(1, (user.projectsCount || 0) + 1)
+                });
+            }
+        }
+
         return new Response(JSON.stringify({
             success: true,
             message: messageText,
             code: extractedCode,
             hasCodeUpdate: hasCodeUpdate,
             agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester'],
+            quotaRemaining,
             raw: rawReply
         }), {
             status: 200,

@@ -329,10 +329,20 @@ export default function SatusiteStudioWorkspace() {
   const [showHistoryModal, setShowHistoryModal] = useState<boolean>(false);
   const [historySearch, setHistorySearch] = useState<string>("");
   const [savedProjectsList, setSavedProjectsList] = useState<any[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
+  const [upgradeFeatureName, setUpgradeFeatureName] = useState<string>("Fitur Ini");
+
+  const isPaidUser = useMemo(() => {
+    if (!currentUser) return false;
+    const r = (currentUser.role || "").toLowerCase();
+    return r === "pro" || r === "client pro" || r === "max" || r === "superadmin";
+  }, [currentUser]);
+
   const [activeCodeFile, setActiveCodeFile] = useState<"index.html" | "styles.css" | "app.js" | "database.json">("index.html");
   const [logs, setLogs] = useState<string[]>([
     "[SYSTEM] Satusite Studio v2.5 initialized",
-    "[AI AGENT] Ready for prompt execution",
+    "[AI AGENT] Ready for prompt execution (Unlimited Canvas)",
     "[SANDBOX] Hot-reloader active",
     "[DATABASE] In-memory collection mounted",
   ]);
@@ -453,6 +463,7 @@ export default function SatusiteStudioWorkspace() {
         window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         return;
       }
+      setCurrentUser(JSON.parse(authUser));
     } catch (e) {}
 
     try {
@@ -524,6 +535,13 @@ export default function SatusiteStudioWorkspace() {
   const handleSendPrompt = async (promptToSend?: string, customName?: string, customId?: string, modeOverride?: "fullstack" | "frontend" | "prd") => {
     const text = (promptToSend || inputPrompt).trim();
     if (!text || isGenerating) return;
+
+    // Free Tier Rule: 1st project generation is unlimited. After it completes, quota expires.
+    if (!isPaidUser && currentUser && currentUser.quota !== undefined && currentUser.quota <= 0 && hasGenerated) {
+      setUpgradeFeatureName("Iterasi Lanjutan & Unlimited Prompt");
+      setShowUpgradeModal(true);
+      return;
+    }
 
     setHasGenerated(true);
     setShowCanvas(true);
@@ -601,7 +619,8 @@ export default function SatusiteStudioWorkspace() {
           projectName: customName || projectName,
           currentCode: code,
           chatHistory: updatedMessages,
-          mode: effectiveMode
+          mode: effectiveMode,
+          userEmail: currentUser?.email || ""
         })
       });
 
@@ -610,8 +629,23 @@ export default function SatusiteStudioWorkspace() {
 
       const data = await res.json();
 
+      if (data.requiresUpgrade) {
+        setUpgradeFeatureName("Iterasi Lanjutan & Unlimited Prompt");
+        setShowUpgradeModal(true);
+        setIsGenerating(false);
+        return;
+      }
+
       if (!res.ok || data.error) {
         throw new Error(data.error || "Terjadi kesalahan saat memproses permintaan.");
+      }
+
+      if (data.quotaRemaining !== undefined && !isPaidUser && currentUser) {
+        const updatedUser = { ...currentUser, quota: data.quotaRemaining };
+        setCurrentUser(updatedUser);
+        try {
+          localStorage.setItem("satusite_auth_user", JSON.stringify(updatedUser));
+        } catch (e) {}
       }
 
       const agentResponseText =
@@ -1312,39 +1346,63 @@ export default function SatusiteStudioWorkspace() {
             </button>
           )}
 
-          <a
-            href={`/testing?id=${projectId}`}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px]"
+          <button
+            type="button"
+            onClick={() => {
+              if (!isPaidUser) {
+                setUpgradeFeatureName("QA Testing & Verification Suite");
+                setShowUpgradeModal(true);
+              } else {
+                window.location.href = `/testing?id=${projectId}`;
+              }
+            }}
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
             title="Uji Kualitas & Testing Suite"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
             <span className="hidden sm:inline">Testing</span>
-          </a>
+          </button>
 
-          <a
-            href={`/github?id=${projectId}`}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px]"
+          <button
+            type="button"
+            onClick={() => {
+              if (!isPaidUser) {
+                setUpgradeFeatureName("Sinkronisasi GitHub Repository");
+                setShowUpgradeModal(true);
+              } else {
+                window.location.href = `/github?id=${projectId}`;
+              }
+            }}
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
             title="Push ke GitHub Repository"
           >
             <i className="fa-brands fa-github text-sm text-zinc-400"></i>
             <span className="hidden sm:inline">GitHub</span>
-          </a>
+          </button>
 
-          <a
-            href={`/deploy?id=${projectId}`}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px]"
+          <button
+            type="button"
+            onClick={() => {
+              if (!isPaidUser) {
+                setUpgradeFeatureName("1-Click Cloud Deployment");
+                setShowUpgradeModal(true);
+              } else {
+                window.location.href = `/deploy?id=${projectId}`;
+              }
+            }}
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
             title="Publikasikan ke Vercel/Netlify"
           >
             <Rocket className="w-3.5 h-3.5 text-zinc-400" />
             <span className="hidden sm:inline">Deploy</span>
-          </a>
+          </button>
 
           <button
             onClick={() => {
               loadSavedProjects();
               setShowHistoryModal(true);
             }}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px]"
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
             title="Riwayat Chat & Proyek"
           >
             <History className="w-3.5 h-3.5 text-zinc-400" />
@@ -1353,7 +1411,7 @@ export default function SatusiteStudioWorkspace() {
 
           <button
             onClick={() => setShowHelpModal(true)}
-            className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800/60 transition-colors"
+            className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800/60 transition-colors cursor-pointer"
             title="Panduan Pemakaian"
           >
             <HelpCircle className="w-3.5 h-3.5" />
@@ -1362,21 +1420,37 @@ export default function SatusiteStudioWorkspace() {
           {hasGenerated && (
             <>
               <button
-                onClick={() => setShowExportModal(true)}
-                className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800/60 transition-colors"
+                type="button"
+                onClick={() => {
+                  if (!isPaidUser) {
+                    setUpgradeFeatureName("Unduh Berkas Kode Sumber (.html / .zip)");
+                    setShowUpgradeModal(true);
+                  } else {
+                    setShowExportModal(true);
+                  }
+                }}
+                className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800/60 transition-colors cursor-pointer"
                 title="Unduh File HTML"
               >
                 <Download className="w-3.5 h-3.5" />
               </button>
 
-              <a
-                href={`/deploy?id=${projectId}`}
-                className="ml-1 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white text-[11px] font-medium transition-colors border border-zinc-700/80 shadow-sm"
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isPaidUser) {
+                    setUpgradeFeatureName("1-Click Cloud Deployment");
+                    setShowUpgradeModal(true);
+                  } else {
+                    window.location.href = `/deploy?id=${projectId}`;
+                  }
+                }}
+                className="ml-1 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white text-[11px] font-medium transition-colors border border-zinc-700/80 shadow-sm cursor-pointer"
                 title="Deploy ke Cloud"
               >
                 <Rocket className="w-3 h-3 text-zinc-400" />
                 <span>Deploy</span>
-              </a>
+              </button>
             </>
           )}
         </div>
@@ -2060,6 +2134,71 @@ export default function SatusiteStudioWorkspace() {
                 className="px-3.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-white transition-colors"
               >
                 Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* UPGRADE PAYWALL MODAL */}
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-zinc-950 border border-zinc-800/90 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl animate-fade-in-up text-center relative font-sans">
+            <button
+              onClick={() => setShowUpgradeModal(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-200">
+              <Sparkles className="w-6 h-6 text-zinc-100" />
+            </div>
+
+            <div className="space-y-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400">
+                Eksklusif Akun Pro & Max
+              </span>
+              <h3 className="text-lg font-bold text-white tracking-tight">
+                Tingkatkan Paket Anda
+              </h3>
+              <p className="text-xs text-zinc-400 leading-relaxed px-2">
+                Versi <strong>Gratis</strong> memberikan 1x generasi AI penuh tanpa batas. Fitur <strong className="text-zinc-200">{upgradeFeatureName}</strong> memerlukan paket <strong>Pro</strong> atau <strong>Max</strong>.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 text-left text-xs space-y-2 text-zinc-300">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                <span>Unduh kode sumber lengkap (.html, .zip bundle)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                <span>1-Click Deploy ke Vercel & Netlify + Custom Domain</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                <span>Sinkronisasi otomatis ke GitHub Repository</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                <span>Testing QA Suite audit & performa CWV</span>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <a
+                href="/pricing"
+                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-semibold flex items-center justify-center gap-2 transition-all shadow-md"
+              >
+                <span>Lihat Pilihan Paket & Berlangganan &rarr;</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => setShowUpgradeModal(false)}
+                className="w-full py-2 px-4 rounded-xl text-zinc-500 hover:text-zinc-300 text-xs transition-colors"
+              >
+                Lanjutkan Eksplorasi di Studio
               </button>
             </div>
           </div>

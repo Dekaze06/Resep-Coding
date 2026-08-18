@@ -23,6 +23,43 @@
     "projectsCount": 0,
     "authProvider": "google",
     "joinedAt": "18 Agu 2026",
-    "lastLoginAt": "2026-08-18T14:45:11.005Z"
+    "lastLoginAt": "2026-08-18T15:51:40.961Z"
+  },
+  {
+    "name": "dekaze06",
+    "email": "dekaze06@gmail.com",
+    "role": "Client Pro",
+    "status": "active",
+    "quota": 250,
+    "projectsCount": 1,
+    "id": "usr_1787066517031",
+    "joinedAt": "18 Agu 2026"
+  },
+  {
+    "name": "Fajar",
+    "email": "dekaze08@gmail.com",
+    "role": "Gratis",
+    "status": "pending",
+    "isVerified": false,
+    "verificationToken": "e59e899b-cc45-44dc-88cb-15f45443e929",
+    "verificationExpires": 1787153193184,
+    "quota": 15,
+    "projectsCount": 0,
+    "authProvider": "email",
+    "id": "usr_1787066793184",
+    "joinedAt": "18 Agu 2026"
+  },
+  {
+    "id": "usr_g_1787067726457",
+    "name": "Akmal Sf",
+    "email": "akmalsf2@gmail.com",
+    "avatar": "https://lh3.googleusercontent.com/a/ACg8ocILxtdcR9oNmuVnceAaN2HKdm1YgmjFDwgd0EfGsbAKTJP_XQ2-=s96-c",
+    "role": "Gratis",
+    "status": "active",
+    "quota": 15,
+    "projectsCount": 0,
+    "authProvider": "google",
+    "joinedAt": "18 Agu 2026",
+    "lastLoginAt": "2026-08-18T15:42:06.457Z"
   }
 ]

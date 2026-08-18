@@ -1,4 +1,20 @@
 import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
+
+function getGmailTransporter() {
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+  if (!user || !pass || pass.startsWith('YOUR_') || pass.length < 8) {
+    return null;
+  }
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: user.trim(),
+      pass: pass.replace(/\s+/g, '').trim() // cleans spaces in 16-char app password
+    }
+  });
+}
 
 function getResendClient(): Resend | null {
   const apiKey = process.env.RESEND_API_KEY;
@@ -14,9 +30,7 @@ export interface SendVerificationEmailParams {
   verificationUrl: string;
 }
 
-export async function sendVerificationEmail({ to, name, verificationUrl }: SendVerificationEmailParams): Promise<{ success: boolean; messageId?: string; error?: string }> {
-  const resend = getResendClient();
-
+export async function sendVerificationEmail({ to, name, verificationUrl }: SendVerificationEmailParams): Promise<{ success: boolean; verificationUrl?: string; messageId?: string; error?: string }> {
   const htmlContent = `
 <!DOCTYPE html>
 <html lang="id">
@@ -99,36 +113,92 @@ export async function sendVerificationEmail({ to, name, verificationUrl }: SendV
 </html>
   `;
 
-  if (!resend) {
-    console.log('\n======================================================');
-    console.log('📧 [DEV EMAIL SIMULATION - RESEND API KEY NOT SET]');
-    console.log(`To: ${to}`);
-    console.log(`Verification URL: ${verificationUrl}`);
-    console.log('======================================================\n');
-    return {
-      success: true,
-      messageId: `sim_${Date.now()}`
-    };
+  const gmailTransporter = getGmailTransporter();
+  const resend = getResendClient();
+
+  // 1. Primary Priority: Gmail SMTP (No Custom Domain Required!)
+  if (gmailTransporter) {
+    try {
+      const fromUser = process.env.GMAIL_USER?.trim();
+      const mailOptions = {
+        from: `satusitE Studio <${fromUser}>`,
+        to,
+        subject: 'Konfirmasi Verifikasi Akun satusitE Anda',
+        html: htmlContent
+      };
+
+      const info = await gmailTransporter.sendMail(mailOptions);
+      console.log('\n======================================================');
+      console.log('📧 [GMAIL SMTP DISPATCH SUCCESS]');
+      console.log(`To: ${to}`);
+      console.log(`Message ID: ${info.messageId}`);
+      console.log(`Verification URL: ${verificationUrl}`);
+      console.log('======================================================\n');
+
+      return {
+        success: true,
+        verificationUrl,
+        messageId: info.messageId
+      };
+    } catch (err: any) {
+      console.error('[Gmail SMTP Error]:', err);
+    }
   }
 
-  try {
-    const fromAddress = process.env.RESEND_FROM_EMAIL || 'satusitE <onboarding@resend.dev>';
-    const data = await resend.emails.send({
-      from: fromAddress,
-      to,
-      subject: 'Konfirmasi Verifikasi Akun satusitE Anda',
-      html: htmlContent
-    });
+  // 2. Secondary Priority: Resend Cloud API
+  if (resend) {
+    try {
+      const fromAddress = process.env.RESEND_FROM_EMAIL || 'satusitE <onboarding@resend.dev>';
+      const response = await resend.emails.send({
+        from: fromAddress,
+        to,
+        subject: 'Konfirmasi Verifikasi Akun satusitE Anda',
+        html: htmlContent
+      });
 
-    return {
-      success: true,
-      messageId: data.data?.id
-    };
-  } catch (err: any) {
-    console.error('[Resend Error]', err);
-    return {
-      success: false,
-      error: err.message || 'Gagal mengirim email verifikasi.'
-    };
+      console.log('\n======================================================');
+      console.log('📧 [RESEND EMAIL DISPATCH ATTEMPT]');
+      console.log(`To: ${to}`);
+      console.log(`Verification Link: ${verificationUrl}`);
+      if (response.error) {
+        console.log(`Resend Error: ${response.error.message}`);
+      } else {
+        console.log(`Resend Success ID: ${response.data?.id}`);
+      }
+      console.log('======================================================\n');
+
+      if (response.error) {
+        return {
+          success: false,
+          verificationUrl,
+          error: response.error.message || 'Gagal mengirim email verifikasi.'
+        };
+      }
+
+      return {
+        success: true,
+        verificationUrl,
+        messageId: response.data?.id
+      };
+    } catch (err: any) {
+      console.error('[Resend Exception]', err);
+      return {
+        success: false,
+        verificationUrl,
+        error: err.message || 'Gagal mengirim email verifikasi.'
+      };
+    }
   }
+
+  // 3. Fallback: Development Simulation
+  console.log('\n======================================================');
+  console.log('📧 [DEV EMAIL SIMULATION - NO SMTP / RESEND KEY]');
+  console.log(`To: ${to}`);
+  console.log(`Verification URL: ${verificationUrl}`);
+  console.log('======================================================\n');
+  return {
+    success: true,
+    verificationUrl,
+    messageId: `sim_${Date.now()}`
+  };
 }

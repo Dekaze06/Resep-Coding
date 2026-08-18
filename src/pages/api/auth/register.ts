@@ -20,8 +20,37 @@ export const POST: APIRoute = async ({ request }) => {
 
     const existing = await UsersDB.getByEmailAsync(email);
     if (existing) {
-      return new Response(JSON.stringify({ success: false, error: 'Email sudah terdaftar. Silakan masuk.' }), {
-        status: 409,
+      if (existing.isVerified) {
+        return new Response(JSON.stringify({ success: false, error: 'Email sudah terdaftar dan aktif. Silakan masuk.' }), {
+          status: 409,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
+      // If user exists but is not yet verified, refresh token and resend
+      const verificationToken = crypto.randomUUID();
+      const verificationExpires = Date.now() + 24 * 60 * 60 * 1000;
+      await UsersDB.updateUser(existing.id, { verificationToken, verificationExpires });
+
+      const origin = new URL(request.url).origin;
+      const verificationUrl = `${origin}/verify-email?token=${verificationToken}`;
+
+      const emailResult = await sendVerificationEmail({
+        to: email,
+        name: existing.name || name,
+        verificationUrl
+      });
+
+      return new Response(JSON.stringify({
+        success: true,
+        requiresVerification: true,
+        verificationUrl,
+        message: 'Tautan verifikasi baru telah dikirimkan ke email Anda.',
+        emailSent: emailResult.success,
+        emailError: emailResult.error,
+        user: existing
+      }), {
+        status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
     }
@@ -37,7 +66,7 @@ export const POST: APIRoute = async ({ request }) => {
       isVerified: false,
       verificationToken,
       verificationExpires,
-      quota: 15,
+      quota: 1,
       projectsCount: 0,
       authProvider: 'email'
     });
@@ -54,8 +83,10 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({
       success: true,
       requiresVerification: true,
+      verificationUrl,
       message: 'Pendaftaran berhasil! Kami telah mengirimkan email verifikasi ke alamat Anda.',
       emailSent: emailResult.success,
+      emailError: emailResult.error,
       user: {
         id: user.id,
         name: user.name,

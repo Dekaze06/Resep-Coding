@@ -18,15 +18,16 @@ export const POST: APIRoute = async ({ request }) => {
 
     let user = await UsersDB.getByEmailAsync(email);
 
-    // Auto-create or login user if not found
     if (!user) {
+      const adminEmails = (process.env.ADMIN_ALLOWED_EMAILS || 'dekaze08@gmail.com').toLowerCase().split(',').map(s => s.trim());
+      const isSuperAdmin = adminEmails.includes(email.toLowerCase().trim());
       user = UsersDB.create({
         name: email.split('@')[0],
         email,
-        role: email.includes('admin') ? 'Superadmin' : 'Client Pro',
+        role: isSuperAdmin ? 'Superadmin' : 'Gratis',
         status: 'active',
-        quota: email.includes('admin') ? 9999 : 250,
-        projectsCount: 1
+        quota: isSuperAdmin ? 99999 : 1,
+        projectsCount: 0
       });
     }
 
