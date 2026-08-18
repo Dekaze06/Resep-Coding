@@ -4,7 +4,7 @@ import { SystemConfigDB } from '../../../lib/db';
 export const prerender = false;
 
 export const GET: APIRoute = async () => {
-  const config = SystemConfigDB.get();
+  const config = await SystemConfigDB.getAsync();
   return new Response(JSON.stringify({
     success: true,
     config
@@ -18,7 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const raw = await request.text();
     const body = raw ? JSON.parse(raw) : {};
-    const updated = SystemConfigDB.update(body);
+    const updated = await SystemConfigDB.updateAsync(body);
 
     return new Response(JSON.stringify({
       success: true,

@@ -9,9 +9,13 @@ export const GET: APIRoute = async ({ request }) => {
   const mode = url.searchParams.get('mode');
   const search = url.searchParams.get('search');
   const featured = url.searchParams.get('featured');
+  const owner = url.searchParams.get('owner');
 
   let projects = await ProjectsDB.getAllAsync();
 
+  if (owner) {
+    projects = projects.filter(p => !p.owner || p.owner.toLowerCase() === owner.toLowerCase());
+  }
   if (category) {
     projects = projects.filter(p => p.category.toLowerCase() === category.toLowerCase());
   }

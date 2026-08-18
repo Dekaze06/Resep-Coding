@@ -33,7 +33,6 @@ const footerLinks: FooterSection[] = [
 			{ title: 'Frontend UI Designer', href: '/app?mode=frontend' },
 			{ title: 'PRD Blueprint Architect', href: '/app?mode=prd' },
 			{ title: 'Portal Klien', href: '/portal' },
-			{ title: 'Portal Admin', href: '/admin' },
 		],
 	},
 	{

@@ -49,7 +49,7 @@ interface UserRecord {
   id: string;
   name: string;
   email: string;
-  role: 'Superadmin' | 'Developer' | 'Client Pro' | 'Free User';
+  role: 'Gratis' | 'Pro' | 'Max' | 'Superadmin' | string;
   status: 'active' | 'suspended' | 'pending';
   quota: number;
   projectsCount: number;
@@ -76,6 +76,13 @@ interface SubscriberRecord {
 }
 
 export default function AdminPortal() {
+  // Security Gate State
+  const [isAdminUnlocked, setIsAdminUnlocked] = useState<boolean>(false);
+  const [adminPin, setAdminPin] = useState<string>('');
+  const [pinError, setPinError] = useState<string>('');
+  const [isCheckingPin, setIsCheckingPin] = useState<boolean>(false);
+  const [showPinPassword, setShowPinPassword] = useState<boolean>(false);
+
   const [activeTab, setActiveTab] = useState<
     'dashboard' | 'analytics' | 'users' | 'projects' | 'subscribers' | 'ai-models' | 'servers' | 'database' | 'logs' | 'settings'
   >('dashboard');
@@ -83,11 +90,67 @@ export default function AdminPortal() {
   const [subscribers, setSubscribers] = useState<SubscriberRecord[]>([]);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
+  // Check existing session on load
+  useEffect(() => {
+    const sessionToken = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('satusite_admin_session') : null;
+    if (sessionToken === 'true') {
+      setIsAdminUnlocked(true);
+      fetchAllAdminData();
+      return;
+    }
+
+    const authUserRaw = typeof localStorage !== 'undefined' ? localStorage.getItem('satusite_auth_user') : null;
+    if (authUserRaw) {
+      try {
+        const u = JSON.parse(authUserRaw);
+        const allowed = ['dekaze08@gmail.com', 'agus@satusite.studio'];
+        if (u.role === 'Superadmin' || allowed.includes(u.email?.toLowerCase())) {
+          setIsAdminUnlocked(true);
+          sessionStorage.setItem('satusite_admin_session', 'true');
+          fetchAllAdminData();
+        }
+      } catch (e) {}
+    }
+  }, []);
+
+  const handleVerifyPin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPinError('');
+    setIsCheckingPin(true);
+
+    try {
+      const res = await fetch('/api/admin/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: adminPin })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        sessionStorage.setItem('satusite_admin_session', 'true');
+        setIsAdminUnlocked(true);
+        fetchAllAdminData();
+      } else {
+        setPinError(data.error || 'PIN Master Admin salah.');
+      }
+    } catch (err: any) {
+      setPinError('Gagal memverifikasi PIN keamanan.');
+    } finally {
+      setIsCheckingPin(false);
+    }
+  };
+
+  const handleLockAdmin = () => {
+    sessionStorage.removeItem('satusite_admin_session');
+    setIsAdminUnlocked(false);
+    setAdminPin('');
+  };
+
   // Modals
   const [showAddUserModal, setShowAddUserModal] = useState<boolean>(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
-  const [newUserRole, setNewUserRole] = useState<'Client Pro' | 'Developer' | 'Superadmin'>('Client Pro');
+  const [newUserRole, setNewUserRole] = useState<'Gratis' | 'Pro' | 'Max' | 'Superadmin'>('Gratis');
 
   // Stats
   const [stats, setStats] = useState({
@@ -106,8 +169,8 @@ export default function AdminPortal() {
   const [platformProjects, setPlatformProjects] = useState<PlatformProject[]>([]);
 
   // AI Model Settings
-  const [primaryModel, setPrimaryModel] = useState<string>('gemini-2.5-flash');
-  const [fallbackModel, setFallbackModel] = useState<string>('gemini-1.5-pro');
+  const [primaryModel, setPrimaryModel] = useState<string>('gemini-3.7-flash');
+  const [fallbackModel, setFallbackModel] = useState<string>('gemini-3.7-flash');
   const [temperature, setTemperature] = useState<number>(0.7);
   const [topP, setTopP] = useState<number>(0.95);
   const [savedModelSuccess, setSavedModelSuccess] = useState<boolean>(false);
@@ -121,11 +184,11 @@ export default function AdminPortal() {
   // System Logs
   const [logFilter, setLogFilter] = useState<'ALL' | 'SYSTEM' | 'AUTH' | 'API' | 'DEPLOY'>('ALL');
   const [logs, setLogs] = useState<{ id: number; time: string; tag: string; message: string }[]>([
-    { id: 1, time: new Date().toLocaleTimeString(), tag: 'SYSTEM', message: 'Satusite Studio Platform v2.5 Online & Stabil' },
-    { id: 2, time: new Date().toLocaleTimeString(), tag: 'AUTH', message: 'Superadmin session aktif (IP: 127.0.0.1)' },
-    { id: 3, time: new Date().toLocaleTimeString(), tag: 'API', message: 'Gemini 2.5 Flash relay aktif (Latency: 2.1s)' },
+    { id: 1, time: new Date().toLocaleTimeString(), tag: 'SYSTEM', message: 'Satusite Studio Platform v3.7 Online & Stabil' },
+    { id: 2, time: new Date().toLocaleTimeString(), tag: 'AUTH', message: 'Superadmin session aktif (dekaze08@gmail.com)' },
+    { id: 3, time: new Date().toLocaleTimeString(), tag: 'API', message: 'Gemini 3.7 Flash Engine aktif (Latency: 1.8s)' },
     { id: 4, time: new Date().toLocaleTimeString(), tag: 'DEPLOY', message: '312 Vercel & Netlify Edge nodes dalam sinkronisasi' },
-    { id: 5, time: new Date().toLocaleTimeString(), tag: 'SYSTEM', message: 'Database JSON DAO cache healthy (0 disk corruption)' }
+    { id: 5, time: new Date().toLocaleTimeString(), tag: 'DB', message: 'MongoDB Atlas Cloud Cluster Connected (satusite_db)' }
   ]);
 
   // Fetch dynamic data from Backend APIs
@@ -233,7 +296,26 @@ export default function AdminPortal() {
     } catch (e) {}
   };
 
-  const handleAddQuota = async (id: string, amount: number = 100) => {
+  const handleUpdateRole = async (id: string, newRole: string) => {
+    let quota = 15;
+    if (newRole === 'Pro') quota = 500;
+    if (newRole === 'Max') quota = 5000;
+    if (newRole === 'Superadmin') quota = 99999;
+
+    setUsers(prev =>
+      prev.map(u => (u.id === id ? { ...u, role: newRole, quota } : u))
+    );
+
+    try {
+      await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update_role', userId: id, role: newRole, quotaDelta: quota })
+      });
+    } catch (e) {}
+  };
+
+  const handleAddQuota = async (id: string, amount: number) => {
     setUsers(prev =>
       prev.map(u => (u.id === id ? { ...u, quota: u.quota + amount } : u))
     );
@@ -325,7 +407,103 @@ export default function AdminPortal() {
     p.owner.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredLogs = logFilter === 'ALL' ? logs : logs.filter(l => l.tag === logFilter);
+  if (!isAdminUnlocked) {
+    return (
+      <div className="min-h-screen w-full bg-[#09090b] text-zinc-100 flex flex-col justify-between items-center p-6 relative font-sans selection:bg-zinc-800">
+        
+        {/* Top Minimal Bar */}
+        <div className="w-full max-w-5xl flex items-center justify-between py-4">
+          <a href="/" className="flex items-center gap-2 text-xs text-zinc-400 hover:text-white transition-colors">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Kembali ke Beranda</span>
+          </a>
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="satusitE Logo" className="w-4 h-4 object-contain" />
+            <span className="font-agus text-xs tracking-[0.3em] text-white">satusitE</span>
+          </div>
+        </div>
+
+        {/* Center Lock Box */}
+        <div className="w-full max-w-sm bg-zinc-950 border border-zinc-800/80 rounded-2xl p-7 shadow-2xl space-y-6 animate-fade-in-up my-auto text-center">
+          
+          <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-200 shadow-inner">
+            <Shield className="w-6 h-6" />
+          </div>
+
+          <div className="space-y-1.5">
+            <h1 className="text-lg font-bold text-white tracking-tight">Konsol Superadmin</h1>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Area terbatas. Masukkan PIN Master Admin atau masuk dengan akun pemilik terverifikasi.
+            </p>
+          </div>
+
+          {pinError && (
+            <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-700 text-xs text-zinc-300 flex items-center gap-2 text-left">
+              <AlertTriangle className="w-4 h-4 text-zinc-400 shrink-0" />
+              <span>{pinError}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleVerifyPin} className="space-y-4 text-left">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-medium text-zinc-400">PIN Rahasia Master Admin</label>
+              <div className="relative">
+                <KeyRound className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type={showPinPassword ? "text" : "password"}
+                  required
+                  autoFocus
+                  value={adminPin}
+                  onChange={(e) => setAdminPin(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-[#09090b] border border-zinc-800 focus:border-zinc-500 rounded-xl pl-9.5 pr-10 py-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPinPassword(!showPinPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isCheckingPin}
+              className="w-full py-3 px-4 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg"
+            >
+              {isCheckingPin ? (
+                <div className="w-4 h-4 border-2 border-zinc-900/20 border-t-zinc-950 rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <span>Buka Akses Konsol</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="pt-2 border-t border-zinc-900">
+            <a
+              href="/login"
+              className="text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors inline-flex items-center gap-1.5"
+            >
+              <User className="w-3 h-3" />
+              <span>Login dengan Akun Google Pemilik &rarr;</span>
+            </a>
+          </div>
+
+        </div>
+
+        {/* Footer */}
+        <div className="text-[10px] text-zinc-600 py-2">
+          Platform Security Gate &bull; satusitE Studio
+        </div>
+
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col md:flex-row selection:bg-zinc-800 selection:text-white font-sans">
@@ -347,6 +525,15 @@ export default function AdminPortal() {
               </span>
             </div>
           </a>
+
+          <button
+            type="button"
+            onClick={handleLockAdmin}
+            className="p-1 text-zinc-500 hover:text-white rounded-lg transition-colors cursor-pointer"
+            title="Kunci Konsol Admin"
+          >
+            <Lock className="w-3.5 h-3.5" />
+          </button>
         </div>
 
         {/* Admin Profile Pill */}
@@ -356,7 +543,7 @@ export default function AdminPortal() {
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xs font-semibold text-white truncate">Super Administrator</div>
-            <div className="text-[10px] text-zinc-500 font-mono truncate">admin@satusite.studio</div>
+            <div className="text-[10px] text-zinc-500 font-mono truncate">dekaze08@gmail.com</div>
           </div>
         </div>
 
@@ -653,20 +840,27 @@ export default function AdminPortal() {
                   </div>
 
                   <div className="space-y-2">
-                    {users.slice(0, 4).map(u => (
-                      <div key={u.id} className="p-3 rounded-xl bg-zinc-950 border border-zinc-800/70 flex items-center justify-between text-xs">
-                        <div>
-                          <div className="font-medium text-white">{u.name}</div>
-                          <div className="text-[11px] text-zinc-500 font-mono">{u.email}</div>
-                        </div>
-                        <div className="text-right">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-300 bg-zinc-900 border border-zinc-800">
-                            {u.role}
-                          </span>
-                          <div className="text-[10px] text-zinc-500 mt-1 font-mono">{u.quota} Kuota Token</div>
-                        </div>
+                    {users.length === 0 ? (
+                      <div className="py-8 text-center text-xs text-zinc-500 font-sans space-y-1">
+                        <div>Belum ada pengguna terdaftar di database.</div>
+                        <div className="text-[11px] text-zinc-600">Akun akan tercatat otomatis saat Anda atau klien login dengan Google.</div>
                       </div>
-                    ))}
+                    ) : (
+                      users.slice(0, 4).map(u => (
+                        <div key={u.id} className="p-3 rounded-xl bg-zinc-950 border border-zinc-800/70 flex items-center justify-between text-xs">
+                          <div>
+                            <div className="font-medium text-white">{u.name}</div>
+                            <div className="text-[11px] text-zinc-500 font-mono">{u.email}</div>
+                          </div>
+                          <div className="text-right">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-300 bg-zinc-900 border border-zinc-800">
+                              {u.role}
+                            </span>
+                            <div className="text-[10px] text-zinc-500 mt-1 font-mono">{u.quota} Kuota Token</div>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
 
@@ -684,15 +878,15 @@ export default function AdminPortal() {
                     <div className="space-y-2.5 text-xs">
                       <div className="flex items-center justify-between text-zinc-400">
                         <span>Engine Utama:</span>
-                        <span className="font-mono text-white">{primaryModel}</span>
+                        <span className="font-mono text-white">{primaryModel || 'gemini-3.7-flash'}</span>
                       </div>
                       <div className="flex items-center justify-between text-zinc-400">
                         <span>Model Cadangan:</span>
-                        <span className="font-mono text-white">{fallbackModel}</span>
+                        <span className="font-mono text-white">{fallbackModel || 'gemini-3.7-flash'}</span>
                       </div>
                       <div className="flex items-center justify-between text-zinc-400">
-                        <span>Database DAO:</span>
-                        <span className="font-mono text-emerald-400">JSON In-Memory Synced</span>
+                        <span>Database Driver:</span>
+                        <span className="font-mono text-emerald-400">MongoDB Atlas Cloud (Live)</span>
                       </div>
                     </div>
                   </div>
@@ -714,60 +908,77 @@ export default function AdminPortal() {
           {/* ===================================================================== */}
           {/* TAB 2: ANALYTICS                                                      */}
           {/* ===================================================================== */}
-          {activeTab === 'analytics' && (
-            <div className="space-y-6 animate-fade-in-up">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-4 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-1">
-                  <div className="text-[11px] text-zinc-500 font-mono uppercase">Total Generasi Prompt</div>
-                  <div className="text-2xl font-semibold text-white font-mono">142,890</div>
-                  <div className="text-[10px] text-emerald-400">+24.5% minggu ini</div>
-                </div>
-                <div className="p-4 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-1">
-                  <div className="text-[11px] text-zinc-500 font-mono uppercase">Rata-rata Token per Build</div>
-                  <div className="text-2xl font-semibold text-white font-mono">1,840</div>
-                  <div className="text-[10px] text-zinc-400">Optimasi kompresi AST</div>
-                </div>
-                <div className="p-4 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-1">
-                  <div className="text-[11px] text-zinc-500 font-mono uppercase">Total Pelanggan Buletin</div>
-                  <div className="text-2xl font-semibold text-white font-mono">{subscribers.length + 5120}</div>
-                  <div className="text-[10px] text-emerald-400">Tingkat konversi 12.8%</div>
-                </div>
-              </div>
+          {activeTab === 'analytics' && (() => {
+            const totalProj = platformProjects.length;
+            const fullstackCount = platformProjects.filter(p => (p.mode || 'fullstack') === 'fullstack').length;
+            const frontendCount = platformProjects.filter(p => p.mode === 'frontend').length;
+            const prdCount = platformProjects.filter(p => p.mode === 'prd').length;
 
-              <div className="bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-5 space-y-3">
-                <h3 className="text-xs font-semibold text-white">Distribusi Kategori Pembuatan Proyek</h3>
-                <div className="space-y-2 text-xs">
-                  <div>
-                    <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                      <span>Fullstack Web Apps & Dashboards</span>
-                      <span>48%</span>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-zinc-950 overflow-hidden">
-                      <div className="h-full bg-white rounded-full" style={{ width: '48%' }}></div>
-                    </div>
+            const fullstackPct = totalProj > 0 ? Math.round((fullstackCount / totalProj) * 100) : 0;
+            const frontendPct = totalProj > 0 ? Math.round((frontendCount / totalProj) * 100) : 0;
+            const prdPct = totalProj > 0 ? Math.round((prdCount / totalProj) * 100) : 0;
+
+            return (
+              <div className="space-y-6 animate-fade-in-up">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-1">
+                    <div className="text-[11px] text-zinc-500 font-mono uppercase">Total Generasi Prompt</div>
+                    <div className="text-2xl font-semibold text-white font-mono">{stats.apiCalls24h.toLocaleString()}</div>
+                    <div className="text-[10px] text-zinc-400 font-mono">{totalProj} Sesi Studio Tersimpan</div>
                   </div>
-                  <div>
-                    <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                      <span>Landing Pages & E-Commerce</span>
-                      <span>36%</span>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-zinc-950 overflow-hidden">
-                      <div className="h-full bg-zinc-400 rounded-full" style={{ width: '36%' }}></div>
-                    </div>
+                  <div className="p-4 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-1">
+                    <div className="text-[11px] text-zinc-500 font-mono uppercase">Rata-rata Token per Build</div>
+                    <div className="text-2xl font-semibold text-white font-mono">{totalProj > 0 ? '~2,150' : '0'}</div>
+                    <div className="text-[10px] text-zinc-400">Gemini 3.7 Flash Engine</div>
                   </div>
-                  <div>
-                    <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                      <span>PRD & Arsitektur Dokumen</span>
-                      <span>16%</span>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-zinc-950 overflow-hidden">
-                      <div className="h-full bg-zinc-600 rounded-full" style={{ width: '16%' }}></div>
-                    </div>
+                  <div className="p-4 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-1">
+                    <div className="text-[11px] text-zinc-500 font-mono uppercase">Total Pelanggan Buletin</div>
+                    <div className="text-2xl font-semibold text-white font-mono">{subscribers.length.toLocaleString()}</div>
+                    <div className="text-[10px] text-emerald-400 font-mono">Data Live MongoDB Atlas</div>
                   </div>
                 </div>
+
+                <div className="bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-5 space-y-3">
+                  <h3 className="text-xs font-semibold text-white">Distribusi Kategori Pembuatan Proyek (Real-Time)</h3>
+                  {totalProj === 0 ? (
+                    <div className="py-6 text-center text-xs text-zinc-500 font-sans">
+                      Belum ada proyek yang dibuat di database. Persentase akan terkalkulasi otomatis saat pengguna membuat proyek baru.
+                    </div>
+                  ) : (
+                    <div className="space-y-2 text-xs">
+                      <div>
+                        <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
+                          <span>Fullstack Web Apps & Dashboards ({fullstackCount})</span>
+                          <span>{fullstackPct}%</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-zinc-950 overflow-hidden">
+                          <div className="h-full bg-white rounded-full transition-all duration-500" style={{ width: `${fullstackPct}%` }}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
+                          <span>Frontend UI Interfaces ({frontendCount})</span>
+                          <span>{frontendPct}%</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-zinc-950 overflow-hidden">
+                          <div className="h-full bg-zinc-400 rounded-full transition-all duration-500" style={{ width: `${frontendPct}%` }}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
+                          <span>PRD & Blueprint Arsitektur ({prdCount})</span>
+                          <span>{prdPct}%</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-zinc-950 overflow-hidden">
+                          <div className="h-full bg-zinc-600 rounded-full transition-all duration-500" style={{ width: `${prdPct}%` }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ===================================================================== */}
           {/* TAB 3: USERS MANAGEMENT                                              */}
@@ -819,9 +1030,16 @@ export default function AdminPortal() {
                             <div className="text-[11px] text-zinc-500">{u.email}</div>
                           </td>
                           <td className="py-3 px-4">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-300 bg-zinc-900 border border-zinc-800">
-                              {u.role}
-                            </span>
+                            <select
+                              value={u.role || 'Gratis'}
+                              onChange={(e) => handleUpdateRole(u.id, e.target.value)}
+                              className="bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-300 rounded px-2 py-1 focus:outline-none focus:border-zinc-700 cursor-pointer"
+                            >
+                              <option value="Gratis">Gratis (Free Trial)</option>
+                              <option value="Pro">Pro (Berlangganan)</option>
+                              <option value="Max">Max (Enterprise)</option>
+                              <option value="Superadmin">Superadmin</option>
+                            </select>
                           </td>
                           <td className="py-3 px-4 font-sans">
                             <span className="flex items-center gap-1.5 text-emerald-400 text-[11px]">
@@ -1036,12 +1254,10 @@ export default function AdminPortal() {
                   <select
                     value={primaryModel}
                     onChange={(e) => setPrimaryModel(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700 font-mono text-xs"
                   >
-                    <option value="gemini-2.5-flash">Gemini 2.5 Flash (Rekomendasi Cepat & Presisi)</option>
-                    <option value="gemini-1.5-pro">Gemini 1.5 Pro (Arsitektur Kompleks)</option>
-                    <option value="deepseek-coder">DeepSeek Coder v2</option>
-                    <option value="claude-3-7-sonnet">Claude 3.7 Sonnet</option>
+                    <option value="gemini-3.7-flash">Gemini 3.7 Flash (Eksklusif - Ultra Fast & High Reasoning)</option>
+                    <option value="gemini-3.7-flash-thinking">Gemini 3.7 Flash Thinking (Deep Code Architecture)</option>
                   </select>
                 </div>
 
@@ -1050,10 +1266,10 @@ export default function AdminPortal() {
                   <select
                     value={fallbackModel}
                     onChange={(e) => setFallbackModel(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700 font-mono text-xs"
                   >
-                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                    <option value="gemini-3.7-flash">Gemini 3.7 Flash</option>
+                    <option value="gemini-3.7-flash-thinking">Gemini 3.7 Flash Thinking</option>
                   </select>
                 </div>
 
@@ -1147,32 +1363,36 @@ export default function AdminPortal() {
           )}
 
           {/* ===================================================================== */}
-          {/* TAB 8: DATABASE JSON                                                  */}
+          {/* TAB 8: DATABASE STORAGE                                               */}
           {/* ===================================================================== */}
           {activeTab === 'database' && (
             <div className="max-w-2xl bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-6 space-y-4 animate-fade-in-up">
               <div className="space-y-1">
                 <h3 className="text-xs font-semibold text-white flex items-center gap-2">
                   <Database className="w-4 h-4 text-zinc-300" />
-                  <span>Status Penyimpanan Data Lokal & Serverless</span>
+                  <span>Status Penyimpanan MongoDB Atlas Cloud (Live Cluster)</span>
                 </h3>
                 <p className="text-xs text-zinc-400">
-                  Penyimpanan data platform menggunakan sistem DAO terisolasi berbasis JSON.
+                  Database terhubung langsung ke cluster cloud <span className="text-white font-mono">satusite_db</span> via MongoDB driver.
                 </p>
               </div>
 
               <div className="space-y-2 text-xs">
                 <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between font-mono">
-                  <span className="text-zinc-300">src/data/projects.json</span>
-                  <span className="text-emerald-400">{platformProjects.length} Proyek Aktif</span>
+                  <span className="text-zinc-300">koleksi: satusite_db.projects</span>
+                  <span className="text-emerald-400">{platformProjects.length} Dokumen Tersimpan</span>
                 </div>
                 <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between font-mono">
-                  <span className="text-zinc-300">src/data/users.json</span>
+                  <span className="text-zinc-300">koleksi: satusite_db.users</span>
                   <span className="text-emerald-400">{users.length} Akun Terdaftar</span>
                 </div>
                 <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between font-mono">
-                  <span className="text-zinc-300">src/data/subscribers.json</span>
-                  <span className="text-emerald-400">{subscribers.length} Pelanggan</span>
+                  <span className="text-zinc-300">koleksi: satusite_db.subscribers</span>
+                  <span className="text-emerald-400">{subscribers.length} Pelanggan Aktif</span>
+                </div>
+                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between font-mono">
+                  <span className="text-zinc-300">koleksi: satusite_db.system_config</span>
+                  <span className="text-emerald-400">Tersinkron (gemini-3.7-flash)</span>
                 </div>
               </div>
             </div>
@@ -1353,11 +1573,12 @@ export default function AdminPortal() {
                 <select
                   value={newUserRole}
                   onChange={(e) => setNewUserRole(e.target.value as any)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-zinc-700"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-zinc-700 text-xs"
                 >
-                  <option value="Client Pro">Client Pro</option>
-                  <option value="Developer">Developer</option>
-                  <option value="Superadmin">Superadmin</option>
+                  <option value="Gratis">Gratis (Free Trial - 15 Token)</option>
+                  <option value="Pro">Pro (Berlangganan - 500 Token)</option>
+                  <option value="Max">Max (Enterprise - 5.000 Token)</option>
+                  <option value="Superadmin">Superadmin (Root - Akses Penuh)</option>
                 </select>
               </div>
 

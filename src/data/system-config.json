@@ -1,10 +1,10 @@
 {
-  "primaryModel": "gemini-2.5-flash",
-  "fallbackModel": "gemini-1.5-pro",
+  "primaryModel": "gemini-3.7-flash",
+  "fallbackModel": "gemini-3.7-flash",
   "temperature": 0.7,
   "topP": 0.95,
   "systemStatus": "healthy",
   "maintenanceMode": false,
   "edgeNodesCount": 312,
-  "updatedAt": "2026-08-18T05:00:00.000Z"
+  "updatedAt": "2026-08-18T14:29:17.548Z"
 }

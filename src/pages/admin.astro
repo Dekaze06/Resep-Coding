@@ -1,8 +1,4 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import AdminPortal from '../components/AdminPortal';
+// /admin route is disabled for security obfuscation
+return Astro.redirect('/', 302);
 ---
-
-<Layout title="Portal Admin | satusitE Studio" description="Pusat manajemen dan administrasi platform satusitE Studio, pengguna, kuota AI, dan infrastruktur.">
-    <AdminPortal client:only="react" />
-</Layout>

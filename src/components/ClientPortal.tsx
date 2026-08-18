@@ -395,6 +395,25 @@ export default function ClientPortal() {
               <Settings className="w-3.5 h-3.5 text-zinc-400" />
               <span>Pengaturan Profil</span>
             </button>
+
+            {/* OPSI 2: DYNAMIC SUPERADMIN SHORTCUT (HANYA MUNCUL JIKA USER PEMILIK / SUPERADMIN) */}
+            {(user?.role === 'Superadmin' || user?.email?.toLowerCase() === 'dekaze08@gmail.com') && (
+              <div className="pt-2 border-t border-zinc-800/60">
+                <a
+                  href="/master-console-dekaze"
+                  className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 hover:text-white transition-all text-left font-medium shadow-sm"
+                  title="Akses Konsol Master Superadmin"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Shield className="w-3.5 h-3.5 text-zinc-400" />
+                    <span className="text-xs">Konsol Superadmin</span>
+                  </div>
+                  <span className="text-[9px] font-mono font-bold bg-zinc-800 text-zinc-300 px-1.5 py-0.5 rounded border border-zinc-700">
+                    ROOT
+                  </span>
+                </a>
+              </div>
+            )}
           </div>
 
         </div>
@@ -478,20 +497,20 @@ export default function ClientPortal() {
 
                 <div className="p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-1.5">
                   <div className="text-[11px] text-zinc-500 font-mono uppercase">Sisa Kuota Token</div>
-                  <div className="text-2xl font-semibold text-white tracking-tight font-mono">{user?.quota || 100}</div>
-                  <div className="text-[11px] text-zinc-400">Token Generasi AI</div>
+                  <div className="text-2xl font-semibold text-white tracking-tight font-mono">{user?.quota ?? 100}</div>
+                  <div className="text-[11px] text-zinc-400">Token Generasi AI Aktif</div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-1.5">
                   <div className="text-[11px] text-zinc-500 font-mono uppercase">Tingkat Paket</div>
-                  <div className="text-2xl font-semibold text-white tracking-tight">{user?.role || 'Client Pro'}</div>
-                  <div className="text-[11px] text-zinc-400">Status Akun Aktif</div>
+                  <div className="text-2xl font-semibold text-white tracking-tight">{user?.role || 'Gratis'}</div>
+                  <div className="text-[11px] text-zinc-400">Status Akun Terverifikasi</div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-1.5">
-                  <div className="text-[11px] text-zinc-500 font-mono uppercase">Database Status</div>
-                  <div className="text-2xl font-semibold text-white tracking-tight">MongoDB Cloud</div>
-                  <div className="text-[11px] text-zinc-400">Terkoneksi & Tersinkron</div>
+                  <div className="text-[11px] text-zinc-500 font-mono uppercase">AI Engine & DB</div>
+                  <div className="text-2xl font-semibold text-white tracking-tight font-mono">Gemini 3.7 Flash</div>
+                  <div className="text-[11px] text-zinc-400">MongoDB Atlas Live Sync</div>
                 </div>
               </div>
 

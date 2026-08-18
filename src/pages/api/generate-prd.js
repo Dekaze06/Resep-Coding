@@ -90,10 +90,9 @@ ${body.desc}`;
             });
         }
 
-        // Multi-model rotation fallback list
+        // AI Model Engine strictly locked to gemini-3.7-flash
         const candidateModels = [
-            'gemini-3.7-flash',
-            'gemini-3.6-flash'
+            'gemini-3.7-flash'
         ];
 
         let geminiData = null;

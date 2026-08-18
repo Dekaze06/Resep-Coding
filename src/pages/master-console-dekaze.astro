@@ -1,0 +1,8 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AdminPortal from '../components/AdminPortal';
+---
+
+<Layout title="Konsol Superadmin | satusitE Studio" description="Pusat kontrol internal platform satusitE Studio.">
+    <AdminPortal client:only="react" />
+</Layout>

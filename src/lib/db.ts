@@ -314,11 +314,16 @@ export const UsersDB = {
   async upsertGoogleUser(data: { name: string; email: string; avatar?: string }): Promise<UserData> {
     const existing = await this.getByEmailAsync(data.email);
     const now = new Date().toISOString();
+    const adminEmails = (process.env.ADMIN_ALLOWED_EMAILS || 'dekaze08@gmail.com').toLowerCase().split(',').map(s => s.trim());
+    const isSuperAdmin = adminEmails.includes(data.email.toLowerCase().trim());
+    const defaultRole = isSuperAdmin ? 'Superadmin' : 'Gratis';
+
     if (existing) {
       const updated: UserData = {
         ...existing,
         name: data.name || existing.name,
         avatar: data.avatar || existing.avatar,
+        role: isSuperAdmin ? 'Superadmin' : (existing.role || 'Gratis'),
         authProvider: 'google',
         lastLoginAt: now
       };
@@ -331,9 +336,9 @@ export const UsersDB = {
       name: data.name || data.email.split('@')[0],
       email: data.email,
       avatar: data.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.name)}&backgroundColor=27272a`,
-      role: 'Client Pro',
+      role: defaultRole,
       status: 'active',
-      quota: 100,
+      quota: isSuperAdmin ? 99999 : 15,
       projectsCount: 0,
       authProvider: 'google',
       joinedAt: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
@@ -484,11 +489,29 @@ export const SubscribersDB = {
 
 // --- SYSTEM CONFIG DAO ---
 export const SystemConfigDB = {
+  async getAsync(): Promise<SystemConfigData> {
+    if (isMongoConfigured()) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          const config = await db.collection<SystemConfigData>('system_config').findOne({});
+          if (config) {
+            const { _id, ...rest } = config as any;
+            return rest as SystemConfigData;
+          }
+        }
+      } catch (err) {
+        console.warn('[MongoDB] SystemConfig getAsync failed:', err);
+      }
+    }
+    return this.get();
+  },
+
   get(): SystemConfigData {
     if (!memoryConfig) {
       memoryConfig = readJsonFile<SystemConfigData>('system-config.json', {
-        primaryModel: 'gemini-2.5-flash',
-        fallbackModel: 'gemini-1.5-pro',
+        primaryModel: 'gemini-3.7-flash',
+        fallbackModel: 'gemini-3.7-flash',
         temperature: 0.7,
         topP: 0.95,
         systemStatus: 'healthy',
@@ -498,6 +521,21 @@ export const SystemConfigDB = {
       });
     }
     return memoryConfig;
+  },
+
+  async updateAsync(updates: Partial<SystemConfigData>): Promise<SystemConfigData> {
+    const updated = this.update(updates);
+    if (isMongoConfigured()) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          await db.collection('system_config').updateOne({}, { $set: updated }, { upsert: true });
+        }
+      } catch (err) {
+        console.warn('[MongoDB] SystemConfig updateAsync failed:', err);
+      }
+    }
+    return updated;
   },
 
   update(updates: Partial<SystemConfigData>): SystemConfigData {

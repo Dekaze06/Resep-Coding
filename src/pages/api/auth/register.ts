@@ -27,9 +27,9 @@ export const POST: APIRoute = async ({ request }) => {
     const user = UsersDB.create({
       name,
       email,
-      role: 'Client Pro',
+      role: 'Gratis',
       status: 'active',
-      quota: 100,
+      quota: 15,
       projectsCount: 0
     });
 

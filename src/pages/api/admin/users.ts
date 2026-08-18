@@ -20,6 +20,26 @@ export const POST: APIRoute = async ({ request }) => {
     const body = raw ? JSON.parse(raw) : {};
     const { action, userId, quotaDelta, name, email, role = 'Client Pro' } = body;
 
+    if (action === 'update_role' && userId && role) {
+      let defaultQuota = 15;
+      if (role === 'Pro' || role === 'Client Pro') defaultQuota = 500;
+      if (role === 'Max') defaultQuota = 5000;
+      if (role === 'Superadmin') defaultQuota = 99999;
+
+      const updated = await UsersDB.updateUser(userId, {
+        role,
+        ...(quotaDelta !== undefined ? { quota: quotaDelta } : { quota: defaultQuota })
+      });
+      return new Response(JSON.stringify({
+        success: true,
+        message: `Role pengguna berhasil diubah menjadi ${role}.`,
+        user: updated
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     if (action === 'adjust_quota' && userId) {
       const updated = UsersDB.updateQuota(userId, quotaDelta || 100);
       if (!updated) {
