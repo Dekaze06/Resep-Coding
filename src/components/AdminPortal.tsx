@@ -91,111 +91,19 @@ export default function AdminPortal() {
 
   // Stats
   const [stats, setStats] = useState({
-    totalUsers: 1420,
-    totalProjects: 3890,
-    apiCalls24h: 18450,
-    serverUptime: '99.98%',
-    avgGenTime: '2.4s',
+    totalUsers: 0,
+    totalProjects: 0,
+    apiCalls24h: 0,
+    serverUptime: '100%',
+    avgGenTime: '1.8s',
     activeEdgeNodes: 312
   });
 
-  // User Management
-  const [users, setUsers] = useState<UserRecord[]>([
-    {
-      id: 'usr_1',
-      name: 'Agus Pratama',
-      email: 'agus@satusite.studio',
-      role: 'Superadmin',
-      status: 'active',
-      quota: 9999,
-      projectsCount: 42,
-      joinedAt: '01 Jan 2026'
-    },
-    {
-      id: 'usr_2',
-      name: 'Budi Santoso',
-      email: 'budi.dev@gmail.com',
-      role: 'Client Pro',
-      status: 'active',
-      quota: 250,
-      projectsCount: 14,
-      joinedAt: '12 Feb 2026'
-    },
-    {
-      id: 'usr_3',
-      name: 'Siti Rahmawati',
-      email: 'siti.uiux@company.id',
-      role: 'Client Pro',
-      status: 'active',
-      quota: 180,
-      projectsCount: 8,
-      joinedAt: '18 Mar 2026'
-    },
-    {
-      id: 'usr_4',
-      name: 'Demo Client',
-      email: 'demo@satusite.studio',
-      role: 'Client Pro',
-      status: 'active',
-      quota: 50,
-      projectsCount: 4,
-      joinedAt: '15 Agu 2026'
-    },
-    {
-      id: 'usr_5',
-      name: 'Rian Hidayat',
-      email: 'rian.free@yahoo.com',
-      role: 'Free User',
-      status: 'active',
-      quota: 10,
-      projectsCount: 2,
-      joinedAt: '17 Agu 2026'
-    }
-  ]);
+  // User Management (Real Data from MongoDB)
+  const [users, setUsers] = useState<UserRecord[]>([]);
 
-  // Projects Management
-  const [platformProjects, setPlatformProjects] = useState<PlatformProject[]>([
-    {
-      id: 'proj_101',
-      name: 'Portal Sekolah Profesional',
-      owner: 'agus@satusite.studio',
-      category: 'Pendidikan',
-      mode: 'fullstack',
-      createdAt: '18 Agu 2026',
-      isFeatured: true,
-      status: 'Live'
-    },
-    {
-      id: 'proj_102',
-      name: 'Landing Page Toko Kopi',
-      owner: 'budi.dev@gmail.com',
-      category: 'Bisnis & Kuliner',
-      mode: 'frontend',
-      createdAt: '17 Agu 2026',
-      isFeatured: true,
-      status: 'Live'
-    },
-    {
-      id: 'proj_103',
-      name: 'Nexus Analytics Dashboard',
-      owner: 'siti.uiux@company.id',
-      category: 'SaaS Dashboard',
-      mode: 'fullstack',
-      createdAt: '16 Agu 2026',
-      isFeatured: false,
-      status: 'Live'
-    },
-    {
-      id: 'proj_104',
-      name: 'Aplikasi Kasir POS Resto',
-      owner: 'demo@satusite.studio',
-      category: 'Web App',
-      mode: 'prd',
-      createdAt: '15 Agu 2026',
-      isFeatured: false,
-      status: 'Draft'
-    }
-  ]);
+  // Projects Management (Real Data from MongoDB)
+  const [platformProjects, setPlatformProjects] = useState<PlatformProject[]>([]);
 
   // AI Model Settings
   const [primaryModel, setPrimaryModel] = useState<string>('gemini-2.5-flash');
@@ -243,7 +151,7 @@ export default function AdminPortal() {
       const userRes = await fetch('/api/admin/users');
       if (userRes.ok) {
         const uData = await userRes.json();
-        if (uData.success && Array.isArray(uData.users) && uData.users.length > 0) {
+        if (uData.success && Array.isArray(uData.users)) {
           setUsers(uData.users);
         }
       }
@@ -252,11 +160,11 @@ export default function AdminPortal() {
       const projRes = await fetch('/api/projects');
       if (projRes.ok) {
         const pData = await projRes.json();
-        if (pData.success && Array.isArray(pData.projects) && pData.projects.length > 0) {
+        if (pData.success && Array.isArray(pData.projects)) {
           setPlatformProjects(pData.projects.map((p: any) => ({
             id: p.id,
             name: p.name,
-            owner: p.owner || 'demo@satusite.studio',
+            owner: p.owner || 'user@satusite.studio',
             category: p.category || 'Web App',
             mode: p.mode || 'fullstack',
             createdAt: p.createdAt ? new Date(p.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Hari ini',

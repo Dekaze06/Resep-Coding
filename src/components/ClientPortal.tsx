@@ -36,7 +36,8 @@ import {
   CreditCard,
   User,
   Bell,
-  Cpu
+  Cpu,
+  LogIn
 } from 'lucide-react';
 
 export interface ProjectItem {
@@ -49,6 +50,7 @@ export interface ProjectItem {
   views: number;
   code?: string;
   prompt?: string;
+  owner?: string;
 }
 
 export default function ClientPortal() {
@@ -57,42 +59,55 @@ export default function ClientPortal() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
-  const [user, setUser] = useState<{ id?: string; name: string; email: string; role: string; quota: number; projectsCount: number } | null>(null);
+  const [user, setUser] = useState<{ id?: string; name: string; email: string; avatar?: string; role: string; quota: number; projectsCount: number; authProvider?: string } | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
-  const [activeViewMode, setActiveViewMode] = useState<'grid' | 'table'>('grid');
 
   // Settings State
   const [savedSettingsSuccess, setSavedSettingsSuccess] = useState<boolean>(false);
-  const [clientName, setClientName] = useState<string>('Demo Client');
-  const [clientEmail, setClientEmail] = useState<string>('demo@satusite.studio');
+  const [clientName, setClientName] = useState<string>('');
+  const [clientEmail, setClientEmail] = useState<string>('');
 
   // Fetch initial data from backend APIs
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      // 1. Fetch User Profile
       const authRaw = localStorage.getItem('satusite_auth_user');
-      let activeEmail = 'demo@satusite.studio';
+      let activeEmail = '';
       if (authRaw) {
         try {
           const parsed = JSON.parse(authRaw);
-          if (parsed.email) activeEmail = parsed.email;
+          if (parsed.email) {
+            activeEmail = parsed.email;
+            setUser(parsed);
+            setClientName(parsed.name || parsed.email.split('@')[0]);
+            setClientEmail(parsed.email);
+          }
         } catch (e) {}
       }
 
-      const userRes = await fetch(`/api/auth/me?email=${encodeURIComponent(activeEmail)}`);
-      if (userRes.ok) {
-        const userData = await userRes.json();
-        if (userData.success && userData.user) {
-          setUser(userData.user);
-          setClientName(userData.user.name || 'Demo Client');
-          setClientEmail(userData.user.email || 'demo@satusite.studio');
-        }
+      // 1. Fetch User Profile from MongoDB if logged in
+      if (activeEmail) {
+        try {
+          const token = localStorage.getItem('satusite_auth_token') || '';
+          const userRes = await fetch(`/api/auth/me?email=${encodeURIComponent(activeEmail)}`, {
+            headers: { ...(token && { 'Authorization': `Bearer ${token}` }) }
+          });
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            if (userData.success && userData.user) {
+              setUser(userData.user);
+              setClientName(userData.user.name || '');
+              setClientEmail(userData.user.email || '');
+              localStorage.setItem('satusite_auth_user', JSON.stringify(userData.user));
+            }
+          }
+        } catch (e) {}
       }
 
-      // 2. Fetch Projects from Server Database
-      const projRes = await fetch('/api/projects');
+      // 2. Fetch Projects from MongoDB Database
+      const projUrl = activeEmail ? `/api/projects` : `/api/projects`;
+      const projRes = await fetch(projUrl);
       let serverProjects: ProjectItem[] = [];
       if (projRes.ok) {
         const pData = await projRes.json();
@@ -104,45 +119,22 @@ export default function ClientPortal() {
             mode: p.mode || 'fullstack',
             updatedAt: p.updatedAt ? new Date(p.updatedAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Hari ini',
             status: p.status || 'Live',
-            views: p.views || 42,
+            views: p.views || 0,
             code: p.code,
-            prompt: p.prompt
+            prompt: p.prompt,
+            owner: p.owner
           }));
         }
       }
 
-      // Merge with localStorage projects if any
-      try {
-        const storeRaw = localStorage.getItem('satusite_projects_store') || localStorage.getItem('emergent_projects_store');
-        if (storeRaw) {
-          const store = JSON.parse(storeRaw);
-          if (store && store.projects) {
-            const localList: ProjectItem[] = Object.values(store.projects).map((lp: any) => ({
-              id: lp.id,
-              name: lp.name || 'Proyek AI Lokal',
-              category: 'Web App',
-              mode: 'fullstack',
-              updatedAt: lp.updatedAt ? new Date(lp.updatedAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Baru saja',
-              status: 'Live',
-              views: 12,
-              code: lp.code,
-              prompt: lp.prompt
-            }));
-
-            const combined = [...serverProjects, ...localList];
-            const unique = combined.filter((item, index, self) =>
-              index === self.findIndex(t => t.id === item.id)
-            );
-            setProjects(unique);
-          } else {
-            setProjects(serverProjects);
-          }
-        } else {
-          setProjects(serverProjects);
-        }
-      } catch (e) {
+      // Filter by current user if logged in
+      if (activeEmail) {
+        const userProjects = serverProjects.filter(p => !p.owner || p.owner.toLowerCase() === activeEmail.toLowerCase());
+        setProjects(userProjects);
+      } else {
         setProjects(serverProjects);
       }
+
     } catch (err) {
       console.warn('Error fetching client portal data:', err);
     } finally {
@@ -221,16 +213,33 @@ export default function ClientPortal() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSavedSettingsSuccess(true);
-    if (user) {
-      setUser({ ...user, name: clientName, email: clientEmail });
-    }
+    if (!user) return;
+
     try {
-      localStorage.setItem('satusite_auth_user', JSON.stringify({ name: clientName, email: clientEmail, role: user?.role || 'Client Pro' }));
-    } catch (e) {}
-    setTimeout(() => setSavedSettingsSuccess(false), 2500);
+      const token = localStorage.getItem('satusite_auth_token') || '';
+      const res = await fetch('/api/auth/me', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify({ name: clientName })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) {
+          setUser(data.user);
+          localStorage.setItem('satusite_auth_user', JSON.stringify(data.user));
+        }
+      }
+      setSavedSettingsSuccess(true);
+      setTimeout(() => setSavedSettingsSuccess(false), 2500);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const filteredProjects = projects.filter(p => {
@@ -243,13 +252,11 @@ export default function ClientPortal() {
   return (
     <div className="min-h-screen w-full bg-[#09090b] text-zinc-100 flex flex-col md:flex-row font-sans selection:bg-zinc-800 selection:text-white">
       
-      {/* ========================================================================= */}
-      {/* 1. SIDEBAR NAVIGATION (CLEAN, MINIMALIST, HIGH DENSITY)                  */}
-      {/* ========================================================================= */}
-      <aside className="w-full md:w-64 bg-[#0d0d10] border-r border-zinc-800/70 flex flex-col shrink-0 z-30">
+      {/* 1. SIDEBAR NAVIGATION */}
+      <aside className="w-full md:w-64 bg-[#09090b] border-r border-zinc-800/80 flex flex-col shrink-0 z-30">
         
         {/* Brand Header */}
-        <div className="h-16 px-5 border-b border-zinc-800/70 flex items-center justify-between">
+        <div className="h-16 px-5 border-b border-zinc-800/80 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5 group">
             <img src="/logo.png" alt="satusitE Logo" className="w-5 h-5 object-contain" />
             <div className="flex items-center gap-1.5 select-none">
@@ -264,9 +271,9 @@ export default function ClientPortal() {
         <div className="p-3">
           <a
             href="/app"
-            className="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-semibold flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer"
+            className="w-full py-2.5 px-3 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer"
           >
-            <Sparkles className="w-3.5 h-3.5 text-zinc-900" />
+            <Sparkles className="w-3.5 h-3.5 text-zinc-950" />
             <span>Studio AI Generator</span>
           </a>
         </div>
@@ -312,11 +319,11 @@ export default function ClientPortal() {
             </button>
 
             <a
-              href="/gallery"
+              href="/templates"
               className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50 transition-colors text-left"
             >
               <Layers className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Galeri & Showcase</span>
+              <span>Template & Galeri</span>
             </a>
           </div>
 
@@ -332,9 +339,9 @@ export default function ClientPortal() {
             >
               <div className="flex items-center gap-2.5">
                 <Rocket className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Deploy & Custom Domain</span>
+                <span>Deploy & Cloud Edge</span>
               </div>
-              <span className="text-[10px] font-mono text-emerald-400">Edge</span>
+              <span className="text-[10px] font-mono text-zinc-400">Live</span>
             </a>
 
             <a
@@ -354,10 +361,10 @@ export default function ClientPortal() {
             </a>
           </div>
 
-          {/* GROUP 3: AKUN & MANAJEMEN */}
+          {/* GROUP 3: AKUN & SISTEM */}
           <div className="space-y-1">
             <div className="px-2.5 py-1 text-[10px] font-mono uppercase text-zinc-500 tracking-wider">
-              Akun & Sistem
+              Akun & Preferensi
             </div>
 
             <button
@@ -371,24 +378,9 @@ export default function ClientPortal() {
             >
               <div className="flex items-center gap-2.5">
                 <Zap className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Kuota Token AI</span>
+                <span>Paket & Kuota AI</span>
               </div>
-              <span className="text-[10px] font-mono text-zinc-300 bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">
-                {user?.quota || 250}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('activity')}
-              className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-left cursor-pointer ${
-                activeTab === 'activity' 
-                  ? 'bg-zinc-800/90 text-white font-medium shadow-sm' 
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-              }`}
-            >
-              <Activity className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Log Aktivitas & Audit</span>
+              <span className="text-[10px] font-mono text-zinc-300 font-bold">{user?.quota || 0}</span>
             </button>
 
             <button
@@ -403,104 +395,68 @@ export default function ClientPortal() {
               <Settings className="w-3.5 h-3.5 text-zinc-400" />
               <span>Pengaturan Profil</span>
             </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('docs')}
-              className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-left cursor-pointer ${
-                activeTab === 'docs' 
-                  ? 'bg-zinc-800/90 text-white font-medium shadow-sm' 
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Panduan & API Doc</span>
-            </button>
           </div>
-
-          {/* SUPERADMIN ACCESS */}
-          {user?.role === 'Superadmin' && (
-            <div className="pt-2 border-t border-zinc-800/60">
-              <a
-                href="/admin"
-                className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-zinc-300 hover:text-white bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 transition-colors text-left"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Shield className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>Portal Admin</span>
-                </div>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              </a>
-            </div>
-          )}
 
         </div>
 
-        {/* User Card & Logout */}
-        <div className="p-3 border-t border-zinc-800/70">
-          <div className="flex items-center justify-between p-2 rounded-xl bg-zinc-900/40 border border-zinc-800/60">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-zinc-800 text-zinc-200 flex items-center justify-center font-bold text-[11px] shrink-0 border border-zinc-700/60">
-                {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+        {/* User Footer Profile */}
+        <div className="p-3 border-t border-zinc-800/80">
+          {user ? (
+            <div className="flex items-center justify-between p-2 rounded-xl bg-zinc-900 border border-zinc-800">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <img
+                  src={user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name || user.email)}&backgroundColor=27272a`}
+                  alt={user.name}
+                  className="w-7 h-7 rounded-lg bg-zinc-800 border border-zinc-700 object-cover shrink-0"
+                />
+                <div className="min-w-0">
+                  <div className="text-xs font-semibold text-white truncate">{user.name}</div>
+                  <div className="text-[10px] text-zinc-400 truncate">{user.email}</div>
+                </div>
               </div>
-              <div className="min-w-0">
-                <div className="text-xs font-medium text-white truncate">{user?.name || 'Klien satusitE'}</div>
-                <div className="text-[10px] text-zinc-500 truncate">{user?.email || 'demo@satusite.studio'}</div>
-              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors shrink-0 cursor-pointer"
+                title="Keluar"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors cursor-pointer"
-              title="Keluar"
+          ) : (
+            <a
+              href="/login"
+              className="w-full py-2 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-white text-xs font-medium flex items-center justify-center gap-2 transition-colors"
             >
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
-          </div>
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Masuk Akun</span>
+            </a>
+          )}
         </div>
 
       </aside>
 
-      {/* ========================================================================= */}
-      {/* 2. MAIN CONTENT VIEW (CLEAN MINIMALIST LAYOUT)                            */}
-      {/* ========================================================================= */}
+      {/* 2. MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         
-        {/* Top Header Bar */}
-        <header className="h-16 border-b border-zinc-800/70 bg-[#09090b]/90 backdrop-blur-md px-6 flex items-center justify-between shrink-0 sticky top-0 z-20">
-          <div className="flex items-center gap-3">
-            <h2 className="text-sm font-semibold text-white tracking-tight">
+        {/* Top Navbar */}
+        <header className="h-16 px-6 border-b border-zinc-800/80 flex items-center justify-between shrink-0 bg-transparent">
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-white capitalize">
               {activeTab === 'overview' && 'Ringkasan Dashboard'}
-              {activeTab === 'projects' && 'Katalog Aplikasi Web'}
-              {activeTab === 'quota' && 'Manajemen Kuota Token AI'}
-              {activeTab === 'activity' && 'Log Audit & Aktivitas'}
-              {activeTab === 'settings' && 'Pengaturan Akun & Profil'}
-              {activeTab === 'docs' && 'Panduan Integrasi & API'}
+              {activeTab === 'projects' && 'Koleksi Proyek'}
+              {activeTab === 'quota' && 'Paket & Kuota AI'}
+              {activeTab === 'settings' && 'Pengaturan Akun'}
             </h2>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-zinc-400">
-              <Zap className="w-3.5 h-3.5 text-zinc-400" />
-              <span className="font-mono text-zinc-200">{user?.quota || 250}</span>
-              <span className="text-zinc-500">Token</span>
-            </div>
-
-            <button
-              type="button"
-              onClick={fetchAllData}
-              className="p-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
-              title="Segarkan Data"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-white' : ''}`} />
-            </button>
-
             <a
               href="/app"
-              className="px-3 py-1.5 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
+              className="px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Proyek Baru</span>
+              <span>Buat Proyek Baru</span>
             </a>
           </div>
         </header>
@@ -508,9 +464,7 @@ export default function ClientPortal() {
         {/* Content Viewport */}
         <div className="p-5 sm:p-7 lg:p-8 space-y-6 max-w-7xl">
           
-          {/* ===================================================================== */}
-          {/* TAB 1: OVERVIEW                                                       */}
-          {/* ===================================================================== */}
+          {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="space-y-6 animate-fade-in-up">
               
@@ -518,26 +472,26 @@ export default function ClientPortal() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-1.5">
                   <div className="text-[11px] text-zinc-500 font-mono uppercase">Total Proyek Web</div>
-                  <div className="text-2xl font-semibold text-white tracking-tight">{projects.length}</div>
-                  <div className="text-[11px] text-zinc-400">Tersimpan di Cloud Database</div>
+                  <div className="text-2xl font-semibold text-white tracking-tight font-mono">{projects.length}</div>
+                  <div className="text-[11px] text-zinc-400">Tersimpan di MongoDB Atlas</div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-1.5">
-                  <div className="text-[11px] text-zinc-500 font-mono uppercase">Sisa Kuota AI</div>
-                  <div className="text-2xl font-semibold text-white tracking-tight font-mono">{user?.quota || 250}</div>
-                  <div className="text-[11px] text-zinc-400">Token Generasi Aktif</div>
+                  <div className="text-[11px] text-zinc-500 font-mono uppercase">Sisa Kuota Token</div>
+                  <div className="text-2xl font-semibold text-white tracking-tight font-mono">{user?.quota || 100}</div>
+                  <div className="text-[11px] text-zinc-400">Token Generasi AI</div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-1.5">
-                  <div className="text-[11px] text-zinc-500 font-mono uppercase">Paket Langganan</div>
+                  <div className="text-[11px] text-zinc-500 font-mono uppercase">Tingkat Paket</div>
                   <div className="text-2xl font-semibold text-white tracking-tight">{user?.role || 'Client Pro'}</div>
-                  <div className="text-[11px] text-zinc-400">Akses Tanpa Batas</div>
+                  <div className="text-[11px] text-zinc-400">Status Akun Aktif</div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-1.5">
-                  <div className="text-[11px] text-zinc-500 font-mono uppercase">Jaringan Edge CDN</div>
-                  <div className="text-2xl font-semibold text-emerald-400 tracking-tight">100% Aktif</div>
-                  <div className="text-[11px] text-zinc-400">300+ Node Tersebar Global</div>
+                  <div className="text-[11px] text-zinc-500 font-mono uppercase">Database Status</div>
+                  <div className="text-2xl font-semibold text-white tracking-tight">MongoDB Cloud</div>
+                  <div className="text-[11px] text-zinc-400">Terkoneksi & Tersinkron</div>
                 </div>
               </div>
 
@@ -547,11 +501,11 @@ export default function ClientPortal() {
                   href="/app"
                   className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 hover:border-zinc-700 transition-all group space-y-2"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-zinc-800/80 border border-zinc-700/60 flex items-center justify-center text-zinc-200">
+                  <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-200">
                     <Sparkles className="w-4 h-4" />
                   </div>
                   <div className="font-semibold text-white text-xs flex items-center justify-between">
-                    <span>Studio AI Workspace</span>
+                    <span>Studio AI Generator</span>
                     <ArrowRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-colors" />
                   </div>
                   <p className="text-[11px] text-zinc-400 leading-relaxed">
@@ -563,15 +517,15 @@ export default function ClientPortal() {
                   href="/deploy"
                   className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 hover:border-zinc-700 transition-all group space-y-2"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-zinc-800/80 border border-zinc-700/60 flex items-center justify-center text-zinc-200">
+                  <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-200">
                     <Rocket className="w-4 h-4" />
                   </div>
                   <div className="font-semibold text-white text-xs flex items-center justify-between">
-                    <span>Deploy & Custom Domain</span>
+                    <span>Deploy & Cloud Edge</span>
                     <ArrowRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-colors" />
                   </div>
                   <p className="text-[11px] text-zinc-400 leading-relaxed">
-                    Hubungkan domain kustom dan deploy proyek secara instan ke Vercel atau Netlify Edge.
+                    Hubungkan domain kustom dan publikasikan aplikasi secara instan ke Vercel atau Netlify.
                   </p>
                 </a>
 
@@ -579,11 +533,11 @@ export default function ClientPortal() {
                   href="/testing"
                   className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 hover:border-zinc-700 transition-all group space-y-2"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-zinc-800/80 border border-zinc-700/60 flex items-center justify-center text-zinc-200">
+                  <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-200">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div className="font-semibold text-white text-xs flex items-center justify-between">
-                    <span>Lighthouse QA Suite</span>
+                    <span>Testing & QA Suite</span>
                     <ArrowRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-colors" />
                   </div>
                   <p className="text-[11px] text-zinc-400 leading-relaxed">
@@ -592,17 +546,17 @@ export default function ClientPortal() {
                 </a>
               </div>
 
-              {/* Recent Projects Table/Grid */}
+              {/* Projects Section */}
               <div className="bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
                   <div className="flex items-center gap-2">
                     <FolderGit2 className="w-4 h-4 text-zinc-400" />
-                    <h3 className="text-xs font-semibold text-white">Proyek Aktif Terbaru</h3>
+                    <h3 className="text-xs font-semibold text-white">Proyek Aktif Anda</h3>
                   </div>
                   <button
                     type="button"
                     onClick={() => setActiveTab('projects')}
-                    className="text-xs text-zinc-400 hover:text-white transition-colors flex items-center gap-1"
+                    className="text-xs text-zinc-400 hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
                   >
                     <span>Lihat Semua ({projects.length})</span>
                     <ChevronRight className="w-3.5 h-3.5" />
@@ -610,10 +564,23 @@ export default function ClientPortal() {
                 </div>
 
                 {projects.length === 0 ? (
-                  <div className="text-center py-10 text-zinc-500 text-xs space-y-2">
-                    <Code2 className="w-8 h-8 mx-auto opacity-30" />
-                    <p>Belum ada proyek yang dibuat.</p>
-                    <a href="/app" className="text-white hover:underline font-medium">Buka Studio AI untuk membuat proyek pertama &rarr;</a>
+                  <div className="text-center py-12 text-zinc-400 text-xs space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-500">
+                      <Code2 className="w-6 h-6" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="font-semibold text-white text-sm">Belum Ada Proyek Tersimpan</div>
+                      <p className="text-zinc-500 max-w-sm mx-auto">
+                        Database Anda saat ini dalam kondisi bersih. Mulai buat proyek pertama Anda bersama AI Agent sekarang.
+                      </p>
+                    </div>
+                    <a
+                      href="/app"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-bold transition-all shadow-md"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Buat Proyek Pertama di Studio</span>
+                    </a>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -627,7 +594,7 @@ export default function ClientPortal() {
                             </span>
                           </div>
                           <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">
-                            {p.prompt || 'Aplikasi web mandiri dengan antarmuka modern.'}
+                            {p.prompt || 'Aplikasi web mandiri dengan arsitektur modern.'}
                           </p>
                         </div>
 
@@ -638,14 +605,12 @@ export default function ClientPortal() {
                             <a
                               href={`/app?id=${p.id}`}
                               className="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 transition-colors text-[11px]"
-                              title="Buka di Studio"
                             >
                               Studio
                             </a>
                             <a
                               href={`/deploy?id=${p.id}`}
                               className="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 transition-colors text-[11px]"
-                              title="Deploy ke Cloud"
                             >
                               Deploy
                             </a>
@@ -655,7 +620,7 @@ export default function ClientPortal() {
                               className="p-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 transition-colors cursor-pointer"
                               title="Unduh HTML"
                             >
-                              {downloadSuccess === p.id ? <Check className="w-3 h-3 text-emerald-400" /> : <Download className="w-3 h-3" />}
+                              {downloadSuccess === p.id ? <Check className="w-3 h-3 text-zinc-200" /> : <Download className="w-3 h-3" />}
                             </button>
                           </div>
                         </div>
@@ -668,9 +633,7 @@ export default function ClientPortal() {
             </div>
           )}
 
-          {/* ===================================================================== */}
-          {/* TAB 2: PROJECTS CATALOG                                              */}
-          {/* ===================================================================== */}
+          {/* TAB 2: PROJECTS CATALOG */}
           {activeTab === 'projects' && (
             <div className="space-y-4 animate-fade-in-up">
               
@@ -683,7 +646,7 @@ export default function ClientPortal() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Cari proyek berdasarkan nama atau prompt..."
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-9 pr-3.5 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-700"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-9 pr-3.5 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-700 font-mono"
                   />
                 </div>
 
@@ -705,326 +668,199 @@ export default function ClientPortal() {
                 </div>
               </div>
 
-              {/* Projects Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredProjects.map(p => (
-                  <div key={p.id} className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-4 hover:border-zinc-700 transition-all flex flex-col justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <h4 className="font-semibold text-white text-xs leading-snug">{p.name}</h4>
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 uppercase">
-                          {p.category}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-zinc-400 line-clamp-3 leading-relaxed">
-                        {p.prompt || 'Aplikasi web mandiri yang dirancang oleh AI Agent.'}
-                      </p>
-                    </div>
-
-                    <div className="pt-3 border-t border-zinc-800/60 space-y-3">
-                      <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono">
-                        <span className="flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                          <span>{p.status}</span>
-                        </span>
-                        <span>{p.updatedAt}</span>
-                      </div>
-
-                      <div className="grid grid-cols-4 gap-1">
-                        <a
-                          href={`/app?id=${p.id}`}
-                          className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
-                          title="Buka di Studio"
-                        >
-                          Studio
-                        </a>
-                        <a
-                          href={`/deploy?id=${p.id}`}
-                          className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
-                          title="Deploy"
-                        >
-                          Deploy
-                        </a>
-                        <a
-                          href={`/github?id=${p.id}`}
-                          className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
-                          title="Push GitHub"
-                        >
-                          GitHub
-                        </a>
-                        <a
-                          href={`/testing?id=${p.id}`}
-                          className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
-                          title="Testing QA"
-                        >
-                          Test
-                        </a>
+              {/* Projects Grid or Empty State */}
+              {filteredProjects.length === 0 ? (
+                <div className="p-12 text-center rounded-2xl bg-zinc-900/30 border border-zinc-800 space-y-3">
+                  <Code2 className="w-8 h-8 text-zinc-600 mx-auto" />
+                  <div className="font-semibold text-white text-xs">Belum ada proyek yang sesuai</div>
+                  <a href="/app" className="text-xs text-zinc-300 hover:text-white underline inline-block">
+                    Buat proyek baru di Studio &rarr;
+                  </a>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredProjects.map(p => (
+                    <div key={p.id} className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-4 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 className="font-semibold text-white text-xs leading-snug">{p.name}</h4>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 uppercase">
+                            {p.category}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-zinc-400 line-clamp-3 leading-relaxed">
+                          {p.prompt || 'Aplikasi web mandiri yang dirancang oleh AI Agent.'}
+                        </p>
                       </div>
 
-                      <div className="flex items-center justify-between pt-1 text-[11px] text-zinc-500">
-                        <button
-                          type="button"
-                          onClick={() => handleDownloadProject(p)}
-                          className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
-                        >
-                          <Download className="w-3 h-3" />
-                          <span>Unduh File</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteProject(p.id)}
-                          className="hover:text-red-400 transition-colors flex items-center gap-1 cursor-pointer"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                          <span>Hapus</span>
-                        </button>
+                      <div className="pt-3 border-t border-zinc-800/60 space-y-3">
+                        <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono">
+                          <span className="flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+                            <span>{p.status}</span>
+                          </span>
+                          <span>{p.updatedAt}</span>
+                        </div>
+
+                        <div className="grid grid-cols-4 gap-1">
+                          <a
+                            href={`/app?id=${p.id}`}
+                            className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
+                          >
+                            Studio
+                          </a>
+                          <a
+                            href={`/deploy?id=${p.id}`}
+                            className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
+                          >
+                            Deploy
+                          </a>
+                          <a
+                            href={`/github?id=${p.id}`}
+                            className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
+                          >
+                            GitHub
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteProject(p.id)}
+                            className="py-1.5 rounded-lg bg-zinc-900 hover:bg-red-950/60 text-zinc-400 hover:text-red-400 text-[11px] flex items-center justify-center border border-zinc-800 transition-colors cursor-pointer"
+                            title="Hapus"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
             </div>
           )}
 
-          {/* ===================================================================== */}
-          {/* TAB 3: QUOTA & BILLING                                               */}
-          {/* ===================================================================== */}
+          {/* TAB 3: QUOTA & SUBSCRIPTION */}
           {activeTab === 'quota' && (
             <div className="space-y-6 animate-fade-in-up">
-              <div className="max-w-3xl bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-6 space-y-6">
-                <div className="space-y-1">
-                  <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-zinc-300" />
-                    <span>Manajemen Kuota & Langganan</span>
-                  </h3>
-                  <p className="text-xs text-zinc-400">
-                    Pantau sisa kuota token AI dan kelola paket langganan studio Anda.
-                  </p>
-                </div>
-
-                <div className="p-5 rounded-xl bg-zinc-950 border border-zinc-800 space-y-3">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-400 font-medium">Sisa Kuota Aktif</span>
-                    <span className="text-white font-mono font-semibold">{user?.quota || 250} / 500 Token</span>
+              
+              <div className="p-6 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="text-xs font-mono uppercase text-zinc-400">Paket Langganan Aktif</div>
+                    <h3 className="text-xl font-bold text-white">{user?.role || 'Gratis'}</h3>
+                    <p className="text-xs text-zinc-400">
+                      Tersambung ke akun <span className="text-white font-mono">{user?.email || 'Tamu'}</span>
+                    </p>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
-                    <div
-                      className="h-full bg-white rounded-full transition-all"
-                      style={{ width: `${Math.min(100, ((user?.quota || 250) / 500) * 100)}%` }}
-                    ></div>
+
+                  <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 text-right">
+                    <div className="text-[10px] text-zinc-500 font-mono uppercase">Sisa Kuota Token</div>
+                    <div className="text-3xl font-bold text-white font-mono">{user?.quota || 100}</div>
                   </div>
                 </div>
-
-                {/* Subscription Tiers Matrix */}
-                <div className="space-y-3 pt-2">
-                  <h4 className="text-xs font-semibold text-white">Pilihan Paket Langganan</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    
-                    {/* Gratis */}
-                    <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-3 flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-white">Gratis</span>
-                          <span className="text-[10px] text-zinc-500 font-mono">Rp 0</span>
-                        </div>
-                        <p className="text-[11px] text-zinc-400 leading-relaxed">
-                          Eksplorasi AI Studio di browser tanpa fitur download, deploy cloud, atau push GitHub.
-                        </p>
-                      </div>
-                      <a
-                        href="/app"
-                        className="w-full py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 text-[11px] font-medium text-center transition-colors"
-                      >
-                        Pakai Gratis
-                      </a>
-                    </div>
-
-                    {/* Pro */}
-                    <div className="p-4 rounded-xl bg-zinc-900/80 border-2 border-zinc-600 space-y-3 flex flex-col justify-between relative shadow-lg">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-white">Pro</span>
-                          <span className="text-[10px] text-white font-mono font-bold">Rp 265rb/bln</span>
-                        </div>
-                        <p className="text-[11px] text-zinc-300 leading-relaxed">
-                          Bisa frontend UI/UX, download bundle HTML/CSS/JS mandiri, dan arsitektur PRD struktur.
-                        </p>
-                      </div>
-                      <a
-                        href="/app?tier=pro"
-                        className="w-full py-1.5 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-[11px] text-center transition-colors"
-                      >
-                        Pilih Pro
-                      </a>
-                    </div>
-
-                    {/* Max */}
-                    <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-3 flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-white">Max</span>
-                          <span className="text-[10px] text-zinc-400 font-mono font-bold">Rp 2.35jt/bln</span>
-                        </div>
-                        <p className="text-[11px] text-zinc-400 leading-relaxed">
-                          Semua Fitur terbuka: Fullstack AI + In-Memory CRUD, 1-Click Deploy, GitHub Push, Testing QA & Unlimited Token.
-                        </p>
-                      </div>
-                      <a
-                        href="/app?tier=max"
-                        className="w-full py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-700 text-[11px] font-medium text-center transition-colors"
-                      >
-                        Pilih Max
-                      </a>
-                    </div>
-
-                  </div>
-                </div>
-
               </div>
+
+              {/* 3-Tier Official Pricing */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Gratis */}
+                <div className="p-6 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-4">
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-white text-sm">Gratis</h4>
+                    <div className="text-2xl font-bold text-white">Rp 0</div>
+                    <p className="text-xs text-zinc-400">Eksplorasi pembuatan aplikasi dasar.</p>
+                  </div>
+                  <ul className="text-xs text-zinc-400 space-y-2">
+                    <li>• Akses preview di Studio</li>
+                    <li className="text-zinc-600">• Tidak ada fitur download kode</li>
+                    <li className="text-zinc-600">• Tidak ada fitur deploy ke cloud</li>
+                    <li className="text-zinc-600">• Tidak ada fitur push GitHub</li>
+                  </ul>
+                </div>
+
+                {/* Pro */}
+                <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-600 space-y-4 relative">
+                  <span className="absolute top-4 right-4 text-[9px] px-2 py-0.5 rounded bg-zinc-800 text-white font-semibold border border-zinc-700">Populer</span>
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-white text-sm">Pro</h4>
+                    <div className="text-2xl font-bold text-white">Rp 265.000 <span className="text-xs text-zinc-500 font-normal">/ bln</span></div>
+                    <p className="text-xs text-zinc-400">Untuk kreator & web developer profesional.</p>
+                  </div>
+                  <ul className="text-xs text-zinc-300 space-y-2">
+                    <li>• Akses mode Frontend & PRD Struktur</li>
+                    <li>• Fitur unduh kode HTML5/JS lengkap</li>
+                    <li>• 500 Token generasi AI bulanan</li>
+                    <li>• Pratinjau responsif mobile & tablet</li>
+                  </ul>
+                </div>
+
+                {/* Max */}
+                <div className="p-6 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-4">
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-white text-sm">Max</h4>
+                    <div className="text-2xl font-bold text-white">Rp 2.350.000 <span className="text-xs text-zinc-500 font-normal">/ bln</span></div>
+                    <p className="text-xs text-zinc-400">Akses penuh tanpa batas untuk perusahaan.</p>
+                  </div>
+                  <ul className="text-xs text-zinc-300 space-y-2">
+                    <li>• Semua Fitur Terbuka 100%</li>
+                    <li>• Mode Fullstack + In-Memory CRUD</li>
+                    <li>• 1-Click Deploy ke Edge Network</li>
+                    <li>• Sinkronisasi otomatis repositori GitHub</li>
+                  </ul>
+                </div>
+              </div>
+
             </div>
           )}
 
-          {/* ===================================================================== */}
-          {/* TAB 4: ACTIVITY LOGS                                                 */}
-          {/* ===================================================================== */}
-          {activeTab === 'activity' && (
-            <div className="bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-5 space-y-4 animate-fade-in-up">
-              <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
-                <h3 className="text-xs font-semibold text-white flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-zinc-400" />
-                  <span>Riwayat Aktivitas & Sinkronisasi</span>
-                </h3>
-                <span className="text-[10px] font-mono text-zinc-500">Live Feed</span>
-              </div>
-
-              <div className="space-y-2 text-xs">
-                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800/70 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    <span className="text-zinc-200">Sinkronisasi Database Proyek Serverless</span>
-                  </div>
-                  <span className="text-zinc-500 font-mono text-[11px]">Baru saja</span>
-                </div>
-                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800/70 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-                    <span className="text-zinc-200">Otentikasi Klien Terverifikasi</span>
-                  </div>
-                  <span className="text-zinc-500 font-mono text-[11px]">Aktif</span>
-                </div>
-                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800/70 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
-                    <span className="text-zinc-200">Pembaruan Edge CDN Deployment</span>
-                  </div>
-                  <span className="text-zinc-500 font-mono text-[11px]">10m lalu</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ===================================================================== */}
-          {/* TAB 5: PROFILE & SETTINGS                                            */}
-          {/* ===================================================================== */}
+          {/* TAB 4: SETTINGS */}
           {activeTab === 'settings' && (
-            <div className="max-w-xl bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-6 space-y-6 animate-fade-in-up">
-              <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                  <User className="w-4 h-4 text-zinc-300" />
-                  <span>Pengaturan Profil & Akun</span>
-                </h3>
-                <p className="text-xs text-zinc-400">
-                  Perbarui identitas profil dan konfigurasi preferensi akun Anda.
-                </p>
+            <div className="space-y-6 max-w-2xl animate-fade-in-up">
+              
+              <div className="bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-6 space-y-6">
+                <div className="space-y-1 pb-4 border-b border-zinc-800/60">
+                  <h3 className="text-sm font-semibold text-white">Informasi Profil Pengguna</h3>
+                  <p className="text-xs text-zinc-400">Kelola data identitas akun yang terhubung ke MongoDB Atlas.</p>
+                </div>
+
+                {savedSettingsSuccess && (
+                  <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-700 text-xs text-zinc-200 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-zinc-300 shrink-0" />
+                    <span>Perubahan profil berhasil disimpan ke database!</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleSaveProfile} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-zinc-300">Nama Tampilan</label>
+                    <input
+                      type="text"
+                      value={clientName}
+                      onChange={(e) => setClientName(e.target.value)}
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-zinc-700"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-zinc-300">Alamat Email (Akun Utama)</label>
+                    <input
+                      type="email"
+                      disabled
+                      value={clientEmail}
+                      className="w-full bg-zinc-950/60 border border-zinc-800/60 rounded-xl p-2.5 text-xs text-zinc-500 cursor-not-allowed font-mono"
+                    />
+                  </div>
+
+                  <div className="pt-2 flex justify-end">
+                    <button
+                      type="submit"
+                      className="py-2.5 px-5 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-bold transition-all shadow-md cursor-pointer"
+                    >
+                      Simpan Perubahan
+                    </button>
+                  </div>
+                </form>
               </div>
 
-              <form onSubmit={handleSaveProfile} className="space-y-4 text-xs">
-                <div className="space-y-1.5">
-                  <label className="text-zinc-400 font-medium">Nama Lengkap</label>
-                  <input
-                    type="text"
-                    value={clientName}
-                    onChange={(e) => setClientName(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-zinc-400 font-medium">Alamat Email</label>
-                  <input
-                    type="email"
-                    value={clientEmail}
-                    onChange={(e) => setClientEmail(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700"
-                  />
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-                  >
-                    {savedSettingsSuccess ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-zinc-950" />
-                        <span>Profil Berhasil Diperbarui!</span>
-                      </>
-                    ) : (
-                      <span>Simpan Perubahan Profil</span>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {/* ===================================================================== */}
-          {/* TAB 6: DOCUMENTATION & API GUIDE                                      */}
-          {/* ===================================================================== */}
-          {activeTab === 'docs' && (
-            <div className="max-w-3xl bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-6 space-y-6 animate-fade-in-up">
-              <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-zinc-300" />
-                  <span>Panduan & Integrasi API satusitE</span>
-                </h3>
-                <p className="text-xs text-zinc-400">
-                  Panduan cepat untuk memaksimalkan workflow pengembangan web modern berbasis AI.
-                </p>
-              </div>
-
-              <div className="space-y-4 text-xs">
-                <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2">
-                  <h4 className="font-semibold text-white flex items-center gap-2">
-                    <FileCode2 className="w-3.5 h-3.5 text-zinc-400" />
-                    <span>1. Membuat Aplikasi Web dengan AI Prompt</span>
-                  </h4>
-                  <p className="text-zinc-400 text-[11px] leading-relaxed">
-                    Masuk ke menu Studio AI, pilih mode (Fullstack, Frontend, atau PRD), ketikkan ide spesifikasi aplikasi Anda, dan biarkan AI merancang struktur, kode HTML5, Tailwind CSS, dan JavaScript interaktif secara utuh.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2">
-                  <h4 className="font-semibold text-white flex items-center gap-2">
-                    <Rocket className="w-3.5 h-3.5 text-zinc-400" />
-                    <span>2. Deployment Mandiri & Custom Domain</span>
-                  </h4>
-                  <p className="text-zinc-400 text-[11px] leading-relaxed">
-                    Gunakan Deploy Hub untuk menerbitkan aplikasi ke Edge Network Vercel atau Netlify dengan sertifikat SSL gratis dan latensi ultra rendah.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2">
-                  <h4 className="font-semibold text-white flex items-center gap-2">
-                    <GitBranch className="w-3.5 h-3.5 text-zinc-400" />
-                    <span>3. Integrasi Git & GitHub Otomatis</span>
-                  </h4>
-                  <p className="text-zinc-400 text-[11px] leading-relaxed">
-                    Koneksikan token GitHub Personal Access Token (PAT) Anda untuk melakukan `git push` langsung dari browser ke repositori pribadi atau publik Anda.
-                  </p>
-                </div>
-              </div>
             </div>
           )}
 

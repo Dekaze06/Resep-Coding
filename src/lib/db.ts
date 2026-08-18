@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { getMongoDb, isMongoConfigured } from './mongodb';
+import { getMongoDb, isMongoConfigured } from './mongodb.ts';
 
 export interface ProjectData {
   id: string;
@@ -23,11 +23,14 @@ export interface UserData {
   id: string;
   name: string;
   email: string;
+  avatar?: string;
+  authProvider?: 'google' | 'email';
   role: 'Superadmin' | 'Developer' | 'Client Pro' | 'Free User';
   status: 'active' | 'suspended' | 'pending';
   quota: number;
   projectsCount: number;
   joinedAt: string;
+  lastLoginAt?: string;
 }
 
 export interface SubscriberData {
@@ -87,24 +90,27 @@ function writeJsonFile<T>(filename: string, data: T): boolean {
 
 // --- PROJECTS DAO (MongoDB + Local JSON Fallback) ---
 export const ProjectsDB = {
-  async getAllAsync(): Promise<ProjectData[]> {
+  async getAllAsync(ownerEmail?: string): Promise<ProjectData[]> {
     if (isMongoConfigured()) {
       try {
         const db = await getMongoDb();
         if (db) {
+          const filter = ownerEmail ? { owner: new RegExp(`^${ownerEmail}$`, 'i') } : {};
           const items = await db.collection<ProjectData>('projects')
-            .find({})
+            .find(filter)
             .sort({ updatedAt: -1 })
             .toArray();
-          if (items.length > 0) {
-            return items.map(({ _id, ...rest }: any) => rest as ProjectData);
-          }
+          return items.map(({ _id, ...rest }: any) => rest as ProjectData);
         }
       } catch (err) {
         console.warn('[MongoDB] Projects getAllAsync failed, using fallback:', err);
       }
     }
-    return this.getAll();
+    const all = this.getAll();
+    if (ownerEmail) {
+      return all.filter(p => p.owner.toLowerCase() === ownerEmail.toLowerCase());
+    }
+    return all;
   },
 
   getAll(): ProjectData[] {
@@ -179,7 +185,6 @@ export const ProjectsDB = {
     memoryProjects = list;
     writeJsonFile('projects.json', list);
 
-    // Background write to MongoDB if active
     if (isMongoConfigured()) {
       getMongoDb().then(db => {
         db?.collection('projects').insertOne(newProject as any).catch(console.warn);
@@ -268,9 +273,7 @@ export const UsersDB = {
         const db = await getMongoDb();
         if (db) {
           const items = await db.collection<UserData>('users').find({}).toArray();
-          if (items.length > 0) {
-            return items.map(({ _id, ...rest }: any) => rest as UserData);
-          }
+          return items.map(({ _id, ...rest }: any) => rest as UserData);
         }
       } catch (err) {
         console.warn('[MongoDB] Users getAllAsync failed:', err);
@@ -308,12 +311,77 @@ export const UsersDB = {
     return this.getAll().find(u => u.email.toLowerCase() === email.toLowerCase());
   },
 
-  create(userData: Omit<UserData, 'id' | 'joinedAt'>): UserData {
+  async upsertGoogleUser(data: { name: string; email: string; avatar?: string }): Promise<UserData> {
+    const existing = await this.getByEmailAsync(data.email);
+    const now = new Date().toISOString();
+    if (existing) {
+      const updated: UserData = {
+        ...existing,
+        name: data.name || existing.name,
+        avatar: data.avatar || existing.avatar,
+        authProvider: 'google',
+        lastLoginAt: now
+      };
+      await this.updateUser(existing.id, updated);
+      return updated;
+    }
+
+    const newUser: UserData = {
+      id: `usr_g_${Date.now()}`,
+      name: data.name || data.email.split('@')[0],
+      email: data.email,
+      avatar: data.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.name)}&backgroundColor=27272a`,
+      role: 'Client Pro',
+      status: 'active',
+      quota: 100,
+      projectsCount: 0,
+      authProvider: 'google',
+      joinedAt: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
+      lastLoginAt: now
+    };
+    return this.create(newUser);
+  },
+
+  async updateUser(id: string, updates: Partial<UserData>): Promise<UserData | null> {
+    const list = this.getAll();
+    const idx = list.findIndex(u => u.id === id);
+    if (idx === -1) {
+      if (isMongoConfigured()) {
+        try {
+          const db = await getMongoDb();
+          if (db) {
+            await db.collection('users').updateOne({ id }, { $set: updates });
+            const user = await db.collection<UserData>('users').findOne({ id });
+            if (user) {
+              const { _id, ...rest } = user as any;
+              return rest as UserData;
+            }
+          }
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    const updated = { ...list[idx], ...updates };
+    list[idx] = updated;
+    memoryUsers = list;
+    writeJsonFile('users.json', list);
+
+    if (isMongoConfigured()) {
+      getMongoDb().then(db => {
+        db?.collection('users').updateOne({ id }, { $set: updates }).catch(console.warn);
+      });
+    }
+
+    return updated;
+  },
+
+  create(userData: Omit<UserData, 'id' | 'joinedAt'> & { id?: string; joinedAt?: string }): UserData {
     const list = this.getAll();
     const newUser: UserData = {
       ...userData,
-      id: `usr_${Date.now()}`,
-      joinedAt: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+      id: userData.id || `usr_${Date.now()}`,
+      joinedAt: userData.joinedAt || new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
     };
     list.push(newUser);
     memoryUsers = list;
@@ -372,9 +440,7 @@ export const SubscribersDB = {
         const db = await getMongoDb();
         if (db) {
           const items = await db.collection<SubscriberData>('subscribers').find({}).toArray();
-          if (items.length > 0) {
-            return items.map(({ _id, ...rest }: any) => rest as SubscriberData);
-          }
+          return items.map(({ _id, ...rest }: any) => rest as SubscriberData);
         }
       } catch (err) {
         console.warn('[MongoDB] Subscribers getAllAsync failed:', err);

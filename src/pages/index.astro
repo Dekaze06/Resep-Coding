@@ -2081,6 +2081,7 @@ import Footer from "../components/ui/footer-section";
                     if (menuBtnLogout) {
                         menuBtnLogout.addEventListener("click", () => {
                             localStorage.removeItem("satusite_auth_user");
+                            localStorage.removeItem("satusite_auth_token");
                             window.location.reload();
                         });
                     }
