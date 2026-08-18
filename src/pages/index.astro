@@ -2196,7 +2196,7 @@ import Footer from "../components/ui/footer-section";
                             const isAuthed = localStorage.getItem("satusite_auth_user");
                             if (!isAuthed) {
                                 e.preventDefault();
-                                window.location.href = "/login?redirect=/app";
+                                window.location.href = "/login";
                             }
                         });
                     }
@@ -2207,8 +2207,7 @@ import Footer from "../components/ui/footer-section";
                             const isAuthed = localStorage.getItem("satusite_auth_user");
                             if (!isAuthed) {
                                 e.preventDefault();
-                                const targetHref = link.getAttribute("href") || "/app";
-                                window.location.href = `/login?redirect=${encodeURIComponent(targetHref)}`;
+                                window.location.href = "/login";
                             }
                         });
                     });

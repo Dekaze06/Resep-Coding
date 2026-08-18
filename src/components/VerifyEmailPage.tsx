@@ -46,7 +46,7 @@ export default function VerifyEmailPage() {
       const timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
       return () => clearTimeout(timer);
     } else if (status === 'success' && countdown === 0) {
-      window.location.href = '/app';
+      window.location.href = '/';
     }
   }, [status, countdown]);
 
@@ -71,17 +71,15 @@ export default function VerifyEmailPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-[#121215] border border-zinc-800/80 rounded-2xl p-8 shadow-2xl backdrop-blur-xl text-center space-y-6">
+        <div className="bg-zinc-950 border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl text-center">
 
           {/* 1. LOADING STATE */}
           {status === 'loading' && (
-            <div className="space-y-4 py-8 animate-fade-in-up">
-              <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-300">
-                <Loader2 className="w-6 h-6 animate-spin" />
-              </div>
-              <div className="space-y-1.5">
+            <div className="space-y-4 py-4">
+              <Loader2 className="w-8 h-8 animate-spin text-white mx-auto" />
+              <div className="space-y-1">
                 <h2 className="text-base font-semibold text-white">Memverifikasi Akun Anda...</h2>
-                <p className="text-xs text-zinc-400">Harap tunggu sebentar selagi kami mengonfirmasi token keamanan Anda.</p>
+                <p className="text-xs text-zinc-400">Harap tunggu sebentar, kami sedang mengaktifkan akun Anda.</p>
               </div>
             </div>
           )}
@@ -95,17 +93,17 @@ export default function VerifyEmailPage() {
 
               <div className="space-y-2">
                 <h2 className="text-lg font-bold text-white tracking-tight">
-                  Email Berhasil Diverifikasi!
+                  Verifikasi Berhasil!
                 </h2>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  Selamat datang <strong className="text-white">{verifiedUser?.name || 'Klien'}</strong>! Akun Anda kini telah aktif dengan paket <span className="text-emerald-400 font-mono font-semibold">{verifiedUser?.role || 'Gratis'}</span> ({verifiedUser?.quota || 15} Token).
+                  Selamat datang, <strong className="text-white">{verifiedUser?.name || 'Pengguna'}</strong>. Akun Anda telah aktif sepenuhnya.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800/80 text-left font-mono text-[11px] space-y-1.5 text-zinc-400">
+              <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 text-left text-xs space-y-1.5 text-zinc-400">
                 <div className="flex justify-between">
-                  <span>Alamat Email:</span>
-                  <span className="text-zinc-200">{verifiedUser?.email}</span>
+                  <span>Email:</span>
+                  <span className="font-mono text-zinc-200">{verifiedUser?.email}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Status Akun:</span>
@@ -115,19 +113,19 @@ export default function VerifyEmailPage() {
 
               <div className="pt-2 space-y-2.5">
                 <a
-                  href="/app"
+                  href="/"
                   className="w-full py-3 px-4 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-sm"
                 >
                   <Sparkles className="w-4 h-4" />
-                  <span>Buka Studio AI Sekarang ({countdown}s)</span>
+                  <span>Ke Beranda Sekarang ({countdown}s)</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </a>
 
                 <a
-                  href="/portal"
+                  href="/app"
                   className="w-full py-2.5 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs font-medium transition-colors inline-block border border-zinc-800"
                 >
-                  Ke Portal Klien
+                  Buka Studio AI
                 </a>
               </div>
             </div>

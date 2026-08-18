@@ -10,9 +10,7 @@ const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || import.meta.en
         try {
             const user = localStorage.getItem("satusite_auth_user");
             if (user) {
-                const params = new URLSearchParams(window.location.search);
-                const redirect = params.get("redirect") || "/";
-                window.location.replace(redirect.startsWith("/") ? redirect : "/");
+                window.location.replace("/");
             }
         } catch (e) {}
     </script>

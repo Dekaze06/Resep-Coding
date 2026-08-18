@@ -48,13 +48,6 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
     '392320873628-8ndje66v8i2t5svo36985atrope592q5.apps.googleusercontent.com';
 
   const getRedirectUrl = useCallback(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get("redirect");
-      if (redirect && redirect.startsWith("/")) {
-        return redirect;
-      }
-    } catch (e) {}
     return "/";
   }, []);
 
@@ -445,7 +438,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-zinc-200 font-bold">3.</span>
-                <span>Akun Anda akan aktif dan langsung dialihkan ke Studio AI.</span>
+                <span>Akun Anda akan aktif dan langsung dialihkan ke Beranda.</span>
               </div>
             </div>
 
