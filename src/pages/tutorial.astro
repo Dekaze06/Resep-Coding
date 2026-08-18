@@ -28,71 +28,79 @@ import Footer from '../components/Footer.astro';
             </p>
         </section>
 
-        <!-- Tutorials Grid -->
-        <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Tutorials Grid (2 columns on mobile, compact & neat) -->
+        <section class="max-w-6xl mx-auto px-3 sm:px-6 pb-20">
+            <div class="grid grid-cols-2 gap-2.5 sm:gap-6">
                 
                 <!-- Tutorial 1 -->
-                <div class="p-6 rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all">
-                    <div class="flex items-center gap-2 text-xs font-mono text-blue-400 mb-3">
-                        <i class="fa-solid fa-1"></i>
-                        <span>MODUL 1 • DASAR-DASAR</span>
+                <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1.5 text-[10px] sm:text-xs font-mono text-blue-400 mb-2 sm:mb-3">
+                            <i class="fa-solid fa-1 text-[9px] sm:text-xs"></i>
+                            <span>MODUL 1 • DASAR</span>
+                        </div>
+                        <h3 class="text-xs sm:text-lg font-bold text-white mb-1.5 sm:mb-2">Membuat Website dengan AI Studio</h3>
+                        <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed mb-3 sm:mb-4 line-clamp-3 sm:line-clamp-none">
+                            Ikuti alur wizard: tentukan nama website, kategori, tema warna, audiens, dan instruksi detail.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-2">Membuat Website Pertama dengan AI Studio</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed mb-4">
-                        Ikuti alur wizard 7-langkah: mulai dari menentukan nama website, kategori, tema warna, target audiens, fitur utama, hingga menuliskan prompt instruksi detail.
-                    </p>
-                    <a href="/app" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-blue-400 transition-colors">
-                        <span>Coba Langsung di Studio</span>
-                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    <a href="/app" class="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-white hover:text-blue-400 transition-colors">
+                        <span>Coba di Studio</span>
+                        <i class="fa-solid fa-arrow-right text-[9px]"></i>
                     </a>
                 </div>
 
                 <!-- Tutorial 2 -->
-                <div class="p-6 rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all">
-                    <div class="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-3">
-                        <i class="fa-solid fa-2"></i>
-                        <span>MODUL 2 • FULLSTACK</span>
+                <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1.5 text-[10px] sm:text-xs font-mono text-emerald-400 mb-2 sm:mb-3">
+                            <i class="fa-solid fa-2 text-[9px] sm:text-xs"></i>
+                            <span>MODUL 2 • FULLSTACK</span>
+                        </div>
+                        <h3 class="text-xs sm:text-lg font-bold text-white mb-1.5 sm:mb-2">Kelola Data In-Memory & Admin</h3>
+                        <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed mb-3 sm:mb-4 line-clamp-3 sm:line-clamp-none">
+                            Pelajari cara AI Engine mengintegrasikan state database lokal untuk katalog produk dan dashboard inventori.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-2">Mengelola Data dengan In-Memory CRUD & Panel Admin</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed mb-4">
-                        Pelajari cara AI Engine mengintegrasikan database state lokal (in-memory) untuk mengelola katalog produk, formulir pesanan, dan dashboard inventori interaktif.
-                    </p>
-                    <a href="/app?mode=fullstack" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-emerald-400 transition-colors">
-                        <span>Buka Mode Fullstack</span>
-                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    <a href="/product/fullstack" class="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-white hover:text-emerald-400 transition-colors">
+                        <span>Mode Fullstack</span>
+                        <i class="fa-solid fa-arrow-right text-[9px]"></i>
                     </a>
                 </div>
 
                 <!-- Tutorial 3 -->
-                <div class="p-6 rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all">
-                    <div class="flex items-center gap-2 text-xs font-mono text-purple-400 mb-3">
-                        <i class="fa-solid fa-3"></i>
-                        <span>MODUL 3 • INTEGRASI GIT</span>
+                <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1.5 text-[10px] sm:text-xs font-mono text-purple-400 mb-2 sm:mb-3">
+                            <i class="fa-solid fa-3 text-[9px] sm:text-xs"></i>
+                            <span>MODUL 3 • GIT</span>
+                        </div>
+                        <h3 class="text-xs sm:text-lg font-bold text-white mb-1.5 sm:mb-2">Sinkronisasi & Push ke GitHub</h3>
+                        <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed mb-3 sm:mb-4 line-clamp-3 sm:line-clamp-none">
+                            Hubungkan PAT GitHub Anda untuk push kode langsung ke repository baru tanpa terminal manual.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-2">Sinkronisasi & Push Proyek ke GitHub</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed mb-4">
-                        Hubungkan Personal Access Token (PAT) GitHub Anda untuk melakukan push kode langsung ke repository baru atau existing tanpa perlu terminal manual.
-                    </p>
-                    <a href="/github" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-purple-400 transition-colors">
+                    <a href="/github" class="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-white hover:text-purple-400 transition-colors">
                         <span>Buka GitHub Hub</span>
-                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        <i class="fa-solid fa-arrow-right text-[9px]"></i>
                     </a>
                 </div>
 
                 <!-- Tutorial 4 -->
-                <div class="p-6 rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all">
-                    <div class="flex items-center gap-2 text-xs font-mono text-amber-400 mb-3">
-                        <i class="fa-solid fa-4"></i>
-                        <span>MODUL 4 • DEPLOYMENT</span>
+                <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1.5 text-[10px] sm:text-xs font-mono text-amber-400 mb-2 sm:mb-3">
+                            <i class="fa-solid fa-4 text-[9px] sm:text-xs"></i>
+                            <span>MODUL 4 • DEPLOY</span>
+                        </div>
+                        <h3 class="text-xs sm:text-lg font-bold text-white mb-1.5 sm:mb-2">Deploy ke Vercel & Netlify</h3>
+                        <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed mb-3 sm:mb-4 line-clamp-3 sm:line-clamp-none">
+                            Publikasikan website statis ke edge serverless global dengan domain live HTTPS gratis dalam hitungan detik.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-2">Deploy Instan ke Vercel & Netlify</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed mb-4">
-                        Gunakan Deploy Hub untuk mempublikasikan website statis Anda ke edge serverless global dengan domain live HTTPS gratis dalam hitungan detik.
-                    </p>
-                    <a href="/deploy" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-amber-400 transition-colors">
+                    <a href="/deploy" class="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-white hover:text-amber-400 transition-colors">
                         <span>Buka Deploy Hub</span>
-                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        <i class="fa-solid fa-arrow-right text-[9px]"></i>
                     </a>
                 </div>
 

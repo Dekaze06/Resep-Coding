@@ -6,7 +6,7 @@ interface Props {
 const { activePage = 'home' } = Astro.props;
 ---
 
-<header id="main-header-nav" class="sticky top-0 z-50 px-4 sm:px-6 py-4 bg-transparent border-none transition-all duration-300 ease-in-out will-change-transform translate-y-0">
+<header id="main-header-nav" class="sticky top-0 z-50 px-4 sm:px-6 py-3.5 bg-transparent border-b border-transparent transition-[transform,background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform translate-y-0">
   <div class="max-w-7xl mx-auto flex items-center justify-between">
     
     <!-- Brand Logo -->
@@ -602,7 +602,7 @@ const { activePage = 'home' } = Astro.props;
 
 <script is:inline>
   document.addEventListener("DOMContentLoaded", () => {
-    // 0. Seamless Header Scroll & Auto-Hide Effect
+    // 0. Seamless Header Scroll & Smooth Auto-Hide Effect
     const headerNav = document.getElementById("main-header-nav");
     const mobileNavDrawer = document.getElementById("mobile-nav-drawer");
     
@@ -614,27 +614,28 @@ const { activePage = 'home' } = Astro.props;
         const currentScrollY = window.scrollY;
         const isMobileDrawerOpen = mobileNavDrawer && !mobileNavDrawer.classList.contains("hidden");
 
-        // 1. Glassmorphism Background Transition
+        // 1. Glassmorphism Background Transition (no height jump, smooth colors)
         if (currentScrollY > 20) {
-          headerNav.classList.add("bg-[#08080a]/90", "backdrop-blur-xl", "border-b", "border-zinc-800/80", "py-3", "shadow-[0_10px_30px_rgba(0,0,0,0.5)]");
-          headerNav.classList.remove("bg-transparent", "border-none", "py-4");
+          headerNav.classList.add("bg-[#08080a]/90", "backdrop-blur-xl", "border-zinc-800/80", "shadow-[0_10px_30px_rgba(0,0,0,0.6)]");
+          headerNav.classList.remove("bg-transparent", "border-transparent", "shadow-none");
         } else {
-          headerNav.classList.remove("bg-[#08080a]/90", "backdrop-blur-xl", "border-b", "border-zinc-800/80", "py-3", "shadow-[0_10px_30px_rgba(0,0,0,0.5)]");
-          headerNav.classList.add("bg-transparent", "border-none", "py-4");
+          headerNav.classList.remove("bg-[#08080a]/90", "backdrop-blur-xl", "border-zinc-800/80", "shadow-[0_10px_30px_rgba(0,0,0,0.6)]");
+          headerNav.classList.add("bg-transparent", "border-transparent", "shadow-none");
         }
 
-        // 2. Auto-Hide Navigation: Hide on scroll down, reveal on scroll up
-        if (currentScrollY <= 50) {
-          // At or near top: always show header
+        // 2. Smooth Auto-Hide: Reveal near top, hide on deliberate scroll down, reveal on scroll up
+        if (currentScrollY <= 60) {
+          // Near top: always reveal header smoothly
           headerNav.classList.remove("-translate-y-full");
           headerNav.classList.add("translate-y-0");
         } else if (!isMobileDrawerOpen) {
-          if (currentScrollY > lastScrollY + 6) {
-            // Scrolling down -> Auto hide
+          const delta = currentScrollY - lastScrollY;
+          if (delta > 10 && currentScrollY > 100) {
+            // Deliberate scroll down -> Auto hide
             headerNav.classList.add("-translate-y-full");
             headerNav.classList.remove("translate-y-0");
-          } else if (currentScrollY < lastScrollY - 6) {
-            // Scrolling up -> Reveal
+          } else if (delta < -8) {
+            // Deliberate scroll up -> Smooth reveal
             headerNav.classList.remove("-translate-y-full");
             headerNav.classList.add("translate-y-0");
           }
@@ -656,7 +657,6 @@ const { activePage = 'home' } = Astro.props;
 
     // 1. Mobile Menu Toggle
     const btnMobileToggle = document.getElementById("btn-mobile-menu-toggle");
-    const mobileNavDrawer = document.getElementById("mobile-nav-drawer");
     const iconMobileMenu = document.getElementById("icon-mobile-menu");
 
     if (btnMobileToggle && mobileNavDrawer) {
@@ -705,8 +705,8 @@ const { activePage = 'home' } = Astro.props;
         if (navMenuUserEmail) navMenuUserEmail.textContent = user.email || "";
 
         const avatarUrl = user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(displayName)}&backgroundColor=18181b`;
-        if (navUserAvatar) (navUserAvatar as HTMLImageElement).src = avatarUrl;
-        if (navMenuAvatar) (navMenuAvatar as HTMLImageElement).src = avatarUrl;
+        if (navUserAvatar) navUserAvatar.src = avatarUrl;
+        if (navMenuAvatar) navMenuAvatar.src = avatarUrl;
 
         const role = user.role || "user";
         if (navMenuUserRole) {
@@ -732,7 +732,7 @@ const { activePage = 'home' } = Astro.props;
           });
 
           document.addEventListener("click", (e) => {
-            if (!accountContainer.contains(e.target as Node)) {
+            if (accountContainer && !accountContainer.contains(e.target)) {
               accountMenu.classList.add("hidden");
               if (accountChevron) accountChevron.classList.remove("rotate-180");
             }

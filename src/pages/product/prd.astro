@@ -45,55 +45,55 @@ import Footer from '../../components/Footer.astro';
                 </div>
             </section>
 
-            <!-- Key Pillars Grid -->
-            <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Key Pillars Grid (2 columns on mobile) -->
+            <section class="max-w-6xl mx-auto px-3 sm:px-6 pb-16">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6">
                     
                     <!-- Feature 1 -->
-                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
                         <div>
-                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
-                                <i class="fa-regular fa-file-lines text-sm"></i>
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-3 sm:mb-4">
+                                <i class="fa-regular fa-file-lines text-xs sm:text-sm"></i>
                             </div>
-                            <h3 class="text-base font-bold text-white mb-2">Struktur Dokumen Standar Industri</h3>
-                            <p class="text-xs text-zinc-400 leading-relaxed">
-                                Format PRD terstandarisasi mencakup Executive Summary, Problem Statement, Target User Personas, Core Value Proposition, dan Success Metrics (KPI).
+                            <h3 class="text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2">Format Standar</h3>
+                            <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                                Format PRD terstandarisasi: Executive Summary, Personas, Value Prop, dan KPI.
                             </p>
                         </div>
-                        <div class="pt-6">
-                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-amber-400">Spec Blueprint</span>
+                        <div class="pt-3 sm:pt-6">
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-zinc-900 border border-zinc-800 text-[9px] sm:text-[10px] font-mono text-amber-400">Spec Doc</span>
                         </div>
                     </div>
 
                     <!-- Feature 2 -->
-                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
                         <div>
-                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
-                                <i class="fa-solid fa-diagram-project text-sm"></i>
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-3 sm:mb-4">
+                                <i class="fa-solid fa-diagram-project text-xs sm:text-sm"></i>
                             </div>
-                            <h3 class="text-base font-bold text-white mb-2">Skema Entitas Data & API Contracts</h3>
-                            <p class="text-xs text-zinc-400 leading-relaxed">
-                                Definisi model database (tabel, field, tipe data, relasi) dan spesifikasi REST endpoint yang siap diimplementasikan oleh tim engineering.
+                            <h3 class="text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2">Skema & API Contracts</h3>
+                            <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                                Definisi model database (tabel, relasi) dan spesifikasi REST API siap koding.
                             </p>
                         </div>
-                        <div class="pt-6">
-                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-amber-400">Data Architecture</span>
+                        <div class="pt-3 sm:pt-6">
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-zinc-900 border border-zinc-800 text-[9px] sm:text-[10px] font-mono text-amber-400">Data Schema</span>
                         </div>
                     </div>
 
                     <!-- Feature 3 -->
-                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all col-span-2 md:col-span-1 flex flex-col justify-between">
                         <div>
-                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
-                                <i class="fa-solid fa-list-check text-sm"></i>
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-3 sm:mb-4">
+                                <i class="fa-solid fa-list-check text-xs sm:text-sm"></i>
                             </div>
-                            <h3 class="text-base font-bold text-white mb-2">Roadmap & Tahapan Implementasi</h3>
-                            <p class="text-xs text-zinc-400 leading-relaxed">
-                                Pembagian fase pengembangan MVP (Minimum Viable Product), estimasi kompleksitas teknis, dan checklist kesiapan rilis produk.
+                            <h3 class="text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2">Roadmap & Tahapan</h3>
+                            <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                                Pembagian fase pengembangan MVP, estimasi kompleksitas, dan checklist rilis.
                             </p>
                         </div>
-                        <div class="pt-6">
-                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-amber-400">Sprint Ready</span>
+                        <div class="pt-3 sm:pt-6">
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-zinc-900 border border-zinc-800 text-[9px] sm:text-[10px] font-mono text-amber-400">Sprint Ready</span>
                         </div>
                     </div>
 

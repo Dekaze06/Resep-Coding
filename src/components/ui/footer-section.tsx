@@ -59,10 +59,7 @@ const footerLinks: FooterSection[] = [
 
 export function Footer() {
 	return (
-		<footer className="relative w-full max-w-6xl mx-auto flex flex-col items-center justify-center rounded-t-3xl md:rounded-t-[40px] border-t border-zinc-800/80 bg-[radial-gradient(40%_140px_at_50%_0%,rgba(255,255,255,0.08),transparent)] px-6 py-12 lg:py-16 mt-20 text-zinc-300">
-			{/* Top Center White Glow Line */}
-			<div className="absolute top-0 right-1/2 left-1/2 h-[1px] w-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
-
+		<footer className="relative w-full max-w-6xl mx-auto flex flex-col items-center justify-center rounded-t-3xl md:rounded-t-[40px] border-t border-zinc-800/80 bg-[radial-gradient(40%_140px_at_50%_0%,rgba(255,255,255,0.04),transparent)] px-6 py-12 lg:py-16 mt-20 text-zinc-300">
 			<div className="grid w-full gap-8 xl:grid-cols-3 xl:gap-12">
 				{/* Brand Column */}
 				<AnimatedContainer className="space-y-4 text-left">

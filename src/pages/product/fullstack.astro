@@ -45,55 +45,55 @@ import Footer from '../../components/Footer.astro';
                 </div>
             </section>
 
-            <!-- Key Pillars Grid -->
-            <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Key Pillars Grid (2 columns on mobile) -->
+            <section class="max-w-6xl mx-auto px-3 sm:px-6 pb-16">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6">
                     
                     <!-- Feature 1 -->
-                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
                         <div>
-                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
-                                <i class="fa-solid fa-database text-sm"></i>
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-3 sm:mb-4">
+                                <i class="fa-solid fa-database text-xs sm:text-sm"></i>
                             </div>
-                            <h3 class="text-base font-bold text-white mb-2">In-Memory Data State</h3>
-                            <p class="text-xs text-zinc-400 leading-relaxed">
-                                Struktur data relasional lokal yang siap menampung katalog produk, daftar pesanan, transaksi pelanggan, dan inventori secara instan tanpa konfigurasi database fisik.
+                            <h3 class="text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2">In-Memory Data State</h3>
+                            <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                                Struktur data relasional lokal yang siap menampung katalog, pesanan, dan inventori secara instan.
                             </p>
                         </div>
-                        <div class="pt-6">
-                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-emerald-400">Ready State</span>
+                        <div class="pt-3 sm:pt-6">
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-zinc-900 border border-zinc-800 text-[9px] sm:text-[10px] font-mono text-emerald-400">Ready State</span>
                         </div>
                     </div>
 
                     <!-- Feature 2 -->
-                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
                         <div>
-                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
-                                <i class="fa-solid fa-sliders text-sm"></i>
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-3 sm:mb-4">
+                                <i class="fa-solid fa-sliders text-xs sm:text-sm"></i>
                             </div>
-                            <h3 class="text-base font-bold text-white mb-2">Logika CRUD Lengkap</h3>
-                            <p class="text-xs text-zinc-400 leading-relaxed">
-                                Fitur Create, Read, Update, dan Delete yang langsung terhubung ke tabel data, form modal interaktif, validasi input, dan filter pencarian real-time.
+                            <h3 class="text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2">Logika CRUD Lengkap</h3>
+                            <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                                Fitur Create, Read, Update, Delete langsung terhubung ke tabel data dan modal interaktif.
                             </p>
                         </div>
-                        <div class="pt-6">
-                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-emerald-400">Auto Handlers</span>
+                        <div class="pt-3 sm:pt-6">
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-zinc-900 border border-zinc-800 text-[9px] sm:text-[10px] font-mono text-emerald-400">Auto Handlers</span>
                         </div>
                     </div>
 
                     <!-- Feature 3 -->
-                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all col-span-2 md:col-span-1 flex flex-col justify-between">
                         <div>
-                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
-                                <i class="fa-solid fa-chart-pie text-sm"></i>
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-3 sm:mb-4">
+                                <i class="fa-solid fa-chart-pie text-xs sm:text-sm"></i>
                             </div>
-                            <h3 class="text-base font-bold text-white mb-2">Dashboard Panel Admin</h3>
-                            <p class="text-xs text-zinc-400 leading-relaxed">
-                                Antarmuka panel admin terisolasi untuk pemilik bisnis: pantau statistik penjualan harian, kelola stok barang, dan ekspor data ke format CSV atau JSON.
+                            <h3 class="text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2">Dashboard Panel Admin</h3>
+                            <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                                Antarmuka panel admin terisolasi untuk pantau statistik penjualan harian dan ekspor CSV.
                             </p>
                         </div>
-                        <div class="pt-6">
-                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-emerald-400">Admin UI Included</span>
+                        <div class="pt-3 sm:pt-6">
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-zinc-900 border border-zinc-800 text-[9px] sm:text-[10px] font-mono text-emerald-400">Admin UI</span>
                         </div>
                     </div>
 

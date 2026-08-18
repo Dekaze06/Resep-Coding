@@ -28,37 +28,43 @@ import Footer from '../components/Footer.astro';
             </p>
         </section>
 
-        <!-- Vision & Core Values -->
-        <section class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800">
-                    <div class="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
-                        <i class="fa-solid fa-bolt text-sm"></i>
+        <!-- Vision & Core Values (2 columns on mobile) -->
+        <section class="max-w-6xl mx-auto px-3 sm:px-6 py-12">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6">
+                <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0c0c0e] border border-zinc-800 flex flex-col justify-between">
+                    <div>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mb-3 sm:mb-4">
+                            <i class="fa-solid fa-bolt text-xs sm:text-sm"></i>
+                        </div>
+                        <h3 class="text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2">Kecepatan Tinggi</h3>
+                        <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                            Mengubah ide abstrak menjadi antarmuka responsif dan arsitektur kode fullstack dalam hitungan detik.
+                        </p>
                     </div>
-                    <h3 class="text-base font-bold text-white mb-2">Kecepatan Tanpa Kompromi</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed">
-                        Mengubah ide abstrak menjadi antarmuka responsif dan arsitektur kode fullstack siap pakai dalam hitungan detik, bukan hitungan minggu.
-                    </p>
                 </div>
 
-                <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4">
-                        <i class="fa-solid fa-code text-sm"></i>
+                <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0c0c0e] border border-zinc-800 flex flex-col justify-between">
+                    <div>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-3 sm:mb-4">
+                            <i class="fa-solid fa-code text-xs sm:text-sm"></i>
+                        </div>
+                        <h3 class="text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2">Standar Produksi</h3>
+                        <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                            Menghasilkan kode modular, bersih, tanpa dependensi berlebih, serta mendukung web modern.
+                        </p>
                     </div>
-                    <h3 class="text-base font-bold text-white mb-2">Kualitas Kode Produksi</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed">
-                        Menghasilkan kode modular, bersih, tanpa dependensi berlebih, serta mendukung standarisasi web modern (HTML5, Vanilla JS, Tailwind CSS, REST API).
-                    </p>
                 </div>
 
-                <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800">
-                    <div class="w-10 h-10 rounded-xl bg-purple-600/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-4">
-                        <i class="fa-solid fa-shield-halved text-sm"></i>
+                <div class="p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-[#0c0c0e] border border-zinc-800 col-span-2 md:col-span-1 flex flex-col justify-between">
+                    <div>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-purple-600/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-3 sm:mb-4">
+                            <i class="fa-solid fa-shield-halved text-xs sm:text-sm"></i>
+                        </div>
+                        <h3 class="text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2">Privasi 100%</h3>
+                        <p class="text-[11px] sm:text-xs text-zinc-400 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                            Seluruh kode dan aset yang dibuat adalah milik Anda 100%. Bebas diekspor atau dipush ke GitHub.
+                        </p>
                     </div>
-                    <h3 class="text-base font-bold text-white mb-2">Kepemilikan Penuh & Privasi</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed">
-                        Seluruh kode dan aset yang dibuat adalah milik Anda 100%. Bebas diekspor, dihosting secara mandiri, atau dipush ke GitHub pribadi.
-                    </p>
                 </div>
             </div>
         </section>
