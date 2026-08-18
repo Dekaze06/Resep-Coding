@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { SystemConfigDB } from '../../lib/db';
+import { isMongoConfigured } from '../../lib/mongodb';
 
 export const prerender = false;
 
@@ -13,6 +14,10 @@ export const GET: APIRoute = async () => {
     version: '2.5.0',
     timestamp: new Date().toISOString(),
     uptime: `${Math.floor(uptimeSeconds / 60)}m ${Math.floor(uptimeSeconds % 60)}s`,
+    database: {
+      driver: isMongoConfigured() ? 'MongoDB Atlas' : 'In-Memory JSON Store (Local Fallback)',
+      isCloudConnected: isMongoConfigured()
+    },
     engine: {
       primary: config.primaryModel,
       fallback: config.fallbackModel,

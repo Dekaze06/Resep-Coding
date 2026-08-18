@@ -7,7 +7,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const raw = await request.text();
     const body = raw ? JSON.parse(raw) : {};
-    const { name, email, password } = body;
+    const { name, email } = body;
 
     if (!email || !name) {
       return new Response(JSON.stringify({ success: false, error: 'Nama dan email wajib diisi.' }), {
@@ -16,7 +16,7 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    const existing = UsersDB.getByEmail(email);
+    const existing = await UsersDB.getByEmailAsync(email);
     if (existing) {
       return new Response(JSON.stringify({ success: false, error: 'Email sudah terdaftar. Silakan login.' }), {
         status: 409,

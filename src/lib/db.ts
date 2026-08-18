@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { getMongoDb, isMongoConfigured } from './mongodb';
 
 export interface ProjectData {
   id: string;
@@ -84,8 +85,28 @@ function writeJsonFile<T>(filename: string, data: T): boolean {
   }
 }
 
-// --- PROJECTS DAO ---
+// --- PROJECTS DAO (MongoDB + Local JSON Fallback) ---
 export const ProjectsDB = {
+  async getAllAsync(): Promise<ProjectData[]> {
+    if (isMongoConfigured()) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          const items = await db.collection<ProjectData>('projects')
+            .find({})
+            .sort({ updatedAt: -1 })
+            .toArray();
+          if (items.length > 0) {
+            return items.map(({ _id, ...rest }: any) => rest as ProjectData);
+          }
+        }
+      } catch (err) {
+        console.warn('[MongoDB] Projects getAllAsync failed, using fallback:', err);
+      }
+    }
+    return this.getAll();
+  },
+
   getAll(): ProjectData[] {
     if (!memoryProjects) {
       memoryProjects = readJsonFile<ProjectData[]>('projects.json', []);
@@ -93,9 +114,56 @@ export const ProjectsDB = {
     return memoryProjects;
   },
 
+  async getByIdAsync(id: string): Promise<ProjectData | undefined> {
+    if (isMongoConfigured()) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          const item = await db.collection<ProjectData>('projects').findOne({ id });
+          if (item) {
+            const { _id, ...rest } = item as any;
+            return rest as ProjectData;
+          }
+        }
+      } catch (err) {
+        console.warn('[MongoDB] Projects getByIdAsync failed:', err);
+      }
+    }
+    return this.getById(id);
+  },
+
   getById(id: string): ProjectData | undefined {
     const list = this.getAll();
     return list.find(p => p.id === id);
+  },
+
+  async createAsync(project: Omit<ProjectData, 'createdAt' | 'updatedAt'> & { id?: string }): Promise<ProjectData> {
+    const now = new Date().toISOString();
+    const newProject: ProjectData = {
+      ...project,
+      id: project.id || `proj-${Date.now()}`,
+      createdAt: now,
+      updatedAt: now
+    };
+
+    if (isMongoConfigured()) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          await db.collection<ProjectData>('projects').insertOne(newProject as any);
+        }
+      } catch (err) {
+        console.warn('[MongoDB] Projects createAsync failed:', err);
+      }
+    }
+
+    // Always keep memory & file in sync as backup
+    const list = this.getAll();
+    list.unshift(newProject);
+    memoryProjects = list;
+    writeJsonFile('projects.json', list);
+
+    return newProject;
   },
 
   create(project: Omit<ProjectData, 'createdAt' | 'updatedAt'> & { id?: string }): ProjectData {
@@ -110,7 +178,30 @@ export const ProjectsDB = {
     list.unshift(newProject);
     memoryProjects = list;
     writeJsonFile('projects.json', list);
+
+    // Background write to MongoDB if active
+    if (isMongoConfigured()) {
+      getMongoDb().then(db => {
+        db?.collection('projects').insertOne(newProject as any).catch(console.warn);
+      });
+    }
+
     return newProject;
+  },
+
+  async updateAsync(id: string, updates: Partial<ProjectData>): Promise<ProjectData | null> {
+    const updated = this.update(id, updates);
+    if (isMongoConfigured() && updated) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          await db.collection('projects').updateOne({ id }, { $set: updated });
+        }
+      } catch (err) {
+        console.warn('[MongoDB] Projects updateAsync failed:', err);
+      }
+    }
+    return updated;
   },
 
   update(id: string, updates: Partial<ProjectData>): ProjectData | null {
@@ -126,7 +217,29 @@ export const ProjectsDB = {
     list[index] = updated;
     memoryProjects = list;
     writeJsonFile('projects.json', list);
+
+    if (isMongoConfigured()) {
+      getMongoDb().then(db => {
+        db?.collection('projects').updateOne({ id }, { $set: updated }).catch(console.warn);
+      });
+    }
+
     return updated;
+  },
+
+  async deleteAsync(id: string): Promise<boolean> {
+    const res = this.delete(id);
+    if (isMongoConfigured()) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          await db.collection('projects').deleteOne({ id });
+        }
+      } catch (err) {
+        console.warn('[MongoDB] Projects deleteAsync failed:', err);
+      }
+    }
+    return res;
   },
 
   delete(id: string): boolean {
@@ -136,17 +249,59 @@ export const ProjectsDB = {
 
     memoryProjects = filtered;
     writeJsonFile('projects.json', filtered);
+
+    if (isMongoConfigured()) {
+      getMongoDb().then(db => {
+        db?.collection('projects').deleteOne({ id }).catch(console.warn);
+      });
+    }
+
     return true;
   }
 };
 
 // --- USERS DAO ---
 export const UsersDB = {
+  async getAllAsync(): Promise<UserData[]> {
+    if (isMongoConfigured()) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          const items = await db.collection<UserData>('users').find({}).toArray();
+          if (items.length > 0) {
+            return items.map(({ _id, ...rest }: any) => rest as UserData);
+          }
+        }
+      } catch (err) {
+        console.warn('[MongoDB] Users getAllAsync failed:', err);
+      }
+    }
+    return this.getAll();
+  },
+
   getAll(): UserData[] {
     if (!memoryUsers) {
       memoryUsers = readJsonFile<UserData[]>('users.json', []);
     }
     return memoryUsers;
+  },
+
+  async getByEmailAsync(email: string): Promise<UserData | undefined> {
+    if (isMongoConfigured()) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          const user = await db.collection<UserData>('users').findOne({ email: new RegExp(`^${email}$`, 'i') });
+          if (user) {
+            const { _id, ...rest } = user as any;
+            return rest as UserData;
+          }
+        }
+      } catch (err) {
+        console.warn('[MongoDB] Users getByEmailAsync failed:', err);
+      }
+    }
+    return this.getByEmail(email);
   },
 
   getByEmail(email: string): UserData | undefined {
@@ -163,6 +318,13 @@ export const UsersDB = {
     list.push(newUser);
     memoryUsers = list;
     writeJsonFile('users.json', list);
+
+    if (isMongoConfigured()) {
+      getMongoDb().then(db => {
+        db?.collection('users').insertOne(newUser as any).catch(console.warn);
+      });
+    }
+
     return newUser;
   },
 
@@ -174,6 +336,13 @@ export const UsersDB = {
     user.quota = Math.max(0, user.quota + delta);
     memoryUsers = list;
     writeJsonFile('users.json', list);
+
+    if (isMongoConfigured()) {
+      getMongoDb().then(db => {
+        db?.collection('users').updateOne({ id }, { $set: { quota: user.quota } }).catch(console.warn);
+      });
+    }
+
     return user;
   },
 
@@ -184,12 +353,36 @@ export const UsersDB = {
 
     memoryUsers = filtered;
     writeJsonFile('users.json', filtered);
+
+    if (isMongoConfigured()) {
+      getMongoDb().then(db => {
+        db?.collection('users').deleteOne({ id }).catch(console.warn);
+      });
+    }
+
     return true;
   }
 };
 
 // --- SUBSCRIBERS DAO ---
 export const SubscribersDB = {
+  async getAllAsync(): Promise<SubscriberData[]> {
+    if (isMongoConfigured()) {
+      try {
+        const db = await getMongoDb();
+        if (db) {
+          const items = await db.collection<SubscriberData>('subscribers').find({}).toArray();
+          if (items.length > 0) {
+            return items.map(({ _id, ...rest }: any) => rest as SubscriberData);
+          }
+        }
+      } catch (err) {
+        console.warn('[MongoDB] Subscribers getAllAsync failed:', err);
+      }
+    }
+    return this.getAll();
+  },
+
   getAll(): SubscriberData[] {
     if (!memorySubscribers) {
       memorySubscribers = readJsonFile<SubscriberData[]>('subscribers.json', []);
@@ -212,6 +405,13 @@ export const SubscribersDB = {
     list.push(newSub);
     memorySubscribers = list;
     writeJsonFile('subscribers.json', list);
+
+    if (isMongoConfigured()) {
+      getMongoDb().then(db => {
+        db?.collection('subscribers').insertOne(newSub as any).catch(console.warn);
+      });
+    }
+
     return { success: true, isNew: true };
   }
 };
@@ -243,6 +443,13 @@ export const SystemConfigDB = {
     };
     memoryConfig = updated;
     writeJsonFile('system-config.json', updated);
+
+    if (isMongoConfigured()) {
+      getMongoDb().then(db => {
+        db?.collection('system_config').updateOne({}, { $set: updated }, { upsert: true }).catch(console.warn);
+      });
+    }
+
     return updated;
   }
 };

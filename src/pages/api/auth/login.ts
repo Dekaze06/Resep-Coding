@@ -7,7 +7,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const raw = await request.text();
     const body = raw ? JSON.parse(raw) : {};
-    const { email, password } = body;
+    const { email } = body;
 
     if (!email) {
       return new Response(JSON.stringify({ success: false, error: 'Email wajib diisi.' }), {
@@ -16,9 +16,9 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    let user = UsersDB.getByEmail(email);
+    let user = await UsersDB.getByEmailAsync(email);
 
-    // Auto-create or login demo user if not found
+    // Auto-create or login user if not found
     if (!user) {
       user = UsersDB.create({
         name: email.split('@')[0],

@@ -92,7 +92,6 @@ export default function DeployHub() {
           const list: SavedProject[] = Object.values(store.projects);
           setProjects(list);
           if (list.length > 0) {
-            // Check query param for project ID
             const params = new URLSearchParams(window.location.search);
             const qId = params.get('id');
             const target = (qId && store.projects[qId]) ? store.projects[qId] : list[0];
@@ -225,10 +224,10 @@ export default function DeployHub() {
   };
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col selection:bg-blue-500/30 selection:text-blue-200 font-sans">
+    <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col selection:bg-zinc-800 selection:text-white font-sans">
       
       {/* Top Header */}
-      <header className="sticky top-0 z-40 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-800/80 px-6 py-3.5 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-transparent px-6 py-4 flex items-center justify-between transition-all border-none">
         <div className="flex items-center gap-3">
           <a
             href="/app"
@@ -241,7 +240,7 @@ export default function DeployHub() {
             <span className="font-agus text-sm font-normal tracking-[0.35em] text-white">satusitE</span>
             <span className="text-zinc-600 text-xs">/</span>
             <span className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
-              <Rocket className="w-3.5 h-3.5 text-blue-400" />
+              <Rocket className="w-3.5 h-3.5 text-zinc-400" />
               Deploy Hub
             </span>
           </div>
@@ -259,12 +258,12 @@ export default function DeployHub() {
             href="/testing"
             className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-xs font-medium transition-colors flex items-center gap-1.5"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
             <span className="hidden sm:inline">Testing Suite</span>
           </a>
           <a
             href="/app"
-            className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all flex items-center gap-1.5 shadow-lg shadow-blue-500/20"
+            className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"
           >
             <span>Buka Studio</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -278,8 +277,8 @@ export default function DeployHub() {
         {/* Title Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800/80 pb-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-950/60 border border-blue-800/40 text-blue-400 text-xs font-medium mb-2">
-              <Sparkles className="w-3 h-3" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs font-medium mb-2">
+              <Sparkles className="w-3 h-3 text-zinc-400" />
               <span>Production Edge Deployment</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
@@ -294,15 +293,15 @@ export default function DeployHub() {
           <div className="flex items-center gap-3">
             <div className="px-3.5 py-2 rounded-xl bg-zinc-900/80 border border-zinc-800 text-left">
               <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-mono">Global Edge</div>
-              <div className="text-sm font-bold text-emerald-400 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <div className="text-sm font-bold text-zinc-200 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-zinc-400"></span>
                 Online (300+ CDN)
               </div>
             </div>
             <div className="px-3.5 py-2 rounded-xl bg-zinc-900/80 border border-zinc-800 text-left">
               <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-mono">SSL Security</div>
               <div className="text-sm font-bold text-white flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
                 TLS 1.3 Aktif
               </div>
             </div>
@@ -319,7 +318,7 @@ export default function DeployHub() {
             <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-md bg-blue-950/70 border border-blue-800/40 text-blue-400 flex items-center justify-center text-xs font-bold font-mono">1</div>
+                  <div className="w-6 h-6 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center text-xs font-bold font-mono">1</div>
                   <h3 className="text-sm font-semibold text-white">Pilih Proyek yang Ingin Dideploy</h3>
                 </div>
                 <span className="text-[11px] text-zinc-500 font-mono">{projects.length} Proyek Tersedia</span>
@@ -336,13 +335,13 @@ export default function DeployHub() {
                         onClick={() => handleSelectProject(p.id)}
                         className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-blue-950/40 border-blue-600 text-white shadow-lg shadow-blue-950/30'
+                            ? 'bg-zinc-800/90 border-zinc-400 text-white shadow-md'
                             : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-300 hover:border-zinc-700 hover:bg-zinc-900/50'
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-semibold truncate max-w-[170px]">{p.name || 'Proyek Tanpa Nama'}</span>
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />}
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-zinc-200 shrink-0" />}
                         </div>
                         <p className="text-[10px] text-zinc-500 font-mono mt-1">
                           {p.code ? `${(p.code.length / 1024).toFixed(1)} KB` : 'HTML5 App'}
@@ -354,7 +353,7 @@ export default function DeployHub() {
               ) : (
                 <div className="p-4 rounded-xl bg-zinc-950/60 border border-zinc-800 text-center space-y-2">
                   <p className="text-xs text-zinc-400">Belum ada proyek tersimpan di browser Anda.</p>
-                  <a href="/app" className="inline-block text-xs text-blue-400 hover:text-blue-300 underline">
+                  <a href="/app" className="inline-block text-xs text-zinc-300 hover:text-white underline">
                     Buka Studio untuk membuat proyek baru &rarr;
                   </a>
                 </div>
@@ -364,7 +363,7 @@ export default function DeployHub() {
             {/* Step 2: Select Provider */}
             <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 space-y-4">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-md bg-blue-950/70 border border-blue-800/40 text-blue-400 flex items-center justify-center text-xs font-bold font-mono">2</div>
+                <div className="w-6 h-6 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center text-xs font-bold font-mono">2</div>
                 <h3 className="text-sm font-semibold text-white">Target Provider Cloud</h3>
               </div>
 
@@ -375,11 +374,11 @@ export default function DeployHub() {
                   onClick={() => setProvider('vercel')}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer relative ${
                     provider === 'vercel'
-                      ? 'bg-zinc-800 border-zinc-500 text-white'
+                      ? 'bg-zinc-800/90 border-zinc-400 text-white'
                       : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
                   }`}
                 >
-                  <span className="absolute top-2 right-2 text-[8.5px] px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 font-semibold border border-blue-800/40">Populer</span>
+                  <span className="absolute top-2 right-2 text-[8.5px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-semibold border border-zinc-700">Populer</span>
                   <div className="w-6 h-6 flex items-center justify-center text-white text-base mb-1.5">
                     <i className="fa-solid fa-play rotate-[-90deg] text-xs"></i>
                   </div>
@@ -393,11 +392,11 @@ export default function DeployHub() {
                   onClick={() => setProvider('netlify')}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     provider === 'netlify'
-                      ? 'bg-zinc-800 border-teal-500 text-white'
+                      ? 'bg-zinc-800/90 border-zinc-400 text-white'
                       : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
                   }`}
                 >
-                  <div className="w-6 h-6 flex items-center justify-center text-teal-400 text-base mb-1.5">
+                  <div className="w-6 h-6 flex items-center justify-center text-zinc-300 text-base mb-1.5">
                     <Cloud className="w-4 h-4" />
                   </div>
                   <div className="text-xs font-bold text-white">Netlify</div>
@@ -410,11 +409,11 @@ export default function DeployHub() {
                   onClick={() => setProvider('cloudflare')}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     provider === 'cloudflare'
-                      ? 'bg-zinc-800 border-amber-500 text-white'
+                      ? 'bg-zinc-800/90 border-zinc-400 text-white'
                       : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
                   }`}
                 >
-                  <div className="w-6 h-6 flex items-center justify-center text-amber-400 text-base mb-1.5">
+                  <div className="w-6 h-6 flex items-center justify-center text-zinc-300 text-base mb-1.5">
                     <Zap className="w-4 h-4" />
                   </div>
                   <div className="text-xs font-bold text-white">Cloudflare</div>
@@ -427,11 +426,11 @@ export default function DeployHub() {
                   onClick={() => setProvider('github')}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     provider === 'github'
-                      ? 'bg-zinc-800 border-zinc-500 text-white'
+                      ? 'bg-zinc-800/90 border-zinc-400 text-white'
                       : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
                   }`}
                 >
-                  <div className="w-6 h-6 flex items-center justify-center text-white text-base mb-1.5">
+                  <div className="w-6 h-6 flex items-center justify-center text-zinc-300 text-base mb-1.5">
                     <i className="fa-brands fa-github text-sm"></i>
                   </div>
                   <div className="text-xs font-bold text-white">GitHub</div>
@@ -443,7 +442,7 @@ export default function DeployHub() {
             {/* Step 3: Domain & Slug Setup */}
             <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 space-y-4">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-md bg-blue-950/70 border border-blue-800/40 text-blue-400 flex items-center justify-center text-xs font-bold font-mono">3</div>
+                <div className="w-6 h-6 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center text-xs font-bold font-mono">3</div>
                 <h3 className="text-sm font-semibold text-white">Konfigurasi Alamat URL & Domain</h3>
               </div>
 
@@ -452,7 +451,7 @@ export default function DeployHub() {
                   <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                     Subdomain Gratis ({provider}.app)
                   </label>
-                  <div className="flex items-center rounded-xl bg-zinc-950 border border-zinc-800 focus-within:border-zinc-700 overflow-hidden text-xs">
+                  <div className="flex items-center rounded-xl bg-zinc-950 border border-zinc-800 focus-within:border-zinc-600 overflow-hidden text-xs">
                     <span className="px-3 text-zinc-500 font-mono">https://</span>
                     <input
                       type="text"
@@ -476,12 +475,12 @@ export default function DeployHub() {
                     value={customDomain}
                     onChange={(e) => setCustomDomain(e.target.value.toLowerCase())}
                     placeholder="misal: www.bisnisanda.com atau app.perusahaan.id"
-                    className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-700 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-zinc-600 focus:outline-none font-mono"
+                    className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-zinc-600 focus:outline-none font-mono"
                   />
                   {customDomain && (
                     <div className="mt-2 p-3 rounded-lg bg-zinc-950 border border-zinc-800/80 text-[11px] font-mono text-zinc-400 space-y-1">
                       <div className="text-zinc-300 font-semibold">Konfigurasi DNS yang Diperlukan:</div>
-                      <div>Type: <span className="text-amber-400">CNAME</span> | Host: <span className="text-blue-400">@</span> | Value: <span className="text-emerald-400">cname.{provider}.com</span></div>
+                      <div>Type: <span className="text-zinc-200">CNAME</span> | Host: <span className="text-zinc-200">@</span> | Value: <span className="text-zinc-300">cname.{provider}.com</span></div>
                     </div>
                   )}
                 </div>
@@ -494,16 +493,16 @@ export default function DeployHub() {
                 type="button"
                 onClick={handleStartDeploy}
                 disabled={isDeploying}
-                className="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:bg-zinc-800 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-blue-600/25 cursor-pointer disabled:cursor-not-allowed"
+                className="w-full py-3.5 px-6 rounded-xl bg-zinc-100 hover:bg-white disabled:bg-zinc-800 text-zinc-950 disabled:text-zinc-500 font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer disabled:cursor-not-allowed"
               >
                 {isDeploying ? (
                   <>
-                    <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                    <RefreshCw className="w-4 h-4 animate-spin text-zinc-950" />
                     <span>Mempublikasikan ke Global Edge... ({deployStep}/4)</span>
                   </>
                 ) : (
                   <>
-                    <Rocket className="w-4 h-4 text-white" />
+                    <Rocket className="w-4 h-4 text-zinc-950" />
                     <span>Mulai Deployment Sekarang (1-Click Deploy)</span>
                   </>
                 )}
@@ -519,14 +518,14 @@ export default function DeployHub() {
             <div className="bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col h-[320px]">
               <div className="bg-zinc-900/90 px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-zinc-700"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-zinc-700"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-zinc-700"></div>
                   <span className="text-[11px] font-mono text-zinc-400 ml-2">deploy-pipeline.log</span>
                 </div>
                 {isDeploying && (
-                  <span className="text-[10px] font-mono text-blue-400 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping"></span>
+                  <span className="text-[10px] font-mono text-zinc-300 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-zinc-300 animate-ping"></span>
                     Live Streaming
                   </span>
                 )}
@@ -544,9 +543,9 @@ export default function DeployHub() {
                       key={idx}
                       className={`leading-relaxed ${
                         log.includes('✔')
-                          ? 'text-emerald-400 font-medium'
+                          ? 'text-zinc-200 font-medium'
                           : log.includes('🚀')
-                          ? 'text-blue-300 font-bold bg-blue-950/40 p-2 rounded-lg border border-blue-800/40'
+                          ? 'text-white font-bold bg-zinc-900 p-2 rounded-lg border border-zinc-700'
                           : 'text-zinc-400'
                       }`}
                     >
@@ -559,9 +558,9 @@ export default function DeployHub() {
 
             {/* Success Result Card */}
             {deployResult && (
-              <div className="bg-gradient-to-br from-blue-950/60 to-zinc-900 border border-blue-700/60 rounded-2xl p-5 space-y-4 animate-fade-in-up">
-                <div className="flex items-center gap-2 text-emerald-400 text-xs font-semibold">
-                  <CheckCircle2 className="w-4 h-4" />
+              <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-5 space-y-4 animate-fade-in-up">
+                <div className="flex items-center gap-2 text-white text-xs font-semibold">
+                  <CheckCircle2 className="w-4 h-4 text-zinc-200" />
                   <span>Website Anda Telah Live di Publik!</span>
                 </div>
 
@@ -573,7 +572,7 @@ export default function DeployHub() {
                     className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors shrink-0 cursor-pointer"
                     title="Salin URL"
                   >
-                    {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedUrl ? <Check className="w-3.5 h-3.5 text-zinc-200" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                 </div>
 
@@ -582,7 +581,7 @@ export default function DeployHub() {
                     href={deployResult.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-blue-500/20"
+                    className="py-2.5 px-3 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                   >
                     <span>Buka Website</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -599,7 +598,7 @@ export default function DeployHub() {
                         handleCopyUrl(deployResult.url);
                       }
                     }}
-                    className="py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer border border-zinc-700"
                   >
                     <Share2 className="w-3.5 h-3.5" />
                     <span>Bagikan Link</span>
@@ -636,7 +635,7 @@ export default function DeployHub() {
                     </div>
                     <div className="text-right shrink-0">
                       <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold ${
-                        h.status === 'active' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-zinc-800 text-zinc-400'
+                        h.status === 'active' ? 'bg-zinc-800 text-zinc-200 border border-zinc-700' : 'bg-zinc-900 text-zinc-500'
                       }`}>
                         {h.status === 'active' ? 'Aktif' : 'Tergantikan'}
                       </span>

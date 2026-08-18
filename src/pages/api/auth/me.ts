@@ -20,7 +20,7 @@ export const GET: APIRoute = async ({ request }) => {
     email = 'demo@satusite.studio';
   }
 
-  const user = UsersDB.getByEmail(email) || {
+  const user = (await UsersDB.getByEmailAsync(email)) || {
     id: 'usr_demo',
     name: 'Demo Client',
     email: 'demo@satusite.studio',

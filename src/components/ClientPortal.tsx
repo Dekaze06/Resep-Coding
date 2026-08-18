@@ -791,38 +791,96 @@ export default function ClientPortal() {
           {/* TAB 3: QUOTA & BILLING                                               */}
           {/* ===================================================================== */}
           {activeTab === 'quota' && (
-            <div className="max-w-2xl bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-6 space-y-6 animate-fade-in-up">
-              <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-zinc-300" />
-                  <span>Manajemen Kuota Token AI</span>
-                </h3>
-                <p className="text-xs text-zinc-400">
-                  Setiap instruksi pembuatan atau pengubahan antarmuka mengonsumsi 1 token kuota AI generasi cerdas.
-                </p>
-              </div>
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="max-w-3xl bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-6 space-y-6">
+                <div className="space-y-1">
+                  <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-zinc-300" />
+                    <span>Manajemen Kuota & Langganan</span>
+                  </h3>
+                  <p className="text-xs text-zinc-400">
+                    Pantau sisa kuota token AI dan kelola paket langganan studio Anda.
+                  </p>
+                </div>
 
-              <div className="p-5 rounded-xl bg-zinc-950 border border-zinc-800 space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-zinc-400 font-medium">Sisa Kuota Aktif</span>
-                  <span className="text-white font-mono font-semibold">{user?.quota || 250} / 500 Token</span>
+                <div className="p-5 rounded-xl bg-zinc-950 border border-zinc-800 space-y-3">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-zinc-400 font-medium">Sisa Kuota Aktif</span>
+                    <span className="text-white font-mono font-semibold">{user?.quota || 250} / 500 Token</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
+                    <div
+                      className="h-full bg-white rounded-full transition-all"
+                      style={{ width: `${Math.min(100, ((user?.quota || 250) / 500) * 100)}%` }}
+                    ></div>
+                  </div>
                 </div>
-                <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
-                  <div
-                    className="h-full bg-white rounded-full transition-all"
-                    style={{ width: `${Math.min(100, ((user?.quota || 250) / 500) * 100)}%` }}
-                  ></div>
-                </div>
-              </div>
 
-              <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2 text-xs">
-                <div className="font-medium text-white flex items-center justify-between">
-                  <span>Tipe Paket: {user?.role || 'Client Pro'}</span>
-                  <span className="text-emerald-400 text-[11px] font-mono">Aktif</span>
+                {/* Subscription Tiers Matrix */}
+                <div className="space-y-3 pt-2">
+                  <h4 className="text-xs font-semibold text-white">Pilihan Paket Langganan</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    {/* Gratis */}
+                    <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-3 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-white">Gratis</span>
+                          <span className="text-[10px] text-zinc-500 font-mono">Rp 0</span>
+                        </div>
+                        <p className="text-[11px] text-zinc-400 leading-relaxed">
+                          Eksplorasi AI Studio di browser tanpa fitur download, deploy cloud, atau push GitHub.
+                        </p>
+                      </div>
+                      <a
+                        href="/app"
+                        className="w-full py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 text-[11px] font-medium text-center transition-colors"
+                      >
+                        Pakai Gratis
+                      </a>
+                    </div>
+
+                    {/* Pro */}
+                    <div className="p-4 rounded-xl bg-zinc-900/80 border-2 border-zinc-600 space-y-3 flex flex-col justify-between relative shadow-lg">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-white">Pro</span>
+                          <span className="text-[10px] text-white font-mono font-bold">Rp 265rb/bln</span>
+                        </div>
+                        <p className="text-[11px] text-zinc-300 leading-relaxed">
+                          Bisa frontend UI/UX, download bundle HTML/CSS/JS mandiri, dan arsitektur PRD struktur.
+                        </p>
+                      </div>
+                      <a
+                        href="/app?tier=pro"
+                        className="w-full py-1.5 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-[11px] text-center transition-colors"
+                      >
+                        Pilih Pro
+                      </a>
+                    </div>
+
+                    {/* Max */}
+                    <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-3 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-white">Max</span>
+                          <span className="text-[10px] text-zinc-400 font-mono font-bold">Rp 2.35jt/bln</span>
+                        </div>
+                        <p className="text-[11px] text-zinc-400 leading-relaxed">
+                          Semua Fitur terbuka: Fullstack AI + In-Memory CRUD, 1-Click Deploy, GitHub Push, Testing QA & Unlimited Token.
+                        </p>
+                      </div>
+                      <a
+                        href="/app?tier=max"
+                        className="w-full py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-700 text-[11px] font-medium text-center transition-colors"
+                      >
+                        Pilih Max
+                      </a>
+                    </div>
+
+                  </div>
                 </div>
-                <p className="text-zinc-400 text-[11px] leading-relaxed">
-                  Paket Anda menyertakan regenerasi tanpa batas, ekspor kode sumber mandiri, integrasi deployment global, serta akses prioritas ke model AI terbaru.
-                </p>
+
               </div>
             </div>
           )}

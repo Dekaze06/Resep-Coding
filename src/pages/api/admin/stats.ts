@@ -1,12 +1,13 @@
 import type { APIRoute } from 'astro';
 import { ProjectsDB, UsersDB, SubscribersDB, SystemConfigDB } from '../../../lib/db';
+import { isMongoConfigured } from '../../../lib/mongodb';
 
 export const prerender = false;
 
 export const GET: APIRoute = async () => {
-  const users = UsersDB.getAll();
-  const projects = ProjectsDB.getAll();
-  const subscribers = SubscribersDB.getAll();
+  const users = await UsersDB.getAllAsync();
+  const projects = await ProjectsDB.getAllAsync();
+  const subscribers = await SubscribersDB.getAllAsync();
   const config = SystemConfigDB.get();
 
   return new Response(JSON.stringify({
@@ -18,6 +19,7 @@ export const GET: APIRoute = async () => {
       apiCalls24h: 18450 + Math.floor(Math.random() * 200),
       serverUptime: '99.98%',
       avgGenTime: '2.4s',
+      databaseDriver: isMongoConfigured() ? 'MongoDB Atlas Cloud' : 'In-Memory Store (Local)',
       activeEdgeNodes: config.edgeNodesCount,
       primaryModel: config.primaryModel,
       systemStatus: config.systemStatus

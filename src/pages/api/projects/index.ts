@@ -10,7 +10,7 @@ export const GET: APIRoute = async ({ request }) => {
   const search = url.searchParams.get('search');
   const featured = url.searchParams.get('featured');
 
-  let projects = ProjectsDB.getAll();
+  let projects = await ProjectsDB.getAllAsync();
 
   if (category) {
     projects = projects.filter(p => p.category.toLowerCase() === category.toLowerCase());
@@ -49,7 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    const created = ProjectsDB.create({
+    const created = await ProjectsDB.createAsync({
       id: body.id,
       name,
       category,
@@ -66,7 +66,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(JSON.stringify({
       success: true,
-      message: 'Proyek berhasil disimpan.',
+      message: 'Proyek berhasil disimpan ke database.',
       project: created
     }), {
       status: 201,

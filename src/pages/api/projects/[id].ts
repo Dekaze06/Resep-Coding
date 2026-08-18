@@ -12,7 +12,7 @@ export const GET: APIRoute = async ({ params }) => {
     });
   }
 
-  const project = ProjectsDB.getById(id);
+  const project = await ProjectsDB.getByIdAsync(id);
   if (!project) {
     return new Response(JSON.stringify({ success: false, error: 'Proyek tidak ditemukan.' }), {
       status: 404,
@@ -41,7 +41,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
   try {
     const raw = await request.text();
     const body = raw ? JSON.parse(raw) : {};
-    const updated = ProjectsDB.update(id, body);
+    const updated = await ProjectsDB.updateAsync(id, body);
 
     if (!updated) {
       return new Response(JSON.stringify({ success: false, error: 'Proyek tidak ditemukan.' }), {
@@ -75,7 +75,7 @@ export const DELETE: APIRoute = async ({ params }) => {
     });
   }
 
-  const deleted = ProjectsDB.delete(id);
+  const deleted = await ProjectsDB.deleteAsync(id);
   if (!deleted) {
     return new Response(JSON.stringify({ success: false, error: 'Proyek tidak ditemukan.' }), {
       status: 404,
@@ -85,7 +85,7 @@ export const DELETE: APIRoute = async ({ params }) => {
 
   return new Response(JSON.stringify({
     success: true,
-    message: 'Proyek berhasil dihapus.'
+    message: 'Proyek berhasil dihapus dari database.'
   }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' }

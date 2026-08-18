@@ -4,7 +4,7 @@ import { UsersDB } from '../../../lib/db';
 export const prerender = false;
 
 export const GET: APIRoute = async () => {
-  const users = UsersDB.getAll();
+  const users = await UsersDB.getAllAsync();
   return new Response(JSON.stringify({
     success: true,
     users

@@ -113,7 +113,7 @@ const PRESET_TEMPLATES: TemplateItem[] = [
   </section>
 
   <!-- Cart Drawer -->
-  <div id="cart-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex justify-end">
+  <div id="cart-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden justify-end">
     <div class="w-full max-w-md bg-zinc-900 h-full p-6 flex flex-col justify-between border-l border-zinc-800">
       <div>
         <div class="flex items-center justify-between pb-4 border-b border-zinc-800">
@@ -141,6 +141,7 @@ const PRESET_TEMPLATES: TemplateItem[] = [
     function toggleCart() {
       const drawer = document.getElementById('cart-drawer');
       drawer.classList.toggle('hidden');
+      drawer.classList.toggle('flex');
     }
     function addToCart(name, price) {
       cart.push({ name, price });
