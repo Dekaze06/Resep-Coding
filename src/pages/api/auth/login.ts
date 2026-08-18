@@ -26,7 +26,7 @@ export const POST: APIRoute = async ({ request }) => {
         email,
         role: isSuperAdmin ? 'Superadmin' : 'Gratis',
         status: 'active',
-        quota: isSuperAdmin ? 99999 : 1,
+        quota: 99999,
         projectsCount: 0
       });
     }

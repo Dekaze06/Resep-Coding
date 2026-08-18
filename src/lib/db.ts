@@ -341,7 +341,7 @@ export const UsersDB = {
       avatar: data.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.name)}&backgroundColor=27272a`,
       role: defaultRole,
       status: 'active',
-      quota: isSuperAdmin ? 99999 : 1,
+      quota: 99999,
       projectsCount: 0,
       authProvider: 'google',
       joinedAt: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),

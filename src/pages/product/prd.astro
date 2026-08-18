@@ -1,0 +1,155 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeaderNav from '../../components/HeaderNav.astro';
+---
+
+<Layout title="PRD & Planning - Panduan & Fitur Satusite Studio" description="Pelajari cara menyusun dokumen PRD (Product Requirements Document) komprehensif, skema arsitektur data, dan roadmap teknis.">
+    <!-- Subtle Ambient Background Glows -->
+    <div class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-amber-600/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[15%] w-[500px] h-[400px] bg-blue-500/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+
+    <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-amber-500/30 selection:text-amber-200">
+        <!-- Unified Top Header Nav -->
+        <HeaderNav activePage="product" />
+
+        <main class="flex-1">
+            <!-- Hero Header -->
+            <section class="pt-12 pb-12 sm:pt-20 sm:pb-16 px-4 sm:px-6 text-center max-w-5xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-[11px] font-mono text-zinc-300 mb-6">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span>MODE BLUEPRINT & PERENCANAAN TEKNIS</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white font-sans max-w-4xl mx-auto leading-[1.15]">
+                    PRD & Technical Planning
+                </h1>
+                <p class="mt-4 sm:mt-6 text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                    Hasilkan dokumen *Product Requirements Document* (PRD) profesional, diagram alur pengguna (*user flows*), skema entitas data (ERD), dan rincian arsitektur implementasi.
+                </p>
+
+                <div class="mt-8 flex items-center justify-center gap-3">
+                    <a
+                        href="/app?mode=prd"
+                        class="px-6 py-3 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition-all shadow-lg shadow-white/10 flex items-center gap-2 cursor-pointer"
+                    >
+                        <span>Mulai Susun PRD di Studio</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                    <a
+                        href="/tutorial"
+                        class="px-5 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-xs font-semibold transition-all cursor-pointer"
+                    >
+                        <span>Pelajari Format PRD</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Key Pillars Grid -->
+            <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Feature 1 -->
+                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
+                                <i class="fa-regular fa-file-lines text-sm"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-white mb-2">Struktur Dokumen Standar Industri</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Format PRD terstandarisasi mencakup Executive Summary, Problem Statement, Target User Personas, Core Value Proposition, dan Success Metrics (KPI).
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-amber-400">Spec Blueprint</span>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-diagram-project text-sm"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-white mb-2">Skema Entitas Data & API Contracts</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Definisi model database (tabel, field, tipe data, relasi) dan spesifikasi REST endpoint yang siap diimplementasikan oleh tim engineering.
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-amber-400">Data Architecture</span>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-list-check text-sm"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-white mb-2">Roadmap & Tahapan Implementasi</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Pembagian fase pengembangan MVP (Minimum Viable Product), estimasi kompleksitas teknis, dan checklist kesiapan rilis produk.
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-amber-400">Sprint Ready</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="max-w-4xl mx-auto px-4 sm:px-6 pb-24">
+                <div class="p-8 rounded-3xl bg-[#09090b] border border-zinc-800/90 shadow-2xl">
+                    <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2.5">
+                        <i class="fa-solid fa-sitemap text-zinc-400 text-sm"></i>
+                        <span>Cara Kerja Alur PRD / Planning</span>
+                    </h2>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">1</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">Tuliskan Ide atau Masalah Bisnis</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">Jelaskan target audiens dan fitur kunci yang ingin dibangun pada prompt wizard onboarding Studio.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">2</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">AI Menyusun Blueprint Teknis Terstruktur</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">AI engine Gemini menganalisis kebutuhan dan menyusun dokumen PRD lengkap dalam format Markdown dan tabel terstruktur.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">3</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">Iterasi & Perbaiki dengan AI Agent</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">Gunakan chat agent untuk menambahkan skema database khusus, alur edge-case, atau validasi aturan bisnis.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">4</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">Konversi Langsung ke Kode Aplikasi</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">Gunakan dokumen PRD yang telah disetujui untuk langsung memerintahkan AI Studio membangun aplikasi full-stacknya.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-zinc-800 flex items-center justify-between">
+                        <span class="text-xs text-zinc-400">Siap merencanakan produk digital Anda?</span>
+                        <a href="/app?mode=prd" class="inline-flex items-center gap-1.5 text-xs font-bold text-white hover:text-amber-400 transition-colors">
+                            <span>Buka Studio (Mode PRD)</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</Layout>

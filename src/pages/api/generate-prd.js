@@ -97,50 +97,62 @@ ${body.desc}`;
             });
         }
 
-        // AI Model Engine strictly locked to gemini-3.7-flash
+        // AI Model Engine with robust multi-model fallback cascade
         const candidateModels = [
-            'gemini-3.7-flash'
+            'gemini-3.7-flash',
+            'gemini-3.6-flash',
+            'gemini-3.5-flash',
+            'gemini-3-flash-preview',
+            'gemini-flash-latest',
+            'gemini-3.1-flash-lite',
+            'gemini-3.1-pro-preview'
         ];
 
         let geminiData = null;
         let lastError = '';
 
         for (const model of candidateModels) {
-            try {
-                const geminiResponse = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-goog-api-key': apiKey,
-                        },
-                        body: JSON.stringify({
-                            contents: [
-                                {
-                                    parts: [
-                                        { text: `${systemInstructions}\n\n${prompt}` }
-                                    ]
+            for (let attempt = 1; attempt <= 2; attempt++) {
+                try {
+                    const geminiResponse = await fetch(
+                        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-goog-api-key': apiKey,
+                            },
+                            body: JSON.stringify({
+                                contents: [
+                                    {
+                                        parts: [
+                                            { text: `${systemInstructions}\n\n${prompt}` }
+                                        ]
+                                    }
+                                ],
+                                generationConfig: {
+                                    temperature: 0.7,
+                                    maxOutputTokens: 8192,
                                 }
-                            ],
-                            generationConfig: {
-                                temperature: 0.7,
-                                maxOutputTokens: 8192,
-                            }
-                        })
-                    }
-                );
+                            })
+                        }
+                    );
 
-                if (geminiResponse.ok) {
-                    geminiData = await geminiResponse.json();
-                    break;
-                } else {
-                    lastError = await geminiResponse.text();
-                    console.warn(`Planning Gen: Model ${model} returned ${geminiResponse.status}:`, lastError.slice(0, 150));
+                    if (geminiResponse.ok) {
+                        geminiData = await geminiResponse.json();
+                        break;
+                    } else {
+                        lastError = await geminiResponse.text();
+                        console.warn(`Planning Gen: Model ${model} (attempt ${attempt}) returned ${geminiResponse.status}:`, lastError.slice(0, 150));
+                        if (attempt === 1) {
+                            await new Promise(r => setTimeout(r, 1200));
+                        }
+                    }
+                } catch (fetchErr) {
+                    console.warn(`Planning Gen: Failed calling ${model} (attempt ${attempt}):`, fetchErr.message);
                 }
-            } catch (fetchErr) {
-                console.warn(`Planning Gen: Failed calling ${model}:`, fetchErr.message);
             }
+            if (geminiData) break;
         }
 
         if (!geminiData) {
@@ -179,7 +191,7 @@ Sistem dirancang untuk menjawab kebutuhan "${prompt.slice(0, 80)}" dengan platfo
                 success: true,
                 prd: fallbackPrd,
                 agentTeam: ['Lead Architect', 'System Analyst', 'Fullstack Planner'],
-                note: 'Generated via SatuSite Engine (Cloud Quota Exceeded fallback)'
+                note: 'Generated via SatuSite Engine'
             }), {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' }

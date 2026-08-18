@@ -1,0 +1,102 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeaderNav from '../components/HeaderNav.astro';
+---
+
+<Layout title="Tutorial & Dokumentasi - Satusite Studio" description="Panduan langkah demi langkah menggunakan AI Studio, teknik prompt website modern, dan deployment.">
+    <!-- Subtle Ambient Background Glows -->
+    <div class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-blue-600/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[15%] w-[500px] h-[400px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+
+    <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-blue-500/30 selection:text-blue-200">
+        <HeaderNav activePage="resources" />
+
+        <main class="flex-1">
+            <!-- Hero Header -->
+            <section class="pt-12 pb-12 sm:pt-20 sm:pb-16 px-4 sm:px-6 text-center max-w-5xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-[11px] font-mono text-zinc-300 mb-6">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>PANDUAN & DOKUMENTASI RESMI</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white font-sans max-w-4xl mx-auto leading-[1.15]">
+                Tutorial & Panduan AI Studio
+            </h1>
+            <p class="mt-4 sm:mt-6 text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                Pelajari cara memanfaatkan kecerdasan buatan untuk merancang, menguji, dan mendeploy website full-stack profesional dalam hitungan menit.
+            </p>
+        </section>
+
+        <!-- Tutorials Grid -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Tutorial 1 -->
+                <div class="p-6 rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all">
+                    <div class="flex items-center gap-2 text-xs font-mono text-blue-400 mb-3">
+                        <i class="fa-solid fa-1"></i>
+                        <span>MODUL 1 • DASAR-DASAR</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Membuat Website Pertama dengan AI Studio</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed mb-4">
+                        Ikuti alur wizard 7-langkah: mulai dari menentukan nama website, kategori, tema warna, target audiens, fitur utama, hingga menuliskan prompt instruksi detail.
+                    </p>
+                    <a href="/app" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-blue-400 transition-colors">
+                        <span>Coba Langsung di Studio</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <!-- Tutorial 2 -->
+                <div class="p-6 rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all">
+                    <div class="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-3">
+                        <i class="fa-solid fa-2"></i>
+                        <span>MODUL 2 • FULLSTACK</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Mengelola Data dengan In-Memory CRUD & Panel Admin</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed mb-4">
+                        Pelajari cara AI Engine mengintegrasikan database state lokal (in-memory) untuk mengelola katalog produk, formulir pesanan, dan dashboard inventori interaktif.
+                    </p>
+                    <a href="/app?mode=fullstack" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-emerald-400 transition-colors">
+                        <span>Buka Mode Fullstack</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <!-- Tutorial 3 -->
+                <div class="p-6 rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all">
+                    <div class="flex items-center gap-2 text-xs font-mono text-purple-400 mb-3">
+                        <i class="fa-solid fa-3"></i>
+                        <span>MODUL 3 • INTEGRASI GIT</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Sinkronisasi & Push Proyek ke GitHub</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed mb-4">
+                        Hubungkan Personal Access Token (PAT) GitHub Anda untuk melakukan push kode langsung ke repository baru atau existing tanpa perlu terminal manual.
+                    </p>
+                    <a href="/github" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-purple-400 transition-colors">
+                        <span>Buka GitHub Hub</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <!-- Tutorial 4 -->
+                <div class="p-6 rounded-2xl bg-[#0d0d10] border border-zinc-800 hover:border-zinc-700 transition-all">
+                    <div class="flex items-center gap-2 text-xs font-mono text-amber-400 mb-3">
+                        <i class="fa-solid fa-4"></i>
+                        <span>MODUL 4 • DEPLOYMENT</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Deploy Instan ke Vercel & Netlify</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed mb-4">
+                        Gunakan Deploy Hub untuk mempublikasikan website statis Anda ke edge serverless global dengan domain live HTTPS gratis dalam hitungan detik.
+                    </p>
+                    <a href="/deploy" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-amber-400 transition-colors">
+                        <span>Buka Deploy Hub</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+    </main>
+</div>
+</Layout>

@@ -1,0 +1,140 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeaderNav from '../components/HeaderNav.astro';
+---
+
+<Layout title="Connectors & Integrasi - Satusite Studio" description="Konektor database, payment gateway, dan API pihak ketiga untuk memperluas aplikasi web AI Anda.">
+    <!-- Subtle Ambient Background Glows -->
+    <div class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-blue-600/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[15%] w-[500px] h-[400px] bg-indigo-500/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+
+    <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-blue-500/30 selection:text-blue-200">
+        <HeaderNav activePage="resources" />
+
+        <main class="flex-1">
+            <!-- Hero Header -->
+            <section class="pt-12 pb-12 sm:pt-20 sm:pb-16 px-4 sm:px-6 text-center max-w-5xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-[11px] font-mono text-zinc-300 mb-6">
+                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                <span>ECOSYSTEM CONNECTORS & INTEGRATIONS</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white font-sans max-w-4xl mx-auto leading-[1.15]">
+                Konektor & Integrasi API Modern
+            </h1>
+            <p class="mt-4 sm:mt-6 text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                Hubungkan website yang Anda rancang dengan ekosistem database terpopuler, gerbang pembayaran, dan layanan komunikasi instan.
+            </p>
+        </section>
+
+        <!-- Connectors Grid -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Connector 1: MongoDB -->
+                <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4">
+                            <i class="fa-solid fa-leaf text-sm"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">MongoDB Atlas</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Penyimpanan dokumen NoSQL cloud yang fleksibel untuk data katalog produk, transaksi, dan akun pengguna terdistribusi.
+                        </p>
+                    </div>
+                    <div class="pt-6">
+                        <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-emerald-400">Siap Digunakan</span>
+                    </div>
+                </div>
+
+                <!-- Connector 2: Supabase -->
+                <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4">
+                            <i class="fa-solid fa-bolt text-sm"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Supabase PostgreSQL</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Relational Database Postgres dengan otentikasi bawaan, Realtime Subscriptions, dan Row Level Security (RLS).
+                        </p>
+                    </div>
+                    <div class="pt-6">
+                        <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-emerald-400">Siap Digunakan</span>
+                    </div>
+                </div>
+
+                <!-- Connector 3: WhatsApp Direct -->
+                <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-green-600/10 border border-green-500/20 text-green-400 flex items-center justify-center mb-4">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">WhatsApp Direct Checkout</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Format pesan pemesanan otomatis dari form keranjang belanja langsung ke nomor WhatsApp admin toko dengan invoice rapi.
+                        </p>
+                    </div>
+                    <div class="pt-6">
+                        <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-green-400">Native Terintegrasi</span>
+                    </div>
+                </div>
+
+                <!-- Connector 4: GitHub Push -->
+                <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-700 text-zinc-300 flex items-center justify-center mb-4">
+                            <i class="fa-brands fa-github text-sm"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">GitHub REST API</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Ekspor repositori langsung, sinkronisasi commit otomatis, dan manajemen branch untuk workflow CI/CD modern.
+                        </p>
+                    </div>
+                    <div class="pt-6">
+                        <a href="/github" class="inline-flex items-center gap-1.5 text-xs text-blue-400 hover:underline">
+                            <span>Buka Hub GitHub</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Connector 5: Vercel & Netlify Deploy -->
+                <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
+                            <i class="fa-solid fa-rocket text-sm"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Vercel & Netlify Cloud</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Deploy website statis dalam satu klik dengan konektor API deployment token tanpa perlu konfigurasi server manual.
+                        </p>
+                    </div>
+                    <div class="pt-6">
+                        <a href="/deploy" class="inline-flex items-center gap-1.5 text-xs text-blue-400 hover:underline">
+                            <span>Buka Hub Deploy</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Connector 6: Payment Gateway (Midtrans & Stripe) -->
+                <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-purple-600/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-4">
+                            <i class="fa-regular fa-credit-card text-sm"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Payment Gateway</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Integrasi pembayaran otomatis via Midtrans Snap (QRIS, VA Bank) dan Stripe Checkout untuk transaksi kartu kredit global.
+                        </p>
+                    </div>
+                    <div class="pt-6">
+                        <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-purple-400">Tersedia di Pro/Enterprise</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+</div>
+</Layout>

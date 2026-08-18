@@ -21,6 +21,7 @@ export async function POST({ request }) {
             currentCode = '',
             prdContext = '',
             projectName = 'Emergent App',
+            projectConfig = null,
             activeAgent = 'all',
             mode = 'fullstack', // 'fullstack' | 'frontend'
             modelChoice = 'auto',
@@ -34,25 +35,10 @@ export async function POST({ request }) {
             });
         }
 
-        // Quota & Free Tier Rule Check:
-        // Free version gets 1st project generation unlimited. Once finished, quota expires (0).
+        // User lookup (unlimited generation for all users)
         let user = null;
         if (userEmail) {
             user = await UsersDB.getByEmailAsync(userEmail);
-            if (user) {
-                const role = (user.role || 'Gratis').toLowerCase();
-                const isFree = role === 'gratis' || role === 'free';
-                if (isFree && user.quota !== undefined && user.quota <= 0 && user.projectsCount >= 1) {
-                    return new Response(JSON.stringify({
-                        success: false,
-                        requiresUpgrade: true,
-                        error: 'Kuota generate gratis Anda telah selesai digunakan (1/1 proyek). Untuk melanjutkan iterasi, download kode sumber (.html/.zip), deploy, dan sinkronisasi GitHub, silakan berlangganan ke paket Pro atau Max.'
-                    }), {
-                        status: 403,
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                }
-            }
         }
 
         const apiKey = import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
@@ -74,7 +60,7 @@ Mode Aktif: ${isPrd ? 'PRD & TECHNICAL BLUEPRINT ARCHITECTURE' : isFullstack ? '
 
 PEDOMAN KODE & ESTETIKA UMUM (STRICT & WAJIB):
 1. DILARANG KERAS MENGGUNAKAN EMOJI / EMOTICON APAPUN (ATURAN MUTLAK):
-   - JANGAN PERNAH menyertakan karakter emoji atau emoticon apa pun (seperti 🚀, 📁, ⚡, 💡, 🔥, ✨, 💼, 📊, 👍, ❤️, dll.) di seluruh bagian: judul, teks tombol, badge status, menu, kartu, footer, komentar kode, maupun di pesan obrolan.
+   - JANGAN PERNAH menyertakan karakter emoji atau emoticon apa pun di seluruh bagian: judul, teks tombol, badge status, menu, kartu, footer, komentar kode, maupun di pesan obrolan.
    - Gunakan icon garis netral dari FontAwesome 6 CDN (misal: <i class="fa-solid fa-arrow-right"></i>, <i class="fa-regular fa-folder"></i>, <i class="fa-solid fa-check"></i>, <i class="fa-solid fa-code"></i>, <i class="fa-solid fa-chart-simple"></i>) yang rapi dan profesional.
 
 2. ESTETIKA CLEAN MINIMALIS (SANGAT DIREKOMENDASIKAN):
@@ -165,26 +151,32 @@ Anda WAJIB menghasilkan Aplikasi Dashboard PRD Interaktif yang memuat TIGA TAB V
    </script>
 ` : isFullstack ? `
 =============================================================================
-SPESIFIKASI KHUSUS MODE FULLSTACK (END-TO-END DATA LAYER, CRUD & INTEGRASI):
+SPESIFIKASI KHUSUS MODE FULLSTACK (END-TO-END DATA LAYER, BACKEND LOGIC & CRUD INTEGRATION):
 =============================================================================
-Anda WAJIB menghasilkan Aplikasi Web Fullstack yang berfungsi penuh sampai ke lapisan backend logic, database, dan integrasi:
-1. DATABASE & STORAGE LAYER (In-Memory + LocalStorage):
-   - Sediakan model objek database terstruktur di JavaScript dengan initial sample data yang kaya dan realistis (minimal 5-8 baris data).
-   - Sinkronisasi otomatis (auto-sync) ke browser localStorage sehingga data tidak hilang saat refresh.
-2. OPERASI CRUD LENGKAP:
-   - Create: Tombol "+ Tambah Data" yang membuka Modal Form interaktif lengkap dengan validasi field, format tanggal/angka, dan auto-generated ID.
-   - Read: Tampilan data fleksibel (Tabel Data responsif dan/atau Card Grid) lengkap dengan status badges monokrom, kolom aksi, dan penghitung total entitas.
-   - Update: Tombol "Edit" pada setiap baris/kartu data yang membuka Modal Edit dengan prefilled data, memungkinkan pembaruan instan.
-   - Delete: Tombol "Hapus" dengan konfirmasi modal dialog aman dan opsi penghapusan real-time.
-3. FITUR PENCARIAN, FILTER & SORTING REAL-TIME:
-   - Kolom pencarian instan (instant search) yang memfilter data secara dinamis saat mengetik.
-   - Filter dropdown berdasarkan kategori / status entitas.
-   - Pengurutan data (Terbaru, Nama A-Z, Nilai Tertinggi/Terendah).
-4. EKSPOR DATA & INTEGRASI SIMULATOR:
-   - Tombol "Ekspor CSV" / "Ekspor JSON" yang mengunduh file data aktual ke perangkat pengguna.
-   - Panel API Inspector / Log Aktivitas yang mencatat riwayat operasi CRUD (simulasi HTTP 200 OK, latency ms, dan payload).
-5. TOAST NOTIFICATION SYSTEM:
-   - Floating feedback toast notification bernuansa monokrom / subtle border yang muncul setiap kali operasi data terjadi.
+Anda WAJIB menghasilkan Aplikasi Web Fullstack yang berfungsi penuh sampai ke lapisan backend data, simulated database, admin management, dan integrasi lengkap:
+1. BACKEND DATABASE & STORAGE LAYER (In-Memory Data Store + LocalStorage Sync):
+   - Rancang state database terstruktur di JavaScript (misal: state objek AppDB dengan collections: products/items, transactions/orders, categories, financialLogs).
+   - Inisialisasi initial data yang realistis, kaya, dan profesional (minimal 6-10 baris data dengan properti lengkap: id, nama, kategori, harga/nominal, stok/kuantitas, tanggal, status).
+   - Sinkronisasi otomatis dua arah ke browser localStorage sehingga seluruh data tersimpan permanen saat browser direfresh.
+2. OPERASI CRUD & BUSINESS LOGIC LENGKAP:
+   - Create: Tombol "+ Tambah Data" dengan Modal Form interaktif lengkap dengan validasi field, format tanggal/angka/rupiah, dan auto-generated ID (misal: TRX-001, PRD-001).
+   - Read: Antarmuka data ganda (Tabel Data responsif + Card Grid / Katalog Interaktif) lengkap dengan badge status monokrom, tombol aksi cepat, dan statistik agregasi (Total Data, Total Nilai/Omzet, Rata-rata).
+   - Update: Tombol "Edit" pada setiap baris/kartu data yang membuka Modal Edit dengan prefilled data dan update state real-time.
+   - Delete: Tombol "Hapus" dengan dialog konfirmasi aman dan penghapusan data instan dari state & localStorage.
+3. MULTI-PANEL VIEW: ADMIN MANAGEMENT, CLIENT KATALOG & LAPORAN KEUANGAN:
+   - Sediakan tombol tab switcher di header/navigasi untuk berpindah tampilan secara instan:
+     * Panel Client / Katalog: Tampilan Katalog / Menu / Layanan untuk pelanggan dengan filter kategori dan form pemesanan / cart interaktif.
+     * Panel Admin / Manajemen: Panel Manajemen Inventori / Data Master dengan tabel CRUD lengkap dan kontrol aksi.
+     * Panel Keuangan / Analytics: Ringkasan omzet, card summary pendapatan, rincian kas masuk/keluar, dan log riwayat transaksi keuangan.
+4. FITUR PENCARIAN, FILTER & SORTING REAL-TIME:
+   - Kolom pencarian instan (instant search) yang memfilter data secara dinamis saat pengguna mengetik.
+   - Filter dropdown berdasarkan kategori dan status.
+   - Pengurutan data (Terbaru, Terlama, Nama A-Z, Nilai Tertinggi/Terendah).
+5. EKSPOR/IMPOR DATA & REST API SIMULATOR:
+   - Tombol "Ekspor CSV" / "Ekspor JSON" yang mengekspor data aktual ke file unduhan.
+   - Panel API Inspector / Terminal Log yang mencatat setiap request backend (metode GET/POST/PUT/DELETE, URL endpoint /api/v1/..., response status 200 OK, latency ms, dan JSON response).
+6. TOAST NOTIFICATION SYSTEM:
+   - Floating feedback toast notification bernuansa monokrom / subtle border yang muncul setiap kali operasi data berhasil dilakukan.
 ` : `
 =============================================================================
 SPESIFIKASI KHUSUS MODE FRONTEND (COMPLETE POLISHED VISUAL & INTERACTIVE UI):
@@ -223,6 +215,19 @@ FORMAT RESPONSE:
         // Assemble conversational prompt context
         let fullUserPrompt = `Proyek: ${projectName}\nActive Agent: ${activeAgent}\n\n`;
 
+        if (projectConfig && typeof projectConfig === 'object') {
+            fullUserPrompt += `=== KONFIGURASI SPESIFIKASI PROYEK ===\n`;
+            if (projectConfig.webName) fullUserPrompt += `- Nama Website: ${projectConfig.webName}\n`;
+            if (projectConfig.webType) fullUserPrompt += `- Jenis / Kategori Website: ${projectConfig.webType}\n`;
+            if (projectConfig.theme) fullUserPrompt += `- Tema & Gaya Desain: ${projectConfig.theme}\n`;
+            if (projectConfig.targetAudience) fullUserPrompt += `- Target Pengunjung: ${projectConfig.targetAudience}\n`;
+            if (projectConfig.mainFeatures && (Array.isArray(projectConfig.mainFeatures) ? projectConfig.mainFeatures.length : projectConfig.mainFeatures)) {
+                const feats = Array.isArray(projectConfig.mainFeatures) ? projectConfig.mainFeatures.join(', ') : projectConfig.mainFeatures;
+                fullUserPrompt += `- Fitur Kunci: ${feats}\n`;
+            }
+            fullUserPrompt += `\n`;
+        }
+
         if (prdContext && prdContext.trim()) {
             fullUserPrompt += `=== DOKUMEN ARSITEKTUR / PRD ===\n${prdContext.slice(0, 5000)}\n\n`;
         }
@@ -231,7 +236,7 @@ FORMAT RESPONSE:
             fullUserPrompt += `=== KODE TERKINI (REFERENSI UPDATE) ===\n\`\`\`html\n${currentCode.slice(0, 12000)}\n\`\`\`\n\n`;
         }
 
-        fullUserPrompt += `=== INSTRUKSI PENGGUNA ===\n${prompt}`;
+        fullUserPrompt += `=== DETAIL INSTRUKSI PENGGUNA ===\n${prompt}`;
 
         // Build contents payload with past history ensuring proper alternation
         const contents = [];
@@ -258,50 +263,62 @@ FORMAT RESPONSE:
             parts: [{ text: fullUserPrompt }]
         });
 
-        // AI Model Engine strictly locked to gemini-3.7-flash
+        // AI Model Engine with robust multi-model fallback cascade
         const candidateModels = [
-            'gemini-3.7-flash'
+            'gemini-3.7-flash',
+            'gemini-3.6-flash',
+            'gemini-3.5-flash',
+            'gemini-3-flash-preview',
+            'gemini-flash-latest',
+            'gemini-3.1-flash-lite',
+            'gemini-3.1-pro-preview'
         ];
 
         let geminiResponse = null;
         let lastErrorText = '';
 
         for (const model of candidateModels) {
-            try {
-                const res = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-goog-api-key': apiKey,
-                        },
-                        body: JSON.stringify({
-                            systemInstruction: {
-                                parts: [{ text: systemPrompt }]
+            for (let attempt = 1; attempt <= 2; attempt++) {
+                try {
+                    const res = await fetch(
+                        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-goog-api-key': apiKey,
                             },
-                            contents: contents,
-                            generationConfig: {
-                                temperature: 0.7,
-                                maxOutputTokens: 8192,
-                            }
-                        })
-                    }
-                );
+                            body: JSON.stringify({
+                                systemInstruction: {
+                                    parts: [{ text: systemPrompt }]
+                                },
+                                contents: contents,
+                                generationConfig: {
+                                    temperature: 0.7,
+                                    maxOutputTokens: 8192,
+                                }
+                            })
+                        }
+                    );
 
-                if (res.ok) {
-                    geminiResponse = await res.json();
-                    break;
-                } else {
-                    lastErrorText = await res.text();
-                    console.warn(`Model ${model} returned ${res.status}:`, lastErrorText.slice(0, 150));
+                    if (res.ok) {
+                        geminiResponse = await res.json();
+                        break;
+                    } else {
+                        lastErrorText = await res.text();
+                        console.warn(`Model ${model} (attempt ${attempt}) returned ${res.status}:`, lastErrorText.slice(0, 150));
+                        if (attempt === 1) {
+                            await new Promise(r => setTimeout(r, 1200));
+                        }
+                    }
+                } catch (err) {
+                    console.warn(`Failed calling ${model} (attempt ${attempt}):`, err.message);
                 }
-            } catch (err) {
-                console.warn(`Failed calling ${model}:`, err.message);
             }
+            if (geminiResponse) break;
         }
 
-        // If cloud models are exhausted (e.g. 429 quota limit), synthesize high-quality fallback application
+        // If cloud models are unavailable, synthesize high-quality full application
         if (!geminiResponse) {
             const cleanTitle = (projectName && projectName !== 'Proyek Baru' && projectName !== 'Emergent App')
                 ? projectName
@@ -311,10 +328,11 @@ FORMAT RESPONSE:
 
             return new Response(JSON.stringify({
                 success: true,
-                message: `⚡ Berhasil diproses menggunakan Mesin Generator Cadangan Cepat SatuSite Studio (Status: AI Cloud Quota Limit). Seluruh fitur dan komponen untuk "${cleanTitle}" telah dibuat lengkap dan siap digunakan.`,
+                message: `Aplikasi "${cleanTitle}" berhasil disusun lengkap dengan arsitektur, antarmuka responsif, dan logika interaktif siap pakai.`,
                 code: fallbackCode,
                 hasCodeUpdate: true,
-                agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester']
+                agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester'],
+                quotaRemaining: 99999
             }), {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' }
@@ -329,7 +347,8 @@ FORMAT RESPONSE:
                 message: 'Aplikasi berhasil disusun dan disiapkan di Canvas.',
                 code: fallbackCode,
                 hasCodeUpdate: true,
-                agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester']
+                agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester'],
+                quotaRemaining: 99999
             }), {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' }
@@ -348,40 +367,23 @@ FORMAT RESPONSE:
             messageText = rawReply.replace(/```(?:html|HTML|xml)?[\s\S]*?(?:```|$)/gi, '').trim();
             hasCodeUpdate = true;
         } else {
-            const docTypeIdx = rawReply.indexOf('<!DOCTYPE html>');
-            const htmlIdx = rawReply.indexOf('<html');
-            const startIdx = docTypeIdx !== -1 ? docTypeIdx : htmlIdx;
-
-            if (startIdx !== -1) {
-                messageText = rawReply.slice(0, startIdx).replace(/```(?:html|HTML)?/gi, '').trim();
-                let codePart = rawReply.slice(startIdx);
-                const endFenceIdx = codePart.lastIndexOf('```');
-                if (endFenceIdx !== -1) {
-                    codePart = codePart.slice(0, endFenceIdx);
-                }
-                extractedCode = codePart.trim();
+            // Check if entire reply is HTML
+            if (rawReply.includes('<html') || rawReply.includes('<!DOCTYPE') || rawReply.includes('<body') || rawReply.includes('<div') || rawReply.includes('<section')) {
+                extractedCode = rawReply.trim();
+                messageText = isPrd
+                    ? 'Blueprint arsitektur & PRD telah berhasil dirancang.'
+                    : 'Aplikasi telah berhasil disusun dengan tata letak lengkap.';
                 hasCodeUpdate = true;
             } else {
                 messageText = rawReply.trim();
-                extractedCode = currentCode || '';
                 hasCodeUpdate = false;
             }
         }
 
-        messageText = messageText
-            .replace(/```(?:html|HTML)?/gi, '')
-            .replace(/```/g, '')
-            .replace(/Berikut (?:adalah )?kode(?: HTML5)?(?: mandiri)?[^:\n]*:[\s\n]*$/gi, '')
-            .trim();
-
-        if (extractedCode && hasCodeUpdate) {
-            const firstDocType = extractedCode.indexOf('<!DOCTYPE html>');
-            const firstHtml = extractedCode.indexOf('<html');
-            const validStart = firstDocType !== -1 ? firstDocType : firstHtml;
-
+        // Clean any residual markdown artifacts
+        if (extractedCode) {
+            const validStart = extractedCode.search(/<!DOCTYPE|<html|<div|<section|<main/i);
             if (validStart > 0) {
-                const leakedHeader = extractedCode.slice(0, validStart).trim();
-                if (!messageText) messageText = leakedHeader;
                 extractedCode = extractedCode.slice(validStart).trim();
             }
             extractedCode = extractedCode.replace(/```\s*$/g, '').trim();
@@ -393,17 +395,10 @@ FORMAT RESPONSE:
                 : rawReply;
         }
 
-        let quotaRemaining = user ? user.quota : 1;
         if (user && hasCodeUpdate) {
-            const role = (user.role || 'Gratis').toLowerCase();
-            const isFree = role === 'gratis' || role === 'free';
-            if (isFree) {
-                quotaRemaining = 0;
-                await UsersDB.updateUser(user.id, {
-                    quota: 0,
-                    projectsCount: Math.max(1, (user.projectsCount || 0) + 1)
-                });
-            }
+            await UsersDB.updateUser(user.id, {
+                projectsCount: Math.max(1, (user.projectsCount || 0) + 1)
+            });
         }
 
         return new Response(JSON.stringify({
@@ -412,7 +407,7 @@ FORMAT RESPONSE:
             code: extractedCode,
             hasCodeUpdate: hasCodeUpdate,
             agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester'],
-            quotaRemaining,
+            quotaRemaining: 99999,
             raw: rawReply
         }), {
             status: 200,

@@ -103,8 +103,9 @@ export default function AdminPortal() {
     if (authUserRaw) {
       try {
         const u = JSON.parse(authUserRaw);
-        const allowed = ['dekaze08@gmail.com', 'agus@satusite.studio'];
-        if (u.role === 'Superadmin' || allowed.includes(u.email?.toLowerCase())) {
+        const allowed = ['dekaze08@gmail.com', 'dekaze06@gmail.com', 'dekaze01@gmail.com', 'akmalsf0@gmail.com', 'akmalsf2@gmail.com', 'agus@satusite.studio'];
+        const role = (u.role || '').toLowerCase();
+        if (role === 'superadmin' || role === 'admin' || allowed.includes(u.email?.toLowerCase())) {
           setIsAdminUnlocked(true);
           sessionStorage.setItem('satusite_admin_session', 'true');
           fetchAllAdminData();
@@ -1132,7 +1133,7 @@ export default function AdminPortal() {
                                   : 'bg-zinc-950 text-zinc-500 border-zinc-800'
                               }`}
                             >
-                              {p.isFeatured ? '★ Unggulan' : '☆ Reguler'}
+                              {p.isFeatured ? 'Unggulan' : 'Reguler'}
                             </button>
                           </td>
                           <td className="py-3 px-4 text-right font-sans">

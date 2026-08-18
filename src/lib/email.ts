@@ -129,7 +129,7 @@ export async function sendVerificationEmail({ to, name, verificationUrl }: SendV
 
       const info = await gmailTransporter.sendMail(mailOptions);
       console.log('\n======================================================');
-      console.log('📧 [GMAIL SMTP DISPATCH SUCCESS]');
+      console.log('[GMAIL SMTP DISPATCH SUCCESS]');
       console.log(`To: ${to}`);
       console.log(`Message ID: ${info.messageId}`);
       console.log(`Verification URL: ${verificationUrl}`);
@@ -157,7 +157,7 @@ export async function sendVerificationEmail({ to, name, verificationUrl }: SendV
       });
 
       console.log('\n======================================================');
-      console.log('📧 [RESEND EMAIL DISPATCH ATTEMPT]');
+      console.log('[RESEND EMAIL DISPATCH ATTEMPT]');
       console.log(`To: ${to}`);
       console.log(`Verification Link: ${verificationUrl}`);
       if (response.error) {
@@ -192,7 +192,7 @@ export async function sendVerificationEmail({ to, name, verificationUrl }: SendV
 
   // 3. Fallback: Development Simulation
   console.log('\n======================================================');
-  console.log('📧 [DEV EMAIL SIMULATION - NO SMTP / RESEND KEY]');
+  console.log('[DEV EMAIL SIMULATION - NO SMTP / RESEND KEY]');
   console.log(`To: ${to}`);
   console.log(`Verification URL: ${verificationUrl}`);
   console.log('======================================================\n');

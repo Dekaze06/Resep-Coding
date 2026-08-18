@@ -1,0 +1,155 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeaderNav from '../../components/HeaderNav.astro';
+---
+
+<Layout title="Build Frontend - Panduan & Fitur Satusite Studio" description="Pelajari cara merancang antarmuka website frontend visual modern, animasi interaktif halus, dan responsivitas mobile.">
+    <!-- Subtle Ambient Background Glows -->
+    <div class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-purple-600/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[15%] w-[500px] h-[400px] bg-blue-500/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+
+    <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-purple-500/30 selection:text-purple-200">
+        <!-- Unified Top Header Nav -->
+        <HeaderNav activePage="product" />
+
+        <main class="flex-1">
+            <!-- Hero Header -->
+            <section class="pt-12 pb-12 sm:pt-20 sm:pb-16 px-4 sm:px-6 text-center max-w-5xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-[11px] font-mono text-zinc-300 mb-6">
+                    <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                    <span>MODE PENGEMBANGAN FRONTEND</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white font-sans max-w-4xl mx-auto leading-[1.15]">
+                    Build Frontend UI/UX Visual
+                </h1>
+                <p class="mt-4 sm:mt-6 text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                    Fokus penuh pada kesempurnaan estetika visual, micro-interactions, layout responsif mobile-first, efek kaca glassmorphism, dan animasi CSS kelas dunia.
+                </p>
+
+                <div class="mt-8 flex items-center justify-center gap-3">
+                    <a
+                        href="/app?mode=frontend"
+                        class="px-6 py-3 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition-all shadow-lg shadow-white/10 flex items-center gap-2 cursor-pointer"
+                    >
+                        <span>Mulai Build Frontend di Studio</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                    <a
+                        href="/templates"
+                        class="px-5 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-xs font-semibold transition-all cursor-pointer"
+                    >
+                        <span>Lihat Template Desain</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Key Pillars Grid -->
+            <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Feature 1 -->
+                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-white mb-2">Aestetika Modern & Dark Mode</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Tipografi modern Geist Sans & Geist Mono, efek gradien halus, bayangan lembut, dan kontras warna yang nyaman di mata.
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-purple-400">Design System</span>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-mobile-screen-button text-sm"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-white mb-2">100% Responsif & Mobile First</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Layout fleksibel yang tertata sempurna pada semua resolusi layar: smartphone layar kecil, tablet, laptop, hingga monitor desktop lebar.
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-purple-400">Adaptive Layout</span>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-cube text-sm"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-white mb-2">Komponen Interaktif Siap Pakai</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Termasuk modal pop-up, accordion FAQ, slider carousel gambar, sticky header dinamis, dan tab navigasi interaktif.
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-purple-400">Pure JavaScript</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="max-w-4xl mx-auto px-4 sm:px-6 pb-24">
+                <div class="p-8 rounded-3xl bg-[#09090b] border border-zinc-800/90 shadow-2xl">
+                    <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2.5">
+                        <i class="fa-solid fa-bezier-curve text-zinc-400 text-sm"></i>
+                        <span>Cara Kerja Alur Frontend UI/UX</span>
+                    </h2>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">1</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">Tentukan Identitas Visual & Kategori</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">Pilih kategori landing page, company profile, atau portofolio serta tema warna favorit di wizard onboarding.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">2</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">AI Merancang Layout & Komposisi Halaman</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">AI engine menyusun kode HTML5 & Tailwind CSS murni dengan hirarki konten yang jelas dan micro-animations halus.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">3</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">Live Editing dengan Chat AI Agent</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">Minta AI mengganti warna, mengubah teks headline, atau menambahkan section baru langsung melalui obrolan.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">4</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">Ekspor & Deploy Satu-Klik</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">Unduh file ZIP proyek atau langsung deploy ke Vercel dan Netlify secara gratis.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-zinc-800 flex items-center justify-between">
+                        <span class="text-xs text-zinc-400">Siap merancang frontend impian?</span>
+                        <a href="/app?mode=frontend" class="inline-flex items-center gap-1.5 text-xs font-bold text-white hover:text-purple-400 transition-colors">
+                            <span>Buka Studio (Mode Frontend)</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</Layout>

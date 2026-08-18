@@ -1,0 +1,745 @@
+---
+interface Props {
+  activePage?: 'home' | 'product' | 'templates' | 'resources' | 'pricing' | 'about' | 'studio';
+}
+
+const { activePage = 'home' } = Astro.props;
+---
+
+<header id="main-header-nav" class="sticky top-0 z-50 px-4 sm:px-6 py-4 bg-transparent border-none transition-all duration-300">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    
+    <!-- Brand Logo -->
+    <a href="/" class="flex items-center gap-2.5 group shrink-0">
+      <img
+        src="/logo.png"
+        alt="satusitE Logo"
+        class="w-5 h-5 sm:w-5.5 sm:h-5.5 object-contain transition-transform group-hover:scale-105"
+      />
+      <span class="font-agus text-sm sm:text-base font-normal tracking-[0.35em] text-white">
+        satusitE
+      </span>
+    </a>
+
+    <!-- Desktop Navigation Links with Clean Minimalist Mega Menus -->
+    <nav class="hidden lg:flex items-center gap-1 text-xs font-medium text-zinc-300">
+      
+      <!-- 1. PRODUCT DROPDOWN (FULL WIDTH CLEAN MEGA MENU) -->
+      <div class="group/nav">
+        <button
+          type="button"
+          class={`px-3.5 py-2 rounded-lg hover:text-white hover:bg-zinc-900/70 transition-all flex items-center gap-1.5 cursor-pointer ${activePage === 'product' ? 'text-white bg-zinc-900/60 font-semibold' : ''}`}
+          aria-haspopup="true"
+        >
+          <span>Product</span>
+          <i class="fa-solid fa-chevron-down text-[9px] text-zinc-500 group-hover/nav:text-zinc-300 group-hover/nav:rotate-180 transition-transform duration-200"></i>
+        </button>
+
+        <!-- Full-Width Dropdown Bar -->
+        <div class="invisible opacity-0 group-hover/nav:visible group-hover/nav:opacity-100 transition-all duration-200 absolute top-full left-0 right-0 w-full bg-[#08080a]/95 border-b border-zinc-800/80 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-3xl z-50 before:content-[''] before:absolute before:-top-3 before:left-0 before:right-0 before:h-3">
+          <div class="max-w-7xl mx-auto px-6 py-6 sm:py-7">
+            <div class="grid grid-cols-12 gap-8 items-center">
+              
+              <!-- Left Sidebar Overview (3 cols) -->
+              <div class="col-span-3 border-r border-zinc-800/70 pr-6">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400 mb-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+                  <span>PRODUCT PLATFORM</span>
+                </div>
+                <h3 class="text-sm font-bold text-white mb-1">Autonomous AI Studio</h3>
+                <p class="text-xs text-zinc-400 leading-relaxed mb-4">
+                  Pilih mode pengembangan untuk merancang antarmuka, logika full-stack, atau blueprint spesifikasi.
+                </p>
+                <a
+                  href="/app"
+                  class="inline-flex items-center gap-2 text-xs font-semibold text-white hover:text-blue-400 transition-colors cursor-pointer"
+                >
+                  <span>Buka Workspace Studio</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+              </div>
+
+              <!-- Right 4-Grid Cards Clean & Minimalist (9 cols) -->
+              <div class="col-span-9 grid grid-cols-2 gap-3">
+                
+                <!-- Item 1: AI Studio -->
+                <a
+                  href="/app"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                    </div>
+                    <div>
+                      <div class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">AI Studio</div>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+                <!-- Item 2: Build Fullstack -->
+                <a
+                  href="/product/fullstack"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-solid fa-database text-xs"></i>
+                    </div>
+                    <div>
+                      <div class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">Build Fullstack</div>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+                <!-- Item 3: Build Frontend -->
+                <a
+                  href="/product/frontend"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-solid fa-table-columns text-xs"></i>
+                    </div>
+                    <div>
+                      <div class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">Build Frontend</div>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+                <!-- Item 4: PRD / Planning -->
+                <a
+                  href="/product/prd"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-regular fa-file-lines text-xs"></i>
+                    </div>
+                    <div>
+                      <div class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">PRD / Planning</div>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. TEMPLATE LINK (DIRECT LINK, NO DROPDOWN) -->
+      <a
+        href="/templates"
+        class={`px-3.5 py-2 rounded-lg hover:text-white hover:bg-zinc-900/70 transition-all cursor-pointer ${activePage === 'templates' ? 'text-white bg-zinc-900/60 font-semibold' : ''}`}
+      >
+        <span>Template</span>
+      </a>
+
+      <!-- 3. RESOURCE DROPDOWN (FULL WIDTH CLEAN MEGA MENU) -->
+      <div class="group/nav">
+        <button
+          type="button"
+          class={`px-3.5 py-2 rounded-lg hover:text-white hover:bg-zinc-900/70 transition-all flex items-center gap-1.5 cursor-pointer ${activePage === 'resources' ? 'text-white bg-zinc-900/60 font-semibold' : ''}`}
+          aria-haspopup="true"
+        >
+          <span>Resource</span>
+          <i class="fa-solid fa-chevron-down text-[9px] text-zinc-500 group-hover/nav:text-zinc-300 group-hover/nav:rotate-180 transition-transform duration-200"></i>
+        </button>
+
+        <!-- Full-Width Dropdown Bar -->
+        <div class="invisible opacity-0 group-hover/nav:visible group-hover/nav:opacity-100 transition-all duration-200 absolute top-full left-0 right-0 w-full bg-[#08080a]/95 border-b border-zinc-800/80 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-3xl z-50 before:content-[''] before:absolute before:-top-3 before:left-0 before:right-0 before:h-3">
+          <div class="max-w-7xl mx-auto px-6 py-6 sm:py-7">
+            <div class="grid grid-cols-12 gap-8 items-center">
+              
+              <!-- Left Sidebar Overview (3 cols) -->
+              <div class="col-span-3 border-r border-zinc-800/70 pr-6">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400 mb-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+                  <span>RESOURCE & TOOLING</span>
+                </div>
+                <h3 class="text-sm font-bold text-white mb-1">Ekosistem & Otomasi</h3>
+                <p class="text-xs text-zinc-400 leading-relaxed mb-4">
+                  Dukungan terintegrasi untuk QA testing, kontrol versi Git, dokumentasi, dan deployment cloud.
+                </p>
+                <a
+                  href="/deploy"
+                  class="inline-flex items-center gap-2 text-xs font-semibold text-white hover:text-blue-400 transition-colors cursor-pointer"
+                >
+                  <span>Buka Deploy Hub</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+              </div>
+
+              <!-- Right 5-Grid Items Clean & Minimalist (9 cols) -->
+              <div class="col-span-9 grid grid-cols-3 gap-3">
+                
+                <!-- Resource 1: GitHub -->
+                <a
+                  href="/github"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-brands fa-github text-xs"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">GitHub</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+                <!-- Resource 2: Testing -->
+                <a
+                  href="/testing"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-solid fa-shield-halved text-xs"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">Testing QA</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+                <!-- Resource 3: Deploy -->
+                <a
+                  href="/deploy"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-solid fa-rocket text-xs"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">Deploy Hub</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+                <!-- Resource 4: Tutorial -->
+                <a
+                  href="/tutorial"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-solid fa-book-open text-xs"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">Tutorial & Docs</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+                <!-- Resource 5: Connectors -->
+                <a
+                  href="/connectors"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item col-span-2"
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-solid fa-plug text-xs"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">Connectors & API</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. PRICING LINK (HALAMAN KHUSUS TERPISAH) -->
+      <a
+        href="/pricing"
+        class={`px-3.5 py-2 rounded-lg hover:text-white hover:bg-zinc-900/70 transition-all cursor-pointer ${activePage === 'pricing' ? 'text-white bg-zinc-900/60 font-semibold' : ''}`}
+      >
+        <span>Pricing</span>
+      </a>
+
+      <!-- 5. ABOUT DROPDOWN (FULL WIDTH CLEAN MEGA MENU) -->
+      <div class="group/nav">
+        <button
+          type="button"
+          class={`px-3.5 py-2 rounded-lg hover:text-white hover:bg-zinc-900/70 transition-all flex items-center gap-1.5 cursor-pointer ${activePage === 'about' ? 'text-white bg-zinc-900/60 font-semibold' : ''}`}
+          aria-haspopup="true"
+        >
+          <span>About</span>
+          <i class="fa-solid fa-chevron-down text-[9px] text-zinc-500 group-hover/nav:text-zinc-300 group-hover/nav:rotate-180 transition-transform duration-200"></i>
+        </button>
+
+        <!-- Full-Width Dropdown Bar -->
+        <div class="invisible opacity-0 group-hover/nav:visible group-hover/nav:opacity-100 transition-all duration-200 absolute top-full left-0 right-0 w-full bg-[#08080a]/95 border-b border-zinc-800/80 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-3xl z-50 before:content-[''] before:absolute before:-top-3 before:left-0 before:right-0 before:h-3">
+          <div class="max-w-7xl mx-auto px-6 py-6 sm:py-7">
+            <div class="grid grid-cols-12 gap-8 items-center">
+              
+              <!-- Left Sidebar Overview (3 cols) -->
+              <div class="col-span-3 border-r border-zinc-800/70 pr-6">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400 mb-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+                  <span>ABOUT PLATFORM</span>
+                </div>
+                <h3 class="text-sm font-bold text-white mb-1">Tentang Satusite</h3>
+                <p class="text-xs text-zinc-400 leading-relaxed mb-4">
+                  Platform perancangan aplikasi otonom berbasis generative AI berstandar web modern.
+                </p>
+                <a
+                  href="/about#contact"
+                  class="inline-flex items-center gap-2 text-xs font-semibold text-white hover:text-blue-400 transition-colors cursor-pointer"
+                >
+                  <span>Hubungi Tim Kami</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+              </div>
+
+              <!-- Right 4-Grid Cards Clean & Minimalist (9 cols) -->
+              <div class="col-span-9 grid grid-cols-2 gap-3">
+                
+                <!-- About 1: Profil Satusite -->
+                <a
+                  href="/about"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-solid fa-circle-info text-xs"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">Tentang Satusite</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+                <!-- About 2: Contact Us -->
+                <a
+                  href="/about#contact"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-regular fa-envelope text-xs"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">Contact Us</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+                <!-- About 3: Developer Profile -->
+                <a
+                  href="/about#developer"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-solid fa-laptop-code text-xs"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">Developer & Tim</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+                <!-- About 4: Tech Stack -->
+                <a
+                  href="/about#tech"
+                  class="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/90 border border-zinc-800/60 hover:border-zinc-700/80 transition-all flex items-center justify-between group/item"
+                >
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover/item:text-white group-hover/item:border-zinc-700 group-hover/item:bg-zinc-800 flex items-center justify-center shrink-0 transition-all">
+                      <i class="fa-solid fa-microchip text-xs"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-zinc-200 group-hover/item:text-white transition-colors">Teknologi & Engine</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600 group-hover/item:text-zinc-300 group-hover/item:translate-x-0.5 transition-all"></i>
+                </a>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </nav>
+
+    <!-- Right Action Items -->
+    <div class="flex items-center gap-2.5">
+      <!-- 1. Logged-out Login Button -->
+      <a
+        id="nav-btn-login"
+        href="/login"
+        class="px-3 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-900/60 text-xs font-medium text-zinc-300 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer"
+      >
+        <i class="fa-regular fa-user text-zinc-400 text-xs"></i>
+        <span>Masuk</span>
+      </a>
+
+      <!-- 2. Logged-in Account Dropdown Menu (Hidden if not logged in) -->
+      <div class="relative hidden" id="nav-account-dropdown-container">
+        <button
+          type="button"
+          id="nav-btn-account"
+          class="h-8 px-2.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-medium text-zinc-200 flex items-center gap-2 transition-all cursor-pointer shadow-sm"
+        >
+          <img
+            id="nav-user-avatar"
+            src="https://api.dicebear.com/7.x/initials/svg?seed=User&backgroundColor=27272a"
+            alt="Avatar"
+            class="w-4 h-4 rounded-md object-cover bg-zinc-800 shrink-0"
+          />
+          <span id="nav-user-name" class="max-w-[100px] truncate text-xs font-medium text-zinc-200">Akun</span>
+          <i class="fa-solid fa-chevron-down text-[9px] text-zinc-500 transition-transform duration-200" id="nav-account-chevron"></i>
+        </button>
+
+        <!-- Dropdown Popover Menu -->
+        <div
+          id="nav-account-menu"
+          class="hidden absolute right-0 mt-2 w-60 p-1.5 bg-[#09090b] border border-zinc-800 rounded-xl shadow-2xl z-50 text-left font-sans animate-fade-in-up divide-y divide-zinc-800/60"
+        >
+          <div class="px-2.5 py-2">
+            <div class="flex items-center gap-2.5 mb-2">
+              <img
+                id="nav-menu-avatar"
+                src="https://api.dicebear.com/7.x/initials/svg?seed=User&backgroundColor=18181b"
+                alt="Avatar"
+                class="w-7 h-7 rounded-md object-cover bg-zinc-900 border border-zinc-800 shrink-0"
+              />
+              <div class="min-w-0 flex-1">
+                <p id="nav-menu-user-name" class="text-xs font-medium text-zinc-200 truncate">Pengguna</p>
+                <p id="nav-menu-user-email" class="text-[10px] text-zinc-500 truncate font-mono">user@example.com</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span id="nav-menu-user-role" class="px-2 py-0.5 rounded text-[9px] font-medium bg-zinc-900 text-zinc-300 border border-zinc-800">
+                Gratis
+              </span>
+              <span id="nav-menu-user-quota" class="px-2 py-0.5 rounded text-[9px] font-medium bg-zinc-900 text-zinc-400 border border-zinc-800 flex items-center gap-1">
+                <span id="nav-menu-quota-val">Unlimited AI</span>
+              </span>
+            </div>
+          </div>
+          
+          <div class="py-1 space-y-0.5">
+            <a
+              href="/portal?tab=projects"
+              class="w-full px-2.5 py-1.5 rounded-lg text-xs text-zinc-300 hover:text-white hover:bg-zinc-900 flex items-center justify-between transition-colors group cursor-pointer"
+            >
+              <div class="flex items-center gap-2">
+                <i class="fa-regular fa-folder text-zinc-400 text-xs w-4 text-center"></i>
+                <span>Proyek Saya</span>
+              </div>
+              <span class="text-[10px] font-mono text-zinc-500 group-hover:text-zinc-300">Hub</span>
+            </a>
+
+            <a
+              href="/portal?tab=keys"
+              class="w-full px-2.5 py-1.5 rounded-lg text-xs text-zinc-300 hover:text-white hover:bg-zinc-900 flex items-center justify-between transition-colors group cursor-pointer"
+            >
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-key text-zinc-400 text-xs w-4 text-center"></i>
+                <span>API Keys Pribadi</span>
+              </div>
+              <span class="text-[10px] font-mono text-zinc-500 group-hover:text-zinc-300">BYOK</span>
+            </a>
+
+            <a
+              href="/pricing"
+              class="w-full px-2.5 py-1.5 rounded-lg text-xs text-zinc-300 hover:text-white hover:bg-zinc-900 flex items-center justify-between transition-colors group cursor-pointer"
+            >
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-zinc-400 text-xs w-4 text-center"></i>
+                <span>Upgrade Paket</span>
+              </div>
+              <span class="text-[10px] font-mono text-zinc-400 group-hover:text-white font-semibold">Pro</span>
+            </a>
+
+            <a
+              id="nav-link-admin-panel"
+              href="/master-console-dekaze"
+              class="hidden w-full px-2.5 py-1.5 rounded-lg text-xs text-zinc-300 hover:text-white hover:bg-zinc-900 flex items-center justify-between transition-colors group cursor-pointer"
+            >
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-zinc-400 text-xs w-4 text-center"></i>
+                <span>Master Console</span>
+              </div>
+              <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">Root</span>
+            </a>
+          </div>
+
+          <div class="pt-1">
+            <button
+              type="button"
+              id="nav-btn-logout"
+              class="w-full px-2.5 py-1.5 rounded-lg text-xs text-red-400 hover:text-red-300 hover:bg-red-950/30 flex items-center gap-2 transition-colors cursor-pointer text-left font-medium"
+            >
+              <i class="fa-solid fa-arrow-right-from-bracket text-xs w-4 text-center"></i>
+              <span>Keluar (Logout)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Buka Studio Button -->
+      <a
+        id="btn-header-open-studio"
+        href="/app"
+        class="px-3.5 sm:px-4 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+      >
+        <span>Buka Studio</span>
+        <i class="fa-solid fa-arrow-right text-[10px] text-zinc-400"></i>
+      </a>
+
+      <!-- 4. Mobile Menu Hamburger Toggle -->
+      <button
+        type="button"
+        id="btn-mobile-menu-toggle"
+        class="lg:hidden p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors cursor-pointer"
+        aria-label="Toggle Menu"
+      >
+        <i class="fa-solid fa-bars text-sm" id="icon-mobile-menu"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Drawer / Dropdown -->
+  <div
+    id="mobile-nav-drawer"
+    class="hidden lg:hidden pt-4 pb-2 border-t border-zinc-800/80 mt-3 space-y-3 animate-fade-in-up"
+  >
+    <!-- 1. Product Section -->
+    <div class="space-y-1">
+      <div class="text-[10px] font-mono uppercase tracking-widest text-zinc-500 px-2 font-semibold">1. Product</div>
+      <div class="grid grid-cols-2 gap-1 text-xs font-medium text-zinc-300">
+        <a href="/app" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles text-zinc-400 text-[11px] w-4"></i>
+          <span>AI Studio</span>
+        </a>
+        <a href="/product/fullstack" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-solid fa-database text-zinc-400 text-[11px] w-4"></i>
+          <span>Build Fullstack</span>
+        </a>
+        <a href="/product/frontend" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-solid fa-table-columns text-zinc-400 text-[11px] w-4"></i>
+          <span>Build Frontend</span>
+        </a>
+        <a href="/product/prd" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-regular fa-file-lines text-zinc-400 text-[11px] w-4"></i>
+          <span>PRD / Planning</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 2. Template Link -->
+    <div class="space-y-1">
+      <div class="text-[10px] font-mono uppercase tracking-widest text-zinc-500 px-2 font-semibold">2. Template</div>
+      <div>
+        <a href="/templates" class="px-2.5 py-2 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors flex items-center justify-between text-xs font-medium">
+          <div class="flex items-center gap-2">
+            <i class="fa-regular fa-clone text-zinc-400 text-[11px] w-4"></i>
+            <span>Galeri Template</span>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- 3. Resource Section -->
+    <div class="space-y-1">
+      <div class="text-[10px] font-mono uppercase tracking-widest text-zinc-500 px-2 font-semibold">3. Resource</div>
+      <div class="grid grid-cols-2 gap-1 text-xs font-medium text-zinc-300">
+        <a href="/github" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-brands fa-github text-zinc-400 text-[11px] w-4"></i>
+          <span>GitHub</span>
+        </a>
+        <a href="/testing" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-zinc-400 text-[11px] w-4"></i>
+          <span>Testing</span>
+        </a>
+        <a href="/deploy" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-solid fa-rocket text-zinc-400 text-[11px] w-4"></i>
+          <span>Deploy</span>
+        </a>
+        <a href="/tutorial" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-zinc-400 text-[11px] w-4"></i>
+          <span>Tutorial</span>
+        </a>
+        <a href="/connectors" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2 col-span-2">
+          <i class="fa-solid fa-plug text-zinc-400 text-[11px] w-4"></i>
+          <span>Connectors & Integrasi API</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 4 & 5. Pricing & About Section -->
+    <div class="space-y-1">
+      <div class="text-[10px] font-mono uppercase tracking-widest text-zinc-500 px-2 font-semibold">4 & 5. Pricing & About</div>
+      <div class="grid grid-cols-2 gap-1 text-xs font-medium text-zinc-300">
+        <a href="/pricing" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-solid fa-tag text-zinc-400 text-[11px] w-4"></i>
+          <span>Pricing</span>
+        </a>
+        <a href="/about" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-solid fa-circle-info text-zinc-400 text-[11px] w-4"></i>
+          <span>About</span>
+        </a>
+        <a href="/about#contact" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-regular fa-envelope text-zinc-400 text-[11px] w-4"></i>
+          <span>Contact Us</span>
+        </a>
+        <a href="/about#developer" class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2">
+          <i class="fa-solid fa-laptop-code text-zinc-400 text-[11px] w-4"></i>
+          <span>Developer</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    // 0. Seamless Header Scroll Effect
+    const headerNav = document.getElementById("main-header-nav");
+    if (headerNav) {
+      const handleScroll = () => {
+        if (window.scrollY > 20) {
+          headerNav.classList.add("bg-black/60", "backdrop-blur-xl", "border-b", "border-zinc-800/50", "py-3");
+          headerNav.classList.remove("bg-transparent", "border-none", "py-4");
+        } else {
+          headerNav.classList.remove("bg-black/60", "backdrop-blur-xl", "border-b", "border-zinc-800/50", "py-3");
+          headerNav.classList.add("bg-transparent", "border-none", "py-4");
+        }
+      };
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      handleScroll();
+    }
+
+    // 1. Mobile Menu Toggle
+    const btnMobileToggle = document.getElementById("btn-mobile-menu-toggle");
+    const mobileNavDrawer = document.getElementById("mobile-nav-drawer");
+    const iconMobileMenu = document.getElementById("icon-mobile-menu");
+
+    if (btnMobileToggle && mobileNavDrawer) {
+      btnMobileToggle.addEventListener("click", () => {
+        const isHidden = mobileNavDrawer.classList.contains("hidden");
+        if (isHidden) {
+          mobileNavDrawer.classList.remove("hidden");
+          if (iconMobileMenu) {
+            iconMobileMenu.classList.remove("fa-bars");
+            iconMobileMenu.classList.add("fa-xmark");
+          }
+        } else {
+          mobileNavDrawer.classList.add("hidden");
+          if (iconMobileMenu) {
+            iconMobileMenu.classList.remove("fa-xmark");
+            iconMobileMenu.classList.add("fa-bars");
+          }
+        }
+      });
+    }
+
+    // 2. Auth State Sync
+    try {
+      const storedUser = localStorage.getItem("satusite_auth_user");
+      const btnLogin = document.getElementById("nav-btn-login");
+      const accountContainer = document.getElementById("nav-account-dropdown-container");
+      const btnAccount = document.getElementById("nav-btn-account");
+      const accountMenu = document.getElementById("nav-account-menu");
+      const accountChevron = document.getElementById("nav-account-chevron");
+
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (btnLogin) btnLogin.classList.add("hidden");
+        if (accountContainer) accountContainer.classList.remove("hidden");
+
+        const navUserName = document.getElementById("nav-user-name");
+        const navMenuUserName = document.getElementById("nav-menu-user-name");
+        const navMenuUserEmail = document.getElementById("nav-menu-user-email");
+        const navMenuUserRole = document.getElementById("nav-menu-user-role");
+        const navUserAvatar = document.getElementById("nav-user-avatar");
+        const navMenuAvatar = document.getElementById("nav-menu-avatar");
+
+        const displayName = user.name || user.email?.split("@")[0] || "Akun";
+        if (navUserName) navUserName.textContent = displayName;
+        if (navMenuUserName) navMenuUserName.textContent = displayName;
+        if (navMenuUserEmail) navMenuUserEmail.textContent = user.email || "";
+
+        const avatarUrl = user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(displayName)}&backgroundColor=18181b`;
+        if (navUserAvatar) (navUserAvatar as HTMLImageElement).src = avatarUrl;
+        if (navMenuAvatar) (navMenuAvatar as HTMLImageElement).src = avatarUrl;
+
+        const role = user.role || "user";
+        if (navMenuUserRole) {
+          navMenuUserRole.textContent = role === "superadmin" ? "Superadmin" : role === "admin" ? "Admin" : "Gratis";
+        }
+
+        const adminSection = document.getElementById("nav-menu-admin-section");
+        if (adminSection && (role === "admin" || role === "superadmin")) {
+          adminSection.classList.remove("hidden");
+        }
+
+        if (btnAccount && accountMenu) {
+          btnAccount.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isMenuHidden = accountMenu.classList.contains("hidden");
+            if (isMenuHidden) {
+              accountMenu.classList.remove("hidden");
+              if (accountChevron) accountChevron.classList.add("rotate-180");
+            } else {
+              accountMenu.classList.add("hidden");
+              if (accountChevron) accountChevron.classList.remove("rotate-180");
+            }
+          });
+
+          document.addEventListener("click", (e) => {
+            if (!accountContainer.contains(e.target as Node)) {
+              accountMenu.classList.add("hidden");
+              if (accountChevron) accountChevron.classList.remove("rotate-180");
+            }
+          });
+        }
+
+        const btnLogout = document.getElementById("nav-menu-btn-logout");
+        if (btnLogout) {
+          btnLogout.addEventListener("click", () => {
+            localStorage.removeItem("satusite_auth_user");
+            localStorage.removeItem("satusite_auth_token");
+            window.location.reload();
+          });
+        }
+      } else {
+        if (btnLogin) btnLogin.classList.remove("hidden");
+        if (accountContainer) accountContainer.classList.add("hidden");
+      }
+
+      // Studio Auth Gate for Header and CTA Links
+      const btnHeaderStudio = document.getElementById("btn-header-open-studio");
+      if (btnHeaderStudio) {
+        btnHeaderStudio.addEventListener("click", (e) => {
+          const isAuthed = localStorage.getItem("satusite_auth_user");
+          if (!isAuthed) {
+            e.preventDefault();
+            window.location.href = "/login";
+          }
+        });
+      }
+
+      // Global interceptor for studio links
+      document.querySelectorAll('a[href="/app"], a[href^="/app?"]').forEach((link) => {
+        link.addEventListener("click", (e) => {
+          const isAuthed = localStorage.getItem("satusite_auth_user");
+          if (!isAuthed) {
+            e.preventDefault();
+            window.location.href = "/login";
+          }
+        });
+      });
+    } catch (err) {
+      console.warn("Header auth init warning:", err);
+    }
+  });
+</script>

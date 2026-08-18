@@ -40,10 +40,36 @@ import {
   Plus,
   Search,
   ShieldCheck,
-  Rocket
+  Rocket,
+  SlidersHorizontal,
+  Layers,
+  Settings2,
+  ArrowRight,
+  Building2,
+  Palette,
+  Briefcase,
+  GraduationCap,
+  Calendar,
+  Newspaper,
+  Zap,
+  Users,
+  Bot,
+  MicOff,
+  FileUp,
+  Radio
 } from "lucide-react";
 import CardScrollReveal from "./ui/CardScrollReveal";
 import InteractiveArchitectureTree from "./ui/InteractiveArchitectureTree";
+
+export interface ProjectConfig {
+  webType: string;
+  customWebType?: string;
+  webName: string;
+  theme: string;
+  customTheme?: string;
+  targetAudience: string;
+  mainFeatures: string[];
+}
 
 export interface SubFeatureItem {
   id: string;
@@ -297,25 +323,74 @@ interface ChatMessage {
   steps?: string[];
 }
 
+export const WEB_TYPE_OPTIONS = [
+  { id: "Toko Online & E-Commerce", label: "Toko Online & E-Commerce", desc: "Katalog produk, keranjang belanja & kasir", icon: ShoppingBag },
+  { id: "Kafe, Restoran & Kuliner", label: "Kafe, Restoran & Kuliner", desc: "Daftar menu, reservasi meja & pesanan", icon: Utensils },
+  { id: "Company Profile & Korporat", label: "Company Profile & Korporat", desc: "Profil perusahaan, layanan & kontak klien", icon: Building2 },
+  { id: "Portofolio & Agensi Kreatif", label: "Portofolio & Agensi Kreatif", desc: "Showcase visual, hasil karya & jasa", icon: Sparkles },
+  { id: "Dashboard Web App / SaaS", label: "Dashboard Web App / SaaS", desc: "Manajemen data, analitik & CRUD lengkap", icon: Database },
+  { id: "Landing Page Produk / Event", label: "Landing Page Produk / Event", desc: "Halaman konversi tinggi & registrasi", icon: Zap },
+  { id: "Portal Berita, Blog & Media", label: "Portal Berita, Blog & Media", desc: "Artikel berita, kategori & pembaca", icon: Newspaper },
+  { id: "Booking & Reservasi Layanan", label: "Booking & Reservasi Layanan", desc: "Kalender reservasi, slot waktu & form", icon: Calendar },
+  { id: "Edukasi & Kursus Online", label: "Edukasi & Kursus Online", desc: "Silabus belajar, materi & modul kelas", icon: GraduationCap },
+  { id: "Kustom (Tulis Sendiri...)", label: "Kustom (Tulis Sendiri...)", desc: "Ketik kategori unik sesuai kebutuhan Anda", icon: Plus }
+];
+
+export const THEME_OPTIONS = [
+  { id: "Dark Minimalist & Sleek (Monokrom Modern)", label: "Dark Minimalist & Sleek", desc: "Obsidian & Deep Zinc dengan kontras tajam", dotColor: "bg-zinc-100 ring-zinc-400/40" },
+  { id: "Clean White & Professional (Terang & Bersih)", label: "Clean White & Professional", desc: "Nuansa terang, rapi & minimalis elegan", dotColor: "bg-zinc-300 ring-zinc-500/40" },
+  { id: "Luxury Black & Gold (Mewah & Eksklusif)", label: "Luxury Black & Gold", desc: "Kombinasi hitam pekat & aksen emas mewah", dotColor: "bg-amber-400 ring-amber-500/40" },
+  { id: "Corporate Modern (Biru & Abu-abu Elegan)", label: "Corporate Modern", desc: "Biru terpercaya & tata letak profesional", dotColor: "bg-blue-500 ring-blue-500/40" },
+  { id: "Warm & Cozy (Cokelat Hangat & Estetik)", label: "Warm & Cozy", desc: "Nuansa kopi, kayu hangat & estetik", dotColor: "bg-amber-700 ring-amber-700/40" },
+  { id: "Emerald Modern (Hijau Segar & Modern)", label: "Emerald Modern", desc: "Hijau botani alami & ramah lingkungan", dotColor: "bg-emerald-500 ring-emerald-500/40" },
+  { id: "Kustom (Tulis Sendiri...)", label: "Kustom (Tulis Sendiri...)", desc: "Tentukan palet warna kustom Anda", dotColor: "bg-purple-400 ring-purple-500/40" }
+];
+
+export const AUDIENCE_OPTIONS = [
+  { id: "Pelanggan Umum & Pembeli Retail", label: "Pelanggan Umum & Pembeli Retail", desc: "Konsumen langsung & pembeli online", icon: Users },
+  { id: "Pengusaha, Bisnis & B2B", label: "Pengusaha, Bisnis & B2B", desc: "Mitra bisnis, distributor & pemilik usaha", icon: Briefcase },
+  { id: "Profesional & Klien Korporat", label: "Profesional & Klien Korporat", desc: "Eksekutif, instansi & klien formal", icon: Building2 },
+  { id: "Anak Muda, Mahasiswa & Kreator", label: "Anak Muda, Mahasiswa & Kreator", desc: "Gen-Z, pegiat konten & kreator digital", icon: Sparkles },
+  { id: "Komunitas & Pecinta Hobi", label: "Komunitas & Pecinta Hobi", desc: "Anggota komunitas & kelompok minat khusus", icon: Globe }
+];
+
+export const FEATURE_OPTIONS = [
+  "Panel Admin & CRUD",
+  "Katalog Produk & Filter",
+  "Form Pemesanan / WhatsApp Direct",
+  "Laporan Kas & Ringkasan Keuangan",
+  "Galeri Foto Responsif",
+  "FAQ Interaktif & Testimoni"
+];
+
 export default function SatusiteStudioWorkspace() {
   const [genMode, setGenMode] = useState<"fullstack" | "frontend" | "prd">("fullstack");
   const [showModeDropdown, setShowModeDropdown] = useState<"center" | "side" | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<"type" | "theme" | "audience" | "modal_type" | "modal_theme" | "modal_audience" | null>(null);
   const [projectId, setProjectId] = useState<string>("proj_default");
   const [projectName, setProjectName] = useState<string>("Proyek Baru");
   const [code, setCode] = useState<string>("");
   const [architectureStructure, setArchitectureStructure] = useState<ArchitectureStructure | null>(null);
   const [hasGenerated, setHasGenerated] = useState<boolean>(false);
+  const [isConfigCompleted, setIsConfigCompleted] = useState<boolean>(false);
+  const [onboardingStep, setOnboardingStep] = useState<number>(1);
+  const [detailPrompt, setDetailPrompt] = useState<string>("");
+  const [uploadedFiles, setUploadedFiles] = useState<Array<{ name: string; size: string; type: string }>>([]);
+  const [isRecordingMic, setIsRecordingMic] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showConfigEditModal, setShowConfigEditModal] = useState<boolean>(false);
+  const [projectConfig, setProjectConfig] = useState<ProjectConfig>({
+    webType: "Toko Online & E-Commerce",
+    customWebType: "",
+    webName: "",
+    theme: "Dark Minimalist & Sleek (Monokrom Modern)",
+    customTheme: "",
+    targetAudience: "Pelanggan Umum & Pembeli Retail",
+    mainFeatures: ["Katalog Produk & Filter", "Panel Admin & CRUD", "Form Pemesanan / WhatsApp Direct"]
+  });
   const [showCanvas, setShowCanvas] = useState<boolean>(true);
   const [inputPrompt, setInputPrompt] = useState<string>("");
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: "msg_1",
-      role: "agent",
-      agentName: "AI Agent",
-      text: "Halo! Pilih mode Fullstack, Frontend, atau PRD di bawah, lalu ketikkan ide yang ingin Anda bangun.",
-      timestamp: "Siap",
-    }
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   const [activeTab, setActiveTab] = useState<"preview" | "code" | "architecture" | "database" | "logs">("preview");
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
@@ -380,6 +455,10 @@ export default function SatusiteStudioWorkspace() {
   const handleSelectHistoryProject = (p: any) => {
     setProjectId(p.id);
     setProjectName(p.name || "Proyek Baru");
+    if (p.projectConfig) {
+      setProjectConfig(p.projectConfig);
+    }
+    setIsConfigCompleted(true);
     if (p.code) {
       setCode(p.code);
       setHasGenerated(true);
@@ -426,16 +505,22 @@ export default function SatusiteStudioWorkspace() {
     setCode("");
     setArchitectureStructure(null);
     setHasGenerated(false);
+    setIsConfigCompleted(false);
+    setOnboardingStep(1);
+    setDetailPrompt("");
+    setUploadedFiles([]);
+    setIsRecordingMic(false);
+    setProjectConfig({
+      webType: "Toko Online & E-Commerce",
+      customWebType: "",
+      webName: "",
+      theme: "Dark Minimalist & Sleek (Monokrom Modern)",
+      customTheme: "",
+      targetAudience: "Pelanggan Umum & Pembeli Retail",
+      mainFeatures: ["Katalog Produk & Filter", "Panel Admin & CRUD", "Form Pemesanan / WhatsApp Direct"]
+    });
     setShowCanvas(true);
-    setMessages([
-      {
-        id: "msg_1",
-        role: "agent",
-        agentName: "AI Agent",
-        text: "Halo! Pilih mode Fullstack, Frontend, atau PRD di bawah, lalu ketikkan ide yang ingin Anda bangun.",
-        timestamp: "Siap",
-      }
-    ]);
+    setMessages([]);
     setShowHistoryModal(false);
     try {
       const url = new URL(window.location.href);
@@ -454,6 +539,108 @@ export default function SatusiteStudioWorkspace() {
       return nameMatch || msgMatch;
     });
   }, [savedProjectsList, historySearch]);
+
+  const toggleMicRecording = () => {
+    if (typeof window === "undefined") return;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Browser Anda belum mendukung Web Speech Recognition. Silakan gunakan Google Chrome atau Microsoft Edge.");
+      return;
+    }
+
+    if (isRecordingMic) {
+      setIsRecordingMic(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "id-ID";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        setIsRecordingMic(true);
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results?.[0]?.[0]?.transcript;
+        if (transcript) {
+          setDetailPrompt(prev => prev ? `${prev} ${transcript}` : transcript);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.warn("Speech recognition error:", event.error);
+        setIsRecordingMic(false);
+      };
+
+      recognition.onend = () => {
+        setIsRecordingMic(false);
+      };
+
+      recognition.start();
+    } catch (err) {
+      console.warn("Speech recognition failed:", err);
+      setIsRecordingMic(false);
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const newFileList: Array<{ name: string; size: string; type: string }> = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const sizeKb = (file.size / 1024).toFixed(1) + " KB";
+      newFileList.push({
+        name: file.name,
+        size: sizeKb,
+        type: file.type || "file"
+      });
+    }
+    setUploadedFiles(prev => [...prev, ...newFileList]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeUploadedFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleStartBuilding = (chosenMode?: "fullstack" | "frontend" | "prd") => {
+    const modeToUse = chosenMode || genMode;
+    const finalName = projectConfig.webName.trim() || "Proyek Baru";
+    const finalType = projectConfig.webType === "Kustom (Tulis Sendiri...)" ? (projectConfig.customWebType?.trim() || "Web Kustom") : projectConfig.webType;
+    const finalTheme = projectConfig.theme === "Kustom (Tulis Sendiri...)" ? (projectConfig.customTheme?.trim() || "Kustom") : projectConfig.theme;
+
+    setProjectName(finalName);
+    setGenMode(modeToUse);
+    setIsConfigCompleted(true);
+    setHasGenerated(true);
+    setShowCanvas(true);
+
+    const fileAttachmentsText = uploadedFiles.length > 0 
+      ? `\n\n[Lampiran Dokumen/File: ${uploadedFiles.map(f => `${f.name} (${f.size})`).join(", ")}]` 
+      : "";
+
+    const welcomeMsg: ChatMessage = {
+      id: "msg_init_" + Date.now(),
+      role: "agent",
+      agentName: "AI Agent",
+      text: `Konfigurasi awal proyek "${finalName}" (${finalType} • ${finalTheme} • Mode ${modeToUse.toUpperCase()}) berhasil dicatat.${fileAttachmentsText}\n\nMemulai perancangan arsitektur dan antarmuka aplikasi berdasarkan instruksi lengkap Anda...`,
+      timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
+    };
+
+    setMessages([welcomeMsg]);
+    
+    // Construct effective comprehensive prompt
+    const effectivePrompt = detailPrompt.trim()
+      ? `${detailPrompt.trim()}${fileAttachmentsText}`
+      : `Buatkan website profesional "${finalName}" untuk kategori ${finalType} dengan nuansa desain ${finalTheme}, ditujukan bagi ${projectConfig.targetAudience}, lengkap dengan fitur ${projectConfig.mainFeatures.join(", ")}.${fileAttachmentsText}`;
+
+    // Automatically trigger AI Generation in the workspace
+    handleSendPrompt(effectivePrompt, finalName, undefined, modeToUse);
+  };
 
   useEffect(() => {
     // Auth Guard: Require login before accessing studio
@@ -485,6 +672,10 @@ export default function SatusiteStudioWorkspace() {
         const p = store.projects[qId];
         setProjectId(qId);
         setProjectName(p.name || "Proyek Baru");
+        if (p.projectConfig) {
+          setProjectConfig(p.projectConfig);
+        }
+        setIsConfigCompleted(true);
         if (p.code) {
           setCode(p.code);
           setHasGenerated(true);
@@ -496,6 +687,8 @@ export default function SatusiteStudioWorkspace() {
         setProjectId(newId);
         const name = qPrompt.slice(0, 30) + (qPrompt.length > 30 ? "..." : "");
         setProjectName(name);
+        setProjectConfig(prev => ({ ...prev, webName: name }));
+        setIsConfigCompleted(true);
         setHasGenerated(true);
         handleSendPrompt(qPrompt, name, newId, initialMode);
       }
@@ -518,6 +711,7 @@ export default function SatusiteStudioWorkspace() {
         code: newCode,
         messages: newMessages,
         structure: structToSave,
+        projectConfig: projectConfig,
         updatedAt: Date.now(),
         createdAt: store.projects[projectId]?.createdAt || Date.now()
       };
@@ -526,7 +720,7 @@ export default function SatusiteStudioWorkspace() {
     } catch (e) {
       console.warn("Failed saving project:", e);
     }
-  }, [projectId, projectName, architectureStructure]);
+  }, [projectId, projectName, architectureStructure, projectConfig]);
 
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -535,13 +729,6 @@ export default function SatusiteStudioWorkspace() {
   const handleSendPrompt = async (promptToSend?: string, customName?: string, customId?: string, modeOverride?: "fullstack" | "frontend" | "prd") => {
     const text = (promptToSend || inputPrompt).trim();
     if (!text || isGenerating) return;
-
-    // Free Tier Rule: 1st project generation is unlimited. After it completes, quota expires.
-    if (!isPaidUser && currentUser && currentUser.quota !== undefined && currentUser.quota <= 0 && hasGenerated) {
-      setUpgradeFeatureName("Iterasi Lanjutan & Unlimited Prompt");
-      setShowUpgradeModal(true);
-      return;
-    }
 
     setHasGenerated(true);
     setShowCanvas(true);
@@ -616,7 +803,14 @@ export default function SatusiteStudioWorkspace() {
         signal: controller.signal,
         body: JSON.stringify({
           prompt: text,
-          projectName: customName || projectName,
+          projectName: customName || projectConfig.webName || projectName,
+          projectConfig: {
+            webType: projectConfig.webType === "Kustom (Tulis Sendiri...)" ? (projectConfig.customWebType || "Web Kustom") : projectConfig.webType,
+            webName: projectConfig.webName || customName || projectName,
+            theme: projectConfig.theme === "Kustom (Tulis Sendiri...)" ? (projectConfig.customTheme || "Kustom") : projectConfig.theme,
+            targetAudience: projectConfig.targetAudience,
+            mainFeatures: projectConfig.mainFeatures
+          },
           currentCode: code,
           chatHistory: updatedMessages,
           mode: effectiveMode,
@@ -1079,6 +1273,9 @@ export default function SatusiteStudioWorkspace() {
       if (!target.closest(".mode-dropdown-container")) {
         setShowModeDropdown(null);
       }
+      if (!target.closest(".custom-dropdown-container")) {
+        setOpenDropdown(null);
+      }
     };
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
@@ -1457,14 +1654,14 @@ export default function SatusiteStudioWorkspace() {
       </header>
 
       {/* WORKSPACE BODY */}
-      {!hasGenerated ? (
+      {!isConfigCompleted ? (
         /* ========================================================================= */
-        /* STAGE 1: ONLY CHAT AGENT VISIBLE (BEFORE GENERATING)                      */
+        /* STAGE 1: INITIAL CONFIGURATION WIZARD                                     */
         /* ========================================================================= */
-        <div className="flex-1 flex flex-col items-center justify-between p-4 sm:p-6 overflow-y-auto relative">
+        <div className="flex-1 flex flex-col items-center justify-start p-4 sm:p-6 overflow-y-auto relative">
           
-          {/* Top Brand Mark (Elevated slightly higher up) */}
-          <div className="w-full pt-1 sm:pt-2 flex justify-center shrink-0">
+          {/* Top Brand Mark */}
+          <div className="w-full pt-1 sm:pt-2 flex justify-center shrink-0 mb-3 sm:mb-4">
             <div className="relative group inline-block">
               <div className="absolute -inset-3 bg-blue-600/10 rounded-full blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
               <div className="relative flex items-center justify-center gap-2 select-none">
@@ -1479,27 +1676,677 @@ export default function SatusiteStudioWorkspace() {
             </div>
           </div>
 
-          {/* Main Content Area (Centered towards the lower-middle) */}
-          <div className="max-w-2xl w-full flex flex-col items-center text-center space-y-5 animate-fade-in-up my-auto pt-6 pb-4">
-            
-            {/* Clean Heading */}
-            <div className="space-y-1.5">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                Apa yang ingin Anda bangun hari ini?
-              </h1>
-              <p className="text-xs text-zinc-400 max-w-lg mx-auto leading-relaxed">
-                Ketik ide bisnis atau konsep website yang Anda inginkan. AI Agent akan langsung merancang tampilan dan membuka kanvas kerja 65% secara otomatis.
-              </p>
+          {/* Multi-Step Wizard Progress Indicator */}
+          <div className="w-full max-w-2xl mb-4 px-2 shrink-0">
+            <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400 mb-1.5">
+              <span className="font-semibold text-zinc-300">
+                {onboardingStep === 1 && "Langkah 1 dari 7: Nama Website"}
+                {onboardingStep === 2 && "Langkah 2 dari 7: Kategori Website"}
+                {onboardingStep === 3 && "Langkah 3 dari 7: Tema & Gaya Desain"}
+                {onboardingStep === 4 && "Langkah 4 dari 7: Target Pengunjung"}
+                {onboardingStep === 5 && "Langkah 5 dari 7: Fitur Utama"}
+                {onboardingStep === 6 && "Langkah 6 dari 7: Detail & Chat AI Agent"}
+                {onboardingStep === 7 && "Langkah 7 dari 7: Mode Arsitektur"}
+              </span>
+              <span className="text-zinc-500 font-semibold">{Math.round((onboardingStep / 7) * 100)}% Selesai</span>
             </div>
-
-            {/* Centered Main Prompt Input Bar */}
-            <div className="w-full pt-1">
-              {renderPromptInput(true)}
+            <div className="w-full h-1.5 bg-zinc-900 border border-zinc-800/80 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-white transition-all duration-300 rounded-full"
+                style={{ width: `${(onboardingStep / 7) * 100}%` }}
+              />
             </div>
-
           </div>
 
-          {/* Bottom subtle anchor spacer to balance layout */}
+          {/* ========================================================================= */}
+          {/* STEP 1: NAMA WEBSITE / BRAND                                              */}
+          {/* ========================================================================= */}
+          {onboardingStep === 1 && (
+            <div key="step-1" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/15 via-indigo-500/10 to-purple-600/15 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+              
+              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-6 backdrop-blur-xl">
+                <div className="text-center space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
+                    <FileText className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
+                    Nama Website atau Brand
+                  </h2>
+                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+                    Ketikkan nama bisnis, brand usaha, atau judul proyek website yang ingin Anda rancang.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    autoFocus
+                    value={projectConfig.webName}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setProjectConfig(prev => ({ ...prev, webName: val }));
+                      if (val.trim()) setProjectName(val.trim());
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const finalName = projectConfig.webName.trim() || "Proyek Baru";
+                        setProjectName(finalName);
+                        setOnboardingStep(2);
+                      }
+                    }}
+                    placeholder="Contoh: Kopi Nusantara, Klinik Sehat Modern, Toko Bangunan Jaya..."
+                    className="w-full px-4 py-3.5 rounded-2xl bg-zinc-950/90 border border-zinc-800 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-600 transition-all shadow-inner font-sans"
+                  />
+                  <p className="text-[11px] text-zinc-500 px-1">Tekan <kbd className="px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px]">Enter</kbd> untuk lanjut ke langkah berikutnya.</p>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const finalName = projectConfig.webName.trim() || "Proyek Baru";
+                      setProjectName(finalName);
+                      setOnboardingStep(2);
+                    }}
+                    className="relative group overflow-hidden w-full py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] hover:shadow-[0_15px_35px_-5px_rgba(255,255,255,0.25)] flex items-center justify-center gap-2.5 cursor-pointer active:scale-[0.99]"
+                  >
+                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-black/10 to-transparent transition-transform duration-1000 ease-in-out pointer-events-none" />
+                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Kategori Web</span>
+                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1.5 transition-transform duration-300 shrink-0" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* STEP 2: KATEGORI / JENIS WEB                                              */}
+          {/* ========================================================================= */}
+          {onboardingStep === 2 && (
+            <div key="step-2" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/15 via-indigo-500/10 to-purple-600/15 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+              
+              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-5 backdrop-blur-xl">
+                <div className="text-center space-y-1.5">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
+                    <Layout className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
+                    Kategori & Jenis Website
+                  </h2>
+                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+                    Pilih model atau jenis website yang paling sesuai dengan kebutuhan proyek Anda.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
+                  {WEB_TYPE_OPTIONS.map(opt => {
+                    const IconC = opt.icon;
+                    const isSelected = projectConfig.webType === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setProjectConfig(prev => ({ ...prev, webType: opt.id }))}
+                        className={`p-3 rounded-xl flex items-center justify-between text-left transition-all duration-200 cursor-pointer border ${
+                          isSelected
+                            ? "bg-zinc-800/90 border-zinc-600 text-white shadow-sm"
+                            : "bg-zinc-950/80 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 hover:border-zinc-700"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isSelected ? "bg-blue-600/20 text-blue-400 border border-blue-500/30" : "bg-zinc-900 text-zinc-500 border border-zinc-800"}`}>
+                            <IconC className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold truncate text-white">{opt.label}</div>
+                            <div className="text-[10px] text-zinc-500 truncate leading-tight">{opt.desc}</div>
+                          </div>
+                        </div>
+                        {isSelected && <Check className="w-4 h-4 text-blue-400 shrink-0 ml-2" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {projectConfig.webType === "Kustom (Tulis Sendiri...)" && (
+                  <input
+                    type="text"
+                    value={projectConfig.customWebType || ""}
+                    onChange={(e) => setProjectConfig(prev => ({ ...prev, customWebType: e.target.value }))}
+                    placeholder="Tulis jenis website kustom Anda..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600"
+                  />
+                )}
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(1)}
+                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Kembali</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(3)}
+                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                  >
+                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Tema Desain</span>
+                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* STEP 3: TEMA & GAYA DESAIN                                                */}
+          {/* ========================================================================= */}
+          {onboardingStep === 3 && (
+            <div key="step-3" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/15 via-indigo-500/10 to-purple-600/15 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+              
+              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-5 backdrop-blur-xl">
+                <div className="text-center space-y-1.5">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
+                    <Palette className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
+                    Tema & Gaya Desain Visual
+                  </h2>
+                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+                    Tentukan palet warna dan estetika tampilan yang sesuai dengan identitas website.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
+                  {THEME_OPTIONS.map(opt => {
+                    const isSelected = projectConfig.theme === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setProjectConfig(prev => ({ ...prev, theme: opt.id }))}
+                        className={`p-3 rounded-xl flex items-center justify-between text-left transition-all duration-200 cursor-pointer border ${
+                          isSelected
+                            ? "bg-zinc-800/90 border-zinc-600 text-white shadow-sm"
+                            : "bg-zinc-950/80 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 hover:border-zinc-700"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
+                            <span className={`w-3 h-3 rounded-full ${opt.dotColor} ring-2 ring-offset-1 ring-offset-zinc-900`} />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold truncate text-white">{opt.label}</div>
+                            <div className="text-[10px] text-zinc-500 truncate leading-tight">{opt.desc}</div>
+                          </div>
+                        </div>
+                        {isSelected && <Check className="w-4 h-4 text-blue-400 shrink-0 ml-2" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {projectConfig.theme === "Kustom (Tulis Sendiri...)" && (
+                  <input
+                    type="text"
+                    value={projectConfig.customTheme || ""}
+                    onChange={(e) => setProjectConfig(prev => ({ ...prev, customTheme: e.target.value }))}
+                    placeholder="Tulis tema / palet warna kustom..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600"
+                  />
+                )}
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(2)}
+                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Kembali</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(4)}
+                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                  >
+                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Target Pengunjung</span>
+                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* STEP 4: TARGET PENGUNJUNG                                                 */}
+          {/* ========================================================================= */}
+          {onboardingStep === 4 && (
+            <div key="step-4" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/15 via-indigo-500/10 to-purple-600/15 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+              
+              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-5 backdrop-blur-xl">
+                <div className="text-center space-y-1.5">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
+                    <Users className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
+                    Target Pengunjung & Audiens
+                  </h2>
+                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+                    Siapa segmen audiens utama yang ingin dijangkau oleh website ini?
+                  </p>
+                </div>
+
+                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                  {AUDIENCE_OPTIONS.map(opt => {
+                    const IconC = opt.icon;
+                    const isSelected = projectConfig.targetAudience === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setProjectConfig(prev => ({ ...prev, targetAudience: opt.id }))}
+                        className={`w-full p-3.5 rounded-xl flex items-center justify-between text-left transition-all duration-200 cursor-pointer border ${
+                          isSelected
+                            ? "bg-zinc-800/90 border-zinc-600 text-white shadow-sm"
+                            : "bg-zinc-950/80 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 hover:border-zinc-700"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isSelected ? "bg-blue-600/20 text-blue-400 border border-blue-500/30" : "bg-zinc-900 text-zinc-500 border border-zinc-800"}`}>
+                            <IconC className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold text-white">{opt.label}</div>
+                            <div className="text-[10px] text-zinc-500 leading-tight">{opt.desc}</div>
+                          </div>
+                        </div>
+                        {isSelected && <Check className="w-4 h-4 text-blue-400 shrink-0 ml-2" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(3)}
+                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Kembali</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(5)}
+                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                  >
+                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Fitur Utama</span>
+                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* STEP 5: FITUR UTAMA YANG DIINGINKAN                                       */}
+          {/* ========================================================================= */}
+          {onboardingStep === 5 && (
+            <div key="step-5" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/15 via-indigo-500/10 to-purple-600/15 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+              
+              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-5 backdrop-blur-xl">
+                <div className="text-center space-y-1.5">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
+                    <Sparkles className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
+                    Fitur Utama yang Diinginkan
+                  </h2>
+                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+                    Pilih satu atau beberapa fitur utama yang ingin diintegrasikan ke website Anda.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
+                  {FEATURE_OPTIONS.map(feat => {
+                    const isSelected = projectConfig.mainFeatures.includes(feat);
+                    return (
+                      <button
+                        key={feat}
+                        type="button"
+                        onClick={() => {
+                          setProjectConfig(prev => ({
+                            ...prev,
+                            mainFeatures: isSelected
+                              ? prev.mainFeatures.filter(f => f !== feat)
+                              : [...prev.mainFeatures, feat]
+                          }));
+                        }}
+                        className={`p-3.5 rounded-xl flex items-center justify-between text-left transition-all duration-200 cursor-pointer border ${
+                          isSelected
+                            ? "bg-zinc-800/90 border-zinc-600 text-white shadow-sm"
+                            : "bg-zinc-950/80 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 hover:border-zinc-700"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] transition-colors shrink-0 ${isSelected ? "bg-blue-600/20 text-blue-400" : "bg-zinc-900 text-zinc-500"}`}>
+                            {isSelected ? <Check className="w-3 h-3 stroke-[3]" /> : <Plus className="w-3 h-3" />}
+                          </span>
+                          <span className="text-xs font-semibold text-zinc-200 truncate">{feat}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(4)}
+                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Kembali</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(6)}
+                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                  >
+                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Deskripsi Detail & Chat</span>
+                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* STEP 6: DESKRIPSI DETAIL SINGKAT (CHAT AGENT + UPLOAD FILE + MICROPHONE)   */}
+          {/* ========================================================================= */}
+          {onboardingStep === 6 && (
+            <div key="step-6" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 via-indigo-500/15 to-purple-600/20 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-4 backdrop-blur-xl">
+                
+                {/* Header */}
+                <div className="text-center space-y-1.5">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner ring-1 ring-blue-500/20">
+                    <Bot className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
+                    Deskripsi & Instruksi Khusus AI Agent
+                  </h2>
+                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+                    Tuliskan kebutuhan khusus, menu produk/layanan, atau gunakan suara dan lampirkan dokumen/foto referensi.
+                  </p>
+                </div>
+
+                {/* Quick Inspiration Chips */}
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-semibold text-zinc-400 flex items-center gap-1.5">
+                    <Sparkles className="w-3 h-3 text-blue-400" />
+                    <span>Inspirasi Cepat (Klik untuk memilih):</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(() => {
+                      const type = projectConfig.webType;
+                      let suggestions = [
+                        "Katalog 6 produk unggulan dengan foto & checkout WhatsApp",
+                        "Panel admin kasir CRUD untuk kelola inventori & harga",
+                        "Formulir reservasi interaktif & laporan kas keuangan harian"
+                      ];
+                      if (type.includes("Kuliner") || type.includes("Restoran")) {
+                        suggestions = [
+                          "Daftar menu makanan & minuman lengkap dengan harga dan foto",
+                          "Form reservasi meja & order langsung kirim pesan WhatsApp",
+                          "Laporan kasir harian dan ringkasan pemesanan"
+                        ];
+                      } else if (type.includes("Company") || type.includes("Portofolio")) {
+                        suggestions = [
+                          "Hero section persuasif, profil keunggulan, & showcase proyek",
+                          "Testimoni klien, FAQ interaktif, & form kontak terstruktur",
+                          "Integrasi tombol WhatsApp admin & Google Maps lokasi"
+                        ];
+                      } else if (type.includes("Dashboard") || type.includes("SaaS")) {
+                        suggestions = [
+                          "Dashboard metrik grafik penjualan & analitik pengguna",
+                          "Tabel CRUD manajemen data lengkap dengan filter & search",
+                          "Fitur ekspor laporan transaksi ke format CSV & JSON"
+                        ];
+                      }
+                      return suggestions.map((sug, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setDetailPrompt(prev => prev ? `${prev}. ${sug}` : sug)}
+                          className="px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-900 text-[11px] text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 hover:border-zinc-700 transition-all cursor-pointer text-left truncate max-w-full"
+                        >
+                          + {sug}
+                        </button>
+                      ));
+                    })()}
+                  </div>
+                </div>
+
+                {/* Attached Files List Preview */}
+                {uploadedFiles.length > 0 && (
+                  <div className="flex flex-wrap gap-2 p-2 rounded-xl bg-zinc-950/90 border border-zinc-800">
+                    {uploadedFiles.map((f, idx) => (
+                      <div key={idx} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900 text-[11px] text-zinc-300 border border-zinc-700">
+                        <FileUp className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                        <span className="truncate max-w-[150px] font-medium">{f.name}</span>
+                        <span className="text-zinc-500 text-[10px]">({f.size})</span>
+                        <button
+                          type="button"
+                          onClick={() => removeUploadedFile(idx)}
+                          className="ml-1 text-zinc-400 hover:text-rose-400 cursor-pointer"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Hidden File Input */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  multiple
+                  accept="image/*,.pdf,.txt,.json,.doc,.docx"
+                  className="hidden"
+                />
+
+                {/* Rich Prompt Textarea with Mic & Upload Toolbars */}
+                <div className="relative border border-zinc-800 rounded-2xl bg-zinc-950/90 overflow-hidden focus-within:border-zinc-600 focus-within:ring-1 focus-within:ring-zinc-600 transition-all">
+                  <textarea
+                    autoFocus
+                    rows={4}
+                    value={detailPrompt}
+                    onChange={(e) => setDetailPrompt(e.target.value)}
+                    placeholder={`Contoh: Buatkan website untuk "${projectName || 'bisnis saya'}" dengan 6 menu produk utama, keranjang belanja, form pemesanan langsung WhatsApp, serta panel admin CRUD...`}
+                    className="w-full p-3.5 bg-transparent text-xs sm:text-[13px] text-white placeholder-zinc-500 focus:outline-none resize-none leading-relaxed font-sans"
+                  />
+                  
+                  {/* Toolbar footer inside box */}
+                  <div className="px-3 py-2 bg-zinc-900/60 border-t border-zinc-800/80 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      {/* Upload File Button */}
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs border border-zinc-800 flex items-center gap-1.5 transition-colors cursor-pointer"
+                        title="Upload File Referensi / Gambar"
+                      >
+                        <Paperclip className="w-3.5 h-3.5 text-zinc-400" />
+                        <span className="text-[11px]">Upload File</span>
+                      </button>
+
+                      {/* Mic Button */}
+                      <button
+                        type="button"
+                        onClick={toggleMicRecording}
+                        className={`px-2.5 py-1.5 rounded-lg text-xs border flex items-center gap-1.5 transition-all cursor-pointer ${
+                          isRecordingMic
+                            ? "bg-rose-950/80 border-rose-600 text-rose-300 animate-pulse"
+                            : "bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border-zinc-800"
+                        }`}
+                        title={isRecordingMic ? "Hentikan perekaman suara" : "Rekam suara (Voice to Text)"}
+                      >
+                        {isRecordingMic ? (
+                          <>
+                            <Radio className="w-3.5 h-3.5 text-rose-400 animate-ping" />
+                            <span className="text-[11px] font-semibold text-rose-300">Merekam...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Mic className="w-3.5 h-3.5 text-zinc-400" />
+                            <span className="text-[11px]">Gunakan Suara</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="text-[10px] text-zinc-500 font-mono">
+                      {detailPrompt.length} karakter
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(5)}
+                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Kembali</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(7)}
+                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                  >
+                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Mode Arsitektur</span>
+                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* STEP 7: FULLSTACK / FRONTEND / PRD (FINAL LAUNCH TO CANVAS)                */}
+          {/* ========================================================================= */}
+          {onboardingStep === 7 && (
+            <div key="step-7" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/25 via-indigo-500/20 to-purple-600/25 rounded-3xl blur-2xl opacity-90 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-5 backdrop-blur-xl">
+                
+                {/* Header */}
+                <div className="text-center space-y-1.5">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner ring-1 ring-blue-500/20">
+                    <Zap className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
+                    Pilih Mode Arsitektur Aplikasi
+                  </h2>
+                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+                    Tentukan kedalaman arsitektur dan output kode yang akan diproduksi oleh AI Agent.
+                  </p>
+                </div>
+
+                {/* Mode Options Cards */}
+                <div className="space-y-3">
+                  {[
+                    {
+                      key: "fullstack" as const,
+                      title: "Fullstack Web App",
+                      tag: "Direkomendasikan",
+                      icon: Database,
+                      desc: "Kode fullstack lengkap dengan state management, database in-memory, logika CRUD backend, panel admin, & antarmuka interaktif siap pakai."
+                    },
+                    {
+                      key: "frontend" as const,
+                      title: "Frontend UI Canvas",
+                      tag: "Fokus Visual",
+                      icon: Layout,
+                      desc: "Fokus pada kesempurnaan antarmuka visual (UI/UX), komponen interaktif, animasi section, dan responsivitas mobile-first."
+                    },
+                    {
+                      key: "prd" as const,
+                      title: "Blueprint PRD",
+                      tag: "Dokumen Teknis",
+                      icon: FileText,
+                      desc: "Spesifikasi dokumen teknis lengkap, diagram entitas data, user flow persona, dan arsitektur roadmap produk MVP."
+                    }
+                  ].map(m => {
+                    const IconC = m.icon;
+                    const isSelected = genMode === m.key;
+                    return (
+                      <button
+                        key={m.key}
+                        type="button"
+                        onClick={() => setGenMode(m.key)}
+                        className={`w-full p-4 rounded-2xl flex items-start gap-3.5 text-left transition-all duration-200 cursor-pointer border ${
+                          isSelected
+                            ? "bg-zinc-800/90 border-blue-500/80 ring-1 ring-blue-500/40 text-white shadow-lg"
+                            : "bg-zinc-950/80 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 hover:border-zinc-700"
+                        }`}
+                      >
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${isSelected ? "bg-blue-600/25 text-blue-400 border border-blue-500/40" : "bg-zinc-900 text-zinc-500 border border-zinc-800"}`}>
+                          <IconC className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <span className="text-xs sm:text-sm font-bold text-white">{m.title}</span>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isSelected ? "bg-blue-500/20 text-blue-300 border border-blue-500/30" : "bg-zinc-900 text-zinc-500 border border-zinc-800"}`}>
+                              {m.tag}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-zinc-400 leading-relaxed">{m.desc}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingStep(6)}
+                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Kembali</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleStartBuilding()}
+                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] hover:shadow-[0_15px_35px_-5px_rgba(255,255,255,0.25)] flex items-center justify-center gap-2.5 cursor-pointer active:scale-[0.99]"
+                  >
+                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-black/10 to-transparent transition-transform duration-1000 ease-in-out pointer-events-none" />
+                    <span className="relative z-10 font-sans tracking-tight">Mulai Bangun & Buka Studio Canvas</span>
+                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1.5 transition-transform duration-300 shrink-0" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Bottom subtle anchor spacer */}
           <div className="w-full h-2 shrink-0"></div>
         </div>
       ) : (
@@ -1543,6 +2390,36 @@ export default function SatusiteStudioWorkspace() {
                   {showCanvas ? "35% Panel" : "Full Chat"}
                 </span>
               </div>
+            </div>
+
+            {/* Project Config summary badge */}
+            <div className="px-3 py-1.5 border-b border-zinc-800/40 bg-zinc-900/40 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-4 h-4 rounded bg-zinc-900 border border-zinc-800 text-blue-400 flex items-center justify-center shrink-0">
+                  <SlidersHorizontal className="w-2.5 h-2.5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-semibold text-zinc-200 text-[11px] truncate">
+                      {projectConfig.webName || projectName}
+                    </span>
+                    <span className="px-1 py-0.2 rounded bg-zinc-900 text-zinc-400 text-[9px] border border-zinc-800 shrink-0 capitalize">
+                      {genMode}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-zinc-500 truncate">
+                    {projectConfig.webType === "Kustom (Tulis Sendiri...)" ? (projectConfig.customWebType || "Kustom") : projectConfig.webType} • {projectConfig.theme === "Kustom (Tulis Sendiri...)" ? (projectConfig.customTheme || "Kustom") : projectConfig.theme}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowConfigEditModal(true)}
+                className="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-[10px] font-medium text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 transition-colors cursor-pointer shrink-0 ml-2"
+                title="Ubah Konfigurasi Dasar"
+              >
+                Ubah
+              </button>
             </div>
 
             {/* Messages stream */}
@@ -2199,6 +3076,253 @@ export default function SatusiteStudioWorkspace() {
                 className="w-full py-2 px-4 rounded-xl text-zinc-500 hover:text-zinc-300 text-xs transition-colors"
               >
                 Lanjutkan Eksplorasi di Studio
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT CONFIG MODAL */}
+      {showConfigEditModal && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#0e0e12] border border-zinc-800/90 rounded-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex justify-between items-center pb-3 border-b border-zinc-800/60">
+              <h3 className="font-semibold text-white text-sm flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-blue-400" />
+                <span>Ubah Konfigurasi Proyek</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenDropdown(null);
+                  setShowConfigEditModal(false);
+                }}
+                className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3.5 text-xs">
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Nama Website / Brand:</span>
+                </label>
+                <input
+                  type="text"
+                  value={projectConfig.webName}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setProjectConfig(prev => ({ ...prev, webName: val }));
+                    if (val.trim()) setProjectName(val.trim());
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-600"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Modal Dropdown: Jenis Web */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
+                    <Layout className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>Jenis / Kategori:</span>
+                  </label>
+                  <div className="relative custom-dropdown-container">
+                    <button
+                      type="button"
+                      onClick={() => setOpenDropdown(openDropdown === "modal_type" ? null : "modal_type")}
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 flex items-center justify-between transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        <div className="w-4 h-4 rounded bg-zinc-900 text-blue-400 flex items-center justify-center shrink-0">
+                          {(() => {
+                            const found = WEB_TYPE_OPTIONS.find(o => o.id === projectConfig.webType);
+                            const IconComp = found?.icon || ShoppingBag;
+                            return <IconComp className="w-2.5 h-2.5" />;
+                          })()}
+                        </div>
+                        <span className="truncate">{projectConfig.webType}</span>
+                      </div>
+                      <ChevronDown className={`w-3 h-3 text-zinc-400 shrink-0 transition-transform ${openDropdown === "modal_type" ? "rotate-180" : ""}`} />
+                    </button>
+
+                    {openDropdown === "modal_type" && (
+                      <div className="absolute top-full left-0 right-0 mt-1 p-1 bg-[#121216] border border-zinc-800 rounded-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100 max-h-52 overflow-y-auto space-y-0.5 custom-dropdown-container">
+                        {WEB_TYPE_OPTIONS.map(opt => {
+                          const isSelected = projectConfig.webType === opt.id;
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => {
+                                setProjectConfig(prev => ({ ...prev, webType: opt.id }));
+                                setOpenDropdown(null);
+                              }}
+                              className={`w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-left text-xs transition-colors cursor-pointer ${
+                                isSelected ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
+                              }`}
+                            >
+                              <span className="truncate">{opt.label}</span>
+                              {isSelected && <Check className="w-3 h-3 text-blue-400 shrink-0" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Modal Dropdown: Tema */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
+                    <Palette className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>Tema Desain:</span>
+                  </label>
+                  <div className="relative custom-dropdown-container">
+                    <button
+                      type="button"
+                      onClick={() => setOpenDropdown(openDropdown === "modal_theme" ? null : "modal_theme")}
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 flex items-center justify-between transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        {(() => {
+                          const found = THEME_OPTIONS.find(o => o.id === projectConfig.theme);
+                          const dotCls = found?.dotColor || "bg-blue-500 ring-blue-500/40";
+                          return <span className={`w-2 h-2 rounded-full ${dotCls} shrink-0`} />;
+                        })()}
+                        <span className="truncate">{projectConfig.theme.split(" (")[0]}</span>
+                      </div>
+                      <ChevronDown className={`w-3 h-3 text-zinc-400 shrink-0 transition-transform ${openDropdown === "modal_theme" ? "rotate-180" : ""}`} />
+                    </button>
+
+                    {openDropdown === "modal_theme" && (
+                      <div className="absolute top-full left-0 right-0 mt-1 p-1 bg-[#121216] border border-zinc-800 rounded-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100 max-h-52 overflow-y-auto space-y-0.5 custom-dropdown-container">
+                        {THEME_OPTIONS.map(opt => {
+                          const isSelected = projectConfig.theme === opt.id;
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => {
+                                setProjectConfig(prev => ({ ...prev, theme: opt.id }));
+                                setOpenDropdown(null);
+                              }}
+                              className={`w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-left text-xs transition-colors cursor-pointer ${
+                                isSelected ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 truncate">
+                                <span className={`w-2 h-2 rounded-full ${opt.dotColor} shrink-0`} />
+                                <span className="truncate">{opt.label}</span>
+                              </div>
+                              {isSelected && <Check className="w-3 h-3 text-blue-400 shrink-0" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Dropdown: Target Pengunjung */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Target Pengunjung:</span>
+                </label>
+                <div className="relative custom-dropdown-container">
+                  <button
+                    type="button"
+                    onClick={() => setOpenDropdown(openDropdown === "modal_audience" ? null : "modal_audience")}
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 flex items-center justify-between transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <div className="w-4 h-4 rounded bg-zinc-900 text-blue-400 flex items-center justify-center shrink-0">
+                        {(() => {
+                          const found = AUDIENCE_OPTIONS.find(o => o.id === projectConfig.targetAudience);
+                          const IconComp = found?.icon || Users;
+                          return <IconComp className="w-2.5 h-2.5" />;
+                        })()}
+                      </div>
+                      <span className="truncate">{projectConfig.targetAudience}</span>
+                    </div>
+                    <ChevronDown className={`w-3 h-3 text-zinc-400 shrink-0 transition-transform ${openDropdown === "modal_audience" ? "rotate-180" : ""}`} />
+                  </button>
+
+                  {openDropdown === "modal_audience" && (
+                    <div className="absolute top-full left-0 right-0 mt-1 p-1 bg-[#121216] border border-zinc-800 rounded-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100 max-h-52 overflow-y-auto space-y-0.5 custom-dropdown-container">
+                      {AUDIENCE_OPTIONS.map(opt => {
+                        const isSelected = projectConfig.targetAudience === opt.id;
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => {
+                              setProjectConfig(prev => ({ ...prev, targetAudience: opt.id }));
+                              setOpenDropdown(null);
+                            }}
+                            className={`w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-left text-xs transition-colors cursor-pointer ${
+                              isSelected ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
+                            }`}
+                          >
+                            <span className="truncate">{opt.label}</span>
+                            {isSelected && <Check className="w-3 h-3 text-blue-400 shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Fitur Kunci Tags */}
+              <div className="space-y-1.5 pt-1">
+                <label className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Fitur Kunci:</span>
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {FEATURE_OPTIONS.map(feat => {
+                    const isSelected = projectConfig.mainFeatures.includes(feat);
+                    return (
+                      <button
+                        key={feat}
+                        type="button"
+                        onClick={() => {
+                          setProjectConfig(prev => ({
+                            ...prev,
+                            mainFeatures: isSelected
+                              ? prev.mainFeatures.filter(f => f !== feat)
+                              : [...prev.mainFeatures, feat]
+                          }));
+                        }}
+                        className={`px-2.5 py-1 rounded-lg text-[10.5px] font-medium transition-all cursor-pointer border flex items-center gap-1 ${
+                          isSelected
+                            ? "bg-zinc-800 text-white border-zinc-600 shadow-sm"
+                            : "bg-zinc-950 text-zinc-400 border-zinc-800/80 hover:text-zinc-200"
+                        }`}
+                      >
+                        {isSelected ? <Check className="w-2.5 h-2.5 text-blue-400" /> : <Plus className="w-2.5 h-2.5 text-zinc-500" />}
+                        <span>{feat}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-3 border-t border-zinc-800/60">
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenDropdown(null);
+                  setShowConfigEditModal(false);
+                }}
+                className="px-4 py-2 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs transition-colors cursor-pointer shadow-sm"
+              >
+                Simpan & Tutup
               </button>
             </div>
           </div>

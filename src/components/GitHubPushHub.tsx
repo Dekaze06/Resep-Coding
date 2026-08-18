@@ -203,7 +203,7 @@ export default function GitHubPushHub() {
         `To https://github.com/user/${repoName}.git`,
         ` * [new branch]      ${branch} -> ${branch}`,
         `Branch '${branch}' set up to track remote branch '${branch}' from 'origin'.`,
-        `✔ PUSH BERHASIL! Repositori aktif di: ${finalRepoUrl}`
+        `[OK] PUSH BERHASIL! Repositori aktif di: ${finalRepoUrl}`
       ]);
       setPushSuccess({
         repoUrl: finalRepoUrl,
@@ -591,7 +591,7 @@ export default function GitHubPushHub() {
                       className={`leading-relaxed ${
                         log.startsWith('$')
                           ? 'text-zinc-200 font-bold'
-                          : log.includes('✔')
+                          : log.includes('[OK]')
                           ? 'text-white font-bold bg-zinc-900 p-2 rounded-lg border border-zinc-700'
                           : 'text-zinc-400'
                       }`}

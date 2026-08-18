@@ -1,0 +1,421 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeaderNav from '../components/HeaderNav.astro';
+---
+
+<Layout title="Paket Harga & Langganan - Satusite Studio" description="Pilih paket harga fleksibel untuk membangun website dan aplikasi autonomous AI full-stack.">
+    <!-- Subtle Ambient Background Glows -->
+    <div class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-blue-600/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[15%] w-[500px] h-[400px] bg-blue-500/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+
+    <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-blue-500/30 selection:text-blue-200">
+        <!-- Unified Top Header Nav -->
+        <HeaderNav activePage="pricing" />
+
+        <main class="flex-1">
+            <!-- Hero Header -->
+            <section class="pt-12 pb-12 sm:pt-20 sm:pb-16 px-4 sm:px-6 text-center max-w-5xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-[11px] font-mono text-zinc-300 mb-6">
+                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                <span>PAKET HARGA TRANSPARAN & TANPA BIAYA TERSEMBUNYI</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white font-sans max-w-4xl mx-auto leading-[1.15]">
+                Bangun Aplikasi Modern Lebih Cepat dengan AI
+            </h1>
+            <p class="mt-4 sm:mt-6 text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                Mulai gratis tanpa kartu kredit. Tingkatkan ke paket Pro kapan saja untuk kapasitas AI tanpa batas, deploy cloud instan, dan integrasi GitHub.
+            </p>
+
+            <!-- Billing Cycle Switcher -->
+            <div class="mt-8 sm:mt-10 inline-flex items-center p-1 rounded-2xl bg-zinc-900/80 border border-zinc-800">
+                <button
+                    type="button"
+                    id="btn-bill-monthly"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-800 text-white shadow-sm transition-all cursor-pointer"
+                >
+                    Bulanan
+                </button>
+                <button
+                    type="button"
+                    id="btn-bill-annual"
+                    class="px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                    <span>Tahunan</span>
+                    <span class="px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Hemat 20%</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Pricing Cards Grid -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+                
+                <!-- CARD 1: STARTER / GRATIS -->
+                <div class="relative bg-[#0d0d10] border border-zinc-800/90 rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:border-zinc-700 transition-all duration-300">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs font-mono font-semibold text-zinc-300">Starter</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-white font-sans">Gratis Selamanya</h2>
+                        <p class="text-xs text-zinc-400 mt-2 leading-relaxed">Cocok untuk eksplorasi awal, membuat mockup ide, dan mencoba fitur AI Studio.</p>
+
+                        <div class="mt-6 mb-6">
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-3xl sm:text-4xl font-extrabold text-white font-mono">Rp 0</span>
+                                <span class="text-xs text-zinc-500">/ selamanya</span>
+                            </div>
+                            <p class="text-[11px] text-zinc-500 mt-1 font-mono">Tidak memerlukan kartu kredit</p>
+                        </div>
+
+                        <div class="h-px bg-zinc-800/80 mb-6"></div>
+
+                        <div class="space-y-3 text-xs text-zinc-300">
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Akses AI Studio Workspace</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Live Canvas Preview & Code Editor</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Ekspor File HTML, CSS, JS Tunggal</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Akses Template Komunitas Standar</span>
+                            </div>
+                            <div class="flex items-start gap-2.5 text-zinc-500">
+                                <i class="fa-solid fa-minus text-xs mt-0.5 shrink-0"></i>
+                                <span>Deploy One-Click ke Cloud</span>
+                            </div>
+                            <div class="flex items-start gap-2.5 text-zinc-500">
+                                <i class="fa-solid fa-minus text-xs mt-0.5 shrink-0"></i>
+                                <span>Sinkronisasi Otomatis GitHub</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-8">
+                        <a
+                            href="/app"
+                            class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                        >
+                            <span>Mulai Gratis Sekarang</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] text-zinc-400"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 2: PRO CREATOR (FEATURED / POPULER) -->
+                <div class="relative bg-[#0d0d12] border-2 border-blue-500/80 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-[0_20px_60px_rgba(37,99,235,0.15)] ring-1 ring-blue-500/40 relative">
+                    <!-- Popular Badge -->
+                    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3.5 py-1 rounded-full bg-blue-600 text-white text-[11px] font-bold tracking-wide uppercase shadow-md">
+                        Paling Populer
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-xs font-mono font-semibold text-blue-400">Pro Developer</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-white font-sans">Kreator & Freelancer</h2>
+                        <p class="text-xs text-zinc-400 mt-2 leading-relaxed">Solusi lengkap untuk developer yang ingin memproduksi dan mendeploy aplikasi client secara cepat.</p>
+
+                        <div class="mt-6 mb-6">
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-3xl sm:text-4xl font-extrabold text-white font-mono" id="price-pro">Rp 99.000</span>
+                                <span class="text-xs text-zinc-400 font-mono" id="period-pro">/ bulan</span>
+                            </div>
+                            <p class="text-[11px] text-emerald-400 mt-1 font-mono" id="billing-sub-pro">Ditagih bulanan</p>
+                        </div>
+
+                        <div class="h-px bg-zinc-800/80 mb-6"></div>
+
+                        <div class="space-y-3 text-xs text-zinc-200">
+                            <div class="flex items-start gap-2.5 font-medium">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Semua fitur paket Starter</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Engine AI Multi-Tier (Gemini 3.7 & 3.6 Pro)</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Mode Fullstack, Frontend & PRD Planning</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Deploy One-Click ke Vercel & Netlify</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Push Kode & Sync Repository GitHub</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Testing Suite & Audit Keamanan Otomatis</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-blue-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Ekspor Full Project ZIP & Source Code</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-8">
+                        <a
+                            href="/app"
+                            class="relative group overflow-hidden w-full py-3.5 px-4 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-white/10 active:scale-[0.99]"
+                        >
+                            <span>Pilih Paket Pro Developer</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] text-zinc-950"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 3: ENTERPRISE / AGENCY -->
+                <div class="relative bg-[#0d0d10] border border-zinc-800/90 rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:border-zinc-700 transition-all duration-300">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <span class="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-xs font-mono font-semibold text-purple-400">Agency & Enterprise</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-white font-sans">Studio Bisnis & Tim</h2>
+                        <p class="text-xs text-zinc-400 mt-2 leading-relaxed">Kapasitas maksimal untuk agensi software house dan tim pengembang dengan multi-client.</p>
+
+                        <div class="mt-6 mb-6">
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-3xl sm:text-4xl font-extrabold text-white font-mono" id="price-agency">Rp 299.000</span>
+                                <span class="text-xs text-zinc-400 font-mono" id="period-agency">/ bulan</span>
+                            </div>
+                            <p class="text-[11px] text-emerald-400 mt-1 font-mono" id="billing-sub-agency">Ditagih bulanan</p>
+                        </div>
+
+                        <div class="h-px bg-zinc-800/80 mb-6"></div>
+
+                        <div class="space-y-3 text-xs text-zinc-300">
+                            <div class="flex items-start gap-2.5 font-medium text-white">
+                                <i class="fa-solid fa-check text-purple-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Semua fitur paket Pro Developer</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-purple-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Custom Domain Unlimited untuk Proyek Klien</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-purple-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Konektor Database (MongoDB, Supabase, Firebase)</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-purple-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>White-label Export & Hapus Branding</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-purple-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Akses Master Console & Manajemen Tim</span>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-purple-400 text-xs mt-0.5 shrink-0"></i>
+                                <span>Dukungan Konsultasi & SLA Prioritas 24/7</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-8">
+                        <a
+                            href="/about#contact"
+                            class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                        >
+                            <span>Hubungi Tim Enterprise</span>
+                            <i class="fa-solid fa-envelope text-[10px] text-zinc-400"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Feature Comparison Matrix Table -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16 border-t border-zinc-800/80">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white font-sans">Perbandingan Fitur Lengkap</h2>
+                <p class="text-xs sm:text-sm text-zinc-400 mt-2">Detail perbandingan spesifikasi kemampuan antar tingkatan paket.</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse font-sans">
+                    <thead>
+                        <tr class="border-b border-zinc-800 bg-zinc-950/80">
+                            <th class="py-3.5 px-4 text-zinc-400 font-semibold uppercase text-[10px] tracking-wider w-2/5">Fitur & Kemampuan</th>
+                            <th class="py-3.5 px-4 text-zinc-300 font-bold text-center w-1/5">Starter</th>
+                            <th class="py-3.5 px-4 text-blue-400 font-bold text-center w-1/5 bg-blue-950/20">Pro Developer</th>
+                            <th class="py-3.5 px-4 text-purple-400 font-bold text-center w-1/5">Enterprise</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-800/60 text-zinc-300">
+                        <tr>
+                            <td class="py-3 px-4 font-medium">Akses Autonomous AI Studio</td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-blue-400"></i></td>
+                            <td class="py-3 px-4 text-center bg-blue-950/10"><i class="fa-solid fa-check text-blue-400"></i></td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-purple-400"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-medium">Model AI Cascade (Gemini 3.7 & 3.6 Flash)</td>
+                            <td class="py-3 px-4 text-center text-zinc-500">Standar</td>
+                            <td class="py-3 px-4 text-center bg-blue-950/10 text-white font-semibold">Prioritas Tinggi</td>
+                            <td class="py-3 px-4 text-center text-white font-semibold">Dedicated Max Bandwidth</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-medium">Live Canvas & Responsive Breakpoint</td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-blue-400"></i></td>
+                            <td class="py-3 px-4 text-center bg-blue-950/10"><i class="fa-solid fa-check text-blue-400"></i></td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-purple-400"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-medium">Mode Fullstack (In-memory CRUD & Panel Admin)</td>
+                            <td class="py-3 px-4 text-center text-zinc-500"><i class="fa-solid fa-minus"></i></td>
+                            <td class="py-3 px-4 text-center bg-blue-950/10"><i class="fa-solid fa-check text-blue-400"></i></td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-purple-400"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-medium">Ekspor Kode ZIP & HTML Standalone</td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-blue-400"></i></td>
+                            <td class="py-3 px-4 text-center bg-blue-950/10"><i class="fa-solid fa-check text-blue-400"></i></td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-purple-400"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-medium">One-Click Deploy ke Vercel & Netlify</td>
+                            <td class="py-3 px-4 text-center text-zinc-500"><i class="fa-solid fa-minus"></i></td>
+                            <td class="py-3 px-4 text-center bg-blue-950/10"><i class="fa-solid fa-check text-blue-400"></i></td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-purple-400"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-medium">GitHub Direct Push & Commit Log</td>
+                            <td class="py-3 px-4 text-center text-zinc-500"><i class="fa-solid fa-minus"></i></td>
+                            <td class="py-3 px-4 text-center bg-blue-950/10"><i class="fa-solid fa-check text-blue-400"></i></td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-purple-400"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-medium">Testing Suite QA & Audit Keamanan</td>
+                            <td class="py-3 px-4 text-center text-zinc-500"><i class="fa-solid fa-minus"></i></td>
+                            <td class="py-3 px-4 text-center bg-blue-950/10"><i class="fa-solid fa-check text-blue-400"></i></td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-purple-400"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-medium">Database Connectors (MongoDB, Supabase, Firebase)</td>
+                            <td class="py-3 px-4 text-center text-zinc-500"><i class="fa-solid fa-minus"></i></td>
+                            <td class="py-3 px-4 text-center bg-blue-950/10 text-zinc-500">Opsional</td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-purple-400"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-medium">White-label & Custom Domain</td>
+                            <td class="py-3 px-4 text-center text-zinc-500"><i class="fa-solid fa-minus"></i></td>
+                            <td class="py-3 px-4 text-center bg-blue-950/10 text-zinc-500"><i class="fa-solid fa-minus"></i></td>
+                            <td class="py-3 px-4 text-center"><i class="fa-solid fa-check text-purple-400"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="max-w-4xl mx-auto px-4 sm:px-6 py-16 border-t border-zinc-800/80">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white font-sans">Pertanyaan yang Sering Diajukan</h2>
+                <p class="text-xs sm:text-sm text-zinc-400 mt-2">Jawaban atas hal-hal penting seputar langganan dan penggunaan platform.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
+                    <h3 class="text-sm font-bold text-white mb-2">Apakah saya bisa mencoba Satusite Studio secara gratis?</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">Ya, Anda dapat langsung masuk dan merancang website secara gratis tanpa perlu memasukkan informasi kartu kredit.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
+                    <h3 class="text-sm font-bold text-white mb-2">Apakah website yang digenerate bisa diekspor dan dihosting sendiri?</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">Tentu. Semua kode sumber yang dihasilkan adalah milik Anda sepenuhnya. Anda dapat mengunduh ZIP, melakukan push ke repository GitHub Anda sendiri, atau mendeploy langsung ke Vercel dan Netlify.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
+                    <h3 class="text-sm font-bold text-white mb-2">Metode pembayaran apa saja yang didukung?</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">Kami mendukung pembayaran instan via QRIS (GoPay, OVO, Dana, ShopeePay), Transfer Bank Virtual Account (BCA, Mandiri, BNI, BRI), serta Kartu Kredit/Debit.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
+                    <h3 class="text-sm font-bold text-white mb-2">Bagaimana jika saya memerlukan kustomisasi skala enterprise?</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">Anda dapat menghubungi tim developer kami melalui halaman Contact Us untuk konsultasi integrasi arsitektur database, multi-seat tim, atau SLA khusus.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom CTA Banner -->
+        <section class="max-w-5xl mx-auto px-4 sm:px-6 py-16 text-center">
+            <div class="p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-zinc-900 to-black border border-zinc-800 relative overflow-hidden shadow-2xl">
+                <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                <h2 class="text-2xl sm:text-4xl font-bold text-white font-sans tracking-tight relative z-10">
+                    Siap Memulai Proyek Website Anda?
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-400 max-w-xl mx-auto mt-3 mb-6 relative z-10">
+                    Masuk ke AI Studio dan saksikan bagaimana AI merancang antarmuka profesional dan kode fullstack dalam hitungan detik.
+                </p>
+                <div class="inline-flex items-center gap-3 relative z-10">
+                    <a
+                        href="/app"
+                        class="px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition-all shadow-lg shadow-white/10 flex items-center gap-2 cursor-pointer"
+                    >
+                        <span>Buka AI Studio Sekarang</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+</Layout>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const btnMonthly = document.getElementById("btn-bill-monthly");
+    const btnAnnual = document.getElementById("btn-bill-annual");
+    const pricePro = document.getElementById("price-pro");
+    const periodPro = document.getElementById("period-pro");
+    const billingSubPro = document.getElementById("billing-sub-pro");
+    const priceAgency = document.getElementById("price-agency");
+    const periodAgency = document.getElementById("period-agency");
+    const billingSubAgency = document.getElementById("billing-sub-agency");
+
+    let isAnnual = false;
+
+    if (btnMonthly && btnAnnual) {
+      btnMonthly.addEventListener("click", () => {
+        isAnnual = false;
+        btnMonthly.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-800 text-white shadow-sm transition-all cursor-pointer";
+        btnAnnual.className = "px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer";
+        
+        if (pricePro) pricePro.textContent = "Rp 99.000";
+        if (periodPro) periodPro.textContent = "/ bulan";
+        if (billingSubPro) billingSubPro.textContent = "Ditagih bulanan";
+
+        if (priceAgency) priceAgency.textContent = "Rp 299.000";
+        if (periodAgency) periodAgency.textContent = "/ bulan";
+        if (billingSubAgency) billingSubAgency.textContent = "Ditagih bulanan";
+      });
+
+      btnAnnual.addEventListener("click", () => {
+        isAnnual = true;
+        btnAnnual.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-800 text-white shadow-sm transition-all flex items-center gap-1.5 cursor-pointer";
+        btnMonthly.className = "px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 hover:text-white transition-all cursor-pointer";
+
+        if (pricePro) pricePro.textContent = "Rp 79.000";
+        if (periodPro) periodPro.textContent = "/ bulan";
+        if (billingSubPro) billingSubPro.textContent = "Ditagih tahunan (Rp 948.000/thn - Hemat 20%)";
+
+        if (priceAgency) priceAgency.textContent = "Rp 239.000";
+        if (periodAgency) periodAgency.textContent = "/ bulan";
+        if (billingSubAgency) billingSubAgency.textContent = "Ditagih tahunan (Rp 2.868.000/thn - Hemat 20%)";
+      });
+    }
+  });
+</script>

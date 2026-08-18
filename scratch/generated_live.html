@@ -1,0 +1,365 @@
+Berikut adalah source code HTML lengkap, mandiri, dan responsif dengan arsitektur **Dark Minimalist & Sleek** untuk **Kopi Nusantara**. Sistem ini menyertakan Navigasi Tab, Katalog Menu Interaktif, Keranjang Belanja & POS, Panel Admin CRUD Menu, serta Dashboard Rekap Laba/Rugi Kas Keuangan Harian.
+
+```html
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kopi Nusantara - POS & Operational System</title>
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0c0a09',
+                            card: '#1c1917',
+                            border: '#292524',
+                            accent: '#d97706',
+                            accentHover: '#b45309',
+                            muted: '#a8a29e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar for Dark Aesthetic */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0c0a09;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #292524;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d97706;
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-stone-100 font-sans min-h-screen flex flex-col selection:bg-amber-600 selection:text-white">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="bg-stone-900/90 border-b border-brand-border sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('menu')">
+                    <div class="w-10 h-10 rounded-lg bg-amber-600/10 border border-amber-600/30 flex items-center justify-center text-amber-500">
+                        <i class="fa-solid fa-mug-hot text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-lg font-bold tracking-wider text-white uppercase block leading-none">Kopi Nusantara</span>
+                        <span class="text-[10px] text-brand-muted tracking-widest uppercase">Artisan Coffee & Eatery</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Tabs -->
+                <nav class="hidden md:flex space-x-1">
+                    <button id="nav-menu" onclick="switchTab('menu')" class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2 text-amber-500 bg-stone-800/80">
+                        <i class="fa-solid fa-utensils text-xs"></i>
+                        <span>Katalog Menu</span>
+                    </button>
+                    <button id="nav-cart" onclick="switchTab('cart')" class="tab-btn relative px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2 text-stone-400 hover:text-white hover:bg-stone-800/50">
+                        <i class="fa-solid fa-cart-shopping text-xs"></i>
+                        <span>Kasir & Pesanan</span>
+                        <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-amber-600 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center">0</span>
+                    </button>
+                    <button id="nav-finance" onclick="switchTab('finance')" class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2 text-stone-400 hover:text-white hover:bg-stone-800/50">
+                        <i class="fa-solid fa-chart-line text-xs"></i>
+                        <span>Kas & Keuangan</span>
+                    </button>
+                    <button id="nav-admin" onclick="switchTab('admin')" class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2 text-stone-400 hover:text-white hover:bg-stone-800/50">
+                        <i class="fa-solid fa-sliders text-xs"></i>
+                        <span>Panel Admin</span>
+                    </button>
+                </nav>
+
+                <!-- Quick Action Cart Icon (Mobile) -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="switchTab('cart')" class="relative p-2 text-stone-300 hover:text-white">
+                        <i class="fa-solid fa-cart-shopping text-xl"></i>
+                        <span id="cart-badge-mobile" class="hidden absolute top-0 right-0 bg-amber-600 text-white text-[10px] font-bold w-4 h-4 rounded-full items-center justify-center">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Tabs -->
+        <div class="md:hidden border-t border-brand-border bg-stone-900 grid grid-cols-4 text-center text-xs">
+            <button onclick="switchTab('menu')" id="m-nav-menu" class="py-3 text-amber-500 font-medium border-b-2 border-amber-500">
+                <i class="fa-solid fa-utensils block mb-1 text-sm"></i> Menu
+            </button>
+            <button onclick="switchTab('cart')" id="m-nav-cart" class="py-3 text-stone-400 hover:text-white">
+                <i class="fa-solid fa-cart-shopping block mb-1 text-sm"></i> Kasir
+            </button>
+            <button onclick="switchTab('finance')" id="m-nav-finance" class="py-3 text-stone-400 hover:text-white">
+                <i class="fa-solid fa-chart-line block mb-1 text-sm"></i> Keuangan
+            </button>
+            <button onclick="switchTab('admin')" id="m-nav-admin" class="py-3 text-stone-400 hover:text-white">
+                <i class="fa-solid fa-sliders block mb-1 text-sm"></i> Admin
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- TAB 1: KATALOG MENU INTERAKTIF -->
+        <section id="tab-menu" class="space-y-6">
+            <!-- Header & Filter -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-brand-border pb-4">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-white">Menu Kopi & Kuliner</h1>
+                    <p class="text-sm text-brand-muted">Pilih produk berkualitas khas Nusantara untuk pesanan pelanggan.</p>
+                </div>
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2" id="category-filters">
+                    <button onclick="filterCategory('All')" class="cat-btn active px-3 py-1.5 rounded-lg text-xs font-medium border border-amber-600 bg-amber-600/20 text-amber-400 transition-all">Semua</button>
+                    <button onclick="filterCategory('Espresso Based')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-800 bg-stone-900 text-stone-400 hover:border-stone-700 hover:text-stone-200 transition-all">Espresso Based</button>
+                    <button onclick="filterCategory('Manual Brew')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-800 bg-stone-900 text-stone-400 hover:border-stone-700 hover:text-stone-200 transition-all">Manual Brew</button>
+                    <button onclick="filterCategory('Non-Coffee')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-800 bg-stone-900 text-stone-400 hover:border-stone-700 hover:text-stone-200 transition-all">Non-Coffee</button>
+                    <button onclick="filterCategory('Makanan')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-800 bg-stone-900 text-stone-400 hover:border-stone-700 hover:text-stone-200 transition-all">Makanan</button>
+                </div>
+            </div>
+
+            <!-- Menu Grid -->
+            <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: KERANJANG BELANJA & KASIR -->
+        <section id="tab-cart" class="hidden space-y-6">
+            <div class="border-b border-brand-border pb-4">
+                <h1 class="text-2xl font-bold tracking-tight text-white">Kasir & Keranjang Belanja</h1>
+                <p class="text-sm text-brand-muted">Kelola pesanan aktif dan selesaikan pembayaran transaksi.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Cart Items List (2 Cols) -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="bg-brand-card border border-brand-border rounded-xl p-4 sm:p-6">
+                        <div class="flex justify-between items-center pb-4 mb-4 border-b border-stone-800">
+                            <h2 class="text-lg font-semibold text-white flex items-center space-x-2">
+                                <i class="fa-solid fa-list-check text-amber-500"></i>
+                                <span>Daftar Pesanan</span>
+                            </h2>
+                            <button onclick="clearCart()" class="text-xs text-rose-400 hover:text-rose-300 transition-colors flex items-center space-x-1">
+                                <i class="fa-solid fa-trash-can"></i>
+                                <span>Kosongkan Cart</span>
+                            </button>
+                        </div>
+
+                        <div id="cart-items-container" class="space-y-3 min-h-[200px]">
+                            <!-- Cart Items dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary & Payment (1 Col) -->
+                <div class="space-y-4">
+                    <div class="bg-brand-card border border-brand-border rounded-xl p-4 sm:p-6 space-y-6">
+                        <h2 class="text-lg font-semibold text-white border-b border-stone-800 pb-3 flex items-center space-x-2">
+                            <i class="fa-solid fa-receipt text-amber-500"></i>
+                            <span>Rincian Pembayaran</span>
+                        </h2>
+
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between text-stone-400">
+                                <span>Subtotal</span>
+                                <span id="summary-subtotal" class="font-mono text-stone-200">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between text-stone-400">
+                                <span>Pajak Resto (10%)</span>
+                                <span id="summary-tax" class="font-mono text-stone-200">Rp 0</span>
+                            </div>
+                            <div class="border-t border-stone-800 pt-3 flex justify-between font-bold text-base text-white">
+                                <span>Total Tagihan</span>
+                                <span id="summary-total" class="font-mono text-amber-500">Rp 0</span>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method Selection -->
+                        <div class="space-y-2 pt-2">
+                            <label class="block text-xs font-medium text-brand-muted uppercase tracking-wider">Metode Pembayaran</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button type="button" onclick="selectPayment('QRIS')" id="pay-qris" class="pay-method-btn border border-amber-600 bg-amber-600/10 text-amber-400 py-2 rounded-lg text-xs font-semibold flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-qrcode text-base"></i> QRIS
+                                </button>
+                                <button type="button" onclick="selectPayment('Tunai')" id="pay-cash" class="pay-method-btn border border-stone-800 bg-stone-900 text-stone-400 py-2 rounded-lg text-xs font-semibold flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-money-bill-wave text-base"></i> Tunai
+                                </button>
+                                <button type="button" onclick="selectPayment('Debit/Kartu')" id="pay-card" class="pay-method-btn border border-stone-800 bg-stone-900 text-stone-400 py-2 rounded-lg text-xs font-semibold flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-credit-card text-base"></i> Kartu
+                                </button>
+                            </div>
+                        </div>
+
+                        <button onclick="processCheckout()" class="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm rounded-lg transition-colors shadow-lg shadow-amber-600/20 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Proses & Bayar Sekarang</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: REKAP LABA KAS KEUANGAN HARIAN -->
+        <section id="tab-finance" class="hidden space-y-6">
+            <div class="border-b border-brand-border pb-4 flex justify-between items-end">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-white">Rekap Kas & Laba Keuangan</h1>
+                    <p class="text-sm text-brand-muted">Ringkasan arus kas, HPP, pendapatan, dan laba bersih harian.</p>
+                </div>
+                <button onclick="resetFinancials()" class="text-xs text-stone-500 hover:text-rose-400 transition-colors">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> Reset Data Buku Kas
+                </button>
+            </div>
+
+            <!-- Metrics Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-brand-card border border-brand-border p-5 rounded-xl">
+                    <div class="flex items-center justify-between text-brand-muted mb-2">
+                        <span class="text-xs font-medium uppercase tracking-wider">Total Omset / Sales</span>
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                    </div>
+                    <div id="stat-revenue" class="text-2xl font-bold font-mono text-white">Rp 0</div>
+                    <span class="text-[11px] text-emerald-400 mt-1 block"><i class="fa-solid fa-arrow-up-right mr-1"></i>Pendapatan Kotor</span>
+                </div>
+
+                <div class="bg-brand-card border border-brand-border p-5 rounded-xl">
+                    <div class="flex items-center justify-between text-brand-muted mb-2">
+                        <span class="text-xs font-medium uppercase tracking-wider">Total HPP / Modal</span>
+                        <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center">
+                            <i class="fa-solid fa-boxes-packing"></i>
+                        </div>
+                    </div>
+                    <div id="stat-hpp" class="text-2xl font-bold font-mono text-white">Rp 0</div>
+                    <span class="text-[11px] text-rose-400 mt-1 block"><i class="fa-solid fa-arrow-down-right mr-1"></i>Beban Pokok Penjualan</span>
+                </div>
+
+                <div class="bg-brand-card border border-brand-border p-5 rounded-xl">
+                    <div class="flex items-center justify-between text-brand-muted mb-2">
+                        <span class="text-xs font-medium uppercase tracking-wider">Laba Bersih</span>
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                    </div>
+                    <div id="stat-profit" class="text-2xl font-bold font-mono text-amber-500">Rp 0</div>
+                    <span class="text-[11px] text-amber-400/80 mt-1 block"><i class="fa-solid fa-chart-line mr-1"></i>Margin Keuntungan</span>
+                </div>
+
+                <div class="bg-brand-card border border-brand-border p-5 rounded-xl">
+                    <div class="flex items-center justify-between text-brand-muted mb-2">
+                        <span class="text-xs font-medium uppercase tracking-wider">Total Transaksi</span>
+                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                    </div>
+                    <div id="stat-count" class="text-2xl font-bold font-mono text-white">0</div>
+                    <span class="text-[11px] text-stone-400 mt-1 block">Pesanan Terproses</span>
+                </div>
+            </div>
+
+            <!-- Transaction Logs Table -->
+            <div class="bg-brand-card border border-brand-border rounded-xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-brand-border flex justify-between items-center">
+                    <h2 class="text-base font-semibold text-white">Riwayat Transaksi Harian</h2>
+                    <span class="text-xs text-brand-muted font-mono" id="current-date-display"></span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-stone-300">
+                        <thead class="bg-stone-900 text-xs uppercase text-brand-muted tracking-wider border-b border-brand-border">
+                            <tr>
+                                <th class="px-6 py-3">ID Transaksi</th>
+                                <th class="px-6 py-3">Waktu</th>
+                                <th class="px-6 py-3">Item Pesanan</th>
+                                <th class="px-6 py-3">Metode</th>
+                                <th class="px-6 py-3 text-right">Total Jual</th>
+                                <th class="px-6 py-3 text-right">Laba Bersih</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financial-logs" class="divide-y divide-stone-800/60 font-mono text-xs">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: PANEL ADMIN CRUD MENU -->
+        <section id="tab-admin" class="hidden space-y-6">
+            <div class="border-b border-brand-border pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-white">Panel Kelola Menu (CRUD)</h1>
+                    <p class="text-sm text-brand-muted">Tambah, edit, atau hapus item produk kopi dan kuliner.</p>
+                </div>
+                <button onclick="openAddMenuModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Tambah Menu Baru</span>
+                </button>
+            </div>
+
+            <!-- Admin Menu Table -->
+            <div class="bg-brand-card border border-brand-border rounded-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-stone-300">
+                        <thead class="bg-stone-900 text-xs uppercase text-brand-muted tracking-wider border-b border-brand-border">
+                            <tr>
+                                <th class="px-6 py-3">Produk</th>
+                                <th class="px-6 py-3">Kategori</th>
+                                <th class="px-6 py-3 text-right">Harga Jual</th>
+                                <th class="px-6 py-3 text-right">HPP (Modal)</th>
+                                <th class="px-6 py-3 text-right">Margin / Item</th>
+                                <th class="px-6 py-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-menu-table" class="divide-y divide-stone-800">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL ADD / EDIT MENU -->
+    <div id="menu-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-brand-card border border-brand-border rounded-xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
+            <div class="flex justify-between items-center border-b border-stone-800 pb-3">
+                <h3 id="modal-title" class="text-lg font-bold text-white">Tambah Menu Baru</h3>
+                <button onclick="closeMenuModal()" class="text-stone-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="menu-form" onsubmit="handleMenuSubmit(event)" class="space-y-4">
+                <input type="hidden" id="form-item-id">
+                
+                <div>
+                    <label class="block text-xs font-medium text-brand-muted mb-1">Nama Produk</label>
+                    <input type="text" id="form-name" required class="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-brand-muted mb-1">Kategori</label>
+                        <select id="form-category" required class="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-600">
+                            <option value="Espresso Based">Espresso Based</option>
+                            <option value="Manual Brew">Manual Brew</option>
+                            <option value="Non-Coffee">

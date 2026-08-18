@@ -162,7 +162,7 @@ export default function DeployHub() {
       setDeployStep(2);
       setDeployLogs(prev => [
         ...prev,
-        `[${new Date().toLocaleTimeString()}] ✔ File divalidasi (0 error, 0 warning)`,
+        `[${new Date().toLocaleTimeString()}] [OK] File divalidasi (0 error, 0 warning)`,
         `[${new Date().toLocaleTimeString()}] Membangun aset bundle & minifikasi skrip...`,
         `[${new Date().toLocaleTimeString()}] Menginjeksi environment variables & meta tags...`
       ]);
@@ -172,7 +172,7 @@ export default function DeployHub() {
       setDeployStep(3);
       setDeployLogs(prev => [
         ...prev,
-        `[${new Date().toLocaleTimeString()}] ✔ Bundle selesai (Ukuran: 48.2 KB)`,
+        `[${new Date().toLocaleTimeString()}] [OK] Bundle selesai (Ukuran: 48.2 KB)`,
         `[${new Date().toLocaleTimeString()}] Mengunggah ke 300+ Edge Data Centers ${provider}...`,
         `[${new Date().toLocaleTimeString()}] Mengalokasikan sertifikat SSL/TLS Otomatis (Let's Encrypt)...`
       ]);
@@ -193,9 +193,9 @@ export default function DeployHub() {
 
       setDeployLogs(prev => [
         ...prev,
-        `[${new Date().toLocaleTimeString()}] ✔ SSL/TLS Certificate aktif & terverifikasi (Grade A+)`,
-        `[${new Date().toLocaleTimeString()}] ✔ Propagasi DNS global selesai dalam 82ms`,
-        `[${new Date().toLocaleTimeString()}] 🚀 DEPLOYMENT BERHASIL! Website telah live di: ${finalUrl}`
+        `[${new Date().toLocaleTimeString()}] [OK] SSL/TLS Certificate aktif & terverifikasi (Grade A+)`,
+        `[${new Date().toLocaleTimeString()}] [OK] Propagasi DNS global selesai dalam 82ms`,
+        `[${new Date().toLocaleTimeString()}] [LIVE] DEPLOYMENT BERHASIL! Website telah live di: ${finalUrl}`
       ]);
       setDeployResult({
         url: finalUrl,
@@ -542,9 +542,9 @@ export default function DeployHub() {
                     <div
                       key={idx}
                       className={`leading-relaxed ${
-                        log.includes('✔')
+                        log.includes('[OK]')
                           ? 'text-zinc-200 font-medium'
-                          : log.includes('🚀')
+                          : log.includes('[LIVE]')
                           ? 'text-white font-bold bg-zinc-900 p-2 rounded-lg border border-zinc-700'
                           : 'text-zinc-400'
                       }`}

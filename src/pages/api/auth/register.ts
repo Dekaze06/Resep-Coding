@@ -66,7 +66,7 @@ export const POST: APIRoute = async ({ request }) => {
       isVerified: false,
       verificationToken,
       verificationExpires,
-      quota: 1,
+      quota: 99999,
       projectsCount: 0,
       authProvider: 'email'
     });

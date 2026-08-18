@@ -1,0 +1,155 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeaderNav from '../../components/HeaderNav.astro';
+---
+
+<Layout title="Build Fullstack - Panduan & Fitur Satusite Studio" description="Pelajari cara membangun aplikasi web fullstack lengkap dengan state data in-memory, logika CRUD, dan panel admin.">
+    <!-- Subtle Ambient Background Glows -->
+    <div class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-emerald-600/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[15%] w-[500px] h-[400px] bg-blue-500/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+
+    <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-emerald-500/30 selection:text-emerald-200">
+        <!-- Unified Top Header Nav -->
+        <HeaderNav activePage="product" />
+
+        <main class="flex-1">
+            <!-- Hero Header -->
+            <section class="pt-12 pb-12 sm:pt-20 sm:pb-16 px-4 sm:px-6 text-center max-w-5xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-[11px] font-mono text-zinc-300 mb-6">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>MODE PENGEMBANGAN FULLSTACK</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white font-sans max-w-4xl mx-auto leading-[1.15]">
+                    Build Fullstack Web Apps
+                </h1>
+                <p class="mt-4 sm:mt-6 text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                    Arsitektur aplikasi lengkap dengan manajemen state lokal (*in-memory*), logika manipulasi data CRUD, panel admin terintegrasi, dan alur transaksi bisnis.
+                </p>
+
+                <div class="mt-8 flex items-center justify-center gap-3">
+                    <a
+                        href="/app?mode=fullstack"
+                        class="px-6 py-3 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition-all shadow-lg shadow-white/10 flex items-center gap-2 cursor-pointer"
+                    >
+                        <span>Mulai Build Fullstack di Studio</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                    <a
+                        href="/tutorial"
+                        class="px-5 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-xs font-semibold transition-all cursor-pointer"
+                    >
+                        <span>Lihat Tutorial</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Key Pillars Grid -->
+            <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Feature 1 -->
+                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-database text-sm"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-white mb-2">In-Memory Data State</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Struktur data relasional lokal yang siap menampung katalog produk, daftar pesanan, transaksi pelanggan, dan inventori secara instan tanpa konfigurasi database fisik.
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-emerald-400">Ready State</span>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-sliders text-sm"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-white mb-2">Logika CRUD Lengkap</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Fitur Create, Read, Update, dan Delete yang langsung terhubung ke tabel data, form modal interaktif, validasi input, dan filter pencarian real-time.
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-emerald-400">Auto Handlers</span>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="p-6 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-chart-pie text-sm"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-white mb-2">Dashboard Panel Admin</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Antarmuka panel admin terisolasi untuk pemilik bisnis: pantau statistik penjualan harian, kelola stok barang, dan ekspor data ke format CSV atau JSON.
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-emerald-400">Admin UI Included</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="max-w-4xl mx-auto px-4 sm:px-6 pb-24">
+                <div class="p-8 rounded-3xl bg-[#09090b] border border-zinc-800/90 shadow-2xl">
+                    <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2.5">
+                        <i class="fa-solid fa-layer-group text-zinc-400 text-sm"></i>
+                        <span>Cara Kerja Alur Fullstack</span>
+                    </h2>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">1</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">Definisi Kebutuhan di Wizard Onboarding</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">Pilih mode Fullstack pada langkah ke-7 wizard Studio untuk mengaktifkan AI engine logika database dan tabel CRUD.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">2</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">AI Merancang Frontend & Logika Backend</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">AI menyusun struktur kode lengkap dengan fungsi JavaScript manipulasi state data, form binding, dan tombol aksi.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">3</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">Uji Coba Langsung di Canvas Preview</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">Coba tambah data produk, lakukan checkout, dan login ke panel admin secara live di tab preview Studio.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs font-mono shrink-0">4</div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-white mb-1">Ekspor & Hubungkan Database Eksternal</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">Gunakan menu Connectors untuk menyambungkan state ke MongoDB Atlas, Supabase, atau deploy langsung ke Vercel.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-zinc-800 flex items-center justify-between">
+                        <span class="text-xs text-zinc-400">Siap mencoba mode Fullstack?</span>
+                        <a href="/app?mode=fullstack" class="inline-flex items-center gap-1.5 text-xs font-bold text-white hover:text-emerald-400 transition-colors">
+                            <span>Buka Studio (Mode Fullstack)</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</Layout>
