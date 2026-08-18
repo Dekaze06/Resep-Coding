@@ -1,0 +1,14 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TemplateGallery from '../components/TemplateGallery';
+---
+
+<Layout title="Galeri Template - Satusite Studio" description="Koleksi template website HTML siap pakai yang digenerate oleh AI Agent.">
+    <link rel="preconnect" href="https://fonts.googleapis.com" slot="head" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin slot="head" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" slot="head" />
+    
+    <div class="font-['Geist',sans-serif]">
+        <TemplateGallery client:only="react" />
+    </div>
+</Layout>

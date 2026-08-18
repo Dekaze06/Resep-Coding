@@ -1,0 +1,52 @@
+[
+  {
+    "id": "usr_1",
+    "name": "Agus Pratama",
+    "email": "agus@satusite.studio",
+    "role": "Superadmin",
+    "status": "active",
+    "quota": 9999,
+    "projectsCount": 42,
+    "joinedAt": "01 Jan 2026"
+  },
+  {
+    "id": "usr_2",
+    "name": "Budi Santoso",
+    "email": "budi.dev@gmail.com",
+    "role": "Client Pro",
+    "status": "active",
+    "quota": 250,
+    "projectsCount": 14,
+    "joinedAt": "12 Feb 2026"
+  },
+  {
+    "id": "usr_3",
+    "name": "Siti Rahmawati",
+    "email": "siti.uiux@company.id",
+    "role": "Client Pro",
+    "status": "active",
+    "quota": 180,
+    "projectsCount": 8,
+    "joinedAt": "18 Mar 2026"
+  },
+  {
+    "id": "usr_4",
+    "name": "Demo Client",
+    "email": "demo@satusite.studio",
+    "role": "Client Pro",
+    "status": "active",
+    "quota": 50,
+    "projectsCount": 4,
+    "joinedAt": "15 Agu 2026"
+  },
+  {
+    "id": "usr_5",
+    "name": "Rian Hidayat",
+    "email": "rian.free@yahoo.com",
+    "role": "Free User",
+    "status": "active",
+    "quota": 10,
+    "projectsCount": 2,
+    "joinedAt": "17 Agu 2026"
+  }
+]

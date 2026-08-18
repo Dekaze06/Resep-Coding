@@ -38,8 +38,254 @@ import {
   History,
   Trash2,
   Plus,
-  Search
+  Search,
+  ShieldCheck,
+  Rocket
 } from "lucide-react";
+import CardScrollReveal from "./ui/CardScrollReveal";
+import InteractiveArchitectureTree from "./ui/InteractiveArchitectureTree";
+
+export interface SubFeatureItem {
+  id: string;
+  name: string;
+}
+
+export interface FeatureNode {
+  id: string;
+  title: string;
+  badge?: string;
+  status?: string;
+  icon?: string;
+  subFeatures: SubFeatureItem[];
+}
+
+export interface ArchitectureStructure {
+  rootName: string;
+  rootStatus?: string;
+  features: FeatureNode[];
+}
+
+function generateSmartStructureFromPrompt(promptText: string, projectName: string): ArchitectureStructure {
+  const p = (promptText || "").toLowerCase();
+
+  if (p.includes("sekolah") || p.includes("portal sekolah") || p.includes("guru") || p.includes("siswa") || p.includes("akademik")) {
+    return {
+      rootName: projectName && projectName !== "Proyek Baru" ? projectName : "Portal Sekolah Profesional",
+      rootStatus: "Perencanaan",
+      features: [
+        {
+          id: "feat_1",
+          title: "Dashboard Utama",
+          badge: "Rilis 1",
+          status: "Direncanakan",
+          icon: "fa-solid fa-grip",
+          subFeatures: [
+            { id: "sub_1_1", name: "Ringkasan Sekolah" },
+            { id: "sub_1_2", name: "Aktivitas Terbaru" },
+            { id: "sub_1_3", name: "Akses Cepat" }
+          ]
+        },
+        {
+          id: "feat_2",
+          title: "Data Sekolah",
+          badge: "Rilis 2",
+          status: "Direncanakan",
+          icon: "fa-solid fa-school",
+          subFeatures: [
+            { id: "sub_2_1", name: "Kelola Siswa" },
+            { id: "sub_2_2", name: "Kelola Guru & Staf" },
+            { id: "sub_2_3", name: "Kelola Kelas & Tahun Ajaran" }
+          ]
+        },
+        {
+          id: "feat_3",
+          title: "Jadwal Pelajaran",
+          badge: "Rilis 2",
+          status: "Direncanakan",
+          icon: "fa-solid fa-calendar-days",
+          subFeatures: [
+            { id: "sub_3_1", name: "Lihat Jadwal" },
+            { id: "sub_3_2", name: "Atur Jadwal" },
+            { id: "sub_3_3", name: "Info Perubahan" }
+          ]
+        },
+        {
+          id: "feat_4",
+          title: "Penilaian & Raport",
+          badge: "Rilis 2",
+          status: "Direncanakan",
+          icon: "fa-solid fa-clipboard-check",
+          subFeatures: [
+            { id: "sub_4_1", name: "Input Nilai" },
+            { id: "sub_4_2", name: "Lihat Nilai" },
+            { id: "sub_4_3", name: "Unduh Raport" }
+          ]
+        },
+        {
+          id: "feat_5",
+          title: "Presensi Kehadiran",
+          badge: "Rilis 2",
+          status: "Direncanakan",
+          icon: "fa-solid fa-user-check",
+          subFeatures: [
+            { id: "sub_5_1", name: "Catat Kehadiran" },
+            { id: "sub_5_2", name: "Rekap Kehadiran" },
+            { id: "sub_5_3", name: "Pantau Kehadiran" }
+          ]
+        },
+        {
+          id: "feat_6",
+          title: "Komunikasi Sekolah",
+          badge: "Rilis 2",
+          status: "Direncanakan",
+          icon: "fa-solid fa-comments",
+          subFeatures: [
+            { id: "sub_6_1", name: "Kirim Pengumuman" },
+            { id: "sub_6_2", name: "Kotak Masuk" },
+            { id: "sub_6_3", name: "Pesan Guru & Orang Tua" }
+          ]
+        },
+        {
+          id: "feat_7",
+          title: "Login & Akun",
+          badge: "Rilis 2",
+          status: "Direncanakan",
+          icon: "fa-solid fa-shield-halved",
+          subFeatures: [
+            { id: "sub_7_1", name: "Login & Logout" },
+            { id: "sub_7_2", name: "Profil & Kata Sandi" },
+            { id: "sub_7_3", name: "Hak Akses" }
+          ]
+        },
+        {
+          id: "feat_8",
+          title: "Tampilan & Tema",
+          badge: "Rilis 4",
+          status: "Direncanakan",
+          icon: "fa-solid fa-palette",
+          subFeatures: [
+            { id: "sub_8_1", name: "Tema Warna" },
+            { id: "sub_8_2", name: "Logo Sekolah" },
+            { id: "sub_8_3", name: "Mode Terang/Gelap" }
+          ]
+        }
+      ]
+    };
+  }
+
+  if (p.includes("toko") || p.includes("kasir") || p.includes("shop") || p.includes("ecommerce") || p.includes("produk") || p.includes("checkout")) {
+    return {
+      rootName: projectName && projectName !== "Proyek Baru" ? projectName : "Sistem E-Commerce & Kasir",
+      rootStatus: "Perencanaan",
+      features: [
+        {
+          id: "feat_1",
+          title: "Katalog & Produk",
+          badge: "Rilis 1",
+          status: "Direncanakan",
+          icon: "fa-solid fa-bag-shopping",
+          subFeatures: [
+            { id: "sub_1_1", name: "Grid Produk & Kategori" },
+            { id: "sub_1_2", name: "Pencarian & Filter Harga" },
+            { id: "sub_1_3", name: "Detail Produk & Modal" }
+          ]
+        },
+        {
+          id: "feat_2",
+          title: "Keranjang & Checkout",
+          badge: "Rilis 1",
+          status: "Direncanakan",
+          icon: "fa-solid fa-cart-shopping",
+          subFeatures: [
+            { id: "sub_2_1", name: "Drawer Keranjang Interaktif" },
+            { id: "sub_2_2", name: "Perhitungan Total & Ongkir" },
+            { id: "sub_2_3", name: "Integrasi Checkout WhatsApp" }
+          ]
+        },
+        {
+          id: "feat_3",
+          title: "Riwayat & Transaksi",
+          badge: "Rilis 2",
+          status: "Direncanakan",
+          icon: "fa-solid fa-receipt",
+          subFeatures: [
+            { id: "sub_3_1", name: "Catatan Penjualan Harian" },
+            { id: "sub_3_2", name: "Ekspor Laporan CSV" },
+            { id: "sub_3_3", name: "Status Pembayaran" }
+          ]
+        },
+        {
+          id: "feat_4",
+          title: "Manajemen Inventori",
+          badge: "Rilis 2",
+          status: "Direncanakan",
+          icon: "fa-solid fa-boxes-stacked",
+          subFeatures: [
+            { id: "sub_4_1", name: "Tambah & Edit Stok" },
+            { id: "sub_4_2", name: "Peringatan Stok Rendah" },
+            { id: "sub_4_3", name: "Varian Ukuran & Warna" }
+          ]
+        }
+      ]
+    };
+  }
+
+  // Default clean structure
+  return {
+    rootName: projectName && projectName !== "Proyek Baru" ? projectName : "Arsitektur Sistem & Aplikasi",
+    rootStatus: "Perencanaan",
+    features: [
+      {
+        id: "feat_1",
+        title: "Antarmuka & Navigasi",
+        badge: "Rilis 1",
+        status: "Direncanakan",
+        icon: "fa-solid fa-table-columns",
+        subFeatures: [
+          { id: "sub_1_1", name: "Header & Menu Responsif" },
+          { id: "sub_1_2", name: "Hero Section & CTA" },
+          { id: "sub_1_3", name: "Footer & Navigasi" }
+        ]
+      },
+      {
+        id: "feat_2",
+        title: "Fitur & Modul Utama",
+        badge: "Rilis 1",
+        status: "Direncanakan",
+        icon: "fa-solid fa-cubes",
+        subFeatures: [
+          { id: "sub_2_1", name: "Daftar Data & Kartu Konten" },
+          { id: "sub_2_2", name: "Pencarian, Filter & Urutan" },
+          { id: "sub_2_3", name: "Modal Detail & Aksi Cepat" }
+        ]
+      },
+      {
+        id: "feat_3",
+        title: "Formulir & Data Layer",
+        badge: "Rilis 2",
+        status: "Direncanakan",
+        icon: "fa-solid fa-pen-to-square",
+        subFeatures: [
+          { id: "sub_3_1", name: "Validasi Form Input" },
+          { id: "sub_3_2", name: "Penyimpanan LocalStorage" },
+          { id: "sub_3_3", name: "Notifikasi Status & Toast" }
+        ]
+      },
+      {
+        id: "feat_4",
+        title: "Ekspor & Utilitas",
+        badge: "Rilis 2",
+        status: "Direncanakan",
+        icon: "fa-solid fa-file-export",
+        subFeatures: [
+          { id: "sub_4_1", name: "Unduh File HTML Mandiri" },
+          { id: "sub_4_2", name: "Salin Kode ke Clipboard" },
+          { id: "sub_4_3", name: "Dukungan Mode Gelap/Terang" }
+        ]
+      }
+    ]
+  };
+}
 
 interface ChatMessage {
   id: string;
@@ -57,6 +303,7 @@ export default function SatusiteStudioWorkspace() {
   const [projectId, setProjectId] = useState<string>("proj_default");
   const [projectName, setProjectName] = useState<string>("Proyek Baru");
   const [code, setCode] = useState<string>("");
+  const [architectureStructure, setArchitectureStructure] = useState<ArchitectureStructure | null>(null);
   const [hasGenerated, setHasGenerated] = useState<boolean>(false);
   const [showCanvas, setShowCanvas] = useState<boolean>(true);
   const [inputPrompt, setInputPrompt] = useState<string>("");
@@ -131,6 +378,11 @@ export default function SatusiteStudioWorkspace() {
       setMessages(p.messages);
       setHasGenerated(true);
     }
+    if (p.structure) {
+      setArchitectureStructure(p.structure);
+    } else {
+      setArchitectureStructure(null);
+    }
     setShowHistoryModal(false);
     try {
       const url = new URL(window.location.href);
@@ -162,6 +414,7 @@ export default function SatusiteStudioWorkspace() {
     setProjectId(newId);
     setProjectName("Proyek Baru");
     setCode("");
+    setArchitectureStructure(null);
     setHasGenerated(false);
     setShowCanvas(true);
     setMessages([
@@ -197,7 +450,6 @@ export default function SatusiteStudioWorkspace() {
       const params = new URLSearchParams(window.location.search);
       const qPrompt = params.get("prompt");
       const qId = params.get("id");
-      const qName = params.get("name");
       const qMode = params.get("mode");
 
       let initialMode: "fullstack" | "frontend" | "prd" = "fullstack";
@@ -206,12 +458,10 @@ export default function SatusiteStudioWorkspace() {
         setGenMode(qMode);
       }
 
-      if (qName) setProjectName(qName);
-
       const storeRaw = localStorage.getItem("satusite_projects_store") || localStorage.getItem("emergent_projects_store");
-      const store = storeRaw ? JSON.parse(storeRaw) : { projects: {} };
+      const store = storeRaw ? JSON.parse(storeRaw) : null;
 
-      if (qId && store.projects[qId]) {
+      if (qId && store && store.projects && store.projects[qId]) {
         const p = store.projects[qId];
         setProjectId(qId);
         setProjectName(p.name || "Proyek Baru");
@@ -220,6 +470,7 @@ export default function SatusiteStudioWorkspace() {
           setHasGenerated(true);
         }
         if (p.messages && p.messages.length > 0) setMessages(p.messages);
+        if (p.structure) setArchitectureStructure(p.structure);
       } else if (qPrompt) {
         const newId = "proj_" + Date.now();
         setProjectId(newId);
@@ -233,17 +484,20 @@ export default function SatusiteStudioWorkspace() {
     }
   }, []);
 
-  const saveProjectState = useCallback((newCode: string, newMessages: ChatMessage[], newName?: string) => {
+  const saveProjectState = useCallback((newCode: string, newMessages: ChatMessage[], newName?: string, newStructure?: ArchitectureStructure | null) => {
     try {
       const storeRaw = localStorage.getItem("satusite_projects_store") || localStorage.getItem("emergent_projects_store");
       const store = storeRaw ? JSON.parse(storeRaw) : { projects: {} };
       const currentName = newName || projectName;
+
+      const structToSave = newStructure !== undefined ? newStructure : architectureStructure;
 
       store.projects[projectId] = {
         id: projectId,
         name: currentName,
         code: newCode,
         messages: newMessages,
+        structure: structToSave,
         updatedAt: Date.now(),
         createdAt: store.projects[projectId]?.createdAt || Date.now()
       };
@@ -252,7 +506,7 @@ export default function SatusiteStudioWorkspace() {
     } catch (e) {
       console.warn("Failed saving project:", e);
     }
-  }, [projectId, projectName]);
+  }, [projectId, projectName, architectureStructure]);
 
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -390,15 +644,22 @@ export default function SatusiteStudioWorkspace() {
       const finalMessages = [...updatedMessages, agentMsg];
       setMessages(finalMessages);
 
+      const smartStruct = generateSmartStructureFromPrompt(text, customName || projectName);
+      setArchitectureStructure(smartStruct);
+
       if (data.hasCodeUpdate && data.code) {
         setCode(data.code);
-        saveProjectState(data.code, finalMessages, customName);
+        saveProjectState(data.code, finalMessages, customName, smartStruct);
         setLogs(prev => [
           ...prev,
-          `[HOT-RELOAD] index.html updated (${data.code.length} bytes) [Mode: ${genMode.toUpperCase()}]`
+          `[HOT-RELOAD] index.html updated (${data.code.length} bytes) [Mode: ${effectiveMode.toUpperCase()}]`
         ]);
       } else {
-        saveProjectState(code, finalMessages, customName);
+        saveProjectState(code, finalMessages, customName, smartStruct);
+      }
+
+      if (isPrd) {
+        setActiveTab("architecture");
       }
 
     } catch (err: any) {
@@ -451,33 +712,7 @@ export default function SatusiteStudioWorkspace() {
     setInputPrompt(picked);
   };
 
-  // Starter Suggestions for Centered Chat View (Professional Lucide Icons, NO Emojis)
-  const starterSuggestions = [
-    {
-      title: "Toko Online & Katalog",
-      description: "Katalog produk modern dengan filter kategori dan checkout WhatsApp.",
-      icon: ShoppingBag,
-      prompt: "Buat website toko online modern dan minimalis lengkap dengan katalog produk, filter kategori, badge diskon, dan tombol beli langsung via WhatsApp."
-    },
-    {
-      title: "Landing Page Bisnis & Jasa",
-      description: "Halaman promosi profesional dengan showcase layanan dan formulir kontak.",
-      icon: Compass,
-      prompt: "Buat landing page profesional untuk perusahaan agensi/jasa dengan hero section menarik, showcase keunggulan, portofolio, dan form kontak responsif."
-    },
-    {
-      title: "Restoran & Kafe Kuliner",
-      description: "Daftar menu digital interaktif dengan foto hidangan dan reservasi meja.",
-      icon: Utensils,
-      prompt: "Buat website profil kafe & restoran modern dengan daftar menu makanan & minuman terorganisir, foto menu, jam buka, dan tombol reservasi meja."
-    },
-    {
-      title: "Dashboard & Aplikasi Web",
-      description: "Antarmuka dashboard analitik dengan metrik KPI, grafik, dan tabel data.",
-      icon: Layout,
-      prompt: "Buat dashboard antarmuka web modern dengan kartu metrik ringkasan, grafik visual pertumbuhan, dan tabel data interaktif dengan fitur pencarian."
-    }
-  ];
+
 
 
 
@@ -877,9 +1112,9 @@ export default function SatusiteStudioWorkspace() {
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute bottom-full left-0 mb-2 w-64 p-1.5 bg-[#121215] border border-zinc-800 rounded-xl shadow-[0_10px_38px_rgba(0,0,0,0.85)] z-50 animate-in fade-in zoom-in-95 duration-150 font-sans">
-                  <div className="px-2 py-1 text-[9px] font-mono text-zinc-500 uppercase tracking-wider border-b border-zinc-800/50 mb-1">
-                    Pilih Mode Pengembangan
+                <div className="absolute top-full left-0 mt-1.5 w-56 p-1 bg-[#121215] border border-zinc-800 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.85)] z-50 animate-in fade-in zoom-in-95 duration-150 font-sans">
+                  <div className="px-2 py-0.5 text-[8.5px] font-medium text-zinc-500 uppercase tracking-wider border-b border-zinc-800/50 mb-0.5">
+                    Pilih Mode
                   </div>
 
                   <button
@@ -888,20 +1123,20 @@ export default function SatusiteStudioWorkspace() {
                       setGenMode("fullstack");
                       setShowModeDropdown(null);
                     }}
-                    className={`w-full p-2 rounded-lg flex items-start gap-2.5 text-left transition-colors cursor-pointer ${
+                    className={`w-full px-2 py-1 rounded-lg flex items-center gap-2 text-left transition-colors cursor-pointer ${
                       genMode === "fullstack"
                         ? "bg-zinc-800/90 text-white"
                         : "text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
                     }`}
                   >
-                    <div className="p-1.5 rounded-md bg-blue-950/70 border border-blue-800/30 text-blue-400 mt-0.5 shrink-0">
-                      <Database className="w-3.5 h-3.5" />
+                    <div className="w-5 h-5 rounded bg-blue-950/70 border border-blue-800/30 text-blue-400 flex items-center justify-center shrink-0">
+                      <Database className="w-2.5 h-2.5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-xs font-semibold text-zinc-100">Fullstack</span>
-                      <p className="text-[10px] text-zinc-400 leading-snug mt-0.5">
-                        Skema data, operasi CRUD, storage sync & UI lengkap.
-                      </p>
+                      <div className="text-[11px] font-semibold text-zinc-100 leading-tight">Fullstack</div>
+                      <div className="text-[9px] text-zinc-400 truncate leading-tight">
+                        CRUD, database in-memory & UI.
+                      </div>
                     </div>
                   </button>
 
@@ -911,20 +1146,20 @@ export default function SatusiteStudioWorkspace() {
                       setGenMode("frontend");
                       setShowModeDropdown(null);
                     }}
-                    className={`w-full p-2 rounded-lg flex items-start gap-2.5 text-left transition-colors cursor-pointer mt-1 ${
+                    className={`w-full px-2 py-1 rounded-lg flex items-center gap-2 text-left transition-colors cursor-pointer mt-0.5 ${
                       genMode === "frontend"
                         ? "bg-zinc-800/90 text-white"
                         : "text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
                     }`}
                   >
-                    <div className="p-1.5 rounded-md bg-blue-950/70 border border-blue-800/30 text-blue-400 mt-0.5 shrink-0">
-                      <Layout className="w-3.5 h-3.5" />
+                    <div className="w-5 h-5 rounded bg-blue-950/70 border border-blue-800/30 text-blue-400 flex items-center justify-center shrink-0">
+                      <Layout className="w-2.5 h-2.5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-xs font-semibold text-zinc-100">Frontend</span>
-                      <p className="text-[10px] text-zinc-400 leading-snug mt-0.5">
-                        Tampilan antarmuka visual lengkap, estetik & responsif.
-                      </p>
+                      <div className="text-[11px] font-semibold text-zinc-100 leading-tight">Frontend</div>
+                      <div className="text-[9px] text-zinc-400 truncate leading-tight">
+                        Antarmuka visual responsif.
+                      </div>
                     </div>
                   </button>
 
@@ -934,20 +1169,20 @@ export default function SatusiteStudioWorkspace() {
                       setGenMode("prd");
                       setShowModeDropdown(null);
                     }}
-                    className={`w-full p-2 rounded-lg flex items-start gap-2.5 text-left transition-colors cursor-pointer mt-1 ${
+                    className={`w-full px-2 py-1 rounded-lg flex items-center gap-2 text-left transition-colors cursor-pointer mt-0.5 ${
                       genMode === "prd"
                         ? "bg-zinc-800/90 text-white"
                         : "text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
                     }`}
                   >
-                    <div className="p-1.5 rounded-md bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 mt-0.5 shrink-0">
-                      <FileText className="w-3.5 h-3.5 text-zinc-400" />
+                    <div className="w-5 h-5 rounded bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 flex items-center justify-center shrink-0">
+                      <FileText className="w-2.5 h-2.5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-xs font-semibold text-zinc-100">PRD Blueprint</span>
-                      <p className="text-[10px] text-zinc-400 leading-snug mt-0.5">
-                        Dokumen spesifikasi & arsitektur sistem komprehensif.
-                      </p>
+                      <div className="text-[11px] font-semibold text-zinc-100 leading-tight">PRD Blueprint</div>
+                      <div className="text-[9px] text-zinc-400 truncate leading-tight">
+                        Spesifikasi & arsitektur sistem.
+                      </div>
                     </div>
                   </button>
                 </div>
@@ -1069,12 +1304,30 @@ export default function SatusiteStudioWorkspace() {
           )}
 
           <a
-            href="/portal"
-            className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1 text-[11px]"
-            title="Buka Portal Klien"
+            href={`/testing?id=${projectId}`}
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1 text-[11px]"
+            title="Uji Kualitas & Testing Suite"
           >
-            <FolderGit2 className="w-3.5 h-3.5 text-zinc-400" />
-            <span className="hidden sm:inline">Portal</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">Testing</span>
+          </a>
+
+          <a
+            href={`/github?id=${projectId}`}
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1 text-[11px]"
+            title="Push ke GitHub Repository"
+          >
+            <i className="fa-brands fa-github text-sm text-zinc-300"></i>
+            <span className="hidden sm:inline">GitHub</span>
+          </a>
+
+          <a
+            href={`/deploy?id=${projectId}`}
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1 text-[11px]"
+            title="Publikasikan ke Vercel/Netlify"
+          >
+            <Rocket className="w-3.5 h-3.5 text-blue-400" />
+            <span className="hidden sm:inline">Deploy</span>
           </a>
 
           <button
@@ -1107,14 +1360,14 @@ export default function SatusiteStudioWorkspace() {
                 <Download className="w-3.5 h-3.5" />
               </button>
 
-              <button
-                onClick={() => setShowDeployModal(true)}
-                className="ml-1 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-white text-[11px] font-semibold transition-colors"
-                title="Pratinjau Live & QR Code"
+              <a
+                href={`/deploy?id=${projectId}`}
+                className="ml-1 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-semibold transition-colors shadow-sm"
+                title="Deploy ke Cloud"
               >
-                <Globe className="w-3 h-3 text-zinc-400" />
-                <span>Online</span>
-              </button>
+                <Rocket className="w-3 h-3 text-white" />
+                <span>Deploy</span>
+              </a>
             </>
           )}
         </div>
@@ -1154,32 +1407,6 @@ export default function SatusiteStudioWorkspace() {
               <p className="text-xs text-zinc-400 max-w-lg mx-auto leading-relaxed">
                 Ketik ide bisnis atau konsep website yang Anda inginkan. AI Agent akan langsung merancang tampilan dan membuka kanvas kerja 65% secara otomatis.
               </p>
-            </div>
-
-            {/* Clean Starter Prompt Suggestions (Lucide Vector Icons, NO Emojis) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full text-left pt-1">
-              {starterSuggestions.map((s, idx) => {
-                const Icon = s.icon;
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => handleSendPrompt(s.prompt, s.title)}
-                    className="p-3.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/80 border border-zinc-800/60 hover:border-zinc-700 text-left transition-all group flex items-start gap-3 cursor-pointer"
-                  >
-                    <div className="p-2 rounded-lg bg-zinc-800/60 text-zinc-400 group-hover:text-blue-400 group-hover:bg-blue-500/10 transition-colors shrink-0">
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="text-xs font-semibold text-white group-hover:text-blue-400 transition-colors">
-                        {s.title}
-                      </h4>
-                      <p className="text-[11px] text-zinc-500 line-clamp-2 mt-0.5 leading-relaxed">
-                        {s.description}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
             </div>
 
             {/* Centered Main Prompt Input Bar */}
@@ -1468,26 +1695,22 @@ export default function SatusiteStudioWorkspace() {
                 </div>
               )}
 
-              {/* TAB 3: ARCHITECTURE */}
+              {/* TAB 3: ARCHITECTURE (STRUKTUR) */}
               {activeTab === "architecture" && (
-                <div className="flex-1 p-6 overflow-y-auto bg-zinc-950 space-y-4 text-xs">
-                  <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-5 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Workflow className="w-4 h-4 text-blue-400" />
-                      <h3 className="font-semibold text-white text-sm">Struktur Komponen & Alur Data</h3>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-zinc-300">
-                      <div className="bg-zinc-950 p-4 rounded-lg border border-zinc-800/60 space-y-1.5">
-                        <h5 className="font-semibold text-white font-mono text-xs">Hierarki Tampilan</h5>
-                        <p className="text-zinc-400 leading-relaxed">Header Navigasi $\to$ Bagian Utama $\to$ Komponen Fitur $\to$ Formulir Interaktif $\to$ Footer</p>
-                      </div>
-                      <div className="bg-zinc-950 p-4 rounded-lg border border-zinc-800/60 space-y-1.5">
-                        <h5 className="font-semibold text-white font-mono text-xs">Penyimpanan & State</h5>
-                        <p className="text-zinc-400 leading-relaxed">Penyimpanan state otomatis ke browser localStorage dengan fitur ekspor kode instan.</p>
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex-1 w-full h-full relative overflow-hidden bg-[#0b0e14]">
+                  <InteractiveArchitectureTree
+                    initialStructure={architectureStructure}
+                    projectName={projectName}
+                    promptText={messages[messages.length - 1]?.text || inputPrompt || ""}
+                    onStructureChange={(newStruct) => {
+                      setArchitectureStructure(newStruct);
+                      saveProjectState(code, messages, projectName, newStruct);
+                    }}
+                    onApplyToPrompt={(summaryText) => {
+                      setInputPrompt(summaryText);
+                      setActiveTab("preview");
+                    }}
+                  />
                 </div>
               )}
 
@@ -1538,7 +1761,7 @@ export default function SatusiteStudioWorkspace() {
           <div className="bg-zinc-900 border border-zinc-800/80 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl animate-fade-in-up">
             <div className="flex justify-between items-center pb-3 border-b border-zinc-800/60">
               <h3 className="font-semibold text-white text-sm flex items-center gap-2">
-                <HelpCircle className="w-4 h-4 text-blue-400" /> Panduan Penggunaan Satusite Studio
+                <HelpCircle className="w-4 h-4 text-blue-400" /> Panduan Penggunaan <span className="font-agus font-normal tracking-[0.25em] text-white">satusitE</span> Studio
               </h3>
               <button onClick={() => setShowHelpModal(false)} className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
                 <X className="w-4 h-4" />

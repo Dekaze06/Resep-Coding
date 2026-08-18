@@ -1,73 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import CardScrollReveal from "../components/ui/CardScrollReveal";
+import Footer from "../components/ui/footer-section";
 ---
 
 <Layout title="Satusite Studio - Platform Pembuat Website AI Otonom">
-    <!-- ========================================== -->
-    <!-- 0. 3D NODE & WELCOME SCREEN (INITIAL LOAD) -->
-    <!-- ========================================== -->
-    <div
-        id="welcome-screen"
-        class="fixed inset-0 z-50 bg-[#09090b] flex flex-col items-center justify-center transition-opacity duration-700 pointer-events-auto select-none"
-    >
-        <!-- 3D Node Mesh Canvas -->
-        <canvas
-            id="welcome-3d-canvas"
-            class="absolute inset-0 w-full h-full pointer-events-none opacity-50"
-        ></canvas>
-
-        <!-- Center Content with 3D Floating Logo -->
-        <div
-            class="relative z-10 flex flex-col items-center text-center space-y-4 px-6"
-        >
-            <div class="relative">
-                <div
-                    class="absolute -inset-4 bg-blue-600/15 rounded-full blur-2xl animate-pulse"
-                >
-                </div>
-                <img
-                    src="/logo.png"
-                    alt="Satusite Logo"
-                    class="w-16 h-16 sm:w-20 sm:h-20 object-contain relative animate-logo-float drop-shadow-[0_15px_35px_rgba(0,0,0,0.9)]"
-                />
-            </div>
-
-            <div class="space-y-1">
-                <h2
-                    id="welcome-text-title"
-                    class="text-lg sm:text-xl font-bold text-white tracking-tight"
-                >
-                    Halo..
-                </h2>
-                <p
-                    id="welcome-text-sub"
-                    class="text-xs text-zinc-400 font-medium"
-                >
-                    Menyiapkan Satusite Studio
-                </p>
-            </div>
-
-            <!-- Sleek Minimalist Progress Bar -->
-            <div
-                class="w-32 h-1 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/80 mt-2"
-            >
-                <div
-                    id="welcome-progress-bar"
-                    class="h-full bg-blue-500 rounded-full w-0 transition-all duration-700 ease-out"
-                >
-                </div>
-            </div>
-        </div>
-
-        <!-- Skip Button -->
-        <button
-            id="btn-skip-welcome"
-            class="absolute bottom-6 text-[10px] font-medium text-zinc-600 hover:text-zinc-400 transition-colors z-20 cursor-pointer"
-        >
-            Lewati
-        </button>
-    </div>
-
     <!-- Fluid Ambient Canvas Particles Background -->
     <div
         id="particles-bg"
@@ -115,22 +52,43 @@ import Layout from "../layouts/Layout.astro";
                     class="hidden md:flex items-center gap-8 text-xs font-medium text-zinc-400"
                 >
                     <a
-                        href="#prompt-builder"
-                        class="hover:text-white transition-colors">Studio</a
+                        href="#services"
+                        class="hover:text-white transition-colors"
                     >
+                        Layanan
+                    </a>
+                    <a
+                        href="/templates"
+                        class="hover:text-white transition-colors"
+                    >
+                        Templates
+                    </a>
+                    <a
+                        href="/deploy"
+                        class="hover:text-white transition-colors"
+                    >
+                        Deploy
+                    </a>
+                    <a
+                        href="/github"
+                        class="hover:text-white transition-colors"
+                    >
+                        GitHub
+                    </a>
+                    <a
+                        href="/testing"
+                        class="hover:text-white transition-colors"
+                    >
+                        Testing
+                    </a>
                     <a
                         href="#how-it-works"
                         class="hover:text-white transition-colors">Cara Kerja</a
                     >
                     <a
-                        href="#for-who"
-                        class="hover:text-white transition-colors"
-                        >Untuk Siapa</a
-                    >
-                    <a
                         href="#showcase"
                         class="hover:text-white transition-colors"
-                        >Contoh Website</a
+                        >Showcase</a
                     >
                     <a href="#faq" class="hover:text-white transition-colors"
                         >FAQ</a
@@ -172,7 +130,7 @@ import Layout from "../layouts/Layout.astro";
                             class="hidden absolute right-0 mt-2 w-52 p-1.5 bg-[#121215] border border-zinc-800 rounded-xl shadow-[0_10px_38px_rgba(0,0,0,0.85)] z-50 text-left font-sans animate-fade-in-up"
                         >
                             <div class="px-2.5 py-1.5 border-b border-zinc-800/60 mb-1">
-                                <p id="nav-menu-user-name" class="text-xs font-bold text-white truncate">Klien SatuSite</p>
+                                <p id="nav-menu-user-name" class="text-xs font-bold text-white truncate">Klien <span class="font-agus font-normal tracking-[0.25em]">satusitE</span></p>
                                 <p id="nav-menu-user-email" class="text-[10px] text-zinc-500 truncate">demo@satusite.studio</p>
                             </div>
                             
@@ -193,6 +151,15 @@ import Layout from "../layouts/Layout.astro";
                             >
                                 <i class="fa-solid fa-layer-group text-zinc-400 w-3.5 text-center"></i>
                                 <span>Portal Klien</span>
+                            </a>
+
+                            <!-- Portal Admin in Dropdown -->
+                            <a
+                                href="/admin"
+                                class="w-full px-2.5 py-2 rounded-lg text-xs text-red-400 hover:text-red-300 hover:bg-red-950/40 flex items-center gap-2.5 transition-colors text-left"
+                            >
+                                <i class="fa-solid fa-shield-halved text-red-400 w-3.5 text-center"></i>
+                                <span>Portal Admin</span>
                             </a>
 
                             <!-- Logout Action in Dropdown -->
@@ -248,7 +215,7 @@ import Layout from "../layouts/Layout.astro";
 
                 <!-- PROMPT STUDIO BOX (Positioned Lower) -->
                 <div
-                    class="mt-8 sm:mt-12 max-w-3xl mx-auto bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 text-left shadow-2xl backdrop-blur-xl"
+                    class="mt-4 sm:mt-6 max-w-3xl mx-auto bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 text-left shadow-2xl backdrop-blur-xl"
                 >
                     <form id="hero-prompt-form" class="space-y-3.5">
                         <div class="relative">
@@ -313,38 +280,37 @@ import Layout from "../layouts/Layout.astro";
                                     <!-- Dropdown Popover Menu -->
                                     <div
                                         id="hero-mode-menu"
-                                        class="hidden absolute bottom-full left-0 mb-2 w-64 p-1.5 bg-[#121215] border border-zinc-800 rounded-xl shadow-[0_10px_38px_rgba(0,0,0,0.85)] z-50 font-sans text-left"
+                                        class="hidden absolute top-full left-0 mt-1.5 w-56 p-1 bg-[#121215] border border-zinc-800 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.85)] z-50 font-sans text-left"
                                     >
                                         <div
-                                            class="px-2.5 py-1 text-[9px] font-semibold text-zinc-500 uppercase tracking-wider border-b border-zinc-800/50 mb-1"
+                                            class="px-2 py-0.5 text-[8.5px] font-medium text-zinc-500 uppercase tracking-wider border-b border-zinc-800/50 mb-0.5"
                                         >
-                                            Pilih Mode Pengembangan
+                                            Pilih Mode
                                         </div>
 
                                         <!-- Option Fullstack -->
                                         <button
                                             type="button"
                                             data-mode="fullstack"
-                                            class="hero-mode-item w-full p-2 rounded-lg flex items-start gap-2.5 text-left transition-colors cursor-pointer bg-zinc-800/90 text-white"
+                                            class="hero-mode-item w-full px-2 py-1 rounded-lg flex items-center gap-2 text-left transition-colors cursor-pointer bg-zinc-800/90 text-white"
                                         >
                                             <div
-                                                class="p-1.5 rounded-md bg-blue-950/70 border border-blue-800/30 text-blue-400 mt-0.5 shrink-0"
+                                                class="w-5 h-5 rounded bg-blue-950/70 border border-blue-800/30 text-blue-400 flex items-center justify-center shrink-0"
                                             >
                                                 <i
-                                                    class="fa-solid fa-database text-xs"
+                                                    class="fa-solid fa-database text-[10px]"
                                                 ></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <span
-                                                    class="text-xs font-semibold text-zinc-100"
-                                                    >Fullstack</span
+                                                <div
+                                                    class="text-[11px] font-semibold text-zinc-100 leading-tight"
+                                                    >Fullstack</div
                                                 >
-                                                <p
-                                                    class="text-[10px] text-zinc-400 leading-snug mt-0.5"
+                                                <div
+                                                    class="text-[9px] text-zinc-400 truncate leading-tight"
                                                 >
-                                                    Skema data, operasi CRUD,
-                                                    storage sync & UI lengkap.
-                                                </p>
+                                                    CRUD, storage sync & UI.
+                                                </div>
                                             </div>
                                         </button>
 
@@ -352,27 +318,25 @@ import Layout from "../layouts/Layout.astro";
                                         <button
                                             type="button"
                                             data-mode="frontend"
-                                            class="hero-mode-item w-full p-2 rounded-lg flex items-start gap-2.5 text-left transition-colors cursor-pointer mt-1 text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
+                                            class="hero-mode-item w-full px-2 py-1 rounded-lg flex items-center gap-2 text-left transition-colors cursor-pointer mt-0.5 text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
                                         >
                                             <div
-                                                class="p-1.5 rounded-md bg-blue-950/70 border border-blue-800/30 text-blue-400 mt-0.5 shrink-0"
+                                                class="w-5 h-5 rounded bg-blue-950/70 border border-blue-800/30 text-blue-400 flex items-center justify-center shrink-0"
                                             >
                                                 <i
-                                                    class="fa-solid fa-table-columns text-xs"
+                                                    class="fa-solid fa-table-columns text-[10px]"
                                                 ></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <span
-                                                    class="text-xs font-semibold text-zinc-100"
-                                                    >Frontend</span
+                                                <div
+                                                    class="text-[11px] font-semibold text-zinc-100 leading-tight"
+                                                    >Frontend</div
                                                 >
-                                                <p
-                                                    class="text-[10px] text-zinc-400 leading-snug mt-0.5"
+                                                <div
+                                                    class="text-[9px] text-zinc-400 truncate leading-tight"
                                                 >
-                                                    Tampilan antarmuka visual
-                                                    lengkap, estetik &
-                                                    responsif.
-                                                </p>
+                                                    Antarmuka visual responsif.
+                                                </div>
                                             </div>
                                         </button>
 
@@ -380,25 +344,25 @@ import Layout from "../layouts/Layout.astro";
                                         <button
                                             type="button"
                                             data-mode="prd"
-                                            class="hero-mode-item w-full p-2 rounded-lg flex items-start gap-2.5 text-left transition-colors cursor-pointer mt-1 text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
+                                            class="hero-mode-item w-full px-2 py-1 rounded-lg flex items-center gap-2 text-left transition-colors cursor-pointer mt-0.5 text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
                                         >
                                             <div
-                                                class="p-1.5 rounded-md bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 mt-0.5 shrink-0"
+                                                class="w-5 h-5 rounded bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 flex items-center justify-center shrink-0"
                                             >
                                                 <i
-                                                    class="fa-solid fa-file-lines text-xs text-zinc-400"
+                                                    class="fa-solid fa-file-lines text-[10px] text-zinc-400"
                                                 ></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <span
-                                                    class="text-xs font-semibold text-zinc-100"
-                                                    >PRD Blueprint</span
+                                                <div
+                                                    class="text-[11px] font-semibold text-zinc-100 leading-tight"
+                                                    >PRD Blueprint</div
                                                 >
-                                                <p
-                                                    class="text-[10px] text-zinc-400 leading-snug mt-0.5"
+                                                <div
+                                                    class="text-[9px] text-zinc-400 truncate leading-tight"
                                                 >
-                                                    Dokumen spesifikasi & arsitektur sistem komprehensif.
-                                                </p>
+                                                    Spesifikasi sistem komprehensif.
+                                                </div>
                                             </div>
                                         </button>
                                     </div>
@@ -435,6 +399,172 @@ import Layout from "../layouts/Layout.astro";
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 2.5 SERVICES / LAYANAN SECTION             -->
+        <!-- ========================================== -->
+        <section
+            id="services"
+            class="py-20 px-6 border-t border-zinc-800/80 bg-zinc-950/60 relative overflow-hidden"
+        >
+            <!-- Ambient Glow -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-blue-600/5 rounded-full blur-[140px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto space-y-12 relative z-10">
+                <div class="text-center max-w-2xl mx-auto space-y-3">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/60 border border-blue-800/40 text-blue-400 text-xs font-medium">
+                        <i class="fa-solid fa-sparkles text-xs"></i>
+                        <span>Layanan & Kapabilitas Utama</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
+                        Solusi Pembuatan Web & Aplikasi Cerdas
+                    </h2>
+                    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                        Dari perancangan konsep visual, penyusunan arsitektur sistem, hingga rilis produksi global ke cloud dalam hitungan detik.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Service 1: Fullstack AI -->
+                    <div class="bg-zinc-900/60 border border-zinc-800/80 hover:border-blue-500/40 rounded-2xl p-6 space-y-4 transition-all hover:bg-zinc-900/80 group">
+                        <div class="w-12 h-12 rounded-xl bg-blue-950/70 border border-blue-800/40 text-blue-400 flex items-center justify-center text-lg group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+                        <div class="space-y-1.5">
+                            <h3 class="text-base font-bold text-white group-hover:text-blue-300 transition-colors">Generasi Fullstack AI</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Pembuatan sistem web lengkap dengan skema data relasional in-memory, operasi CRUD, formulir interaktif, dan penyimpanan otomatis di browser.
+                            </p>
+                        </div>
+                        <ul class="text-xs text-zinc-400 space-y-1.5 pt-2 border-t border-zinc-800/60">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-400 text-[10px]"></i> Database Mock JSON Terhubung</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-400 text-[10px]"></i> Logika Bisnis & Filter Data</li>
+                        </ul>
+                        <div class="pt-2">
+                            <a href="/app?mode=fullstack" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300">
+                                <span>Coba Fullstack Builder</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Service 2: Frontend & Landing Page -->
+                    <div class="bg-zinc-900/60 border border-zinc-800/80 hover:border-teal-500/40 rounded-2xl p-6 space-y-4 transition-all hover:bg-zinc-900/80 group">
+                        <div class="w-12 h-12 rounded-xl bg-teal-950/70 border border-teal-800/40 text-teal-400 flex items-center justify-center text-lg group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-table-columns"></i>
+                        </div>
+                        <div class="space-y-1.5">
+                            <h3 class="text-base font-bold text-white group-hover:text-teal-300 transition-colors">Desain UI/UX & Landing Page</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Tampilan antarmuka modern yang estetik, konversi tinggi, dilengkapi animasi halus, dark mode elegan, dan tata letak mobile-first.
+                            </p>
+                        </div>
+                        <ul class="text-xs text-zinc-400 space-y-1.5 pt-2 border-t border-zinc-800/60">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-400 text-[10px]"></i> Tipografi & Warna Kurasi Modern</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-400 text-[10px]"></i> Integrasi Tombol Pesan WhatsApp</li>
+                        </ul>
+                        <div class="pt-2">
+                            <a href="/app?mode=frontend" class="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-400 hover:text-teal-300">
+                                <span>Rancang Tampilan UI</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Service 3: PRD & Architecture Blueprint -->
+                    <div class="bg-zinc-900/60 border border-zinc-800/80 hover:border-purple-500/40 rounded-2xl p-6 space-y-4 transition-all hover:bg-zinc-900/80 group">
+                        <div class="w-12 h-12 rounded-xl bg-purple-950/70 border border-purple-800/40 text-purple-400 flex items-center justify-center text-lg group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-diagram-project"></i>
+                        </div>
+                        <div class="space-y-1.5">
+                            <h3 class="text-base font-bold text-white group-hover:text-purple-300 transition-colors">Arsitektur PRD & Mindmap Interaktif</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Penyusunan dokumen kebutuhan produk (PRD) komprehensif beserta diagram mindmap struktur fitur visual yang dapat diedit langsung.
+                            </p>
+                        </div>
+                        <ul class="text-xs text-zinc-400 space-y-1.5 pt-2 border-t border-zinc-800/60">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-400 text-[10px]"></i> Diagram Tree Graph Node Interaktif</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-400 text-[10px]"></i> Sinkronisasi Struktur ke Kode AI</li>
+                        </ul>
+                        <div class="pt-2">
+                            <a href="/app?mode=prd" class="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-400 hover:text-purple-300">
+                                <span>Buat Blueprint PRD</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Service 4: 1-Click Cloud Deployment -->
+                    <div class="bg-zinc-900/60 border border-zinc-800/80 hover:border-blue-500/40 rounded-2xl p-6 space-y-4 transition-all hover:bg-zinc-900/80 group">
+                        <div class="w-12 h-12 rounded-xl bg-blue-950/70 border border-blue-800/40 text-blue-400 flex items-center justify-center text-lg group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-rocket"></i>
+                        </div>
+                        <div class="space-y-1.5">
+                            <h3 class="text-base font-bold text-white group-hover:text-blue-300 transition-colors">1-Click Cloud Deployment</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Publikasikan website Anda langsung ke jaringan global Edge Vercel, Netlify, atau Cloudflare dengan alokasi sertifikat SSL otomatis.
+                            </p>
+                        </div>
+                        <ul class="text-xs text-zinc-400 space-y-1.5 pt-2 border-t border-zinc-800/60">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-400 text-[10px]"></i> Dukungan Custom Domain Pribadi</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-400 text-[10px]"></i> Live Streaming Build Console</li>
+                        </ul>
+                        <div class="pt-2">
+                            <a href="/deploy" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300">
+                                <span>Kunjungi Deploy Hub</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Service 5: GitHub Version Control -->
+                    <div class="bg-zinc-900/60 border border-zinc-800/80 hover:border-zinc-500/40 rounded-2xl p-6 space-y-4 transition-all hover:bg-zinc-900/80 group">
+                        <div class="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 text-white flex items-center justify-center text-lg group-hover:scale-105 transition-transform">
+                            <i class="fa-brands fa-github"></i>
+                        </div>
+                        <div class="space-y-1.5">
+                            <h3 class="text-base font-bold text-white group-hover:text-zinc-200 transition-colors">Sinkronisasi & Push GitHub</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Hubungkan dan push seluruh bundle kode HTML/CSS/JS mandiri ke repositori GitHub pribadi atau organisasi Anda secara instan.
+                            </p>
+                        </div>
+                        <ul class="text-xs text-zinc-400 space-y-1.5 pt-2 border-t border-zinc-800/60">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-white text-[10px]"></i> Generator Pesan Commit Cerdas AI</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-white text-[10px]"></i> Staging File Tree & Dokumentasi README</li>
+                        </ul>
+                        <div class="pt-2">
+                            <a href="/github" class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-300 hover:text-white">
+                                <span>Kunjungi GitHub Hub</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Service 6: Automated Testing & QA -->
+                    <div class="bg-zinc-900/60 border border-zinc-800/80 hover:border-amber-500/40 rounded-2xl p-6 space-y-4 transition-all hover:bg-zinc-900/80 group">
+                        <div class="w-12 h-12 rounded-xl bg-amber-950/70 border border-amber-800/40 text-amber-400 flex items-center justify-center text-lg group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div class="space-y-1.5">
+                            <h3 class="text-base font-bold text-white group-hover:text-amber-300 transition-colors">Testing & QA Quality Assurance</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Pengujian integritas kode, audit performa Core Web Vitals, kepatuhan aksesibilitas A11y, dan simulator viewport multi-perangkat.
+                            </p>
+                        </div>
+                        <ul class="text-xs text-zinc-400 space-y-1.5 pt-2 border-t border-zinc-800/60">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-400 text-[10px]"></i> Skor Audit Lighthouse Real-time</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-400 text-[10px]"></i> 0 Console Runtime Error Guarantee</li>
+                        </ul>
+                        <div class="pt-2">
+                            <a href="/testing" class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 hover:text-amber-300">
+                                <span>Uji Kualitas Website</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -853,7 +983,7 @@ import Layout from "../layouts/Layout.astro";
                         >
                             <span
                                 >Apakah saya harus bisa koding untuk memakai
-                                Satusite Studio?</span
+                                <span class="font-agus font-normal tracking-[0.25em] text-white">satusitE</span> Studio?</span
                             >
                             <i
                                 class="fa-solid fa-chevron-down text-zinc-500 group-open:rotate-180 transition-transform"
@@ -939,6 +1069,111 @@ import Layout from "../layouts/Layout.astro";
         </section>
 
         <!-- ========================================== -->
+        <!-- 6.5 CTA: HIGH-IMPACT LAUNCH BANNER         -->
+        <!-- ========================================== -->
+        <section class="py-20 px-6 relative overflow-hidden">
+            <div class="max-w-5xl mx-auto rounded-3xl bg-gradient-to-b from-zinc-900/90 via-zinc-950 to-black border border-zinc-800 p-8 sm:p-12 lg:p-16 text-center space-y-8 relative shadow-2xl backdrop-blur-xl">
+                
+                <!-- Glowing Aura -->
+                <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+                <div class="space-y-4 max-w-2xl mx-auto relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-800/50 text-blue-400 text-xs font-medium">
+                        <i class="fa-solid fa-bolt text-xs"></i>
+                        <span>Generasi Real-time Tanpa Batas</span>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                        Siap Mewujudkan Website Impian Anda?
+                    </h2>
+                    <p class="text-xs sm:text-sm md:text-base text-zinc-400 leading-relaxed">
+                        Cukup ketik ide yang ingin Anda buat. AI Agent kami akan langsung merancang kode HTML/CSS/JS mandiri siap pakai dalam hitungan detik.
+                    </p>
+                </div>
+
+                <!-- CTA Action Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 relative z-10">
+                    <a
+                        href="/app"
+                        class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-blue-600/30 hover:shadow-blue-500/40 cursor-pointer"
+                    >
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                        <span>Mulai Buat Gratis Sekarang</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                    <a
+                        href="/templates"
+                        class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                        <i class="fa-regular fa-clone text-xs"></i>
+                        <span>Jelajahi Galeri Template</span>
+                    </a>
+                </div>
+
+                <!-- Trust Points -->
+                <div class="pt-4 border-t border-zinc-800/60 flex flex-wrap items-center justify-center gap-6 text-xs text-zinc-400 relative z-10">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+                        <span>100% Gratis untuk Memulai</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+                        <span>Tanpa Perlu Setup Lingkungan</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+                        <span>Hak Cipta Kode Milik Anda</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 6.6 CTA: NEWSLETTER SUBSCRIBE SECTION      -->
+        <!-- ========================================== -->
+        <section class="py-14 px-6 border-t border-zinc-800/80 bg-zinc-950/40">
+            <div class="max-w-4xl mx-auto rounded-2xl bg-zinc-900/50 border border-zinc-800/90 p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                
+                <div class="space-y-2 text-left max-w-md">
+                    <div class="flex items-center gap-2 text-blue-400 text-xs font-semibold">
+                        <i class="fa-regular fa-envelope"></i>
+                        <span>Buletin Mingguan satusitE</span>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                        Dapatkan Template Baru & Tips AI
+                    </h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Bergabunglah dengan 5,000+ developer & pelaku usaha. Dapatkan koleksi template HTML5 siap pakai eksklusif setiap minggu.
+                    </p>
+                </div>
+
+                <div class="w-full md:w-auto flex-1 max-w-md">
+                    <form id="subscribe-form" class="space-y-2">
+                        <div class="flex flex-col sm:flex-row items-center gap-2">
+                            <input
+                                type="email"
+                                id="subscribe-email-input"
+                                required
+                                placeholder="Masukkan alamat email Anda..."
+                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-3 text-xs text-white placeholder-zinc-500 focus:outline-none transition-colors font-sans"
+                            />
+                            <button
+                                type="submit"
+                                id="btn-subscribe"
+                                class="w-full sm:w-auto px-5 py-3 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition-colors shrink-0 cursor-pointer shadow-md"
+                            >
+                                <span>Berlangganan</span>
+                            </button>
+                        </div>
+                        <p id="subscribe-status" class="text-[11px] text-zinc-500 text-left">
+                            Bebas spam. Anda dapat berhenti berlangganan kapan saja.
+                        </p>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
         <!-- 7. MY PROJECTS MODAL                       -->
         <!-- ========================================== -->
         <div
@@ -992,234 +1227,10 @@ import Layout from "../layouts/Layout.astro";
         </div>
 
         <!-- ========================================== -->
-        <!-- 8. MINIMALIST FOOTER                       -->
+        <!-- 8. MODERN ANIMATED FOOTER                  -->
         <!-- ========================================== -->
-        <footer
-            class="border-t border-zinc-800/80 py-8 px-6 mt-auto bg-zinc-950 text-xs text-zinc-500"
-        >
-            <div
-                class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"
-            >
-                <div class="flex items-center gap-2.5">
-                    <img
-                        src="/logo.png"
-                        alt="satusitE Logo"
-                        class="w-5 h-5 object-contain"
-                    />
-                    <div class="flex items-center gap-1.5 select-none text-xs">
-                        <span
-                            class="font-agus text-sm font-normal tracking-[0.4em] text-zinc-300"
-                        >
-                            satusitE
-                        </span>
-                        <span
-                            class="text-white font-light text-[11px] opacity-80"
-                            >/</span
-                        >
-                        <span
-                            class="font-syne font-bold text-[11px] text-zinc-300 tracking-tight"
-                        >
-                            Studio.
-                        </span>
-                    </div>
-                    <span>&middot;</span>
-                    <span>Platform Pembuat Aplikasi AI Otonom</span>
-                </div>
-
-                <div class="flex items-center gap-6">
-                    <a
-                        href="#prompt-builder"
-                        class="hover:text-zinc-300 transition-colors">Studio</a
-                    >
-                    <a
-                        href="#how-it-works"
-                        class="hover:text-zinc-300 transition-colors"
-                        >Cara Kerja</a
-                    >
-                    <a
-                        href="#for-who"
-                        class="hover:text-zinc-300 transition-colors"
-                        >Untuk Siapa</a
-                    >
-                    <a href="#faq" class="hover:text-zinc-300 transition-colors"
-                        >FAQ</a
-                    >
-                    <a href="/portal" class="text-zinc-400 hover:text-white transition-colors"
-                        >Portal Klien</a
-                    >
-                    <a href="/login" class="text-zinc-400 hover:text-white transition-colors"
-                        >Masuk</a
-                    >
-                    <a href="/app" class="text-blue-400 hover:underline"
-                        >Buka Studio</a
-                    >
-                </div>
-
-                <div>&copy; 2026 Satusite Studio.</div>
-            </div>
-        </footer>
+        <Footer client:visible />
     </div>
-
-    <!-- 3D Node Mesh & Welcome Screen Script -->
-    <script is:inline>
-        (function () {
-            const welcomeScreen = document.getElementById("welcome-screen");
-            const welcomeCanvas = document.getElementById("welcome-3d-canvas");
-            const progressBar = document.getElementById("welcome-progress-bar");
-            const skipBtn = document.getElementById("btn-skip-welcome");
-            const titleEl = document.getElementById("welcome-text-title");
-            const subEl = document.getElementById("welcome-text-sub");
-
-            if (!welcomeScreen || !welcomeCanvas) return;
-
-            const ctx = welcomeCanvas.getContext("2d");
-            let animId;
-            let width, height;
-            let rotX = 0.2;
-            let rotY = 0.3;
-
-            // 3D Nodes setup
-            const nodeCount = 38;
-            const nodes = [];
-            const radius = 130;
-
-            for (let i = 0; i < nodeCount; i++) {
-                const theta = Math.acos(2 * Math.random() - 1);
-                const phi = 2 * Math.PI * Math.random();
-                nodes.push({
-                    x: radius * Math.sin(theta) * Math.cos(phi),
-                    y: radius * Math.sin(theta) * Math.sin(phi),
-                    z: radius * Math.cos(theta),
-                    size: Math.random() * 2 + 1.5,
-                });
-            }
-
-            function resizeCanvas() {
-                width = welcomeCanvas.width = window.innerWidth;
-                height = welcomeCanvas.height = window.innerHeight;
-            }
-
-            function render3DNodes() {
-                ctx.clearRect(0, 0, width, height);
-
-                const cx = width / 2;
-                const cy = height / 2;
-                const fov = 400;
-
-                rotX += 0.003;
-                rotY += 0.004;
-
-                const cosX = Math.cos(rotX);
-                const sinX = Math.sin(rotX);
-                const cosY = Math.cos(rotY);
-                const sinY = Math.sin(rotY);
-
-                const projected = [];
-
-                for (let i = 0; i < nodes.length; i++) {
-                    const n = nodes[i];
-
-                    // 3D Rotation Y
-                    let x1 = n.x * cosY - n.z * sinY;
-                    let z1 = n.z * cosY + n.x * sinY;
-
-                    // 3D Rotation X
-                    let y1 = n.y * cosX - z1 * sinX;
-                    let z2 = z1 * cosX + n.y * sinX;
-
-                    // Perspective projection
-                    const scale = fov / (fov + z2 + 200);
-                    const px = cx + x1 * scale;
-                    const py = cy + y1 * scale;
-                    const alpha = Math.max(
-                        0.1,
-                        Math.min(1, (z2 + radius) / (radius * 2)),
-                    );
-
-                    projected.push({
-                        x: px,
-                        y: py,
-                        z: z2,
-                        scale,
-                        alpha,
-                        size: n.size * scale,
-                    });
-                }
-
-                // Draw connections between nearby nodes
-                ctx.lineWidth = 0.75;
-                for (let i = 0; i < projected.length; i++) {
-                    for (let j = i + 1; j < projected.length; j++) {
-                        const p1 = projected[i];
-                        const p2 = projected[j];
-                        const dx = p1.x - p2.x;
-                        const dy = p1.y - p2.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-
-                        if (dist < 85) {
-                            const lineAlpha =
-                                (1 - dist / 85) *
-                                0.25 *
-                                ((p1.alpha + p2.alpha) / 2);
-                            ctx.strokeStyle = `rgba(59, 130, 246, ${lineAlpha})`;
-                            ctx.beginPath();
-                            ctx.moveTo(p1.x, p1.y);
-                            ctx.lineTo(p2.x, p2.y);
-                            ctx.stroke();
-                        }
-                    }
-                }
-
-                // Draw glowing nodes
-                for (let i = 0; i < projected.length; i++) {
-                    const p = projected[i];
-                    ctx.fillStyle = `rgba(96, 165, 250, ${p.alpha * 0.7})`;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, Math.max(1, p.size), 0, Math.PI * 2);
-                    ctx.fill();
-                }
-
-                animId = requestAnimationFrame(render3DNodes);
-            }
-
-            window.addEventListener("resize", resizeCanvas);
-            resizeCanvas();
-            render3DNodes();
-
-            // Progress bar and staged welcome text
-            setTimeout(() => {
-                if (progressBar) progressBar.style.width = "75%";
-            }, 300);
-
-            setTimeout(() => {
-                if (titleEl)
-                    titleEl.textContent =
-                        "Halo, selamat datang di Satusite Studio";
-                if (subEl)
-                    subEl.textContent = "Platform AI Otonom siap digunakan";
-                if (progressBar) progressBar.style.width = "100%";
-            }, 900);
-
-            function dismissWelcome() {
-                welcomeScreen.style.opacity = "0";
-                welcomeScreen.style.pointerEvents = "none";
-                setTimeout(() => {
-                    welcomeScreen.style.display = "none";
-                    cancelAnimationFrame(animId);
-                }, 750);
-            }
-
-            // Auto dismiss after 1.9s
-            const autoTimer = setTimeout(dismissWelcome, 1900);
-
-            if (skipBtn) {
-                skipBtn.addEventListener("click", () => {
-                    clearTimeout(autoTimer);
-                    dismissWelcome();
-                });
-            }
-        })();
-    </script>
 
     <!-- Client Scripts -->
     <script is:inline>
@@ -1721,6 +1732,57 @@ import Layout from "../layouts/Layout.astro";
                     }
                 } catch (err) {
                     console.warn("Auth nav init error:", err);
+                }
+
+                // Newsletter Subscribe Form Handling
+                const subForm = document.getElementById("subscribe-form");
+                const subEmail = document.getElementById("subscribe-email-input");
+                const subStatus = document.getElementById("subscribe-status");
+                const subBtn = document.getElementById("btn-subscribe");
+
+                if (subForm && subEmail && subStatus && subBtn) {
+                    subForm.addEventListener("submit", async (e) => {
+                        e.preventDefault();
+                        const emailVal = subEmail.value.trim();
+                        if (!emailVal) return;
+
+                        subBtn.disabled = true;
+                        subBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-xs"></i> <span>Mendaftar...</span>';
+
+                        let successMsg = 'Terima kasih! Anda telah terdaftar untuk menerima update eksklusif mingguan.';
+                        try {
+                            const res = await fetch('/api/subscribe', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ email: emailVal, source: 'landing_cta' })
+                            });
+                            if (res.ok) {
+                                const data = await res.json();
+                                if (data.message) successMsg = data.message;
+                            }
+                        } catch (err) {
+                            console.warn('Subscription backend fallback:', err);
+                        }
+
+                        try {
+                            const list = JSON.parse(localStorage.getItem("satusite_newsletter_subs") || "[]");
+                            if (!list.includes(emailVal)) {
+                                list.push(emailVal);
+                                localStorage.setItem("satusite_newsletter_subs", JSON.stringify(list));
+                            }
+                        } catch (e) {}
+
+                        subBtn.className = "w-full sm:w-auto px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs transition-colors shrink-0 shadow-lg shadow-emerald-500/20";
+                        subBtn.innerHTML = '<i class="fa-solid fa-check text-xs mr-1"></i> <span>Terdaftar!</span>';
+                        subEmail.value = "";
+                        subStatus.innerHTML = `<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check text-[11px] mr-1"></i> ${successMsg}</span>`;
+
+                        setTimeout(() => {
+                            subBtn.disabled = false;
+                            subBtn.className = "w-full sm:w-auto px-5 py-3 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition-colors shrink-0 cursor-pointer shadow-md";
+                            subBtn.innerHTML = "<span>Berlangganan</span>";
+                        }, 5000);
+                    });
                 }
             })();
         });
