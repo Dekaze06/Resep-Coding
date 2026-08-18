@@ -6,7 +6,7 @@ interface Props {
 const { activePage = 'home' } = Astro.props;
 ---
 
-<header id="main-header-nav" class="sticky top-0 z-50 px-4 sm:px-6 py-4 bg-transparent border-none transition-all duration-300">
+<header id="main-header-nav" class="sticky top-0 z-50 px-4 sm:px-6 py-4 bg-transparent border-none transition-all duration-300 ease-in-out will-change-transform translate-y-0">
   <div class="max-w-7xl mx-auto flex items-center justify-between">
     
     <!-- Brand Logo -->
@@ -602,19 +602,55 @@ const { activePage = 'home' } = Astro.props;
 
 <script is:inline>
   document.addEventListener("DOMContentLoaded", () => {
-    // 0. Seamless Header Scroll Effect
+    // 0. Seamless Header Scroll & Auto-Hide Effect
     const headerNav = document.getElementById("main-header-nav");
+    const mobileNavDrawer = document.getElementById("mobile-nav-drawer");
+    
     if (headerNav) {
+      let lastScrollY = window.scrollY;
+      let isTicking = false;
+
       const handleScroll = () => {
-        if (window.scrollY > 20) {
-          headerNav.classList.add("bg-black/60", "backdrop-blur-xl", "border-b", "border-zinc-800/50", "py-3");
+        const currentScrollY = window.scrollY;
+        const isMobileDrawerOpen = mobileNavDrawer && !mobileNavDrawer.classList.contains("hidden");
+
+        // 1. Glassmorphism Background Transition
+        if (currentScrollY > 20) {
+          headerNav.classList.add("bg-[#08080a]/90", "backdrop-blur-xl", "border-b", "border-zinc-800/80", "py-3", "shadow-[0_10px_30px_rgba(0,0,0,0.5)]");
           headerNav.classList.remove("bg-transparent", "border-none", "py-4");
         } else {
-          headerNav.classList.remove("bg-black/60", "backdrop-blur-xl", "border-b", "border-zinc-800/50", "py-3");
+          headerNav.classList.remove("bg-[#08080a]/90", "backdrop-blur-xl", "border-b", "border-zinc-800/80", "py-3", "shadow-[0_10px_30px_rgba(0,0,0,0.5)]");
           headerNav.classList.add("bg-transparent", "border-none", "py-4");
         }
+
+        // 2. Auto-Hide Navigation: Hide on scroll down, reveal on scroll up
+        if (currentScrollY <= 50) {
+          // At or near top: always show header
+          headerNav.classList.remove("-translate-y-full");
+          headerNav.classList.add("translate-y-0");
+        } else if (!isMobileDrawerOpen) {
+          if (currentScrollY > lastScrollY + 6) {
+            // Scrolling down -> Auto hide
+            headerNav.classList.add("-translate-y-full");
+            headerNav.classList.remove("translate-y-0");
+          } else if (currentScrollY < lastScrollY - 6) {
+            // Scrolling up -> Reveal
+            headerNav.classList.remove("-translate-y-full");
+            headerNav.classList.add("translate-y-0");
+          }
+        }
+
+        lastScrollY = Math.max(0, currentScrollY);
+        isTicking = false;
       };
-      window.addEventListener("scroll", handleScroll, { passive: true });
+
+      window.addEventListener("scroll", () => {
+        if (!isTicking) {
+          window.requestAnimationFrame(handleScroll);
+          isTicking = true;
+        }
+      }, { passive: true });
+
       handleScroll();
     }
 

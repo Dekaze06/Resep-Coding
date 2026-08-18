@@ -17,40 +17,42 @@ interface FooterSection {
 
 const footerLinks: FooterSection[] = [
 	{
-		label: 'Produk',
+		label: 'Product',
 		links: [
 			{ title: 'AI Studio Workspace', href: '/app' },
+			{ title: 'Build Fullstack', href: '/product/fullstack' },
+			{ title: 'Build Frontend', href: '/product/frontend' },
+			{ title: 'PRD / Planning', href: '/product/prd' },
+			{ title: 'Galeri Template', href: '/templates' },
+		],
+	},
+	{
+		label: 'Resource',
+		links: [
 			{ title: 'Deploy Cloud Hub', href: '/deploy' },
-			{ title: 'Push ke GitHub', href: '/github' },
-			{ title: 'Testing & QA Suite', href: '/testing' },
-			{ title: 'Galeri Template HTML', href: '/templates' },
+			{ title: 'GitHub Sync', href: '/github' },
+			{ title: 'Testing QA Suite', href: '/testing' },
+			{ title: 'Tutorial & Panduan', href: '/tutorial' },
+			{ title: 'Connectors & API', href: '/connectors' },
 		],
 	},
 	{
-		label: 'Fitur AI',
+		label: 'Platform',
 		links: [
-			{ title: 'Fullstack App Builder', href: '/app?mode=fullstack' },
-			{ title: 'Frontend UI Designer', href: '/app?mode=frontend' },
-			{ title: 'PRD Blueprint Architect', href: '/app?mode=prd' },
-			{ title: 'Portal Klien', href: '/portal' },
+			{ title: 'Paket & Harga', href: '/pricing' },
+			{ title: 'Tentang Satusite', href: '/about' },
+			{ title: 'Contact Us', href: '/about#contact' },
+			{ title: 'Developer & Tim', href: '/about#developer' },
+			{ title: 'Portal Proyek', href: '/portal' },
 		],
 	},
 	{
-		label: 'Sumber Daya',
+		label: 'Komunitas',
 		links: [
-			{ title: 'Cara Kerja', href: '#how-it-works' },
-			{ title: 'Contoh Website', href: '#showcase' },
-			{ title: 'FAQ & Panduan', href: '#faq' },
-			{ title: 'Masuk Akun', href: '/login' },
-		],
-	},
-	{
-		label: 'Media Sosial',
-		links: [
-			{ title: 'Instagram', href: 'https://instagram.com', iconClass: 'fa-brands fa-instagram' },
-			{ title: 'YouTube', href: 'https://youtube.com', iconClass: 'fa-brands fa-youtube' },
+			{ title: 'GitHub Repo', href: 'https://github.com', iconClass: 'fa-brands fa-github' },
+			{ title: 'Discord Community', href: 'https://discord.com', iconClass: 'fa-brands fa-discord' },
+			{ title: 'X (Twitter)', href: 'https://x.com', iconClass: 'fa-brands fa-x-twitter' },
 			{ title: 'LinkedIn', href: 'https://linkedin.com', iconClass: 'fa-brands fa-linkedin-in' },
-			{ title: 'Facebook', href: 'https://facebook.com', iconClass: 'fa-brands fa-facebook-f' },
 		],
 	},
 ];

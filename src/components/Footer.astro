@@ -1,0 +1,174 @@
+---
+// src/components/Footer.astro
+// Unified Clean Minimalist Footer Component for Satusite Studio
+---
+
+<footer class="relative w-full border-t border-zinc-800/80 bg-[#08080a] text-zinc-400 mt-20 transition-colors">
+  <!-- Subtle Top White Glow Accent -->
+  <div class="absolute top-0 right-1/2 left-1/2 h-[1px] w-1/3 -translate-x-1/2 rounded-full blur-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto px-6 py-12 lg:py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
+      
+      <!-- Brand & Mission Column (2 cols on lg) -->
+      <div class="lg:col-span-2 space-y-4 text-left pr-0 lg:pr-8">
+        <a href="/" class="flex items-center gap-2.5 group shrink-0">
+          <img
+            src="/logo.png"
+            alt="satusitE Logo"
+            class="w-6 h-6 object-contain transition-transform group-hover:scale-105"
+          />
+          <span class="font-agus text-base font-normal tracking-[0.35em] text-white">
+            satusitE
+          </span>
+        </a>
+        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-sm">
+          Platform perancangan aplikasi otonom berbasis generative AI. Mengubah ide dan prompt menjadi web production-ready mandiri tanpa setup rumit.
+        </p>
+        <div class="pt-2 flex items-center gap-3 text-xs text-zinc-500">
+          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-emerald-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>All Systems Operational</span>
+          </span>
+          <span class="font-mono text-[10px] text-zinc-500">v3.7 Studio</span>
+        </div>
+      </div>
+
+      <!-- Column 1: Product -->
+      <div class="space-y-3.5 text-left">
+        <div class="text-[11px] font-mono uppercase tracking-widest text-zinc-300 font-semibold">1. Product</div>
+        <ul class="space-y-2 text-xs">
+          <li>
+            <a href="/app" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles text-[10px] text-zinc-500 w-3.5"></i>
+              <span>AI Studio</span>
+            </a>
+          </li>
+          <li>
+            <a href="/product/fullstack" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-database text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Build Fullstack</span>
+            </a>
+          </li>
+          <li>
+            <a href="/product/frontend" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-table-columns text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Build Frontend</span>
+            </a>
+          </li>
+          <li>
+            <a href="/product/prd" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-regular fa-file-lines text-[10px] text-zinc-500 w-3.5"></i>
+              <span>PRD / Planning</span>
+            </a>
+          </li>
+          <li>
+            <a href="/templates" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-regular fa-clone text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Galeri Template</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Column 2: Resource & Tooling -->
+      <div class="space-y-3.5 text-left">
+        <div class="text-[11px] font-mono uppercase tracking-widest text-zinc-300 font-semibold">2. Resource</div>
+        <ul class="space-y-2 text-xs">
+          <li>
+            <a href="/github" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-brands fa-github text-[11px] text-zinc-500 w-3.5"></i>
+              <span>GitHub Sync</span>
+            </a>
+          </li>
+          <li>
+            <a href="/testing" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Testing QA</span>
+            </a>
+          </li>
+          <li>
+            <a href="/deploy" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-rocket text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Deploy Hub</span>
+            </a>
+          </li>
+          <li>
+            <a href="/tutorial" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-book-open text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Tutorial & Panduan</span>
+            </a>
+          </li>
+          <li>
+            <a href="/connectors" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-plug text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Connectors & API</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Platform & Company -->
+      <div class="space-y-3.5 text-left">
+        <div class="text-[11px] font-mono uppercase tracking-widest text-zinc-300 font-semibold">3. Platform</div>
+        <ul class="space-y-2 text-xs">
+          <li>
+            <a href="/pricing" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-tag text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Paket & Harga</span>
+            </a>
+          </li>
+          <li>
+            <a href="/about" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-circle-info text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Tentang Satusite</span>
+            </a>
+          </li>
+          <li>
+            <a href="/about#contact" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-regular fa-envelope text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Contact Us</span>
+            </a>
+          </li>
+          <li>
+            <a href="/about#developer" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-laptop-code text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Developer & Tim</span>
+            </a>
+          </li>
+          <li>
+            <a href="/portal" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-regular fa-folder text-[10px] text-zinc-500 w-3.5"></i>
+              <span>Portal Proyek</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Bottom Copyright & Social Row -->
+    <div class="mt-12 pt-6 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+      <div class="flex items-center gap-2">
+        <span>© {new Date().getFullYear()}</span>
+        <span class="font-agus font-normal tracking-[0.25em] text-zinc-400">satusitE</span>
+        <span>Studio. All rights reserved.</span>
+      </div>
+
+      <div class="flex items-center gap-5 text-zinc-400">
+        <a href="https://github.com" target="_blank" rel="noreferrer" class="hover:text-white transition-colors" aria-label="GitHub">
+          <i class="fa-brands fa-github text-sm"></i>
+        </a>
+        <a href="https://discord.com" target="_blank" rel="noreferrer" class="hover:text-white transition-colors" aria-label="Discord">
+          <i class="fa-brands fa-discord text-sm"></i>
+        </a>
+        <a href="https://x.com" target="_blank" rel="noreferrer" class="hover:text-white transition-colors" aria-label="Twitter">
+          <i class="fa-brands fa-x-twitter text-sm"></i>
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noreferrer" class="hover:text-white transition-colors" aria-label="LinkedIn">
+          <i class="fa-brands fa-linkedin text-sm"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
