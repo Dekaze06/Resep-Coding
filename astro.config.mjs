@@ -12,7 +12,12 @@ export default defineConfig({
   adapter: vercel(),
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    server: {
+      watch: {
+        ignored: ['**/.vercel/**', '**/dist/**']
+      }
+    }
   },
 
   integrations: [react()]

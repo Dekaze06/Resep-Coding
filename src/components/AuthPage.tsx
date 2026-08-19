@@ -383,12 +383,6 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
           <span>Beranda</span>
         </a>
 
-        {/* Brand Mark */}
-        <a href="/" className="flex items-center gap-2 group">
-          <img src="/logo.png" alt="satusitE Logo" className="w-5 h-5 object-contain" />
-          <span className="font-agus text-sm font-normal tracking-[0.35em] text-white">satusitE</span>
-        </a>
-
         <div className="w-20 flex justify-end">
           <a href="/app" className="text-xs font-medium text-zinc-400 hover:text-white transition-colors">
             Studio &rarr;
@@ -491,16 +485,18 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
         ) : (
           <div className="w-full max-w-[400px] bg-zinc-950 border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6 animate-fade-in-up">
             
-            {/* Header Title & Mode Toggle */}
-            <div className="text-center space-y-2">
-              <h1 className="text-xl font-bold tracking-tight text-white">
-                {authMode === 'login' ? 'Masuk ke Akun Anda' : 'Buat Akun Baru'}
-              </h1>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                {authMode === 'login'
-                  ? 'Akses portal akun, kelola proyek & sinkronisasi AI.'
-                  : 'Mulai bangun aplikasi fullstack dengan akun satusitE.'}
-              </p>
+            {/* Brand Logo inside Form Card */}
+            <div className="flex justify-center items-center pt-1 pb-1">
+              <a href="/" className="flex items-center gap-2.5 group">
+                <img
+                  src="/logo.png"
+                  alt="satusitE Logo"
+                  className="w-5.5 h-5.5 object-contain transition-transform group-hover:scale-105"
+                />
+                <span className="font-agus text-sm sm:text-base font-normal tracking-[0.35em] text-white">
+                  SATUSITE
+                </span>
+              </a>
             </div>
 
             {/* Google Sign-In Primary Section */}
@@ -526,12 +522,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
             </div>
 
             {/* Divider */}
-            <div className="relative flex items-center justify-center">
-              <div className="w-full border-t border-zinc-800"></div>
-              <span className="bg-zinc-950 px-3 text-[10px] uppercase font-medium text-zinc-500 tracking-wider">
-                atau dengan email
-              </span>
-            </div>
+            <div className="w-full border-t border-zinc-800/80"></div>
 
             {/* Error & Success Alerts */}
             {errorMsg && (
@@ -569,7 +560,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
                 )}
 
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-medium text-zinc-400">Alamat Email</label>
+                  <label className="text-[11px] font-medium text-zinc-400">Login with email</label>
                   <div className="relative">
                     <Mail className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input

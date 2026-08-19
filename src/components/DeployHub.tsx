@@ -22,7 +22,8 @@ import {
   Share2,
   Settings2,
   Check,
-  Zap
+  Zap,
+  ChevronRight
 } from 'lucide-react';
 
 interface SavedProject {
@@ -156,7 +157,7 @@ export default function DeployHub() {
         const data = await res.json();
         if (data.liveUrl) serverLiveUrl = data.liveUrl;
       }
-    } catch (e) {}
+    } catch (e) { }
 
     setTimeout(() => {
       setDeployStep(2);
@@ -185,10 +186,10 @@ export default function DeployHub() {
         provider === 'vercel'
           ? `https://${targetSlug}.satusite.vercel.app`
           : provider === 'netlify'
-          ? `https://${targetSlug}.netlify.app`
-          : provider === 'cloudflare'
-          ? `https://${targetSlug}.pages.dev`
-          : `https://${targetSlug}.satusite.app`
+            ? `https://${targetSlug}.netlify.app`
+            : provider === 'cloudflare'
+              ? `https://${targetSlug}.pages.dev`
+              : `https://${targetSlug}.satusite.app`
       );
 
       setDeployLogs(prev => [
@@ -225,7 +226,7 @@ export default function DeployHub() {
 
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col selection:bg-zinc-800 selection:text-white font-sans">
-      
+
       {/* Top Header */}
       <header className="sticky top-0 z-40 bg-transparent px-6 py-4 flex items-center justify-between transition-all border-none">
         <div className="flex items-center gap-3">
@@ -263,17 +264,21 @@ export default function DeployHub() {
           </a>
           <a
             href="/app"
-            className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"
+            className="group relative inline-flex items-center justify-center overflow-hidden px-3.5 py-1.5 rounded-lg bg-white hover:bg-zinc-100 border border-zinc-200/80 text-zinc-950 text-xs font-semibold shadow-md shadow-white/5 transition-all duration-300 cursor-pointer select-none"
           >
-            <span>Buka Studio</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span className="mr-5 sm:mr-6 transition-opacity duration-500 group-hover:opacity-0">
+              Open Studio
+            </span>
+            <span className="absolute right-1 top-1 bottom-1 rounded-md z-10 grid w-6 place-items-center transition-all duration-500 bg-zinc-950/10 group-hover:bg-zinc-950/15 group-hover:w-[calc(100%-0.5rem)] group-active:scale-95 text-zinc-800 group-hover:text-zinc-950">
+              <ChevronRight size={14} strokeWidth={2} aria-hidden="true" />
+            </span>
           </a>
         </div>
       </header>
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
-        
+
         {/* Title Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800/80 pb-6">
           <div>
@@ -310,10 +315,10 @@ export default function DeployHub() {
 
         {/* Grid Layout: Configuration + Live Terminal */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
+
           {/* Left Column: Form & Configuration (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            
+
             {/* Step 1: Select Project */}
             <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 space-y-4">
               <div className="flex items-center justify-between">
@@ -333,11 +338,10 @@ export default function DeployHub() {
                         key={p.id}
                         type="button"
                         onClick={() => handleSelectProject(p.id)}
-                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-zinc-800/90 border-zinc-400 text-white shadow-md'
-                            : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-300 hover:border-zinc-700 hover:bg-zinc-900/50'
-                        }`}
+                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${isSelected
+                          ? 'bg-zinc-800/90 border-zinc-400 text-white shadow-md'
+                          : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-300 hover:border-zinc-700 hover:bg-zinc-900/50'
+                          }`}
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-semibold truncate max-w-[170px]">{p.name || 'Proyek Tanpa Nama'}</span>
@@ -372,11 +376,10 @@ export default function DeployHub() {
                 <button
                   type="button"
                   onClick={() => setProvider('vercel')}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer relative ${
-                    provider === 'vercel'
-                      ? 'bg-zinc-800/90 border-zinc-400 text-white'
-                      : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
-                  }`}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer relative ${provider === 'vercel'
+                    ? 'bg-zinc-800/90 border-zinc-400 text-white'
+                    : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
+                    }`}
                 >
                   <span className="absolute top-2 right-2 text-[8.5px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-semibold border border-zinc-700">Populer</span>
                   <div className="w-6 h-6 flex items-center justify-center text-white text-base mb-1.5">
@@ -390,11 +393,10 @@ export default function DeployHub() {
                 <button
                   type="button"
                   onClick={() => setProvider('netlify')}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
-                    provider === 'netlify'
-                      ? 'bg-zinc-800/90 border-zinc-400 text-white'
-                      : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
-                  }`}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${provider === 'netlify'
+                    ? 'bg-zinc-800/90 border-zinc-400 text-white'
+                    : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
+                    }`}
                 >
                   <div className="w-6 h-6 flex items-center justify-center text-zinc-300 text-base mb-1.5">
                     <Cloud className="w-4 h-4" />
@@ -407,11 +409,10 @@ export default function DeployHub() {
                 <button
                   type="button"
                   onClick={() => setProvider('cloudflare')}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
-                    provider === 'cloudflare'
-                      ? 'bg-zinc-800/90 border-zinc-400 text-white'
-                      : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
-                  }`}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${provider === 'cloudflare'
+                    ? 'bg-zinc-800/90 border-zinc-400 text-white'
+                    : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
+                    }`}
                 >
                   <div className="w-6 h-6 flex items-center justify-center text-zinc-300 text-base mb-1.5">
                     <Zap className="w-4 h-4" />
@@ -424,11 +425,10 @@ export default function DeployHub() {
                 <button
                   type="button"
                   onClick={() => setProvider('github')}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
-                    provider === 'github'
-                      ? 'bg-zinc-800/90 border-zinc-400 text-white'
-                      : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
-                  }`}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${provider === 'github'
+                    ? 'bg-zinc-800/90 border-zinc-400 text-white'
+                    : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
+                    }`}
                 >
                   <div className="w-6 h-6 flex items-center justify-center text-zinc-300 text-base mb-1.5">
                     <i className="fa-brands fa-github text-sm"></i>
@@ -513,7 +513,7 @@ export default function DeployHub() {
 
           {/* Right Column: Live Terminal & Result Card (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            
+
             {/* Live Terminal */}
             <div className="bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col h-[320px]">
               <div className="bg-zinc-900/90 px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between">
@@ -541,13 +541,12 @@ export default function DeployHub() {
                   deployLogs.map((log, idx) => (
                     <div
                       key={idx}
-                      className={`leading-relaxed ${
-                        log.includes('[OK]')
-                          ? 'text-zinc-200 font-medium'
-                          : log.includes('[LIVE]')
+                      className={`leading-relaxed ${log.includes('[OK]')
+                        ? 'text-zinc-200 font-medium'
+                        : log.includes('[LIVE]')
                           ? 'text-white font-bold bg-zinc-900 p-2 rounded-lg border border-zinc-700'
                           : 'text-zinc-400'
-                      }`}
+                        }`}
                     >
                       {log}
                     </div>
@@ -634,9 +633,8 @@ export default function DeployHub() {
                       <div className="text-[10px] text-zinc-500 font-mono truncate">{h.url}</div>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold ${
-                        h.status === 'active' ? 'bg-zinc-800 text-zinc-200 border border-zinc-700' : 'bg-zinc-900 text-zinc-500'
-                      }`}>
+                      <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold ${h.status === 'active' ? 'bg-zinc-800 text-zinc-200 border border-zinc-700' : 'bg-zinc-900 text-zinc-500'
+                        }`}>
                         {h.status === 'active' ? 'Aktif' : 'Tergantikan'}
                       </span>
                       <div className="text-[9px] text-zinc-600 mt-0.5">{h.timestamp}</div>

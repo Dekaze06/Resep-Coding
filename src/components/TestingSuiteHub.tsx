@@ -21,7 +21,8 @@ import {
   Zap,
   Check,
   FileCheck,
-  Eye
+  Eye,
+  ChevronRight
 } from 'lucide-react';
 
 interface SavedProject {
@@ -169,7 +170,7 @@ export default function TestingSuiteHub() {
 
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col selection:bg-zinc-800 selection:text-white font-sans">
-      
+
       {/* Top Header */}
       <header className="sticky top-0 z-40 bg-transparent px-6 py-4 flex items-center justify-between transition-all border-none">
         <div className="flex items-center gap-3">
@@ -207,17 +208,21 @@ export default function TestingSuiteHub() {
           </a>
           <a
             href="/app"
-            className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"
+            className="group relative inline-flex items-center justify-center overflow-hidden px-3.5 py-1.5 rounded-lg bg-white hover:bg-zinc-100 border border-zinc-200/80 text-zinc-950 text-xs font-semibold shadow-md shadow-white/5 transition-all duration-300 cursor-pointer select-none"
           >
-            <span>Buka Studio</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span className="mr-5 sm:mr-6 transition-opacity duration-500 group-hover:opacity-0">
+              Open Studio
+            </span>
+            <span className="absolute right-1 top-1 bottom-1 rounded-md z-10 grid w-6 place-items-center transition-all duration-500 bg-zinc-950/10 group-hover:bg-zinc-950/15 group-hover:w-[calc(100%-0.5rem)] group-active:scale-95 text-zinc-800 group-hover:text-zinc-950">
+              <ChevronRight size={14} strokeWidth={2} aria-hidden="true" />
+            </span>
           </a>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
-        
+
         {/* Title & Action Bar */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800/80 pb-6">
           <div>
@@ -265,11 +270,10 @@ export default function TestingSuiteHub() {
                 key={p.id}
                 type="button"
                 onClick={() => handleSelectProject(p.id)}
-                className={`px-3 py-1.5 rounded-lg border text-xs font-medium shrink-0 transition-colors cursor-pointer ${
-                  isSelected
-                    ? 'bg-zinc-800/90 border-zinc-400 text-white shadow-sm'
-                    : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:text-zinc-200'
-                }`}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-medium shrink-0 transition-colors cursor-pointer ${isSelected
+                  ? 'bg-zinc-800/90 border-zinc-400 text-white shadow-sm'
+                  : 'bg-zinc-950/60 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                  }`}
               >
                 {p.name || 'Proyek Tanpa Nama'}
               </button>
@@ -279,7 +283,7 @@ export default function TestingSuiteHub() {
 
         {/* 4-Pillar Score Cards (Lighthouse style) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          
+
           {/* Performance */}
           <div className="p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-zinc-900 border-2 border-zinc-500 text-white flex flex-col items-center justify-center font-mono shrink-0 shadow-md">
@@ -336,7 +340,7 @@ export default function TestingSuiteHub() {
 
         {/* Two-Column Grid: Test Cases List + Live Viewport Tester */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
+
           {/* Left Column: Test Cases List (6 cols) */}
           <div className="lg:col-span-6 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-zinc-800/60">
@@ -399,9 +403,8 @@ export default function TestingSuiteHub() {
                 <button
                   type="button"
                   onClick={() => setActiveDevice('desktop')}
-                  className={`p-1.5 rounded-md text-xs transition-colors cursor-pointer ${
-                    activeDevice === 'desktop' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
-                  }`}
+                  className={`p-1.5 rounded-md text-xs transition-colors cursor-pointer ${activeDevice === 'desktop' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
+                    }`}
                   title="Desktop (100%)"
                 >
                   <Monitor className="w-3.5 h-3.5" />
@@ -409,9 +412,8 @@ export default function TestingSuiteHub() {
                 <button
                   type="button"
                   onClick={() => setActiveDevice('tablet')}
-                  className={`p-1.5 rounded-md text-xs transition-colors cursor-pointer ${
-                    activeDevice === 'tablet' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
-                  }`}
+                  className={`p-1.5 rounded-md text-xs transition-colors cursor-pointer ${activeDevice === 'tablet' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
+                    }`}
                   title="Tablet iPad (768px)"
                 >
                   <Tablet className="w-3.5 h-3.5" />
@@ -419,9 +421,8 @@ export default function TestingSuiteHub() {
                 <button
                   type="button"
                   onClick={() => setActiveDevice('mobile')}
-                  className={`p-1.5 rounded-md text-xs transition-colors cursor-pointer ${
-                    activeDevice === 'mobile' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
-                  }`}
+                  className={`p-1.5 rounded-md text-xs transition-colors cursor-pointer ${activeDevice === 'mobile' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
+                    }`}
                   title="Mobile iPhone (375px)"
                 >
                   <Smartphone className="w-3.5 h-3.5" />
@@ -432,13 +433,12 @@ export default function TestingSuiteHub() {
             {/* Interactive Device Frame */}
             <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[480px] shadow-2xl">
               <div
-                className={`transition-all duration-300 bg-white rounded-xl overflow-hidden shadow-2xl border border-zinc-800 relative ${
-                  activeDevice === 'desktop'
-                    ? 'w-full h-[440px]'
-                    : activeDevice === 'tablet'
+                className={`transition-all duration-300 bg-white rounded-xl overflow-hidden shadow-2xl border border-zinc-800 relative ${activeDevice === 'desktop'
+                  ? 'w-full h-[440px]'
+                  : activeDevice === 'tablet'
                     ? 'w-[380px] h-[440px]'
                     : 'w-[240px] h-[440px]'
-                }`}
+                  }`}
               >
                 {previewHtml ? (
                   <iframe
