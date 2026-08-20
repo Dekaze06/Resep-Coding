@@ -10,6 +10,7 @@ import Footer from "../components/Footer.astro";
 import HeaderNav from "../components/HeaderNav.astro";
 import FAQ from "../components/ui/faq-section";
 import PricingSection from "../components/ui/pricing-section";
+import GenerativeArtScene from "../components/ui/GenerativeArtScene";
 ---
 
 <Layout title="Satusite Studio - Platform Pembuat Website AI Otonom">
@@ -44,9 +45,11 @@ import PricingSection from "../components/ui/pricing-section";
         <!-- ========================================== -->
         <section
             id="prompt-builder"
-            class="min-h-[72vh] md:min-h-[78vh] flex flex-col justify-center pt-28 pb-32 md:pt-40 md:pb-44 px-6 text-center"
+            class="relative min-h-[72vh] md:min-h-[78vh] flex flex-col justify-center pt-28 pb-32 md:pt-40 md:pb-44 px-6 text-center overflow-hidden"
         >
-            <div class="max-w-4xl mx-auto w-full space-y-6 sm:space-y-7">
+            <GenerativeArtScene client:only="react" />
+
+            <div class="relative z-10 max-w-4xl mx-auto w-full space-y-6 sm:space-y-7">
                 <!-- Alternating 1-Line Semi-Bold Information Banner (Fade in/out Up) -->
                 <div
                     class="relative h-9 sm:h-10 flex items-center justify-center overflow-hidden"

@@ -8,10 +8,10 @@
     "status": "active",
     "isVerified": true,
     "quota": 115,
-    "projectsCount": 0,
+    "projectsCount": 1,
     "authProvider": "google",
     "joinedAt": "18 Agu 2026",
-    "lastLoginAt": "2026-08-18T17:27:50.095Z"
+    "lastLoginAt": "2026-08-20T10:53:36.359Z"
   },
   {
     "id": "usr_g_1787064311005",
@@ -39,9 +39,9 @@
     "joinedAt": "18 Agu 2026"
   },
   {
-    "name": "Dekaze Admin",
+    "name": "Akamale",
     "email": "dekaze08@gmail.com",
-    "role": "Gratis",
+    "role": "Superadmin",
     "status": "active",
     "isVerified": true,
     "quota": 15,
@@ -49,8 +49,8 @@
     "authProvider": "google",
     "id": "usr_1787066793184",
     "joinedAt": "18 Agu 2026",
-    "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Dekaze",
-    "lastLoginAt": "2026-08-18T16:12:01.188Z"
+    "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLxpNzXSUyUFZ-0LvP9V54iHMKZU0SWQmixDzsYHh9z_A1fSA=s96-c",
+    "lastLoginAt": "2026-08-20T10:37:41.659Z"
   },
   {
     "id": "usr_g_1787067726457",

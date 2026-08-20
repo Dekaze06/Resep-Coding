@@ -14,6 +14,7 @@ import {
   User,
   Loader2
 } from 'lucide-react';
+import PlasmaBackground from './ui/PlasmaBackground';
 
 declare global {
   interface Window {
@@ -375,6 +376,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
 
   return (
     <div className="min-h-screen w-full bg-[#09090b] text-zinc-100 flex flex-col justify-between relative selection:bg-zinc-800 selection:text-white overflow-hidden font-sans">
+      <PlasmaBackground />
       
       {/* Top Bar Header */}
       <header className="relative z-20 px-6 py-6 max-w-7xl mx-auto w-full flex items-center justify-between">
@@ -393,7 +395,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
       {/* Main Form Box */}
       <main className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-6 my-auto">
         {isAlreadyAuthed ? (
-          <div className="w-full max-w-[400px] bg-zinc-950 border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6 text-center animate-fade-in-up">
+          <div className="w-full max-w-[400px] bg-zinc-950/85 backdrop-blur-xl border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/80 space-y-6 text-center animate-fade-in-up">
             <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-300">
               <Loader2 className="w-7 h-7 animate-spin text-white" />
             </div>
@@ -407,7 +409,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
             </div>
           </div>
         ) : verificationSentEmail ? (
-          <div className="w-full max-w-[400px] bg-zinc-950 border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6 text-center animate-fade-in-up">
+          <div className="w-full max-w-[400px] bg-zinc-950/85 backdrop-blur-xl border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/80 space-y-6 text-center animate-fade-in-up">
             <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-300">
               <Mail className="w-7 h-7" />
             </div>
@@ -483,7 +485,7 @@ export default function AuthPage({ googleClientId }: AuthPageProps) {
             </div>
           </div>
         ) : (
-          <div className="w-full max-w-[400px] bg-zinc-950 border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6 animate-fade-in-up">
+          <div className="w-full max-w-[400px] bg-zinc-950/85 backdrop-blur-xl border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/80 space-y-6 animate-fade-in-up">
             
             {/* Brand Logo inside Form Card */}
             <div className="flex justify-center items-center pt-1 pb-1">
