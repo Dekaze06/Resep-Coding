@@ -192,24 +192,20 @@ import GenerativeArtScene from "../components/ui/GenerativeArtScene";
         <!-- 4. FOR WHO: PEMULA VS DEVELOPER MATRIX     -->
         <!-- ========================================== -->
         <section id="for-who" class="py-20 px-6 border-t border-zinc-800/80">
-            <div class="max-w-7xl mx-auto">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-                    <!-- Left Column: Animated Section Header (Sticky on Desktop) -->
-                    <div class="lg:col-span-4 lg:sticky lg:top-24">
-                        <SectionHeader
-                            client:visible
-                            title="Didesain untuk Pemula & Developer"
-                            description="Solusi tanpa hambatan untuk non-teknis, sekaligus kanvas fleksibel berkecepatan tinggi bagi programmer profesional."
-                            align="left"
-                            direction="left"
-                        />
-                    </div>
-
-                    <!-- Right Column: Animated Comparison Cards -->
-                    <div class="lg:col-span-8">
-                        <ForWhoCards client:visible />
-                    </div>
+            <div class="max-w-7xl mx-auto space-y-6">
+                <!-- Section Header -->
+                <div class="max-w-2xl">
+                    <SectionHeader
+                        client:visible
+                        title={"Didesain untuk Pemula & Developer"}
+                        description="Solusi tanpa hambatan untuk non-teknis, sekaligus kanvas fleksibel berkecepatan tinggi bagi programmer profesional."
+                        align="left"
+                        direction="left"
+                    />
                 </div>
+
+                <!-- Timeline Comparison -->
+                <ForWhoCards client:visible />
             </div>
         </section>
 

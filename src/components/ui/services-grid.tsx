@@ -11,6 +11,7 @@ interface ServiceItem {
   bullets: string[];
   ctaText: string;
   ctaHref: string;
+  imageSrc: string;
 }
 
 const services: ServiceItem[] = [
@@ -21,6 +22,8 @@ const services: ServiceItem[] = [
     bullets: ["Mock DB JSON", "Logika Bisnis"],
     ctaText: "Coba Fullstack",
     ctaHref: "/app?mode=fullstack",
+    imageSrc:
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&auto=format&fit=crop&q=75",
   },
   {
     icon: LayoutTemplate,
@@ -29,6 +32,8 @@ const services: ServiceItem[] = [
     bullets: ["Kurasi Tipografi", "Integrasi WA"],
     ctaText: "Rancang UI",
     ctaHref: "/app?mode=frontend",
+    imageSrc:
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=75",
   },
   {
     icon: Network,
@@ -37,6 +42,8 @@ const services: ServiceItem[] = [
     bullets: ["Graph Tree Node", "Sync Kode AI"],
     ctaText: "Buat PRD",
     ctaHref: "/app?mode=prd",
+    imageSrc:
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=75",
   },
   {
     icon: Rocket,
@@ -45,6 +52,8 @@ const services: ServiceItem[] = [
     bullets: ["Custom Domain", "Live Build Log"],
     ctaText: "Deploy Hub",
     ctaHref: "/deploy",
+    imageSrc:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=75",
   },
   {
     icon: GitBranch,
@@ -53,6 +62,8 @@ const services: ServiceItem[] = [
     bullets: ["AI Commit Msg", "Staging Tree"],
     ctaText: "GitHub Hub",
     ctaHref: "/github",
+    imageSrc:
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=75",
   },
   {
     icon: ShieldCheck,
@@ -61,6 +72,8 @@ const services: ServiceItem[] = [
     bullets: ["Lighthouse Real-time", "0 Console Error"],
     ctaText: "Uji QA",
     ctaHref: "/testing",
+    imageSrc:
+      "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&auto=format&fit=crop&q=75",
   },
 ];
 
@@ -88,40 +101,54 @@ export default function ServicesGrid() {
               delay: index * 0.05,
               ease: smoothEasing,
             }}
-            whileHover={{}}
-            className="bg-zinc-900/40 border border-zinc-800/80 hover:border-zinc-700/90 rounded-xl p-3.5 sm:p-4 space-y-3 transition-colors hover:bg-zinc-900/70 group flex flex-col justify-between shadow-sm"
+            className="bg-zinc-900/40 rounded-xl overflow-hidden space-y-0 transition-colors hover:bg-zinc-900/70 group flex flex-col justify-between shadow-sm"
           >
-            <div className="space-y-2.5">
-              <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs group-hover:border-zinc-700 group-hover:text-white transition-colors">
-                <IconComponent className="w-4 h-4" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-xs sm:text-sm font-semibold text-white group-hover:text-zinc-200 transition-colors font-sans">
-                  {item.title}
-                </h3>
-                <p className="text-[11px] text-zinc-400 leading-snug">
-                  {item.description}
-                </p>
+            {/* Image Area */}
+            <div className="relative w-full h-28 sm:h-32 overflow-hidden">
+              <img
+                src={item.imageSrc}
+                alt={item.title}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/95 via-zinc-950/50 to-transparent" />
+              {/* Icon badge overlaid on image */}
+              <div className="absolute bottom-2.5 left-3 w-7 h-7 rounded-lg bg-zinc-950/80 backdrop-blur-md text-zinc-300 flex items-center justify-center text-xs group-hover:text-white transition-colors">
+                <IconComponent className="w-3.5 h-3.5" />
               </div>
             </div>
 
-            <div className="space-y-2 pt-2.5 border-t border-zinc-800/60">
-              <ul className="text-[11px] text-zinc-400 space-y-1">
-                {item.bullets.map((bullet, bIdx) => (
-                  <li key={bIdx} className="flex items-center gap-1.5">
-                    <Check className="w-3 h-3 text-zinc-400 shrink-0" />
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="pt-0.5">
-                <a
-                  href={item.ctaHref}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 hover:text-white text-[11px] font-semibold transition-all inline-flex items-center justify-between shadow-sm group/btn cursor-pointer"
-                >
-                  <span>{item.ctaText}</span>
-                  <ArrowRight className="w-3 h-3 text-zinc-500 group-hover/btn:text-zinc-200 group-hover/btn:translate-x-0.5 transition-transform" />
-                </a>
+            {/* Content Area */}
+            <div className="p-3.5 sm:p-4 space-y-3 flex flex-col flex-1 justify-between">
+              <div className="space-y-2.5">
+                <div className="space-y-1">
+                  <h3 className="text-xs sm:text-sm font-semibold text-white group-hover:text-zinc-200 transition-colors font-sans">
+                    {item.title}
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 leading-snug">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-2.5 border-t border-zinc-800/60">
+                <ul className="text-[11px] text-zinc-400 space-y-1">
+                  {item.bullets.map((bullet, bIdx) => (
+                    <li key={bIdx} className="flex items-center gap-1.5">
+                      <Check className="w-3 h-3 text-zinc-400 shrink-0" />
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="pt-0.5">
+                  <a
+                    href={item.ctaHref}
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 hover:text-white text-[11px] font-semibold transition-all inline-flex items-center justify-between shadow-sm group/btn cursor-pointer"
+                  >
+                    <span>{item.ctaText}</span>
+                    <ArrowRight className="w-3 h-3 text-zinc-500 group-hover/btn:text-zinc-200 group-hover/btn:translate-x-0.5 transition-transform" />
+                  </a>
+                </div>
               </div>
             </div>
           </motion.div>
