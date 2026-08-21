@@ -157,6 +157,9 @@ export default function ScrollAdventure({
     }
   };
 
+  const touchStartY = useRef<number | null>(null);
+  const touchStartX = useRef<number | null>(null);
+
   // Local wheel handler on container to prevent hijacking whole page when not focused
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     if (isScrolling.current) return;
@@ -177,6 +180,48 @@ export default function ScrollAdventure({
         isScrolling.current = false;
       }, animTime);
     }
+  };
+
+  // Touch swipe support for mobile devices
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 1) {
+      touchStartY.current = e.touches[0].clientY;
+      touchStartX.current = e.touches[0].clientX;
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartY.current === null || touchStartX.current === null || isScrolling.current) return;
+    const touchEndY = e.changedTouches[0].clientY;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffY = touchStartY.current - touchEndY;
+    const diffX = touchStartX.current - touchEndX;
+
+    // Detect vertical or horizontal swipe
+    if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 40) {
+      if (diffY > 0 && currentPage < numOfPages) {
+        isScrolling.current = true;
+        navigateDown();
+        setTimeout(() => { isScrolling.current = false; }, animTime);
+      } else if (diffY < 0 && currentPage > 1) {
+        isScrolling.current = true;
+        navigateUp();
+        setTimeout(() => { isScrolling.current = false; }, animTime);
+      }
+    } else if (Math.abs(diffX) > 40) {
+      if (diffX > 0 && currentPage < numOfPages) {
+        isScrolling.current = true;
+        navigateDown();
+        setTimeout(() => { isScrolling.current = false; }, animTime);
+      } else if (diffX < 0 && currentPage > 1) {
+        isScrolling.current = true;
+        navigateUp();
+        setTimeout(() => { isScrolling.current = false; }, animTime);
+      }
+    }
+
+    touchStartY.current = null;
+    touchStartX.current = null;
   };
 
   // Keyboard navigation when container is focused
@@ -204,6 +249,8 @@ export default function ScrollAdventure({
       ref={containerRef}
       tabIndex={0}
       onWheel={handleWheel}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       onKeyDown={handleKeyDown}
       className={cn(
         "relative w-full overflow-hidden rounded-2xl md:rounded-3xl border border-zinc-800 bg-zinc-950 shadow-[0_20px_50px_rgba(0,0,0,0.8)] focus:outline-none focus:ring-1 focus:ring-zinc-700 select-none",
@@ -254,15 +301,15 @@ export default function ScrollAdventure({
                   </div>
                 </div>
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-950 to-black p-6 sm:p-10 md:p-12 flex flex-col justify-center border-b md:border-b-0 md:border-r border-zinc-800/80">
-                  <div className="space-y-4 max-w-md">
+                <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-950 to-black p-5 sm:p-8 md:p-12 flex flex-col justify-center border-b md:border-b-0 md:border-r border-zinc-800/80 overflow-y-auto md:overflow-hidden">
+                  <div className="space-y-3 sm:space-y-4 max-w-md">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-zinc-400">
                       <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
                       <span>{slide.tag}</span>
                     </div>
                     {slide.leftContent && (
                       <>
-                        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tight leading-tight">
+                        <h3 className="text-lg sm:text-2xl md:text-3xl font-bold text-white tracking-tight leading-tight">
                           {slide.leftContent.heading}
                         </h3>
                         <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
@@ -270,7 +317,7 @@ export default function ScrollAdventure({
                         </p>
 
                         {slide.leftContent.bullets && (
-                          <ul className="space-y-2 pt-2 text-xs text-zinc-300">
+                          <ul className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2 text-xs text-zinc-300">
                             {slide.leftContent.bullets.map((bullet, bIdx) => (
                               <li key={bIdx} className="flex items-start gap-2">
                                 <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 mt-1.5 shrink-0" />
@@ -281,10 +328,10 @@ export default function ScrollAdventure({
                         )}
 
                         {slide.leftContent.ctaText && (
-                          <div className="pt-3">
+                          <div className="pt-2 sm:pt-3">
                             <a
                               href={slide.leftContent.ctaHref || "#"}
-                              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-white transition-all shadow-sm group cursor-pointer"
+                              className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-white transition-all shadow-sm group cursor-pointer"
                             >
                               <span>{slide.leftContent.ctaText}</span>
                               <ArrowRight className="w-3.5 h-3.5 text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
@@ -314,15 +361,15 @@ export default function ScrollAdventure({
                   </div>
                 </div>
               ) : (
-                <div className="w-full h-full bg-gradient-to-bl from-zinc-900 via-zinc-950 to-black p-6 sm:p-10 md:p-12 flex flex-col justify-center">
-                  <div className="space-y-4 max-w-md">
+                <div className="w-full h-full bg-gradient-to-bl from-zinc-900 via-zinc-950 to-black p-5 sm:p-8 md:p-12 flex flex-col justify-center overflow-y-auto md:overflow-hidden">
+                  <div className="space-y-3 sm:space-y-4 max-w-md">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-zinc-400">
                       <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
                       <span>{slide.tag}</span>
                     </div>
                     {slide.rightContent && (
                       <>
-                        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tight leading-tight">
+                        <h3 className="text-lg sm:text-2xl md:text-3xl font-bold text-white tracking-tight leading-tight">
                           {slide.rightContent.heading}
                         </h3>
                         <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
@@ -330,7 +377,7 @@ export default function ScrollAdventure({
                         </p>
 
                         {slide.rightContent.bullets && (
-                          <ul className="space-y-2 pt-2 text-xs text-zinc-300">
+                          <ul className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2 text-xs text-zinc-300">
                             {slide.rightContent.bullets.map((bullet, bIdx) => (
                               <li key={bIdx} className="flex items-start gap-2">
                                 <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 mt-1.5 shrink-0" />
@@ -341,10 +388,10 @@ export default function ScrollAdventure({
                         )}
 
                         {slide.rightContent.ctaText && (
-                          <div className="pt-3">
+                          <div className="pt-2 sm:pt-3">
                             <a
                               href={slide.rightContent.ctaHref || "#"}
-                              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-white transition-all shadow-sm group cursor-pointer"
+                              className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-white transition-all shadow-sm group cursor-pointer"
                             >
                               <span>{slide.rightContent.ctaText}</span>
                               <ArrowRight className="w-3.5 h-3.5 text-zinc-400 group-hover:translate-x-0.5 transition-transform" />

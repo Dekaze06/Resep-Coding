@@ -206,8 +206,8 @@ export function StudioElasticGallery() {
                       : "opacity-0 pointer-events-none"
                   )}
                 >
-                  {/* Fixed-width internal frame: Prevents text wrapping changes during card expansion */}
-                  <div className="w-[320px] sm:w-[420px] md:w-[460px] lg:w-[500px] shrink-0 h-full flex flex-col justify-between">
+                  {/* Responsive internal frame: Prevents text wrapping changes during card expansion */}
+                  <div className="w-full max-w-[320px] sm:max-w-[420px] md:w-[460px] lg:w-[500px] shrink-0 h-full flex flex-col justify-between">
                     {/* Top Header Section inside Card */}
                     <div className="space-y-4">
                       <div className="flex items-center justify-between gap-3">
@@ -239,7 +239,7 @@ export function StudioElasticGallery() {
 
                       {/* Title & Description */}
                       <div className="space-y-1.5 pt-1">
-                        <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-white font-sans whitespace-nowrap">
+                        <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-white font-sans break-words sm:whitespace-nowrap">
                           {item.title}
                         </h3>
                         <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-xl">

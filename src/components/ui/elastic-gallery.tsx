@@ -84,8 +84,8 @@ export function ElasticGallery() {
         </a>
       </motion.div>
 
-      {/* Container: Fixed height on mobile/desktop to ensure animation stability */}
-      <div className="mx-auto flex h-[480px] w-full flex-col gap-2 md:h-[540px] md:flex-row md:gap-3">
+      {/* Container: Horizontal Flex Accordion on all screen sizes */}
+      <div className="mx-auto flex h-[380px] sm:h-[460px] md:h-[540px] w-full flex-row gap-1.5 sm:gap-2 md:gap-3 overflow-hidden">
         {items.map((item) => {
           const isActive = activeId === item.id;
           return (
@@ -94,10 +94,10 @@ export function ElasticGallery() {
               onMouseEnter={() => setActiveId(item.id)}
               onClick={() => setActiveId(item.id)}
               className={cn(
-                "relative cursor-pointer overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 transform-gpu",
+                "relative cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl border border-zinc-800 bg-zinc-950 transform-gpu",
                 // Hardware accelerated flex transitions
                 "transition-[flex] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]",
-                isActive ? "flex-[4]" : "flex-[1]"
+                isActive ? "flex-[4] sm:flex-[4]" : "flex-[0.8] sm:flex-[1]"
               )}
             >
               {/* Background Image Layer */}
@@ -113,7 +113,7 @@ export function ElasticGallery() {
                   )}
                 />
 
-                {/* Lightweight Darkening Overlay (Faster than CSS filter brightness) */}
+                {/* Lightweight Darkening Overlay */}
                 <div
                   className={cn(
                     "absolute inset-0 bg-black transition-opacity duration-500 pointer-events-none",
@@ -124,18 +124,18 @@ export function ElasticGallery() {
                 {/* Gradient Overlay for Text Readability */}
                 <div
                   className={cn(
-                    "absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none",
+                    "absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none",
                     isActive ? "opacity-100" : "opacity-0"
                   )}
                 />
               </div>
 
               {/* Content Container */}
-              <div className="absolute bottom-0 left-0 right-0 flex h-full flex-col justify-end p-4 md:p-6 pointer-events-none">
+              <div className="absolute bottom-0 left-0 right-0 flex h-full flex-col justify-end p-3 sm:p-4 md:p-6 pointer-events-none">
                 {/* Active Content: Title & Button */}
                 <div
                   className={cn(
-                    "flex flex-col gap-2 transition-all duration-300 transform-gpu",
+                    "flex flex-col gap-1.5 sm:gap-2 transition-all duration-300 transform-gpu",
                     isActive
                       ? "translate-y-0 opacity-100 pointer-events-auto"
                       : "translate-y-6 opacity-0 pointer-events-none"
@@ -143,27 +143,27 @@ export function ElasticGallery() {
                 >
                   {/* Category Tag */}
                   <div className="flex items-center gap-2">
-                    <span className="rounded-full border border-white/20 bg-black/60 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-white md:px-3 md:text-xs">
+                    <span className="rounded-full border border-white/20 bg-black/70 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-[10px] font-medium uppercase tracking-wider text-white md:px-3 md:text-xs">
                       {item.category}
                     </span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-2xl font-black uppercase leading-none text-white md:text-3xl lg:text-4xl font-sans tracking-tight">
+                  <h3 className="text-lg sm:text-2xl font-black uppercase leading-tight text-white md:text-3xl lg:text-4xl font-sans tracking-tight line-clamp-2">
                     {item.title}
                   </h3>
 
                   {/* Call to Action */}
                   <a
-                    href="/app"
-                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-white/90 hover:text-white md:mt-3 transition-colors cursor-pointer"
+                    href="/studio"
+                    className="mt-1 sm:mt-2 inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-white/90 hover:text-white md:mt-3 transition-colors cursor-pointer"
                   >
-                    View Project{" "}
-                    <ArrowUpRight className="h-3.5 w-3.5" />
+                    <span>Clone Template</span>
+                    <ArrowUpRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   </a>
                 </div>
 
-                {/* Inactive Content: Vertical Text (Desktop) / Short Label (Mobile) */}
+                {/* Inactive Content: Vertical Text */}
                 <div
                   className={cn(
                     "absolute transition-all duration-300",
@@ -173,11 +173,8 @@ export function ElasticGallery() {
                       : "opacity-100"
                   )}
                 >
-                  <span className="hidden whitespace-nowrap text-sm font-bold uppercase tracking-widest text-zinc-300 [writing-mode:vertical-rl] md:block">
+                  <span className="whitespace-nowrap text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-zinc-300 [writing-mode:vertical-rl] select-none">
                     {item.title}
-                  </span>
-                  <span className="block text-xs font-bold text-zinc-300 md:hidden">
-                    {item.id}
                   </span>
                 </div>
               </div>

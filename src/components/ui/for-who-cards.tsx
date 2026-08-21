@@ -132,9 +132,9 @@ export default function ForWhoCards() {
               </div>
 
               {/* Right: Content card */}
-              <div className="relative pl-20 pr-0 md:pl-4 w-full">
+              <div className="relative pl-14 sm:pl-20 pr-0 md:pl-4 w-full">
                 {/* Mobile title */}
-                <h3 className="md:hidden block text-xl mb-4 text-left font-bold text-zinc-500 tracking-tight">
+                <h3 className="md:hidden block text-lg sm:text-xl mb-3 sm:mb-4 text-left font-bold text-zinc-300 tracking-tight">
                   {item.title}
                 </h3>
 

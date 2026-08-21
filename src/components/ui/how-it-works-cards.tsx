@@ -79,20 +79,26 @@ function StepCard({
         ease: smoothEasing,
       }}
       className={cn(
-        "relative bg-zinc-900/40 rounded-2xl p-5 sm:p-6 space-y-4 flex flex-col justify-between",
+        "relative bg-zinc-900/40 border border-zinc-800/40 rounded-2xl p-4 sm:p-6 space-y-3 sm:space-y-4 flex flex-col justify-between",
+        "min-w-[82vw] xs:min-w-[300px] sm:min-w-0 snap-center shrink-0 sm:shrink",
         "transition-all duration-300 ease-out",
-        "hover:scale-[1.03] hover:bg-zinc-900/70 hover:shadow-xl hover:shadow-zinc-950/60",
+        "hover:scale-[1.02] sm:hover:scale-[1.03] hover:bg-zinc-900/70 hover:shadow-xl hover:shadow-zinc-950/60",
         "group"
       )}
     >
-      {/* Icon */}
-      <div className="space-y-4">
-        <div className="w-10 h-10 rounded-xl bg-zinc-900 text-zinc-300 flex items-center justify-center group-hover:text-white transition-colors">
-          <IconComponent className="w-5 h-5" />
+      {/* Icon & Mobile step badge */}
+      <div className="space-y-3 sm:space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-zinc-900 text-zinc-300 flex items-center justify-center group-hover:text-white transition-colors">
+            <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
+          </div>
+          <span className="sm:hidden font-mono text-[11px] font-bold text-zinc-500 px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800">
+            Langkah {step.number}
+          </span>
         </div>
 
         {/* Title & Description */}
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2">
           <h4 className="text-sm sm:text-base font-semibold text-white font-sans tracking-tight">
             {step.title}
           </h4>
@@ -103,13 +109,13 @@ function StepCard({
       </div>
 
       {/* Benefits List */}
-      <ul className="space-y-2.5 pt-3 border-t border-zinc-800/50">
+      <ul className="space-y-2 pt-2.5 sm:pt-3 border-t border-zinc-800/50">
         {step.benefits.map((benefit, bIdx) => (
-          <li key={bIdx} className="flex items-center gap-2.5">
-            <div className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center rounded-full bg-zinc-700/50 group-hover:bg-zinc-600/60 transition-colors">
+          <li key={bIdx} className="flex items-center gap-2">
+            <div className="flex h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0 items-center justify-center rounded-full bg-zinc-700/50 group-hover:bg-zinc-600/60 transition-colors">
               <div className="h-1.5 w-1.5 rounded-full bg-zinc-400 group-hover:bg-zinc-300 transition-colors" />
             </div>
-            <span className="text-[11px] sm:text-xs text-zinc-400 group-hover:text-zinc-300 transition-colors leading-snug">
+            <span className="text-[10.5px] sm:text-xs text-zinc-400 group-hover:text-zinc-300 transition-colors leading-snug">
               {benefit}
             </span>
           </li>
@@ -124,9 +130,9 @@ export default function HowItWorksCards() {
   const isInView = useInView(containerRef, { once: false, margin: "-60px" });
 
   return (
-    <div ref={containerRef} className="space-y-5">
-      {/* Step Number Indicators with Connecting Line */}
-      <div className="relative w-full max-w-full">
+    <div ref={containerRef} className="space-y-4 sm:space-y-5">
+      {/* Step Number Indicators with Connecting Line (Desktop) */}
+      <div className="hidden sm:block relative w-full max-w-full">
         {/* Connecting horizontal line */}
         <div
           aria-hidden="true"
@@ -157,8 +163,8 @@ export default function HowItWorksCards() {
         </div>
       </div>
 
-      {/* Step Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+      {/* Step Cards: Horizontal Slide on Mobile, Grid on Tablet/Desktop */}
+      <div className="flex overflow-x-auto snap-x snap-mandatory pb-3 sm:pb-0 gap-3.5 sm:grid sm:grid-cols-3 sm:gap-5 sm:overflow-visible scrollbar-none px-0.5">
         {steps.map((step, index) => (
           <StepCard
             key={step.number}

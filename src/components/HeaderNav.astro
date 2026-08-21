@@ -654,385 +654,485 @@ const { activePage = "home" } = Astro.props;
       <button
         type="button"
         id="btn-mobile-menu-toggle"
-        class="lg:hidden p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors cursor-pointer"
+        onclick="window.__toggleMobileMenu && window.__toggleMobileMenu()"
+        class="lg:hidden p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors cursor-pointer relative z-50 select-none touch-manipulation active:scale-95"
         aria-label="Toggle Menu"
       >
-        <i class="fa-solid fa-bars text-sm" id="icon-mobile-menu"></i>
+        <i class="fa-solid fa-bars text-sm pointer-events-none" id="icon-mobile-menu"></i>
       </button>
     </div>
   </div>
+</header>
 
-  <!-- Mobile Navigation Drawer / Dropdown -->
-  <div
-    id="mobile-nav-drawer"
-    class="hidden lg:hidden pt-4 pb-2 border-t border-zinc-800/80 mt-3 space-y-3 animate-fade-in-up"
-  >
-    <!-- 1. Product Section -->
-    <div class="space-y-1">
+<!-- True Fixed Full-Screen Mobile Navigation Drawer Overlay -->
+<div
+  id="mobile-nav-drawer"
+  style="display: none;"
+  class="fixed inset-0 z-[99999] bg-[#09090b] text-white flex flex-col justify-between overflow-y-auto"
+>
+  <!-- Sticky Mobile Top Bar Header -->
+  <div class="px-5 py-3.5 border-b border-zinc-800/80 flex items-center justify-between sticky top-0 bg-[#09090b]/95 backdrop-blur-2xl z-20 shrink-0">
+    <a href="/" onclick="window.__closeMobileMenu && window.__closeMobileMenu()" class="flex items-center gap-2.5 group">
+      <img
+        src="/logo.png"
+        alt="satusitE Logo"
+        class="w-5.5 h-5.5 object-contain"
+      />
+      <span class="font-agus text-sm sm:text-base font-normal tracking-[0.35em] text-white">
+        satusitE
+      </span>
+    </a>
+
+    <button
+      type="button"
+      id="btn-mobile-menu-close"
+      onclick="window.__closeMobileMenu && window.__closeMobileMenu()"
+      class="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors cursor-pointer active:scale-95"
+      aria-label="Tutup Menu"
+    >
+      <i class="fa-solid fa-xmark text-base"></i>
+    </button>
+  </div>
+
+  <!-- Scrollable Category Menu Content -->
+  <div class="p-5 sm:p-6 space-y-6 flex-1">
+    <!-- 1. Product & Studio Section -->
+    <div class="space-y-2">
       <div
-        class="text-[10px] font-medium uppercase tracking-widest text-zinc-500 px-2 font-semibold"
+        class="text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-semibold flex items-center gap-2"
       >
-        1. Product & Studio
+        <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+        <span>1. PRODUCT & STUDIO AI</span>
       </div>
-      <div class="grid grid-cols-2 gap-1 text-xs font-medium text-zinc-300">
+      <div class="grid grid-cols-2 gap-2 text-xs font-medium text-zinc-200">
         <a
           href="/studio"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="p-3 rounded-xl bg-zinc-900/60 hover:bg-zinc-800/80 border border-zinc-800/70 hover:border-zinc-700 transition-all flex flex-col gap-1.5 group/m"
         >
-          <i
-            class="fa-solid fa-grid-2 text-zinc-400 text-[11px] w-4"
-          ></i>
-          <span>Pilihan Studio</span>
+          <div class="w-7 h-7 rounded-lg bg-zinc-800/80 text-zinc-300 flex items-center justify-center group-hover/m:text-white transition-colors">
+            <i class="fa-solid fa-grid-2 text-xs"></i>
+          </div>
+          <span class="font-semibold text-white">Pilihan Studio</span>
+          <span class="text-[10px] text-zinc-400">Overview 4 Studio AI</span>
         </a>
+
         <a
           href="/studio/frontend"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="p-3 rounded-xl bg-zinc-900/60 hover:bg-zinc-800/80 border border-zinc-800/70 hover:border-zinc-700 transition-all flex flex-col gap-1.5 group/m"
         >
-          <i class="fa-solid fa-table-columns text-zinc-400 text-[11px] w-4"
-          ></i>
-          <span>Studio Frontend</span>
+          <div class="w-7 h-7 rounded-lg bg-zinc-800/80 text-zinc-300 flex items-center justify-center group-hover/m:text-white transition-colors">
+            <i class="fa-solid fa-table-columns text-xs"></i>
+          </div>
+          <span class="font-semibold text-white">Studio Frontend</span>
+          <span class="text-[10px] text-zinc-400">Desain UI/UX & CSS</span>
         </a>
+
         <a
           href="/studio/fullstack"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="p-3 rounded-xl bg-zinc-900/60 hover:bg-zinc-800/80 border border-zinc-800/70 hover:border-zinc-700 transition-all flex flex-col gap-1.5 group/m"
         >
-          <i class="fa-solid fa-database text-zinc-400 text-[11px] w-4"></i>
-          <span>Studio Fullstack</span>
+          <div class="w-7 h-7 rounded-lg bg-zinc-800/80 text-zinc-300 flex items-center justify-center group-hover/m:text-white transition-colors">
+            <i class="fa-solid fa-database text-xs"></i>
+          </div>
+          <span class="font-semibold text-white">Studio Fullstack</span>
+          <span class="text-[10px] text-zinc-400">Database & CRUD</span>
         </a>
+
         <a
           href="/studio/prd"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="p-3 rounded-xl bg-zinc-900/60 hover:bg-zinc-800/80 border border-zinc-800/70 hover:border-zinc-700 transition-all flex flex-col gap-1.5 group/m"
         >
-          <i class="fa-regular fa-file-lines text-zinc-400 text-[11px] w-4"></i>
-          <span>Studio PRD</span>
-        </a>
-      </div>
-    </div>
-
-    <!-- 2. Template Link -->
-    <div class="space-y-1">
-      <div
-        class="text-[10px] font-medium uppercase tracking-widest text-zinc-500 px-2 font-semibold"
-      >
-        2. Template
-      </div>
-      <div>
-        <a
-          href="/templates"
-          class="px-2.5 py-2 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors flex items-center justify-between text-xs font-medium"
-        >
-          <div class="flex items-center gap-2">
-            <i class="fa-regular fa-clone text-zinc-400 text-[11px] w-4"></i>
-            <span>Galeri Template</span>
+          <div class="w-7 h-7 rounded-lg bg-zinc-800/80 text-zinc-300 flex items-center justify-center group-hover/m:text-white transition-colors">
+            <i class="fa-regular fa-file-lines text-xs"></i>
           </div>
-          <i class="fa-solid fa-chevron-right text-[9px] text-zinc-600"></i>
+          <span class="font-semibold text-white">Studio PRD</span>
+          <span class="text-[10px] text-zinc-400">Dokumen Spesifikasi</span>
         </a>
       </div>
     </div>
 
-    <!-- 3. Resource Section -->
-    <div class="space-y-1">
+    <!-- 2. Template Gallery Section -->
+    <div class="space-y-2">
       <div
-        class="text-[10px] font-medium uppercase tracking-widest text-zinc-500 px-2 font-semibold"
+        class="text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-semibold flex items-center gap-2"
       >
-        3. Resource
+        <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+        <span>2. TEMPLATE</span>
       </div>
-      <div class="grid grid-cols-2 gap-1 text-xs font-medium text-zinc-300">
+      <a
+        href="/templates"
+        class="p-3.5 rounded-xl bg-zinc-900/60 hover:bg-zinc-800/80 border border-zinc-800/70 hover:border-zinc-700 text-zinc-200 hover:text-white transition-all flex items-center justify-between text-xs font-semibold"
+      >
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 rounded-lg bg-zinc-800/80 text-zinc-300 flex items-center justify-center">
+            <i class="fa-regular fa-clone text-xs"></i>
+          </div>
+          <div>
+            <div class="text-white font-semibold">Galeri Template Siap Pakai</div>
+            <div class="text-[10px] text-zinc-400 font-normal">Koleksi website landing page & dashboard</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right text-[10px] text-zinc-500"></i>
+      </a>
+    </div>
+
+    <!-- 3. Resource & Tools Section -->
+    <div class="space-y-2">
+      <div
+        class="text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-semibold flex items-center gap-2"
+      >
+        <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+        <span>3. RESOURCE & TOOLING</span>
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-xs font-medium text-zinc-300">
         <a
           href="/github"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="px-3 py-2.5 rounded-xl bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 hover:text-white transition-all flex items-center gap-2.5"
         >
-          <i class="fa-brands fa-github text-zinc-400 text-[11px] w-4"></i>
-          <span>GitHub</span>
+          <i class="fa-brands fa-github text-zinc-400 text-sm w-4 text-center"></i>
+          <span>GitHub Sync</span>
         </a>
         <a
           href="/testing"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="px-3 py-2.5 rounded-xl bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 hover:text-white transition-all flex items-center gap-2.5"
         >
-          <i class="fa-solid fa-shield-halved text-zinc-400 text-[11px] w-4"
-          ></i>
-          <span>Testing</span>
+          <i class="fa-solid fa-shield-halved text-zinc-400 text-sm w-4 text-center"></i>
+          <span>Testing & QA</span>
         </a>
         <a
           href="/deploy"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="px-3 py-2.5 rounded-xl bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 hover:text-white transition-all flex items-center gap-2.5"
         >
-          <i class="fa-solid fa-rocket text-zinc-400 text-[11px] w-4"></i>
-          <span>Deploy</span>
+          <i class="fa-solid fa-rocket text-zinc-400 text-sm w-4 text-center"></i>
+          <span>Deploy Hub</span>
         </a>
         <a
           href="/tutorial"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="px-3 py-2.5 rounded-xl bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 hover:text-white transition-all flex items-center gap-2.5"
         >
-          <i class="fa-solid fa-book-open text-zinc-400 text-[11px] w-4"></i>
-          <span>Tutorial</span>
+          <i class="fa-solid fa-book-open text-zinc-400 text-sm w-4 text-center"></i>
+          <span>Tutorial & Panduan</span>
         </a>
         <a
           href="/connectors"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2 col-span-2"
+          class="px-3 py-2.5 rounded-xl bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 hover:text-white transition-all flex items-center gap-2.5 col-span-2"
         >
-          <i class="fa-solid fa-plug text-zinc-400 text-[11px] w-4"></i>
-          <span>Connectors & Integrasi API</span>
+          <i class="fa-solid fa-plug text-zinc-400 text-sm w-4 text-center"></i>
+          <span>Connectors & Integrasi REST API</span>
         </a>
       </div>
     </div>
 
     <!-- 4 & 5. Pricing & About Section -->
-    <div class="space-y-1">
+    <div class="space-y-2">
       <div
-        class="text-[10px] font-medium uppercase tracking-widest text-zinc-500 px-2 font-semibold"
+        class="text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-semibold flex items-center gap-2"
       >
-        4 & 5. Pricing & About
+        <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+        <span>4 & 5. PRICING & ABOUT</span>
       </div>
-      <div class="grid grid-cols-2 gap-1 text-xs font-medium text-zinc-300">
+      <div class="grid grid-cols-2 gap-2 text-xs font-medium text-zinc-300">
         <a
           href="/pricing"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="px-3 py-2.5 rounded-xl bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 hover:text-white transition-all flex items-center gap-2.5"
         >
-          <i class="fa-solid fa-tag text-zinc-400 text-[11px] w-4"></i>
-          <span>Pricing</span>
+          <i class="fa-solid fa-tag text-zinc-400 text-sm w-4 text-center"></i>
+          <span>Paket Harga</span>
         </a>
         <a
           href="/about"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="px-3 py-2.5 rounded-xl bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 hover:text-white transition-all flex items-center gap-2.5"
         >
-          <i class="fa-solid fa-circle-info text-zinc-400 text-[11px] w-4"></i>
-          <span>About</span>
+          <i class="fa-solid fa-circle-info text-zinc-400 text-sm w-4 text-center"></i>
+          <span>Tentang Satusite</span>
         </a>
         <a
           href="/about#contact"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="px-3 py-2.5 rounded-xl bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 hover:text-white transition-all flex items-center gap-2.5"
         >
-          <i class="fa-regular fa-envelope text-zinc-400 text-[11px] w-4"></i>
-          <span>Contact Us</span>
+          <i class="fa-regular fa-envelope text-zinc-400 text-sm w-4 text-center"></i>
+          <span>Hubungi Kami</span>
         </a>
         <a
           href="/about#developer"
-          class="px-2.5 py-1.5 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 hover:text-white transition-colors flex items-center gap-2"
+          class="px-3 py-2.5 rounded-xl bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/60 text-zinc-300 hover:text-white transition-all flex items-center gap-2.5"
         >
-          <i class="fa-solid fa-laptop-code text-zinc-400 text-[11px] w-4"></i>
-          <span>Developer</span>
+          <i class="fa-solid fa-laptop-code text-zinc-400 text-sm w-4 text-center"></i>
+          <span>Developer & Tim</span>
         </a>
       </div>
     </div>
   </div>
-</header>
+
+  <!-- Bottom Action & Quick Studio Button -->
+  <div class="p-5 sm:p-6 border-t border-zinc-800/80 space-y-3 bg-[#09090b] shrink-0">
+    <a
+      href="/studio"
+      class="w-full py-3 px-4 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-white/5 cursor-pointer"
+    >
+      <span>Buka Studio AI</span>
+      <i class="fa-solid fa-arrow-right text-[11px]"></i>
+    </a>
+    <div class="text-center text-[10px] text-zinc-600">
+      &copy; {new Date().getFullYear()} satusitE Studio. Platform Pembuat Web AI.
+    </div>
+  </div>
+</div>
 
 <script is:inline>
-  document.addEventListener("DOMContentLoaded", () => {
-    // 0. Seamless Header Scroll & Smooth Auto-Hide Effect
-    const headerNav = document.getElementById("main-header-nav");
-    const mobileNavDrawer = document.getElementById("mobile-nav-drawer");
+  window.__openMobileMenu = function() {
+    var drawer = document.getElementById('mobile-nav-drawer');
+    var icon = document.getElementById('icon-mobile-menu');
+    if (drawer) {
+      drawer.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      if (icon) { icon.classList.remove('fa-bars'); icon.classList.add('fa-xmark'); }
+    }
+  };
 
-    if (headerNav) {
-      let lastScrollY = window.scrollY;
-      let isTicking = false;
+  window.__closeMobileMenu = function() {
+    var drawer = document.getElementById('mobile-nav-drawer');
+    var icon = document.getElementById('icon-mobile-menu');
+    if (drawer) {
+      drawer.style.display = 'none';
+      document.body.style.overflow = '';
+      if (icon) { icon.classList.remove('fa-xmark'); icon.classList.add('fa-bars'); }
+    }
+  };
 
-      const handleScroll = () => {
-        const currentScrollY = window.scrollY;
-        const isMobileDrawerOpen =
-          mobileNavDrawer && !mobileNavDrawer.classList.contains("hidden");
+  window.__toggleMobileMenu = function() {
+    var drawer = document.getElementById('mobile-nav-drawer');
+    if (!drawer) return;
+    if (drawer.style.display === 'none' || getComputedStyle(drawer).display === 'none') {
+      window.__openMobileMenu();
+    } else {
+      window.__closeMobileMenu();
+    }
+  };
 
-        // 1. Glassmorphism Background Transition (no height jump, smooth colors)
-        if (currentScrollY > 20) {
-          headerNav.classList.add(
-            "bg-[#08080a]/90",
-            "backdrop-blur-xl",
-            "border-zinc-800/80",
-            "shadow-[0_10px_30px_rgba(0,0,0,0.6)]",
-          );
-          headerNav.classList.remove(
-            "bg-transparent",
-            "border-transparent",
-            "shadow-none",
-          );
-        } else {
-          headerNav.classList.remove(
-            "bg-[#08080a]/90",
-            "backdrop-blur-xl",
-            "border-zinc-800/80",
-            "shadow-[0_10px_30px_rgba(0,0,0,0.6)]",
-          );
-          headerNav.classList.add(
-            "bg-transparent",
-            "border-transparent",
-            "shadow-none",
-          );
-        }
+  (function () {
+    function initHeaderNavScript() {
+      // 0. Seamless Header Scroll & Smooth Auto-Hide Effect
+      const headerNav = document.getElementById("main-header-nav");
+      const mobileNavDrawer = document.getElementById("mobile-nav-drawer");
 
-        // 2. Smooth Auto-Hide: Reveal near top, hide on deliberate scroll down, reveal on scroll up
-        if (currentScrollY <= 60) {
-          // Near top: always reveal header smoothly
-          headerNav.classList.remove("-translate-y-full");
-          headerNav.classList.add("translate-y-0");
-        } else if (!isMobileDrawerOpen) {
-          const delta = currentScrollY - lastScrollY;
-          if (delta > 10 && currentScrollY > 100) {
-            // Deliberate scroll down -> Auto hide
-            headerNav.classList.add("-translate-y-full");
-            headerNav.classList.remove("translate-y-0");
-          } else if (delta < -8) {
-            // Deliberate scroll up -> Smooth reveal
+      if (headerNav && !headerNav.dataset.scrollBound) {
+        headerNav.dataset.scrollBound = "true";
+        let lastScrollY = window.scrollY;
+        let isTicking = false;
+
+        const handleScroll = () => {
+          const currentScrollY = window.scrollY;
+          const isMobileDrawerOpen =
+            mobileNavDrawer && (mobileNavDrawer.style.display === "flex" || (!mobileNavDrawer.classList.contains("hidden") && mobileNavDrawer.style.display !== "none"));
+
+          // 1. Glassmorphism Background Transition
+          if (currentScrollY > 20) {
+            headerNav.classList.add(
+              "bg-[#08080a]/90",
+              "backdrop-blur-xl",
+              "border-zinc-800/80",
+              "shadow-[0_10px_30px_rgba(0,0,0,0.6)]",
+            );
+            headerNav.classList.remove(
+              "bg-transparent",
+              "border-transparent",
+              "shadow-none",
+            );
+          } else {
+            headerNav.classList.remove(
+              "bg-[#08080a]/90",
+              "backdrop-blur-xl",
+              "border-zinc-800/80",
+              "shadow-[0_10px_30px_rgba(0,0,0,0.6)]",
+            );
+            headerNav.classList.add(
+              "bg-transparent",
+              "border-transparent",
+              "shadow-none",
+            );
+          }
+
+          // 2. Smooth Auto-Hide: Reveal near top, hide on deliberate scroll down, reveal on scroll up
+          if (currentScrollY <= 60) {
             headerNav.classList.remove("-translate-y-full");
             headerNav.classList.add("translate-y-0");
-          }
-        }
-
-        lastScrollY = Math.max(0, currentScrollY);
-        isTicking = false;
-      };
-
-      window.addEventListener(
-        "scroll",
-        () => {
-          if (!isTicking) {
-            window.requestAnimationFrame(handleScroll);
-            isTicking = true;
-          }
-        },
-        { passive: true },
-      );
-
-      handleScroll();
-    }
-
-    // 1. Mobile Menu Toggle
-    const btnMobileToggle = document.getElementById("btn-mobile-menu-toggle");
-    const iconMobileMenu = document.getElementById("icon-mobile-menu");
-
-    if (btnMobileToggle && mobileNavDrawer) {
-      btnMobileToggle.addEventListener("click", () => {
-        const isHidden = mobileNavDrawer.classList.contains("hidden");
-        if (isHidden) {
-          mobileNavDrawer.classList.remove("hidden");
-          if (iconMobileMenu) {
-            iconMobileMenu.classList.remove("fa-bars");
-            iconMobileMenu.classList.add("fa-xmark");
-          }
-        } else {
-          mobileNavDrawer.classList.add("hidden");
-          if (iconMobileMenu) {
-            iconMobileMenu.classList.remove("fa-xmark");
-            iconMobileMenu.classList.add("fa-bars");
-          }
-        }
-      });
-    }
-
-    // 2. Auth State Sync
-    try {
-      const storedUser = localStorage.getItem("satusite_auth_user");
-      const btnLogin = document.getElementById("nav-btn-login");
-      const accountContainer = document.getElementById(
-        "nav-account-dropdown-container",
-      );
-      const btnAccount = document.getElementById("nav-btn-account");
-      const accountMenu = document.getElementById("nav-account-menu");
-      const accountChevron = document.getElementById("nav-account-chevron");
-
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        if (btnLogin) btnLogin.classList.add("hidden");
-        if (accountContainer) accountContainer.classList.remove("hidden");
-
-        const navUserName = document.getElementById("nav-user-name");
-        const navMenuUserName = document.getElementById("nav-menu-user-name");
-        const navMenuUserEmail = document.getElementById("nav-menu-user-email");
-        const navMenuUserRole = document.getElementById("nav-menu-user-role");
-        const navUserAvatar = document.getElementById("nav-user-avatar");
-        const navMenuAvatar = document.getElementById("nav-menu-avatar");
-
-        const displayName = user.name || user.email?.split("@")[0] || "Akun";
-        if (navUserName) navUserName.textContent = displayName;
-        if (navMenuUserName) navMenuUserName.textContent = displayName;
-        if (navMenuUserEmail) navMenuUserEmail.textContent = user.email || "";
-
-        const avatarUrl =
-          user.avatar ||
-          `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(displayName)}&backgroundColor=18181b`;
-        if (navUserAvatar) navUserAvatar.src = avatarUrl;
-        if (navMenuAvatar) navMenuAvatar.src = avatarUrl;
-
-        const role = user.role || "user";
-        if (navMenuUserRole) {
-          navMenuUserRole.textContent =
-            role === "superadmin"
-              ? "Superadmin"
-              : role === "admin"
-                ? "Admin"
-                : "Gratis";
-        }
-
-        const adminLink = document.getElementById("nav-link-admin-panel");
-        if (
-          adminLink &&
-          (role === "admin" ||
-            role === "superadmin" ||
-            (user.email && user.email.toLowerCase() === "dekaze08@gmail.com"))
-        ) {
-          adminLink.classList.remove("hidden");
-        }
-
-        if (btnAccount && accountMenu) {
-          btnAccount.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const isMenuHidden = accountMenu.classList.contains("hidden");
-            if (isMenuHidden) {
-              accountMenu.classList.remove("hidden");
-              if (accountChevron) accountChevron.classList.add("rotate-180");
-            } else {
-              accountMenu.classList.add("hidden");
-              if (accountChevron) accountChevron.classList.remove("rotate-180");
+          } else if (!isMobileDrawerOpen) {
+            const delta = currentScrollY - lastScrollY;
+            if (delta > 10 && currentScrollY > 100) {
+              headerNav.classList.add("-translate-y-full");
+              headerNav.classList.remove("translate-y-0");
+            } else if (delta < -8) {
+              headerNav.classList.remove("-translate-y-full");
+              headerNav.classList.add("translate-y-0");
             }
-          });
+          }
 
-          document.addEventListener("click", (e) => {
-            if (accountContainer && !accountContainer.contains(e.target)) {
-              accountMenu.classList.add("hidden");
-              if (accountChevron) accountChevron.classList.remove("rotate-180");
+          lastScrollY = Math.max(0, currentScrollY);
+          isTicking = false;
+        };
+
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (!isTicking) {
+              window.requestAnimationFrame(handleScroll);
+              isTicking = true;
             }
-          });
-        }
+          },
+          { passive: true },
+        );
 
-        const btnLogout = document.getElementById("nav-btn-logout");
-        if (btnLogout) {
-          btnLogout.addEventListener("click", () => {
-            localStorage.removeItem("satusite_auth_user");
-            localStorage.removeItem("satusite_auth_token");
-            window.location.reload();
-          });
-        }
-      } else {
-        if (btnLogin) btnLogin.classList.remove("hidden");
-        if (accountContainer) accountContainer.classList.add("hidden");
+        handleScroll();
       }
 
-      // Studio Auth Gate for Header and CTA Links
-      const btnHeaderStudio = document.getElementById("btn-header-open-studio");
-      if (btnHeaderStudio) {
-        btnHeaderStudio.addEventListener("click", (e) => {
-          const isAuthed = localStorage.getItem("satusite_auth_user");
-          if (!isAuthed) {
-            e.preventDefault();
-            window.location.href = "/login";
-          }
+      // 1. Mobile Menu Toggle Event Binding
+      const btnMobileToggle = document.getElementById("btn-mobile-menu-toggle");
+      if (btnMobileToggle) {
+        btnMobileToggle.onclick = function(e) {
+          if (e) e.stopPropagation();
+          window.__toggleMobileMenu();
+        };
+      }
+
+      const btnMobileClose = document.getElementById("btn-mobile-menu-close");
+      if (btnMobileClose) {
+        btnMobileClose.onclick = function(e) {
+          if (e) e.stopPropagation();
+          window.__closeMobileMenu();
+        };
+      }
+
+      if (mobileNavDrawer) {
+        mobileNavDrawer.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            window.__closeMobileMenu();
+          });
         });
       }
 
-      // Global interceptor for studio and app links
-      document
-        .querySelectorAll('a[href="/app"], a[href^="/app?"], a[href="/studio"], a[href^="/studio/"], a[href^="/studio?"]')
-        .forEach((link) => {
-          link.addEventListener("click", (e) => {
+      // 2. Auth State Sync
+      try {
+        const storedUser = localStorage.getItem("satusite_auth_user");
+        const btnLogin = document.getElementById("nav-btn-login");
+        const accountContainer = document.getElementById(
+          "nav-account-dropdown-container",
+        );
+        const btnAccount = document.getElementById("nav-btn-account");
+        const accountMenu = document.getElementById("nav-account-menu");
+        const accountChevron = document.getElementById("nav-account-chevron");
+
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          if (btnLogin) btnLogin.classList.add("hidden");
+          if (accountContainer) accountContainer.classList.remove("hidden");
+
+          const navUserName = document.getElementById("nav-user-name");
+          const navMenuUserName = document.getElementById("nav-menu-user-name");
+          const navMenuUserEmail = document.getElementById("nav-menu-user-email");
+          const navMenuUserRole = document.getElementById("nav-menu-user-role");
+          const navUserAvatar = document.getElementById("nav-user-avatar");
+          const navMenuAvatar = document.getElementById("nav-menu-avatar");
+
+          const displayName = user.name || user.email?.split("@")[0] || "Akun";
+          if (navUserName) navUserName.textContent = displayName;
+          if (navMenuUserName) navMenuUserName.textContent = displayName;
+          if (navMenuUserEmail) navMenuUserEmail.textContent = user.email || "";
+
+          const avatarUrl =
+            user.avatar ||
+            `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(displayName)}&backgroundColor=18181b`;
+          if (navUserAvatar) navUserAvatar.src = avatarUrl;
+          if (navMenuAvatar) navMenuAvatar.src = avatarUrl;
+
+          const role = user.role || "user";
+          if (navMenuUserRole) {
+            navMenuUserRole.textContent =
+              role === "superadmin"
+                ? "Superadmin"
+                : role === "admin"
+                  ? "Admin"
+                  : "Gratis";
+          }
+
+          const adminLink = document.getElementById("nav-link-admin-panel");
+          if (
+            adminLink &&
+            (role === "admin" ||
+              role === "superadmin" ||
+              (user.email && user.email.toLowerCase() === "dekaze08@gmail.com"))
+          ) {
+            adminLink.classList.remove("hidden");
+          }
+
+          if (btnAccount && accountMenu) {
+            btnAccount.onclick = (e) => {
+              e.stopPropagation();
+              const isMenuHidden = accountMenu.classList.contains("hidden");
+              if (isMenuHidden) {
+                accountMenu.classList.remove("hidden");
+                if (accountChevron) accountChevron.classList.add("rotate-180");
+              } else {
+                accountMenu.classList.add("hidden");
+                if (accountChevron) accountChevron.classList.remove("rotate-180");
+              }
+            };
+
+            document.addEventListener("click", (e) => {
+              if (accountContainer && !accountContainer.contains(e.target)) {
+                accountMenu.classList.add("hidden");
+                if (accountChevron) accountChevron.classList.remove("rotate-180");
+              }
+            });
+          }
+
+          const btnLogout = document.getElementById("nav-btn-logout");
+          if (btnLogout) {
+            btnLogout.onclick = () => {
+              localStorage.removeItem("satusite_auth_user");
+              localStorage.removeItem("satusite_auth_token");
+              window.location.reload();
+            };
+          }
+        } else {
+          if (btnLogin) btnLogin.classList.remove("hidden");
+          if (accountContainer) accountContainer.classList.add("hidden");
+        }
+
+        // Studio Auth Gate for Header and CTA Links
+        const btnHeaderStudio = document.getElementById("btn-header-open-studio");
+        if (btnHeaderStudio) {
+          btnHeaderStudio.onclick = (e) => {
             const isAuthed = localStorage.getItem("satusite_auth_user");
             if (!isAuthed) {
               e.preventDefault();
               window.location.href = "/login";
             }
+          };
+        }
+
+        // Global interceptor for studio and app links
+        document
+          .querySelectorAll('a[href="/app"], a[href^="/app?"], a[href="/studio"], a[href^="/studio/"], a[href^="/studio?"]')
+          .forEach((link) => {
+            link.onclick = (e) => {
+              const isAuthed = localStorage.getItem("satusite_auth_user");
+              if (!isAuthed) {
+                e.preventDefault();
+                window.location.href = "/login";
+              }
+            };
           });
-        });
-    } catch (err) {
-      console.warn("Header auth init warning:", err);
+      } catch (err) {
+        console.warn("Header auth init warning:", err);
+      }
     }
-  });
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initHeaderNavScript);
+    } else {
+      initHeaderNavScript();
+    }
+    document.addEventListener("astro:page-load", initHeaderNavScript);
+  })();
 </script>

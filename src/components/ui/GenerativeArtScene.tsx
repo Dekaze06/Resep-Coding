@@ -1,7 +1,13 @@
 import React, { useRef, useEffect, Suspense } from "react";
 import * as THREE from "three";
 
-export function GenerativeArtScene({ className = "" }: { className?: string }) {
+export function GenerativeArtScene({
+  className = "",
+  color = "#1d4ed8",
+}: {
+  className?: string;
+  color?: string;
+}) {
   const mountRef = useRef<HTMLDivElement>(null);
   const lightRef = useRef<THREE.PointLight | null>(null);
 
@@ -12,14 +18,14 @@ export function GenerativeArtScene({ className = "" }: { className?: string }) {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       75,
-      currentMount.clientWidth / currentMount.clientHeight,
+      (currentMount.clientWidth || 300) / (currentMount.clientHeight || 300),
       0.1,
       1000
     );
     camera.position.z = 3;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+    renderer.setSize(currentMount.clientWidth || 300, currentMount.clientHeight || 300);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     currentMount.appendChild(renderer.domElement);
 
@@ -28,7 +34,7 @@ export function GenerativeArtScene({ className = "" }: { className?: string }) {
       uniforms: {
         time: { value: 0 },
         pointLightPos: { value: new THREE.Vector3(0, 0, 5) },
-        color: { value: new THREE.Color("#1d4ed8") },
+        color: { value: new THREE.Color(color) },
       },
       vertexShader: `
         uniform float time;

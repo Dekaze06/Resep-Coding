@@ -150,8 +150,8 @@ export function PricingSection({
         </motion.div>
       )}
 
-      {/* Pricing Cards Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+      {/* Pricing Cards: Horizontal Snap Scroll on Mobile, 3-Col Grid on Desktop */}
+      <div className="flex overflow-x-auto snap-x snap-mandatory pt-6 pb-4 lg:pt-6 lg:pb-0 gap-4 lg:grid lg:grid-cols-3 lg:gap-8 items-stretch scrollbar-none px-2">
         {PLANS.map((plan, index) => {
           const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
 
@@ -167,7 +167,8 @@ export function PricingSection({
               }}
               whileHover={{ y: -6, transition: { duration: 0.25 } }}
               className={cn(
-                "relative rounded-3xl p-7 flex flex-col justify-between transition-all duration-300 group",
+                "relative rounded-2xl sm:rounded-3xl p-5 sm:p-7 flex flex-col justify-between transition-all duration-300 group",
+                "min-w-[82vw] xs:min-w-[320px] lg:min-w-0 snap-center shrink-0 lg:shrink",
                 plan.featured
                   ? "bg-zinc-900/90 border-2 border-zinc-500/80 shadow-[0_20px_50px_rgba(0,0,0,0.85)] ring-1 ring-zinc-500/20"
                   : "bg-zinc-900/40 border border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-900/60 shadow-xl"
@@ -175,20 +176,20 @@ export function PricingSection({
             >
               {/* Popular Pill Badge */}
               {plan.featured && plan.popularBadge && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-white text-zinc-950 font-bold text-[10px] uppercase tracking-wider shadow-lg flex items-center gap-1.5">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3.5 py-1 rounded-full bg-white text-zinc-950 font-bold text-[9.5px] sm:text-[10px] uppercase tracking-wider shadow-lg flex items-center gap-1.5 z-20 whitespace-nowrap pointer-events-none">
                   <Zap className="w-3 h-3 fill-zinc-950 text-zinc-950" />
                   <span>{plan.popularBadge}</span>
                 </div>
               )}
 
               {/* Card Header & Content */}
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Category Badge & Title */}
-                <div className="space-y-2">
+                <div className="space-y-1.5 sm:space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <span
                       className={cn(
-                        "px-2.5 py-1 rounded-md text-[11px] font-medium border",
+                        "px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[10px] sm:text-[11px] font-medium border",
                         plan.featured
                           ? "bg-zinc-800 border-zinc-700 text-zinc-200"
                           : "bg-zinc-900 border border-zinc-800 text-zinc-400"
@@ -204,16 +205,16 @@ export function PricingSection({
                     )}
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                  <h3 className="text-lg sm:text-2xl font-bold text-white tracking-tight">
                     {plan.name}
                   </h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed min-h-[36px]">
+                  <p className="text-xs text-zinc-400 leading-relaxed min-h-[32px] sm:min-h-[36px]">
                     {plan.description}
                   </p>
                 </div>
 
                 {/* Price Display with AnimatePresence */}
-                <div className="pt-2 pb-4 border-b border-zinc-800/80">
+                <div className="pt-1.5 sm:pt-2 pb-3 sm:pb-4 border-b border-zinc-800/80">
                   <div className="flex items-baseline gap-1">
                     <AnimatePresence mode="wait">
                       <motion.span
@@ -222,27 +223,27 @@ export function PricingSection({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 8 }}
                         transition={{ duration: 0.2 }}
-                        className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-sans"
+                        className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-sans"
                       >
                         {formatIDR(price)}
                       </motion.span>
                     </AnimatePresence>
-                    <span className="text-xs text-zinc-400">
+                    <span className="text-[11px] sm:text-xs text-zinc-400">
                       {plan.monthlyPrice === 0 ? "/ selamanya" : "/ bulan"}
                     </span>
                   </div>
                   {isAnnual && plan.monthlyPrice > 0 && (
-                    <p className="text-[10px] text-zinc-400 mt-1 font-mono">
+                    <p className="text-[9.5px] sm:text-[10px] text-zinc-400 mt-0.5 sm:mt-1 font-mono">
                       Ditagih tahunan (Hemat {formatIDR((plan.monthlyPrice - plan.annualPrice) * 12)}/thn)
                     </p>
                   )}
                 </div>
 
                 {/* Features List */}
-                <div className="space-y-3 text-xs">
+                <div className="space-y-2 sm:space-y-3 text-xs">
                   <p
                     className={cn(
-                      "text-[11px] font-medium uppercase tracking-wider",
+                      "text-[10.5px] sm:text-[11px] font-medium uppercase tracking-wider",
                       plan.featured ? "text-zinc-200" : "text-zinc-400"
                     )}
                   >
@@ -252,12 +253,12 @@ export function PricingSection({
                       ? "Semua fitur Gratis, ditambah:"
                       : "Semua Fitur Tanpa Batas:"}
                   </p>
-                  <ul className="space-y-2.5">
+                  <ul className="space-y-2 sm:space-y-2.5">
                     {plan.features.map((feature, idx) => (
                       <li
                         key={idx}
                         className={cn(
-                          "flex items-start gap-2.5 transition-colors",
+                          "flex items-start gap-2 sm:gap-2.5 transition-colors text-[11px] sm:text-xs",
                           !feature.included
                             ? "text-zinc-500"
                             : feature.highlight
@@ -268,17 +269,17 @@ export function PricingSection({
                         {feature.included ? (
                           <div
                             className={cn(
-                              "w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5",
+                              "w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5",
                               plan.featured
                                 ? "bg-white text-zinc-950"
                                 : "bg-zinc-800 text-zinc-300 border border-zinc-700"
                             )}
                           >
-                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                            <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 stroke-[3]" />
                           </div>
                         ) : (
-                          <div className="w-4 h-4 rounded-full bg-zinc-950 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 border border-zinc-800">
-                            <X className="w-2.5 h-2.5" />
+                          <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-zinc-950 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 border border-zinc-800">
+                            <X className="w-2 h-2 sm:w-2.5 sm:h-2.5" />
                           </div>
                         )}
                         <span className={cn(!feature.included && "line-through")}>
@@ -291,11 +292,11 @@ export function PricingSection({
               </div>
 
               {/* CTA Action Button */}
-              <div className="pt-6 mt-6 border-t border-zinc-800/80">
+              <div className="pt-4 sm:pt-6 mt-4 sm:mt-6 border-t border-zinc-800/80">
                 <a
                   href={plan.ctaHref}
                   className={cn(
-                    "w-full py-3 px-4 rounded-xl font-semibold text-xs transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer select-none group/btn shadow-md",
+                    "w-full py-2.5 sm:py-3 px-4 rounded-xl font-semibold text-xs transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer select-none group/btn shadow-md",
                     plan.featured
                       ? "bg-white hover:bg-zinc-100 text-zinc-950 hover:shadow-white/10"
                       : "bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 hover:text-white"
