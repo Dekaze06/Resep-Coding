@@ -72,7 +72,7 @@ export function ElasticGallery() {
           </h3>
         </div>
         <a
-          href="/app"
+          href="/studio"
           className="group relative inline-flex items-center justify-center overflow-hidden px-4 py-2 rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-semibold text-zinc-950 transition-all cursor-pointer select-none shadow-sm"
         >
           <span className="mr-5 transition-opacity duration-300 group-hover:opacity-0">

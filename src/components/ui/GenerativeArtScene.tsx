@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, Suspense } from "react";
 import * as THREE from "three";
 
-export function GenerativeArtScene() {
+export function GenerativeArtScene({ className = "" }: { className?: string }) {
   const mountRef = useRef<HTMLDivElement>(null);
   const lightRef = useRef<THREE.PointLight | null>(null);
 
@@ -169,7 +169,12 @@ export function GenerativeArtScene() {
     };
   }, []);
 
-  return <div ref={mountRef} className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden opacity-70 mix-blend-screen" />;
+  return (
+    <div
+      ref={mountRef}
+      className={`w-full h-full relative overflow-hidden pointer-events-none opacity-85 mix-blend-screen ${className}`}
+    />
+  );
 }
 
 export function AnomalousMatterHero({

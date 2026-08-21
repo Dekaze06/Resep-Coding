@@ -120,7 +120,7 @@ export function TemplateShowcase() {
           </h3>
         </div>
         <a
-          href="/app"
+          href="/studio"
           className="group relative inline-flex items-center justify-center overflow-hidden px-3.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-zinc-300 hover:text-white transition-all cursor-pointer select-none"
         >
           <span className="mr-5 transition-opacity duration-500 group-hover:opacity-0">

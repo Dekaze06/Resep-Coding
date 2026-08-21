@@ -11,7 +11,7 @@ interface OpenStudioButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEle
 }
 
 export function OpenStudioButton({
-  href = "/app",
+  href = "/studio",
   className,
   size = "default",
   children = "Open Studio",

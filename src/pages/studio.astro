@@ -1,0 +1,409 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+    title="Pilih Studio AI - Satusite Studio"
+    description="Pilih salah satu dari 4 studio AI khusus untuk merancang website otomatis terpandu, dokumen PRD arsitektur, antarmuka visual frontend, atau aplikasi fullstack."
+>
+    <!-- Fluid Ambient Canvas Particles Background -->
+    <div
+        id="particles-bg"
+        class="fixed top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none"
+    >
+        <canvas
+            id="particles-canvas"
+            class="absolute inset-0 w-full h-full opacity-25"></canvas>
+    </div>
+
+    <!-- Subtle Ambient Glow Effects -->
+    <div
+        class="fixed top-[-10%] left-[25%] w-[600px] h-[500px] bg-blue-600/10 rounded-full blur-[160px] pointer-events-none z-0"
+    >
+    </div>
+    <div
+        class="fixed bottom-[-10%] right-[20%] w-[600px] h-[500px] bg-purple-600/10 rounded-full blur-[160px] pointer-events-none z-0"
+    >
+    </div>
+
+    <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-blue-500/30 selection:text-blue-200">
+        
+        <!-- SLEEK TOP BAR (STANDALONE STUDIO PORTAL NAV) -->
+        <header class="h-14 sm:h-16 px-4 sm:px-8 border-b border-zinc-800/60 bg-zinc-950/70 backdrop-blur-xl flex items-center justify-between z-20 shrink-0">
+            <div class="flex items-center gap-3">
+                <a
+                    href="/"
+                    class="px-2.5 py-1.5 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800/90 hover:border-zinc-700 text-zinc-400 hover:text-white text-xs font-medium transition-all flex items-center gap-2 cursor-pointer group"
+                    title="Kembali ke Beranda"
+                >
+                    <i class="fa-solid fa-arrow-left text-[11px] group-hover:-translate-x-0.5 transition-transform"></i>
+                    <span>Beranda</span>
+                </a>
+                <div class="h-4 w-[1px] bg-zinc-800"></div>
+                <div class="flex items-center gap-2 select-none">
+                    <img src="/logo.png" alt="Satusite Logo" class="w-5 h-5 object-contain" />
+                    <span class="text-xs font-semibold text-zinc-300 tracking-tight">Satusite Studio</span>
+                </div>
+            </div>
+
+            <!-- Right Quick Link -->
+            <div class="flex items-center gap-2">
+                <a
+                    href="/pricing"
+                    class="px-3 py-1.5 rounded-lg text-xs text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors flex items-center gap-1.5"
+                >
+                    <i class="fa-solid fa-crown text-[11px] text-amber-400"></i>
+                    <span class="hidden sm:inline">Paket Berlangganan</span>
+                </a>
+                <a
+                    href="/login"
+                    id="portal-auth-btn"
+                    class="px-3.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-semibold text-zinc-200 hover:text-white transition-colors"
+                >
+                    Masuk
+                </a>
+            </div>
+        </header>
+
+        <!-- MAIN STUDIO SELECTION CONTENT -->
+        <main class="flex-1 flex flex-col justify-center py-10 sm:py-16 px-4 sm:px-6 max-w-7xl mx-auto w-full">
+            
+            <!-- Header Section -->
+            <div class="text-center max-w-2xl mx-auto space-y-3 mb-10 sm:mb-14">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white font-sans">
+                    Pilih Studio AI
+                </h1>
+
+                <p class="text-xs sm:text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
+                    Pilih lingkungan kerja AI khusus untuk memulai pembuatan aplikasi, dokumen blueprint arsitektur, antarmuka visual, atau logika database fullstack.
+                </p>
+            </div>
+
+            <!-- 4 Cards Grid (Order: AI Recommended, PRD, Frontend, Fullstack) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-7 max-w-5xl mx-auto w-full">
+                
+                <!-- CARD 1: AI RECOMMENDED (WIZARD OTOMATIS) -->
+                <div class="studio-card group relative rounded-2xl bg-[#0c0c0e]/95 border border-zinc-800/90 hover:border-blue-500/50 p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(59,130,246,0.14)] backdrop-blur-2xl overflow-hidden">
+                    <!-- Subtle Card Top Glow Line -->
+                    <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                    <div class="space-y-4">
+                        <!-- Top Bar of Card -->
+                        <div class="flex items-center justify-between">
+                            <div class="w-11 h-11 rounded-xl bg-blue-950/50 border border-blue-800/40 text-blue-400 flex items-center justify-center shadow-inner group-hover:scale-105 group-hover:bg-blue-900/50 transition-all duration-300">
+                                <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-2.5 py-0.5 rounded-full bg-blue-950/70 border border-blue-800/40 text-blue-300 text-[10px] font-semibold tracking-wide">
+                                    Otomatis & Terpandu
+                                </span>
+                                <span class="px-2 py-0.5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 text-[10px] font-medium">
+                                    Coba 1x Gratis
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Card Info -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-lg font-bold text-white tracking-tight group-hover:text-blue-300 transition-colors">
+                                    AI Recommended Studio
+                                </h2>
+                            </div>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Panduan konfigurasi otomatis mudah 7 langkah. Tentukan nama website, kategori bisnis, gaya desain, target audiens, dan fitur utama secara terstruktur.
+                            </p>
+                        </div>
+
+                        <!-- Bullet Features -->
+                        <div class="space-y-2 pt-2 border-t border-zinc-800/70">
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-blue-400 shrink-0"></i>
+                                <span>Wizard 7 langkah otomatis ramah pemula</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-blue-400 shrink-0"></i>
+                                <span>Preset tema warna, tipografi & audiens bisnis</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-blue-400 shrink-0"></i>
+                                <span>Akses coba 1x gratis dengan hasil instan</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Action -->
+                    <div class="pt-5 mt-4 border-t border-zinc-800/60">
+                        <a
+                            href="/app?mode=ai-recommended"
+                            class="w-full py-3 px-4 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs transition-all flex items-center justify-center gap-2 group/btn shadow-md cursor-pointer active:scale-[0.99]"
+                        >
+                            <span>Buka AI Recommended</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 2: STUDIO PRD (PRO - COBA 1X GRATIS) -->
+                <div class="studio-card group relative rounded-2xl bg-[#0c0c0e]/95 border border-zinc-800/90 hover:border-amber-500/50 p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(245,158,11,0.14)] backdrop-blur-2xl overflow-hidden">
+                    <!-- Subtle Card Top Glow Line -->
+                    <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-amber-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                    <div class="space-y-4">
+                        <!-- Top Bar of Card -->
+                        <div class="flex items-center justify-between">
+                            <div class="w-11 h-11 rounded-xl bg-amber-950/50 border border-amber-800/40 text-amber-400 flex items-center justify-center shadow-inner group-hover:scale-105 group-hover:bg-amber-900/50 transition-all duration-300">
+                                <i class="fa-solid fa-file-lines text-base"></i>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-2.5 py-0.5 rounded-full bg-amber-950/70 border border-amber-800/40 text-amber-300 text-[10px] font-semibold tracking-wide uppercase">
+                                    PRO
+                                </span>
+                                <span class="px-2 py-0.5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 text-[10px] font-medium">
+                                    Coba 1x Gratis
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Card Info -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-lg font-bold text-white tracking-tight group-hover:text-amber-300 transition-colors">
+                                    Studio PRD
+                                </h2>
+                            </div>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Kolom chat AI Agent khusus perancangan dokumen Product Requirement Document (PRD), spesifikasi modul teknis, dan diagram hierarki arsitektur.
+                            </p>
+                        </div>
+
+                        <!-- Bullet Features -->
+                        <div class="space-y-2 pt-2 border-t border-zinc-800/70">
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-amber-400 shrink-0"></i>
+                                <span>Analisis kebutuhan sistem & user stories</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-amber-400 shrink-0"></i>
+                                <span>Visualisasi pohon hierarki modul arsitektur</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-amber-400 shrink-0"></i>
+                                <span>Tersedia untuk tier PRO (Coba 1x gratis)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Action -->
+                    <div class="pt-5 mt-4 border-t border-zinc-800/60">
+                        <a
+                            href="/studio/prd"
+                            class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-white font-bold text-xs transition-all flex items-center justify-center gap-2 group/btn cursor-pointer active:scale-[0.99]"
+                        >
+                            <span>Buka Studio PRD</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform text-amber-400"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 3: STUDIO FRONTEND (PRO - COBA 1X GRATIS) -->
+                <div class="studio-card group relative rounded-2xl bg-[#0c0c0e]/95 border border-zinc-800/90 hover:border-purple-500/50 p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(168,85,247,0.14)] backdrop-blur-2xl overflow-hidden">
+                    <!-- Subtle Card Top Glow Line -->
+                    <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                    <div class="space-y-4">
+                        <!-- Top Bar of Card -->
+                        <div class="flex items-center justify-between">
+                            <div class="w-11 h-11 rounded-xl bg-purple-950/50 border border-purple-800/40 text-purple-400 flex items-center justify-center shadow-inner group-hover:scale-105 group-hover:bg-purple-900/50 transition-all duration-300">
+                                <i class="fa-solid fa-table-columns text-base"></i>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-2.5 py-0.5 rounded-full bg-purple-950/70 border border-purple-800/40 text-purple-300 text-[10px] font-semibold tracking-wide uppercase">
+                                    PRO
+                                </span>
+                                <span class="px-2 py-0.5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 text-[10px] font-medium">
+                                    Coba 1x Gratis
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Card Info -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-lg font-bold text-white tracking-tight group-hover:text-purple-300 transition-colors">
+                                    Studio Frontend
+                                </h2>
+                            </div>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Kolom chat AI Agent khusus perancangan estetika visual, komponen responsif multi-device, micro-interactions, dan styling CSS modern.
+                            </p>
+                        </div>
+
+                        <!-- Bullet Features -->
+                        <div class="space-y-2 pt-2 border-t border-zinc-800/70">
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-purple-400 shrink-0"></i>
+                                <span>Prompt builder visual UI/UX & tata letak responsif</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-purple-400 shrink-0"></i>
+                                <span>Pratinjau langsung mobile, tablet, dan desktop</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-purple-400 shrink-0"></i>
+                                <span>Tersedia untuk tier PRO (Coba 1x gratis)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Action -->
+                    <div class="pt-5 mt-4 border-t border-zinc-800/60">
+                        <a
+                            href="/studio/frontend"
+                            class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-white font-bold text-xs transition-all flex items-center justify-center gap-2 group/btn cursor-pointer active:scale-[0.99]"
+                        >
+                            <span>Buka Studio Frontend</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform text-purple-400"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 4: STUDIO FULLSTACK (MAX - EKSKLUSIF TIER MAX) -->
+                <div class="studio-card group relative rounded-2xl bg-[#0c0c0e]/95 border border-zinc-800/90 hover:border-emerald-500/50 p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(16,185,129,0.14)] backdrop-blur-2xl overflow-hidden">
+                    <!-- Subtle Card Top Glow Line -->
+                    <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                    <div class="space-y-4">
+                        <!-- Top Bar of Card -->
+                        <div class="flex items-center justify-between">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-950/50 border border-emerald-800/40 text-emerald-400 flex items-center justify-center shadow-inner group-hover:scale-105 group-hover:bg-emerald-900/50 transition-all duration-300">
+                                <i class="fa-solid fa-database text-base"></i>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-800/40 text-emerald-300 text-[10px] font-semibold tracking-wide uppercase">
+                                    MAX
+                                </span>
+                                <span class="px-2 py-0.5 rounded-md bg-emerald-950/40 border border-emerald-800/40 text-emerald-300 text-[10px] font-medium">
+                                    Tier MAX
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Card Info -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-lg font-bold text-white tracking-tight group-hover:text-emerald-300 transition-colors">
+                                    Studio Fullstack
+                                </h2>
+                            </div>
+                            <p class="text-xs text-zinc-400 leading-relaxed">
+                                Kolom chat AI Agent khusus pengembangan aplikasi lengkap dengan database in-memory, logika aksi CRUD, manipulasi state, dan panel admin.
+                            </p>
+                        </div>
+
+                        <!-- Bullet Features -->
+                        <div class="space-y-2 pt-2 border-t border-zinc-800/70">
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-emerald-400 shrink-0"></i>
+                                <span>Logika data, manipulasi state & CRUD terintegrasi</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-emerald-400 shrink-0"></i>
+                                <span>Penyimpanan data lokal, pencarian & export data</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-zinc-300">
+                                <i class="fa-solid fa-check text-[10px] text-emerald-400 shrink-0"></i>
+                                <span>Fitur mutakhir khusus paket MAX</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Action -->
+                    <div class="pt-5 mt-4 border-t border-zinc-800/60">
+                        <a
+                            href="/studio/fullstack"
+                            class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-white font-bold text-xs transition-all flex items-center justify-center gap-2 group/btn cursor-pointer active:scale-[0.99]"
+                        >
+                            <span>Buka Studio Fullstack</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform text-emerald-400"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Auth check script for top bar -->
+    <script is:inline>
+        document.addEventListener("DOMContentLoaded", () => {
+            try {
+                const userRaw = localStorage.getItem("satusite_auth_user");
+                const authBtn = document.getElementById("portal-auth-btn");
+                if (userRaw && authBtn) {
+                    const user = JSON.parse(userRaw);
+                    authBtn.href = "/portal";
+                    authBtn.textContent = user.name ? user.name.split(" ")[0] : "Portal Klien";
+                }
+            } catch (e) {}
+        });
+    </script>
+
+    <!-- Canvas Particles & Micro-Interaction Enhancements -->
+    <script is:inline>
+        (function () {
+            const canvas = document.getElementById("particles-canvas");
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return;
+
+            let particles = [];
+            const count = 45;
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            function init() {
+                resize();
+                particles = Array.from({ length: count }, () => ({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
+                    size: Math.random() * 1.5 + 0.5,
+                    opacity: Math.random() * 0.3 + 0.1,
+                }));
+            }
+
+            function loop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0) p.x = canvas.width;
+                    if (p.x > canvas.width) p.x = 0;
+                    if (p.y < 0) p.y = canvas.height;
+                    if (p.y > canvas.height) p.y = 0;
+
+                    ctx.fillStyle = `rgba(59, 130, 246, ${p.opacity * 0.35})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                requestAnimationFrame(loop);
+            }
+
+            window.addEventListener("resize", resize);
+            document.addEventListener("DOMContentLoaded", () => {
+                init();
+                loop();
+            });
+        })();
+    </script>
+</Layout>

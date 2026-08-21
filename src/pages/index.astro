@@ -43,217 +43,90 @@ import GenerativeArtScene from "../components/ui/GenerativeArtScene";
         <!-- ========================================== -->
         <!-- 2. HERO SECTION: PROMPT BUILDER            -->
         <!-- ========================================== -->
+        <!-- 2. HERO SECTION: 2-COLUMN FULL LAYOUT      -->
+        <!-- ========================================== -->
         <section
-            id="prompt-builder"
-            class="relative min-h-[72vh] md:min-h-[78vh] flex flex-col justify-center pt-28 pb-32 md:pt-40 md:pb-44 px-6 text-center overflow-hidden"
+            id="hero-section"
+            class="relative min-h-[calc(100vh-4.5rem)] flex items-center justify-center pt-24 pb-20 sm:pt-28 sm:pb-24 lg:pt-32 lg:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden"
         >
-            <GenerativeArtScene client:only="react" />
+            <!-- Ambient Subtle Background Glows -->
+            <div
+                class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none -z-10"
+            >
+            </div>
+            <div
+                class="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none -z-10"
+            >
+            </div>
 
-            <div class="relative z-10 max-w-4xl mx-auto w-full space-y-6 sm:space-y-7">
-                <!-- Alternating 1-Line Semi-Bold Information Banner (Fade in/out Up) -->
-                <div
-                    class="relative h-9 sm:h-10 flex items-center justify-center overflow-hidden"
-                >
-                    <div
-                        id="hero-ticker-container"
-                        class="w-full flex items-center justify-center"
-                    >
-                        <h1
-                            id="hero-ticker-text"
-                            class="hero-slide text-sm sm:text-base md:text-lg font-medium tracking-tight text-zinc-300 transition-all duration-500 ease-out truncate px-2"
+            <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center relative z-10">
+                
+                <!-- LEFT COLUMN: Judul, Subjudul & Tombol Open Studio -->
+                <div class="lg:col-span-7 xl:col-span-7 text-left space-y-6 sm:space-y-7">
+                    
+                    <!-- Judul Utama (Singkat & Simpel) -->
+                    <h1 class="text-3xl sm:text-5xl lg:text-[54px] xl:text-6xl font-bold tracking-tight text-white font-sans leading-[1.12]">
+                        Bangun Website & Aplikasi dengan AI
+                    </h1>
+
+                    <!-- Sub Judul (Singkat & Simpel) -->
+                    <p class="text-sm sm:text-base lg:text-lg text-zinc-400 leading-relaxed max-w-xl font-normal">
+                        Rancang antarmuka frontend, logika fullstack, dan dokumen arsitektur PRD dengan mudah dan cepat.
+                    </p>
+
+                    <!-- Tombol Open Studio & Secondary CTA -->
+                    <div class="pt-2 flex flex-wrap items-center gap-3.5 sm:gap-4">
+                        <!-- Tombol Open Studio -->
+                        <a
+                            href="/studio"
+                            class="group relative inline-flex items-center justify-center overflow-hidden px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-xs sm:text-sm font-bold shadow-lg shadow-white/10 hover:shadow-white/20 transition-all duration-300 cursor-pointer select-none"
                         >
-                            Bangun Aplikasi & Website Lengkap With AI Agent
-                        </h1>
+                            <span class="mr-6 transition-opacity duration-300 group-hover:opacity-0">
+                                Open Studio
+                            </span>
+                            <span class="absolute right-1.5 top-1.5 bottom-1.5 rounded-lg z-10 grid w-7 place-items-center transition-all duration-300 bg-zinc-950/10 group-hover:w-[calc(100%-0.75rem)] group-active:scale-95 text-zinc-900 group-hover:text-zinc-950">
+                                <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
+                            </span>
+                        </a>
+
+                        <!-- Secondary CTA -->
+                        <a
+                            href="/templates"
+                            class="px-5 py-3.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2"
+                        >
+                            <i class="fa-solid fa-layer-group text-xs text-zinc-400"></i>
+                            <span>Jelajahi Template</span>
+                        </a>
+                    </div>
+
+                    <!-- Trust Highlights Checklist -->
+                    <div class="pt-4 sm:pt-6 border-t border-zinc-800/60 flex flex-wrap items-center gap-5 sm:gap-6 text-[11px] sm:text-xs text-zinc-400">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-check text-blue-400 text-xs"></i>
+                            <span>4 Studio AI Terdedikasi</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-check text-blue-400 text-xs"></i>
+                            <span>Ekspor Kode HTML/CSS/JS Murni</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-check text-blue-400 text-xs"></i>
+                            <span>1-Click Deploy Siap Pakai</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- PROMPT STUDIO BOX (Positioned Lower) -->
-                <div
-                    class="mt-4 sm:mt-6 max-w-3xl mx-auto bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 text-left shadow-2xl backdrop-blur-xl"
-                >
-                    <form id="hero-prompt-form" class="space-y-3.5">
-                        <div class="relative">
-                            <textarea
-                                id="hero-prompt-input"
-                                rows="3"
-                                placeholder="Tuliskan website yang ingin Anda buat... (Contoh: 'Buatkan landing page toko kopi lokal dengan menu lengkap, tombol pesan WhatsApp langsung, galeri foto, dan peta lokasi')"
-                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-700 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none transition-all resize-none font-sans"
-                            ></textarea>
+                <!-- RIGHT COLUMN: 3D Matter Blue Sphere -->
+                <div class="lg:col-span-5 xl:col-span-5 relative flex items-center justify-center">
+                    <div class="relative w-full h-[360px] sm:h-[460px] lg:h-[540px] flex items-center justify-center">
+                        <!-- Ambient Radial Backing -->
+                        <div class="absolute w-64 h-64 sm:w-80 sm:h-80 bg-blue-600/15 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+                        <div class="w-full h-full relative">
+                            <GenerativeArtScene client:only="react" />
                         </div>
-
-                        <!-- Prompt controls bar -->
-                        <div
-                            class="flex items-center justify-between gap-3 pt-1"
-                        >
-                            <!-- Left: File Upload & Dark Mode Dropdown -->
-                            <div class="flex items-center gap-1.5">
-                                <label
-                                    for="hero-file-upload"
-                                    class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
-                                    title="Upload Dokumen / Gambar"
-                                >
-                                    <i class="fa-solid fa-paperclip text-xs"
-                                    ></i>
-                                    <input
-                                        id="hero-file-upload"
-                                        type="file"
-                                        class="hidden"
-                                        accept="image/*,.txt,.pdf,.json"
-                                    />
-                                </label>
-                                <span
-                                    id="hero-file-indicator"
-                                    class="hidden text-[11px] text-zinc-300 bg-zinc-800 px-2 py-0.5 rounded truncate max-w-[140px]"
-                                ></span>
-
-                                <!-- Dark Minimalist Mode Dropdown (Fullstack / Frontend) -->
-                                <div
-                                    class="relative"
-                                    id="hero-mode-dropdown-container"
-                                >
-                                    <button
-                                        type="button"
-                                        id="hero-btn-mode-dropdown"
-                                        class="h-8 px-2.5 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
-                                        title="Pilih Mode Pengembangan"
-                                    >
-                                        <i
-                                            id="hero-mode-icon"
-                                            class="fa-solid fa-database text-xs text-blue-400 shrink-0"
-                                        ></i>
-                                        <span
-                                            id="hero-mode-label"
-                                            class="capitalize">Fullstack</span
-                                        >
-                                        <i
-                                            id="hero-mode-chevron"
-                                            class="fa-solid fa-chevron-down text-[9px] text-zinc-500 transition-transform duration-200"
-                                        ></i>
-                                    </button>
-
-                                    <!-- Dropdown Popover Menu -->
-                                    <div
-                                        id="hero-mode-menu"
-                                        class="hidden absolute top-full left-0 mt-1.5 w-56 p-1 bg-[#121215] border border-zinc-800 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.85)] z-50 font-sans text-left"
-                                    >
-                                        <div
-                                            class="px-2 py-0.5 text-[8.5px] font-medium text-zinc-500 uppercase tracking-wider border-b border-zinc-800/50 mb-0.5"
-                                        >
-                                            Pilih Mode
-                                        </div>
-
-                                        <!-- Option Fullstack -->
-                                        <button
-                                            type="button"
-                                            data-mode="fullstack"
-                                            class="hero-mode-item w-full px-2 py-1 rounded-lg flex items-center gap-2 text-left transition-colors cursor-pointer bg-zinc-800/90 text-white"
-                                        >
-                                            <div
-                                                class="w-5 h-5 rounded bg-blue-950/70 border border-blue-800/30 text-blue-400 flex items-center justify-center shrink-0"
-                                            >
-                                                <i
-                                                    class="fa-solid fa-database text-[10px]"
-                                                ></i>
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div
-                                                    class="text-[11px] font-semibold text-zinc-100 leading-tight"
-                                                    >Fullstack</div
-                                                >
-                                                <div
-                                                    class="text-[9px] text-zinc-400 truncate leading-tight"
-                                                >
-                                                    CRUD, storage sync & UI.
-                                                </div>
-                                            </div>
-                                        </button>
-
-                                        <!-- Option Frontend -->
-                                        <button
-                                            type="button"
-                                            data-mode="frontend"
-                                            class="hero-mode-item w-full px-2 py-1 rounded-lg flex items-center gap-2 text-left transition-colors cursor-pointer mt-0.5 text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
-                                        >
-                                            <div
-                                                class="w-5 h-5 rounded bg-blue-950/70 border border-blue-800/30 text-blue-400 flex items-center justify-center shrink-0"
-                                            >
-                                                <i
-                                                    class="fa-solid fa-table-columns text-[10px]"
-                                                ></i>
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div
-                                                    class="text-[11px] font-semibold text-zinc-100 leading-tight"
-                                                    >Frontend</div
-                                                >
-                                                <div
-                                                    class="text-[9px] text-zinc-400 truncate leading-tight"
-                                                >
-                                                    Antarmuka visual responsif.
-                                                </div>
-                                            </div>
-                                        </button>
-
-                                        <!-- Option PRD -->
-                                        <button
-                                            type="button"
-                                            data-mode="prd"
-                                            class="hero-mode-item w-full px-2 py-1 rounded-lg flex items-center gap-2 text-left transition-colors cursor-pointer mt-0.5 text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
-                                        >
-                                            <div
-                                                class="w-5 h-5 rounded bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 flex items-center justify-center shrink-0"
-                                            >
-                                                <i
-                                                    class="fa-solid fa-file-lines text-[10px] text-zinc-400"
-                                                ></i>
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div
-                                                    class="text-[11px] font-semibold text-zinc-100 leading-tight"
-                                                    >PRD Blueprint</div
-                                                >
-                                                <div
-                                                    class="text-[9px] text-zinc-400 truncate leading-tight"
-                                                >
-                                                    Spesifikasi sistem komprehensif.
-                                                </div>
-                                            </div>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Right: Voice Icon & Generate Arrow-Up / Stop Button (Borderless) -->
-                            <div class="flex items-center gap-1.5">
-                                <!-- Voice Dictation Icon -->
-                                <button
-                                    type="button"
-                                    id="btn-hero-voice"
-                                    class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
-                                    title="Input Suara"
-                                >
-                                    <i
-                                        id="icon-voice"
-                                        class="fa-solid fa-microphone text-xs"
-                                    ></i>
-                                </button>
-
-                                <!-- Generate Arrow-Up / Stop Icon Button (Single Dynamic Icon, Borderless) -->
-                                <button
-                                     type="submit"
-                                     id="btn-hero-generate"
-                                     class="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white transition-colors flex items-center justify-center cursor-pointer group shadow-sm border-0 outline-none"
-                                     title="Generate Website"
-                                >
-                                     <i
-                                         id="btn-hero-generate-icon"
-                                         class="fa-solid fa-arrow-up text-xs text-zinc-300 group-hover:text-white group-hover:-translate-y-0.5 transition-transform"
-                                     ></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    </div>
                 </div>
+
             </div>
         </section>
 
@@ -272,8 +145,8 @@ import GenerativeArtScene from "../components/ui/GenerativeArtScene";
                             client:visible
                             title="Solusi Pembuatan Web & Aplikasi Cerdas"
                             description="Dari perancangan konsep visual, penyusunan arsitektur sistem, hingga rilis produksi global ke cloud dalam hitungan detik."
-                            ctaText="Buka Studio AI"
-                            ctaHref="/app"
+                            ctaText="Pilih Studio AI"
+                            ctaHref="/studio"
                             align="left"
                             direction="left"
                         />
@@ -410,7 +283,7 @@ import GenerativeArtScene from "../components/ui/GenerativeArtScene";
                 <!-- CTA Action Buttons -->
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 relative z-10">
                     <a
-                        href="/app"
+                        href="/studio"
                         class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
                     >
                         <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
@@ -524,7 +397,7 @@ import GenerativeArtScene from "../components/ui/GenerativeArtScene";
                     class="flex justify-between items-center pt-3 border-t border-zinc-800"
                 >
                     <a
-                        href="/app"
+                        href="/studio"
                         class="px-3.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs flex items-center gap-1.5 border border-zinc-700"
                     >
                         <i class="fa-solid fa-plus text-xs"></i> Buat Baru
@@ -548,315 +421,7 @@ import GenerativeArtScene from "../components/ui/GenerativeArtScene";
     <!-- Client Scripts -->
     <script is:inline>
         document.addEventListener("DOMContentLoaded", () => {
-            // Alternating 1-Line Semi-Bold Information Banner (Smooth Blur & Fade in/out Up)
-            const tickerText = document.getElementById("hero-ticker-text");
-            const phrases = [
-                "Bangun Aplikasi & Website Lengkap With AI Agent",
-                "Ketik Ide Bisnis Anda & Dapatkan Pratinjau Instan",
-                "Rancang Antarmuka Responsif & Kode Bersih Otomatis",
-                "Ekspor File HTML Mandiri Siap Digunakan Kapan Saja",
-            ];
-            let phraseIdx = 0;
-
-            if (tickerText) {
-                tickerText.style.filter = "blur(0px)";
-                tickerText.style.opacity = "1";
-                tickerText.style.transform = "translateY(0px)";
-
-                setInterval(() => {
-                    // 1. Smooth Fade out UP with BLUR
-                    tickerText.style.filter = "blur(8px)";
-                    tickerText.style.opacity = "0";
-                    tickerText.style.transform = "translateY(-16px)";
-
-                    // 2. Prepare next phrase from bottom
-                    setTimeout(() => {
-                        phraseIdx = (phraseIdx + 1) % phrases.length;
-                        tickerText.textContent = phrases[phraseIdx];
-
-                        // Reset position at bottom with blur and zero opacity without animation
-                        tickerText.style.transition = "none";
-                        tickerText.style.transform = "translateY(16px)";
-                        tickerText.style.filter = "blur(8px)";
-                        tickerText.style.opacity = "0";
-
-                        // Force reflow
-                        void tickerText.offsetWidth;
-
-                        // Re-enable transition
-                        tickerText.style.transition = "";
-
-                        // 3. Smoothly animate into sharp focus at center
-                        requestAnimationFrame(() => {
-                            tickerText.style.filter = "blur(0px)";
-                            tickerText.style.opacity = "1";
-                            tickerText.style.transform = "translateY(0px)";
-                        });
-                    }, 850);
-                }, 5200);
-            }
-
-            // File Upload Indicator
-            const fileInput = document.getElementById("hero-file-upload");
-            const fileIndicator = document.getElementById(
-                "hero-file-indicator",
-            );
-            let attachedFileName = null;
-
-            if (fileInput && fileIndicator) {
-                fileInput.addEventListener("change", (e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                        attachedFileName = file.name;
-                        fileIndicator.textContent = file.name;
-                        fileIndicator.classList.remove("hidden");
-                    } else {
-                        attachedFileName = null;
-                        fileIndicator.classList.add("hidden");
-                    }
-                });
-            }
-
-            // Voice Dictation (Speech Recognition)
-            const voiceBtn = document.getElementById("btn-hero-voice");
-            const voiceIcon = document.getElementById("icon-voice");
-            let recognition = null;
-            let isListening = false;
-
-            if (voiceBtn && voiceIcon) {
-                const SpeechRecognition =
-                    window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (SpeechRecognition) {
-                    recognition = new SpeechRecognition();
-                    recognition.lang = "id-ID";
-                    recognition.interimResults = false;
-
-                    recognition.onstart = () => {
-                        isListening = true;
-                        voiceBtn.classList.add(
-                            "bg-red-500/10",
-                            "border-red-500/40",
-                        );
-                        voiceIcon.classList.add(
-                            "text-red-400",
-                            "animate-pulse",
-                        );
-                    };
-
-                    recognition.onresult = (event) => {
-                        const transcript = event.results[0][0].transcript;
-                        if (input) {
-                            input.value =
-                                (input.value ? input.value + " " : "") +
-                                transcript;
-                            input.focus();
-                        }
-                    };
-
-                    recognition.onerror = () => {
-                        isListening = false;
-                        voiceBtn.classList.remove(
-                            "bg-red-500/10",
-                            "border-red-500/40",
-                        );
-                        voiceIcon.classList.remove(
-                            "text-red-400",
-                            "animate-pulse",
-                        );
-                    };
-
-                    recognition.onend = () => {
-                        isListening = false;
-                        voiceBtn.classList.remove(
-                            "bg-red-500/10",
-                            "border-red-500/40",
-                        );
-                        voiceIcon.classList.remove(
-                            "text-red-400",
-                            "animate-pulse",
-                        );
-                    };
-
-                    voiceBtn.addEventListener("click", () => {
-                        if (!isListening) {
-                            try {
-                                recognition.start();
-                            } catch (err) {
-                                console.warn(err);
-                            }
-                        } else {
-                            recognition.stop();
-                        }
-                    });
-                } else {
-                    voiceBtn.addEventListener("click", () => {
-                        if (input) {
-                            input.focus();
-                            input.setAttribute(
-                                "placeholder",
-                                "Mikrofon tidak didukung di browser ini. Silakan ketik langsung ide Anda...",
-                            );
-                        }
-                    });
-                }
-            }
-
-            // Mode Dropdown Switcher (Fullstack vs Frontend)
-            const modeDropdownBtn = document.getElementById(
-                "hero-btn-mode-dropdown",
-            );
-            const modeMenu = document.getElementById("hero-mode-menu");
-            const modeChevron = document.getElementById("hero-mode-chevron");
-            const modeLabel = document.getElementById("hero-mode-label");
-            const modeIcon = document.getElementById("hero-mode-icon");
-            const modeItems = document.querySelectorAll(".hero-mode-item");
-            let selectedMode = "fullstack";
-
-            if (modeDropdownBtn && modeMenu) {
-                modeDropdownBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    const isOpen = !modeMenu.classList.contains("hidden");
-                    if (isOpen) {
-                        modeMenu.classList.add("hidden");
-                        if (modeChevron)
-                            modeChevron.classList.remove("rotate-180");
-                    } else {
-                        modeMenu.classList.remove("hidden");
-                        if (modeChevron)
-                            modeChevron.classList.add("rotate-180");
-                    }
-                });
-
-                document.addEventListener("click", (e) => {
-                    const container = document.getElementById(
-                        "hero-mode-dropdown-container",
-                    );
-                    if (container && !container.contains(e.target)) {
-                        modeMenu.classList.add("hidden");
-                        if (modeChevron)
-                            modeChevron.classList.remove("rotate-180");
-                    }
-                });
-
-                modeItems.forEach((item) => {
-                    item.addEventListener("click", () => {
-                        const mode = item.getAttribute("data-mode");
-                        if (!mode) return;
-                        selectedMode = mode;
-
-                        // Update label and icon
-                        if (mode === "fullstack") {
-                            if (modeLabel) modeLabel.textContent = "Fullstack";
-                            if (modeIcon)
-                                modeIcon.className =
-                                    "fa-solid fa-database text-xs text-blue-400 shrink-0";
-                            if (input)
-                                input.setAttribute(
-                                    "placeholder",
-                                    "Tuliskan ide aplikasi fullstack... (Contoh: 'Buat aplikasi kasir toko kopi dengan pencarian produk, ringkasan transaksi & ekspor CSV')",
-                                );
-                        } else if (mode === "prd") {
-                            if (modeLabel) modeLabel.textContent = "PRD";
-                            if (modeIcon)
-                                modeIcon.className =
-                                    "fa-solid fa-file-lines text-xs text-zinc-400 shrink-0";
-                            if (input)
-                                input.setAttribute(
-                                    "placeholder",
-                                    "Tuliskan konsep atau fitur aplikasi yang ingin dibuatkan dokumen PRD & Blueprint arsitektur...",
-                                );
-                        } else {
-                            if (modeLabel) modeLabel.textContent = "Frontend";
-                            if (modeIcon)
-                                modeIcon.className =
-                                    "fa-solid fa-table-columns text-xs text-blue-400 shrink-0";
-                            if (input)
-                                input.setAttribute(
-                                    "placeholder",
-                                    "Tuliskan ide desain frontend... (Contoh: 'Buat landing page kafe modern dengan daftar menu, galeri foto & form kontak')",
-                                );
-                        }
-
-                        // Update active styles
-                        modeItems.forEach((btn) => {
-                            const isSelected =
-                                btn.getAttribute("data-mode") === mode;
-                            if (isSelected) {
-                                btn.classList.add(
-                                    "bg-zinc-800/90",
-                                    "text-white",
-                                );
-                                btn.classList.remove(
-                                    "text-zinc-400",
-                                    "hover:bg-zinc-800/40",
-                                    "hover:text-zinc-200",
-                                );
-                            } else {
-                                btn.classList.remove(
-                                    "bg-zinc-800/90",
-                                    "text-white",
-                                );
-                                btn.classList.add(
-                                    "text-zinc-400",
-                                    "hover:bg-zinc-800/40",
-                                    "hover:text-zinc-200",
-                                );
-                            }
-                        });
-
-                        modeMenu.classList.add("hidden");
-                        if (modeChevron)
-                            modeChevron.classList.remove("rotate-180");
-                    });
-                });
-            }
-
-            // Form Submit with Arrow-Up to Stop Icon Dynamic Transition
-            const form = document.getElementById("hero-prompt-form");
-            const input = document.getElementById("hero-prompt-input");
-            const generateIcon = document.getElementById(
-                "btn-hero-generate-icon",
-            );
-            let isGeneratingPrompt = false;
-            let navTimer = null;
-
-            function setGenerateBtnState(generating) {
-                isGeneratingPrompt = generating;
-                if (!generateIcon) return;
-                if (generating) {
-                    generateIcon.className =
-                        "fa-solid fa-square text-[10px] text-zinc-300";
-                } else {
-                    generateIcon.className =
-                        "fa-solid fa-arrow-up text-xs group-hover:-translate-y-0.5 transition-transform";
-                }
-            }
-
-            if (form && input) {
-                form.addEventListener("submit", (e) => {
-                    e.preventDefault();
-                    if (isGeneratingPrompt) {
-                        // Stop clicked -> cancel
-                        if (navTimer) clearTimeout(navTimer);
-                        setGenerateBtnState(false);
-                        return;
-                    }
-
-                    let promptText = input.value.trim();
-                    if (attachedFileName) {
-                        promptText =
-                            `[Lampiran: ${attachedFileName}] ` + promptText;
-                    }
-                    if (!promptText) return;
-
-                    setGenerateBtnState(true);
-
-                    navTimer = setTimeout(() => {
-                        window.location.href = `/app?prompt=${encodeURIComponent(promptText)}&mode=${encodeURIComponent(selectedMode)}`;
-                    }, 500);
-                });
-            }
-
+            // Clone Showcase Buttons
             document.querySelectorAll(".clone-showcase-btn").forEach((btn) => {
                 btn.addEventListener("click", () => {
                     const prompt = btn.getAttribute("data-prompt");

@@ -1487,10 +1487,12 @@ export default function SatusiteStudioWorkspace() {
       {/* TOP NAVIGATION — Clean & Borderless */}
       <header className="h-11 border-b border-zinc-800/60 bg-zinc-950/80 backdrop-blur-md px-4 flex items-center justify-between shrink-0 z-30">
         
-        <div className="flex items-center gap-2.5">
-          <a href="/" className="p-1 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800/60 transition-colors" title="Kembali ke Beranda">
+        <div className="flex items-center gap-2">
+          <a href="/studio" className="p-1 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1 text-[11px]" title="Kembali ke Pilihan Studio">
             <ArrowLeft className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline text-[10px] text-zinc-400">Studio</span>
           </a>
+          <div className="h-3 w-[1px] bg-zinc-800 hidden sm:block"></div>
           <img src="/logo.png" alt="Satusite Logo" className="w-5 h-5 object-contain" />
           <input
             type="text"

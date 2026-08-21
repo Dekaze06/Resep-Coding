@@ -263,8 +263,8 @@ export default function DeployHub() {
             <span className="hidden sm:inline">Testing Suite</span>
           </a>
           <a
-            href="/app"
-            className="group relative inline-flex items-center justify-center overflow-hidden px-3.5 py-1.5 rounded-lg bg-white hover:bg-zinc-100 border border-zinc-200/80 text-zinc-950 text-xs font-semibold shadow-md shadow-white/5 transition-all duration-300 cursor-pointer select-none"
+            href="/studio"
+            className="group relative inline-flex items-center justify-center overflow-hidden px-3.5 sm:px-4 py-1.5 rounded-lg bg-white hover:bg-zinc-100 border border-zinc-200/80 text-zinc-950 text-xs font-semibold shadow-md shadow-white/5 transition-all duration-300 cursor-pointer select-none"
           >
             <span className="mr-5 sm:mr-6 transition-opacity duration-500 group-hover:opacity-0">
               Open Studio

@@ -1,0 +1,375 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import HeaderNav from "../../components/HeaderNav.astro";
+import Footer from "../../components/Footer.astro";
+import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
+---
+
+<Layout
+    title="Studio PRD & Blueprint - Satusite AI Studio"
+    description="Studio AI Agent khusus penyusunan Product Requirement Document (PRD), spesifikasi sistem komprehensif, dan hierarki blueprint arsitektur."
+>
+    <!-- Fluid Ambient Canvas Particles Background -->
+    <div
+        id="particles-bg"
+        class="fixed top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none"
+    >
+        <canvas
+            id="particles-canvas"
+            class="absolute inset-0 w-full h-full opacity-20"></canvas>
+    </div>
+
+    <!-- Subtle Ambient Amber & Blue Gradients -->
+    <div
+        class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-amber-600/10 rounded-full blur-[140px] pointer-events-none z-0"
+    >
+    </div>
+    <div
+        class="fixed bottom-[-10%] right-[15%] w-[500px] h-[400px] bg-blue-500/10 rounded-full blur-[140px] pointer-events-none z-0"
+    >
+    </div>
+
+    <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-amber-500/30 selection:text-amber-200">
+        <!-- Top Navbar -->
+        <HeaderNav activePage="studio" />
+
+        <!-- HERO SECTION: DEDICATED PRD PROMPT STUDIO -->
+        <section
+            id="prd-prompt-studio"
+            class="relative min-h-[72vh] md:min-h-[78vh] flex flex-col justify-center pt-28 pb-24 md:pt-36 md:pb-32 px-4 sm:px-6 text-center overflow-hidden"
+        >
+            <GenerativeArtScene client:only="react" />
+
+            <div class="relative z-10 max-w-4xl mx-auto w-full space-y-6 sm:space-y-7">
+                
+                <!-- Mode Badge & Title -->
+                <div class="space-y-3">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950/70 border border-amber-800/50 text-[11px] font-medium text-amber-300 shadow-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                        <span>STUDIO KHUSUS PRD & ARSITEKTUR SISTEM</span>
+                    </div>
+
+                    <h1 class="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white font-sans leading-tight">
+                        Susun Dokumen Spesifikasi & Blueprint Arsitektur
+                    </h1>
+                    <p class="text-xs sm:text-sm text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                        Fokus penuh pada perancangan Product Requirement Document (PRD), analisis kebutuhan sistem, hierarki modul, dan diagram blueprint langsung bersama AI Agent.
+                    </p>
+                </div>
+
+                <!-- PROMPT STUDIO BOX (PRD DEDICATED) -->
+                <div
+                    class="mt-4 sm:mt-6 max-w-3xl mx-auto bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 text-left shadow-2xl backdrop-blur-xl"
+                >
+                    <form id="studio-prompt-form" class="space-y-3.5">
+                        <div class="relative">
+                            <textarea
+                                id="studio-prompt-input"
+                                rows="3"
+                                placeholder="Tuliskan konsep atau fitur aplikasi yang ingin dibuatkan dokumen PRD & Blueprint arsitektur... (Contoh: 'Susun dokumen PRD lengkap untuk platform marketplace jasa freelance, termasuk modul otentikasi, alur escrow pembayaran, sistem ulasan, dan struktur database')"
+                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500/60 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none transition-all resize-none font-sans"
+                            ></textarea>
+                        </div>
+
+                        <!-- Prompt controls bar -->
+                        <div class="flex items-center justify-between gap-3 pt-1">
+                            <!-- Left: File Upload & Mode Indicator -->
+                            <div class="flex items-center gap-1.5">
+                                <label
+                                    for="studio-file-upload"
+                                    class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
+                                    title="Upload Dokumen / Catatan Kebutuhan"
+                                >
+                                    <i class="fa-solid fa-paperclip text-xs"></i>
+                                    <input
+                                        id="studio-file-upload"
+                                        type="file"
+                                        class="hidden"
+                                        accept="image/*,.txt,.pdf,.json,.doc,.docx"
+                                    />
+                                </label>
+                                <span
+                                    id="studio-file-indicator"
+                                    class="hidden text-[11px] text-zinc-300 bg-zinc-800 px-2 py-0.5 rounded truncate max-w-[140px]"
+                                ></span>
+
+                                <!-- Static PRD Mode Badge -->
+                                <div class="h-8 px-2.5 rounded-lg bg-amber-950/60 border border-amber-800/40 text-[11px] font-medium text-amber-300 flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-file-lines text-xs text-amber-400 shrink-0"></i>
+                                    <span>PRD Blueprint</span>
+                                </div>
+                            </div>
+
+                            <!-- Right: Voice Icon & Generate Button -->
+                            <div class="flex items-center gap-1.5">
+                                <!-- Voice Dictation Icon -->
+                                <button
+                                    type="button"
+                                    id="btn-studio-voice"
+                                    class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
+                                    title="Input Suara"
+                                >
+                                    <i
+                                        id="icon-studio-voice"
+                                        class="fa-solid fa-microphone text-xs"
+                                    ></i>
+                                </button>
+
+                                <!-- Generate Button -->
+                                <button
+                                    type="submit"
+                                    id="btn-studio-generate"
+                                    class="w-8 h-8 rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors flex items-center justify-center cursor-pointer group shadow-sm border-0 outline-none"
+                                    title="Generate PRD Blueprint"
+                                >
+                                    <i
+                                        id="btn-studio-generate-icon"
+                                        class="fa-solid fa-arrow-up text-xs text-white group-hover:-translate-y-0.5 transition-transform"
+                                    ></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Suggested Prompt Chips -->
+                        <div class="pt-2 border-t border-zinc-800/60 flex flex-wrap items-center gap-1.5 text-[11px]">
+                            <span class="text-zinc-500 text-[10px] uppercase font-semibold mr-1">Rekomendasi:</span>
+                            <button
+                                type="button"
+                                class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
+                                data-prompt="Susun dokumen PRD lengkap platform marketplace jasa freelance, mencakup modul user, booking pesanan, pembayaran escrow, ulasan, dan skema basis data"
+                            >
+                                Marketplace Jasa Freelance
+                            </button>
+                            <button
+                                type="button"
+                                class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
+                                data-prompt="Rancang spesifikasi teknis dan blueprint arsitektur sistem SaaS B2B manajemen tim kerja dengan modul hierarki organisasi, penugasan task, dan log audit"
+                            >
+                                Blueprint SaaS B2B Manajemen
+                            </button>
+                            <button
+                                type="button"
+                                class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
+                                data-prompt="Buatkan dokumen PRD portal edukasi kursus online (LMS) mencakup manajemen silabus belajar, video player, kuis interaktif, dan sertifikat kelulusan"
+                            >
+                                PRD Portal Edukasi LMS
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Mode Switcher Link -->
+                <div class="flex items-center justify-center gap-4 text-xs text-zinc-400 pt-2">
+                    <a href="/studio" class="hover:text-white transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-grid-2 text-[10px]"></i>
+                        <span>Lihat Semua Studio</span>
+                    </a>
+                    <span class="text-zinc-700">•</span>
+                    <a href="/app?mode=prd" class="hover:text-amber-400 transition-colors flex items-center gap-1.5">
+                        <span>Buka Workspace Kosong</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRD HIGHLIGHT SECTION -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
+                    <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-file-contract text-sm"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mb-1.5">Dokumen PRD Komprehensif</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Lengkap dengan latar belakang produk, target pengguna, user stories, acceptance criteria, dan daftar prioritas rilis.
+                    </p>
+                </div>
+
+                <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
+                    <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-diagram-project text-sm"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mb-1.5">Pohon Arsitektur Interaktif</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Visualisasi grafis struktur hierarki modul utama dan sub-fitur yang terorganisir rapi dan dapat dieksplorasi.
+                    </p>
+                </div>
+
+                <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
+                    <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-arrow-right-arrow-left text-sm"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mb-1.5">Konversi Otomatis ke Kode</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Gunakan blueprint dokumen PRD yang telah disusun untuk langsung menghasilkan kode frontend atau fullstack dengan 1 klik.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <Footer />
+    </div>
+
+    <!-- Client Script -->
+    <script is:inline>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("studio-prompt-form");
+            const input = document.getElementById("studio-prompt-input");
+            const fileUpload = document.getElementById("studio-file-upload");
+            const fileIndicator = document.getElementById("studio-file-indicator");
+            const voiceBtn = document.getElementById("btn-studio-voice");
+            const voiceIcon = document.getElementById("icon-studio-voice");
+            const generateIcon = document.getElementById("btn-studio-generate-icon");
+
+            let attachedFileName = "";
+            let isGeneratingPrompt = false;
+            let navTimer = null;
+
+            if (fileUpload && fileIndicator) {
+                fileUpload.addEventListener("change", (e) => {
+                    const file = e.target.files && e.target.files[0];
+                    if (file) {
+                        attachedFileName = file.name;
+                        fileIndicator.textContent = file.name;
+                        fileIndicator.classList.remove("hidden");
+                    } else {
+                        attachedFileName = "";
+                        fileIndicator.classList.add("hidden");
+                    }
+                });
+            }
+
+            if (voiceBtn) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    voiceBtn.style.display = "none";
+                } else {
+                    const recognition = new SpeechRecognition();
+                    recognition.lang = "id-ID";
+                    let isListening = false;
+
+                    recognition.onresult = (ev) => {
+                        const transcript = ev.results[0][0].transcript;
+                        if (input) {
+                            input.value = input.value ? `${input.value} ${transcript}` : transcript;
+                            input.focus();
+                        }
+                    };
+
+                    recognition.onend = () => {
+                        isListening = false;
+                        if (voiceIcon) voiceIcon.className = "fa-solid fa-microphone text-xs";
+                    };
+
+                    voiceBtn.addEventListener("click", () => {
+                        if (isListening) {
+                            recognition.stop();
+                        } else {
+                            try {
+                                recognition.start();
+                                isListening = true;
+                                if (voiceIcon) voiceIcon.className = "fa-solid fa-microphone-slash text-xs text-red-400 animate-pulse";
+                            } catch (err) {
+                                console.warn("Voice error:", err);
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Chip click to populate
+            document.querySelectorAll(".prompt-chip").forEach((chip) => {
+                chip.addEventListener("click", () => {
+                    const prompt = chip.getAttribute("data-prompt");
+                    if (prompt && input) {
+                        input.value = prompt;
+                        input.focus();
+                    }
+                });
+            });
+
+            // Form Submission
+            if (form && input) {
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    if (isGeneratingPrompt) {
+                        if (navTimer) clearTimeout(navTimer);
+                        isGeneratingPrompt = false;
+                        if (generateIcon) generateIcon.className = "fa-solid fa-arrow-up text-xs";
+                        return;
+                    }
+
+                    let promptText = input.value.trim();
+                    if (attachedFileName) {
+                        promptText = `[Lampiran: ${attachedFileName}] ` + promptText;
+                    }
+                    if (!promptText) return;
+
+                    isGeneratingPrompt = true;
+                    if (generateIcon) generateIcon.className = "fa-solid fa-square text-[10px] text-white";
+
+                    navTimer = setTimeout(() => {
+                        window.location.href = `/app?prompt=${encodeURIComponent(promptText)}&mode=prd`;
+                    }, 400);
+                });
+            }
+        });
+
+        // Background Particles
+        (function () {
+            const canvas = document.getElementById("particles-canvas");
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return;
+
+            let particles = [];
+            const count = 45;
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            function init() {
+                resize();
+                particles = Array.from({ length: count }, () => ({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
+                    size: Math.random() * 1.5 + 0.5,
+                    opacity: Math.random() * 0.3 + 0.1,
+                }));
+            }
+
+            function loop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0) p.x = canvas.width;
+                    if (p.x > canvas.width) p.x = 0;
+                    if (p.y < 0) p.y = canvas.height;
+                    if (p.y > canvas.height) p.y = 0;
+
+                    ctx.fillStyle = `rgba(245, 158, 11, ${p.opacity * 0.35})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                requestAnimationFrame(loop);
+            }
+
+            window.addEventListener("resize", resize);
+            document.addEventListener("DOMContentLoaded", () => {
+                init();
+                loop();
+            });
+        })();
+    </script>
+</Layout>

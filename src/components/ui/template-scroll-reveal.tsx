@@ -148,7 +148,7 @@ export function TemplateScrollReveal() {
           </h3>
         </div>
         <a
-          href="/app"
+          href="/studio"
           className="group relative inline-flex items-center justify-center overflow-hidden px-3.5 py-1.5 rounded-lg bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-semibold text-zinc-950 transition-all cursor-pointer select-none"
         >
           <span className="mr-5 transition-opacity duration-500 group-hover:opacity-0">
