@@ -58,7 +58,7 @@ const defaultSlides: ScrollAdventureSlide[] = [
         "Struktur JSON bersih yang siap diekspor ke PostgreSQL/MySQL",
       ],
       ctaText: "Eksplorasi Fullstack",
-      ctaHref: "/app?mode=fullstack",
+      ctaHref: "/studio/fullstack",
     },
     rightContent: null,
   },
@@ -77,7 +77,7 @@ const defaultSlides: ScrollAdventureSlide[] = [
         "Sinkronisasi node PRD ke modul kode generator",
       ],
       ctaText: "Lihat Generator PRD",
-      ctaHref: "/app?mode=prd",
+      ctaHref: "/studio/prd",
     },
   },
   {

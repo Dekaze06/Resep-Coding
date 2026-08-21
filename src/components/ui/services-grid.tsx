@@ -21,7 +21,7 @@ const services: ServiceItem[] = [
     description: "Sistem web lengkap skema data relasional, CRUD, & storage browser.",
     bullets: ["Mock DB JSON", "Logika Bisnis"],
     ctaText: "Coba Fullstack",
-    ctaHref: "/app?mode=fullstack",
+    ctaHref: "/studio/fullstack",
     imageSrc:
       "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&auto=format&fit=crop&q=75",
   },
@@ -31,7 +31,7 @@ const services: ServiceItem[] = [
     description: "Antarmuka modern responsif, animasi halus, & tombol WhatsApp.",
     bullets: ["Kurasi Tipografi", "Integrasi WA"],
     ctaText: "Rancang UI",
-    ctaHref: "/app?mode=frontend",
+    ctaHref: "/studio/frontend",
     imageSrc:
       "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=75",
   },
@@ -41,7 +41,7 @@ const services: ServiceItem[] = [
     description: "Dokumen kebutuhan produk komprehensif & mindmap interaktif.",
     bullets: ["Graph Tree Node", "Sync Kode AI"],
     ctaText: "Buat PRD",
-    ctaHref: "/app?mode=prd",
+    ctaHref: "/studio/prd",
     imageSrc:
       "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=75",
   },
