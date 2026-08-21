@@ -19,6 +19,7 @@ import {
   Workflow,
   QrCode,
   ArrowLeft,
+  Bookmark,
   HelpCircle,
   MessageSquare,
   Paperclip,
@@ -33,6 +34,7 @@ import {
   PanelRightOpen,
   Sparkles,
   ChevronDown,
+  ChevronRight,
   FolderGit2,
   FileText,
   History,
@@ -56,7 +58,8 @@ import {
   Bot,
   MicOff,
   FileUp,
-  Radio
+  Radio,
+  Heart
 } from "lucide-react";
 import CardScrollReveal from "./ui/CardScrollReveal";
 import InteractiveArchitectureTree from "./ui/InteractiveArchitectureTree";
@@ -324,43 +327,218 @@ interface ChatMessage {
 }
 
 export const WEB_TYPE_OPTIONS = [
-  { id: "Toko Online & E-Commerce", label: "Toko Online & E-Commerce", desc: "Katalog produk, keranjang belanja & kasir", icon: ShoppingBag },
-  { id: "Kafe, Restoran & Kuliner", label: "Kafe, Restoran & Kuliner", desc: "Daftar menu, reservasi meja & pesanan", icon: Utensils },
-  { id: "Company Profile & Korporat", label: "Company Profile & Korporat", desc: "Profil perusahaan, layanan & kontak klien", icon: Building2 },
-  { id: "Portofolio & Agensi Kreatif", label: "Portofolio & Agensi Kreatif", desc: "Showcase visual, hasil karya & jasa", icon: Sparkles },
-  { id: "Dashboard Web App / SaaS", label: "Dashboard Web App / SaaS", desc: "Manajemen data, analitik & CRUD lengkap", icon: Database },
-  { id: "Landing Page Produk / Event", label: "Landing Page Produk / Event", desc: "Halaman konversi tinggi & registrasi", icon: Zap },
-  { id: "Portal Berita, Blog & Media", label: "Portal Berita, Blog & Media", desc: "Artikel berita, kategori & pembaca", icon: Newspaper },
-  { id: "Booking & Reservasi Layanan", label: "Booking & Reservasi Layanan", desc: "Kalender reservasi, slot waktu & form", icon: Calendar },
-  { id: "Edukasi & Kursus Online", label: "Edukasi & Kursus Online", desc: "Silabus belajar, materi & modul kelas", icon: GraduationCap },
-  { id: "Kustom (Tulis Sendiri...)", label: "Kustom (Tulis Sendiri...)", desc: "Ketik kategori unik sesuai kebutuhan Anda", icon: Plus }
+  {
+    id: "Toko Online & E-Commerce",
+    label: "Toko Online & E-Commerce",
+    desc: "Katalog produk, keranjang belanja & kasir",
+    icon: ShoppingBag,
+    image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Kafe, Restoran & Kuliner",
+    label: "Kafe, Restoran & Kuliner",
+    desc: "Daftar menu, reservasi meja & pesanan",
+    icon: Utensils,
+    image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Company Profile & Korporat",
+    label: "Company Profile & Korporat",
+    desc: "Profil perusahaan, layanan & kontak klien",
+    icon: Building2,
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Portofolio & Agensi Kreatif",
+    label: "Portofolio & Agensi Kreatif",
+    desc: "Showcase visual, hasil karya & jasa",
+    icon: Sparkles,
+    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Dashboard Web App / SaaS",
+    label: "Dashboard Web App / SaaS",
+    desc: "Manajemen data, analitik & CRUD lengkap",
+    icon: Database,
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Landing Page Produk / Event",
+    label: "Landing Page Produk / Event",
+    desc: "Halaman konversi tinggi & registrasi",
+    icon: Zap,
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Portal Berita, Blog & Media",
+    label: "Portal Berita, Blog & Media",
+    desc: "Artikel berita, kategori & pembaca",
+    icon: Newspaper,
+    image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Booking & Reservasi Layanan",
+    label: "Booking & Reservasi Layanan",
+    desc: "Kalender reservasi, slot waktu & form",
+    icon: Calendar,
+    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Edukasi & Kursus Online",
+    label: "Edukasi & Kursus Online",
+    desc: "Silabus belajar, materi & modul kelas",
+    icon: GraduationCap,
+    image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Kustom (Tulis Sendiri...)",
+    label: "Kustom (Tulis Sendiri...)",
+    desc: "Ketik kategori unik sesuai kebutuhan Anda",
+    icon: Plus,
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&auto=format&fit=crop&q=80"
+  }
 ];
 
 export const THEME_OPTIONS = [
-  { id: "Dark Minimalist & Sleek (Monokrom Modern)", label: "Dark Minimalist & Sleek", desc: "Obsidian & Deep Zinc dengan kontras tajam", dotColor: "bg-zinc-100 ring-zinc-400/40" },
-  { id: "Clean White & Professional (Terang & Bersih)", label: "Clean White & Professional", desc: "Nuansa terang, rapi & minimalis elegan", dotColor: "bg-zinc-300 ring-zinc-500/40" },
-  { id: "Luxury Black & Gold (Mewah & Eksklusif)", label: "Luxury Black & Gold", desc: "Kombinasi hitam pekat & aksen emas mewah", dotColor: "bg-amber-400 ring-amber-500/40" },
-  { id: "Corporate Modern (Biru & Abu-abu Elegan)", label: "Corporate Modern", desc: "Biru terpercaya & tata letak profesional", dotColor: "bg-blue-500 ring-blue-500/40" },
-  { id: "Warm & Cozy (Cokelat Hangat & Estetik)", label: "Warm & Cozy", desc: "Nuansa kopi, kayu hangat & estetik", dotColor: "bg-amber-700 ring-amber-700/40" },
-  { id: "Emerald Modern (Hijau Segar & Modern)", label: "Emerald Modern", desc: "Hijau botani alami & ramah lingkungan", dotColor: "bg-emerald-500 ring-emerald-500/40" },
-  { id: "Kustom (Tulis Sendiri...)", label: "Kustom (Tulis Sendiri...)", desc: "Tentukan palet warna kustom Anda", dotColor: "bg-purple-400 ring-purple-500/40" }
+  {
+    id: "Dark Minimalist & Sleek (Monokrom Modern)",
+    label: "Dark Minimalist & Sleek",
+    desc: "Obsidian & Deep Zinc dengan kontras tajam",
+    dotColor: "bg-zinc-100 ring-zinc-400/40",
+    palette: ["#09090b", "#18181b", "#27272a", "#71717a", "#fafafa"]
+  },
+  {
+    id: "Clean White & Professional (Terang & Bersih)",
+    label: "Clean White & Professional",
+    desc: "Nuansa terang, rapi & minimalis elegan",
+    dotColor: "bg-zinc-300 ring-zinc-500/40",
+    palette: ["#ffffff", "#f4f4f5", "#e4e4e7", "#3b82f6", "#09090b"]
+  },
+  {
+    id: "Luxury Black & Gold (Mewah & Eksklusif)",
+    label: "Luxury Black & Gold",
+    desc: "Kombinasi hitam pekat & aksen emas mewah",
+    dotColor: "bg-amber-400 ring-amber-500/40",
+    palette: ["#050505", "#1c1917", "#b45309", "#f59e0b", "#fef3c7"]
+  },
+  {
+    id: "Corporate Modern (Biru & Abu-abu Elegan)",
+    label: "Corporate Modern",
+    desc: "Biru terpercaya & tata letak profesional",
+    dotColor: "bg-blue-500 ring-blue-500/40",
+    palette: ["#0f172a", "#1e293b", "#2563eb", "#60a5fa", "#f8fafc"]
+  },
+  {
+    id: "Warm & Cozy (Cokelat Hangat & Estetik)",
+    label: "Warm & Cozy",
+    desc: "Nuansa kopi, kayu hangat & estetik",
+    dotColor: "bg-amber-700 ring-amber-700/40",
+    palette: ["#29180f", "#452414", "#9a3412", "#d97706", "#fef3c7"]
+  },
+  {
+    id: "Emerald Modern (Hijau Segar & Modern)",
+    label: "Emerald Modern",
+    desc: "Hijau botani alami & ramah lingkungan",
+    dotColor: "bg-emerald-500 ring-emerald-500/40",
+    palette: ["#022c22", "#064e3b", "#059669", "#34d399", "#ecfdf5"]
+  },
+  {
+    id: "Kustom (Tulis Sendiri...)",
+    label: "Kustom (Tulis Sendiri...)",
+    desc: "Tentukan palet warna kustom Anda",
+    dotColor: "bg-purple-400 ring-purple-500/40",
+    palette: ["#1e1b4b", "#4338ca", "#8b5cf6", "#c084fc", "#f5f3ff"]
+  }
 ];
 
 export const AUDIENCE_OPTIONS = [
-  { id: "Pelanggan Umum & Pembeli Retail", label: "Pelanggan Umum & Pembeli Retail", desc: "Konsumen langsung & pembeli online", icon: Users },
-  { id: "Pengusaha, Bisnis & B2B", label: "Pengusaha, Bisnis & B2B", desc: "Mitra bisnis, distributor & pemilik usaha", icon: Briefcase },
-  { id: "Profesional & Klien Korporat", label: "Profesional & Klien Korporat", desc: "Eksekutif, instansi & klien formal", icon: Building2 },
-  { id: "Anak Muda, Mahasiswa & Kreator", label: "Anak Muda, Mahasiswa & Kreator", desc: "Gen-Z, pegiat konten & kreator digital", icon: Sparkles },
-  { id: "Komunitas & Pecinta Hobi", label: "Komunitas & Pecinta Hobi", desc: "Anggota komunitas & kelompok minat khusus", icon: Globe }
+  {
+    id: "Pelanggan Umum & Pembeli Retail",
+    label: "Pelanggan Umum & Pembeli Retail",
+    desc: "Konsumen langsung & pembeli online",
+    icon: Users,
+    image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Pengusaha, Bisnis & B2B",
+    label: "Pengusaha, Bisnis & B2B",
+    desc: "Mitra bisnis, distributor & pemilik usaha",
+    icon: Briefcase,
+    image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Profesional & Klien Korporat",
+    label: "Profesional & Klien Korporat",
+    desc: "Eksekutif, instansi & klien formal",
+    icon: Building2,
+    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Anak Muda, Mahasiswa & Kreator",
+    label: "Anak Muda, Mahasiswa & Kreator",
+    desc: "Gen-Z, pegiat konten & kreator digital",
+    icon: Sparkles,
+    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Komunitas & Pecinta Hobi",
+    label: "Komunitas & Pecinta Hobi",
+    desc: "Anggota komunitas & kelompok minat khusus",
+    icon: Globe,
+    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Keluarga, Pasien & Edukasi",
+    label: "Keluarga & Edukasi",
+    desc: "Orang tua, pelajar & masyarakat umum",
+    icon: Heart,
+    image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400&auto=format&fit=crop&q=80"
+  }
 ];
 
 export const FEATURE_OPTIONS = [
-  "Panel Admin & CRUD",
-  "Katalog Produk & Filter",
-  "Form Pemesanan / WhatsApp Direct",
-  "Laporan Kas & Ringkasan Keuangan",
-  "Galeri Foto Responsif",
-  "FAQ Interaktif & Testimoni"
+  {
+    id: "Panel Admin & CRUD",
+    label: "Panel Admin & CRUD",
+    desc: "Kelola data, input inventori & dashboard admin",
+    icon: Database,
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Katalog Produk & Filter",
+    label: "Katalog Produk & Filter",
+    desc: "Tampilan produk rapi dengan pencarian & filter",
+    icon: ShoppingBag,
+    image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Form Pemesanan / WhatsApp Direct",
+    label: "Pemesanan via WhatsApp",
+    desc: "Kirim pesanan langsung ke chat WhatsApp",
+    icon: Zap,
+    image: "https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Laporan Kas & Ringkasan Keuangan",
+    label: "Laporan Keuangan",
+    desc: "Grafik pemasukan, rekap laba & arus kas",
+    icon: Sparkles,
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "Galeri Foto Responsif",
+    label: "Galeri Showcase Foto",
+    desc: "Grid visual portfolio resolusi tinggi",
+    icon: Building2,
+    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=400&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "FAQ Interaktif & Testimoni",
+    label: "FAQ & Testimoni Klien",
+    desc: "Accordion tanya jawab dan ulasan pelanggan",
+    icon: Users,
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&auto=format&fit=crop&q=80"
+  }
 ];
 
 export default function SatusiteStudioWorkspace() {
@@ -377,6 +555,7 @@ export default function SatusiteStudioWorkspace() {
   const [detailPrompt, setDetailPrompt] = useState<string>("");
   const [uploadedFiles, setUploadedFiles] = useState<Array<{ name: string; size: string; type: string }>>([]);
   const [isRecordingMic, setIsRecordingMic] = useState<boolean>(false);
+  const [isRecordingStep1Mic, setIsRecordingStep1Mic] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showConfigEditModal, setShowConfigEditModal] = useState<boolean>(false);
   const [projectConfig, setProjectConfig] = useState<ProjectConfig>({
@@ -586,6 +765,54 @@ export default function SatusiteStudioWorkspace() {
     }
   };
 
+  const toggleStep1Mic = () => {
+    if (typeof window === "undefined") return;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Browser Anda belum mendukung Web Speech Recognition. Silakan gunakan Google Chrome atau Microsoft Edge.");
+      return;
+    }
+
+    if (isRecordingStep1Mic) {
+      setIsRecordingStep1Mic(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "id-ID";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        setIsRecordingStep1Mic(true);
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results?.[0]?.[0]?.transcript;
+        if (transcript) {
+          const cleaned = transcript.trim();
+          setProjectConfig(prev => ({ ...prev, webName: cleaned }));
+          setProjectName(cleaned);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.warn("Speech recognition error:", event.error);
+        setIsRecordingStep1Mic(false);
+      };
+
+      recognition.onend = () => {
+        setIsRecordingStep1Mic(false);
+      };
+
+      recognition.start();
+    } catch (err) {
+      console.warn("Speech recognition failed:", err);
+      setIsRecordingStep1Mic(false);
+    }
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -643,15 +870,25 @@ export default function SatusiteStudioWorkspace() {
   };
 
   useEffect(() => {
-    // Auth Guard: Require login before accessing studio
+    // Auth Check: Set authenticated user or fallback to guest preview user
     try {
       const authUser = localStorage.getItem("satusite_auth_user");
-      if (!authUser) {
-        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
-        return;
+      if (authUser) {
+        setCurrentUser(JSON.parse(authUser));
+      } else {
+        setCurrentUser({
+          name: "Tamu (Preview)",
+          email: "guest@satusite.com",
+          role: "free"
+        });
       }
-      setCurrentUser(JSON.parse(authUser));
-    } catch (e) {}
+    } catch (e) {
+      setCurrentUser({
+        name: "Tamu (Preview)",
+        email: "guest@satusite.com",
+        role: "free"
+      });
+    }
 
     try {
       const params = new URLSearchParams(window.location.search);
@@ -725,6 +962,8 @@ export default function SatusiteStudioWorkspace() {
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isGenerating]);
+
+
 
   const handleSendPrompt = async (promptToSend?: string, customName?: string, customId?: string, modeOverride?: "fullstack" | "frontend" | "prd") => {
     const text = (promptToSend || inputPrompt).trim();
@@ -1545,76 +1784,80 @@ export default function SatusiteStudioWorkspace() {
             </button>
           )}
 
-          <button
-            type="button"
-            onClick={() => {
-              if (!isPaidUser) {
-                setUpgradeFeatureName("QA Testing & Verification Suite");
-                setShowUpgradeModal(true);
-              } else {
-                window.location.href = `/testing?id=${projectId}`;
-              }
-            }}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
-            title="Uji Kualitas & Testing Suite"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
-            <span className="hidden sm:inline">Testing</span>
-          </button>
+          {isConfigCompleted && (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isPaidUser) {
+                    setUpgradeFeatureName("QA Testing & Verification Suite");
+                    setShowUpgradeModal(true);
+                  } else {
+                    window.location.href = `/testing?id=${projectId}`;
+                  }
+                }}
+                className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
+                title="Uji Kualitas & Testing Suite"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
+                <span className="hidden sm:inline">Testing</span>
+              </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              if (!isPaidUser) {
-                setUpgradeFeatureName("Sinkronisasi GitHub Repository");
-                setShowUpgradeModal(true);
-              } else {
-                window.location.href = `/github?id=${projectId}`;
-              }
-            }}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
-            title="Push ke GitHub Repository"
-          >
-            <i className="fa-brands fa-github text-sm text-zinc-400"></i>
-            <span className="hidden sm:inline">GitHub</span>
-          </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isPaidUser) {
+                    setUpgradeFeatureName("Sinkronisasi GitHub Repository");
+                    setShowUpgradeModal(true);
+                  } else {
+                    window.location.href = `/github?id=${projectId}`;
+                  }
+                }}
+                className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
+                title="Push ke GitHub Repository"
+              >
+                <i className="fa-brands fa-github text-sm text-zinc-400"></i>
+                <span className="hidden sm:inline">GitHub</span>
+              </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              if (!isPaidUser) {
-                setUpgradeFeatureName("1-Click Cloud Deployment");
-                setShowUpgradeModal(true);
-              } else {
-                window.location.href = `/deploy?id=${projectId}`;
-              }
-            }}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
-            title="Publikasikan ke Vercel/Netlify"
-          >
-            <Rocket className="w-3.5 h-3.5 text-zinc-400" />
-            <span className="hidden sm:inline">Deploy</span>
-          </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isPaidUser) {
+                    setUpgradeFeatureName("1-Click Cloud Deployment");
+                    setShowUpgradeModal(true);
+                  } else {
+                    window.location.href = `/deploy?id=${projectId}`;
+                  }
+                }}
+                className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
+                title="Publikasikan ke Vercel/Netlify"
+              >
+                <Rocket className="w-3.5 h-3.5 text-zinc-400" />
+                <span className="hidden sm:inline">Deploy</span>
+              </button>
 
-          <button
-            onClick={() => {
-              loadSavedProjects();
-              setShowHistoryModal(true);
-            }}
-            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
-            title="Riwayat Chat & Proyek"
-          >
-            <History className="w-3.5 h-3.5 text-zinc-400" />
-            <span className="hidden sm:inline">Riwayat</span>
-          </button>
+              <button
+                onClick={() => {
+                  loadSavedProjects();
+                  setShowHistoryModal(true);
+                }}
+                className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
+                title="Riwayat Chat & Proyek"
+              >
+                <History className="w-3.5 h-3.5 text-zinc-400" />
+                <span className="hidden sm:inline">Riwayat</span>
+              </button>
 
-          <button
-            onClick={() => setShowHelpModal(true)}
-            className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800/60 transition-colors cursor-pointer"
-            title="Panduan Pemakaian"
-          >
-            <HelpCircle className="w-3.5 h-3.5" />
-          </button>
+              <button
+                onClick={() => setShowHelpModal(true)}
+                className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800/60 transition-colors cursor-pointer"
+                title="Panduan Pemakaian"
+              >
+                <HelpCircle className="w-3.5 h-3.5" />
+              </button>
+            </>
+          )}
 
           {hasGenerated && (
             <>
@@ -1678,49 +1921,27 @@ export default function SatusiteStudioWorkspace() {
             </div>
           </div>
 
-          {/* Multi-Step Wizard Progress Indicator */}
-          <div className="w-full max-w-2xl mb-4 px-2 shrink-0">
-            <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400 mb-1.5">
-              <span className="font-semibold text-zinc-300">
-                {onboardingStep === 1 && "Langkah 1 dari 7: Nama Website"}
-                {onboardingStep === 2 && "Langkah 2 dari 7: Kategori Website"}
-                {onboardingStep === 3 && "Langkah 3 dari 7: Tema & Gaya Desain"}
-                {onboardingStep === 4 && "Langkah 4 dari 7: Target Pengunjung"}
-                {onboardingStep === 5 && "Langkah 5 dari 7: Fitur Utama"}
-                {onboardingStep === 6 && "Langkah 6 dari 7: Detail & Chat AI Agent"}
-                {onboardingStep === 7 && "Langkah 7 dari 7: Mode Arsitektur"}
-              </span>
-              <span className="text-zinc-500 font-semibold">{Math.round((onboardingStep / 7) * 100)}% Selesai</span>
-            </div>
-            <div className="w-full h-1.5 bg-zinc-900 border border-zinc-800/80 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-white transition-all duration-300 rounded-full"
-                style={{ width: `${(onboardingStep / 7) * 100}%` }}
-              />
-            </div>
-          </div>
 
           {/* ========================================================================= */}
           {/* STEP 1: NAMA WEBSITE / BRAND                                              */}
           {/* ========================================================================= */}
           {onboardingStep === 1 && (
-            <div key="step-1" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/15 via-indigo-500/10 to-purple-600/15 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-              
-              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-6 backdrop-blur-xl">
-                <div className="text-center space-y-2">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
-                    <FileText className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
-                    Nama Website atau Brand
-                  </h2>
-                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
-                    Ketikkan nama bisnis, brand usaha, atau judul proyek website yang ingin Anda rancang.
-                  </p>
-                </div>
+            <div key="step-1" className="max-w-2xl w-full relative my-auto space-y-4 sm:space-y-5 animate-in fade-in zoom-in-95 duration-200">
+              {/* Minimalist Title & Subtitle OUTSIDE the box */}
+              <div className="text-center space-y-1 sm:space-y-1.5 px-2">
+                <h2 className="text-xl sm:text-2xl font-normal tracking-tight text-zinc-100 font-sans">
+                  Nama Website atau Brand
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-400 font-sans">
+                  Ketikkan nama bisnis atau judul proyek
+                </p>
+              </div>
 
-                <div className="space-y-2">
+              {/* Transparent Minimalist Elegant Input Box with Voice Icon & Next Icon */}
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/10 via-indigo-500/10 to-purple-600/10 rounded-2xl blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+                <div className="relative flex items-center bg-zinc-950/60 hover:bg-zinc-950/80 border border-zinc-800 hover:border-zinc-700 focus-within:border-zinc-600 focus-within:ring-1 focus-within:ring-zinc-600/40 rounded-2xl p-2 sm:p-2.5 transition-all backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
                   <input
                     type="text"
                     autoFocus
@@ -1737,27 +1958,54 @@ export default function SatusiteStudioWorkspace() {
                         setOnboardingStep(2);
                       }
                     }}
-                    placeholder="Contoh: Kopi Nusantara, Klinik Sehat Modern, Toko Bangunan Jaya..."
-                    className="w-full px-4 py-3.5 rounded-2xl bg-zinc-950/90 border border-zinc-800 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-600 transition-all shadow-inner font-sans"
+                    placeholder="Tuliskan nama"
+                    className="w-full bg-transparent px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-zinc-100 placeholder-zinc-500 focus:outline-none font-sans font-normal"
                   />
-                  <p className="text-[11px] text-zinc-500 px-1">Tekan <kbd className="px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px]">Enter</kbd> untuk lanjut ke langkah berikutnya.</p>
+
+                  {/* Action buttons: Voice on left, Next on right */}
+                  <div className="flex items-center gap-1.5 shrink-0 pr-0.5">
+                    {/* Voice Dictation Button */}
+                    <button
+                      type="button"
+                      onClick={toggleStep1Mic}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                        isRecordingStep1Mic
+                          ? "bg-red-500/20 border border-red-500/60 text-red-400 animate-pulse"
+                          : "bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800"
+                      }`}
+                      title={isRecordingStep1Mic ? "Mendengarkan suara... Klik untuk berhenti" : "Input Suara"}
+                    >
+                      {isRecordingStep1Mic ? (
+                        <MicOff className="w-4 h-4 text-red-400" />
+                      ) : (
+                        <Mic className="w-4 h-4" />
+                      )}
+                    </button>
+
+                    {/* Next Button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const finalName = projectConfig.webName.trim() || "Proyek Baru";
+                        setProjectName(finalName);
+                        setOnboardingStep(2);
+                      }}
+                      className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95 group"
+                      title="Lanjut ke Kategori Web"
+                    >
+                      <ArrowRight className="w-4 h-4 text-zinc-950 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  </div>
                 </div>
 
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const finalName = projectConfig.webName.trim() || "Proyek Baru";
-                      setProjectName(finalName);
-                      setOnboardingStep(2);
-                    }}
-                    className="relative group overflow-hidden w-full py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] hover:shadow-[0_15px_35px_-5px_rgba(255,255,255,0.25)] flex items-center justify-center gap-2.5 cursor-pointer active:scale-[0.99]"
-                  >
-                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-black/10 to-transparent transition-transform duration-1000 ease-in-out pointer-events-none" />
-                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Kategori Web</span>
-                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1.5 transition-transform duration-300 shrink-0" />
-                  </button>
-                </div>
+                {isRecordingStep1Mic && (
+                  <div className="flex items-center justify-center pt-2 font-sans">
+                    <span className="text-red-400 text-xs font-medium flex items-center gap-1.5 animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                      Mendengarkan suara...
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -1766,79 +2014,95 @@ export default function SatusiteStudioWorkspace() {
           {/* STEP 2: KATEGORI / JENIS WEB                                              */}
           {/* ========================================================================= */}
           {onboardingStep === 2 && (
-            <div key="step-2" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/15 via-indigo-500/10 to-purple-600/15 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-              
-              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-5 backdrop-blur-xl">
-                <div className="text-center space-y-1.5">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
-                    <Layout className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
-                    Kategori & Jenis Website
-                  </h2>
-                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
-                    Pilih model atau jenis website yang paling sesuai dengan kebutuhan proyek Anda.
-                  </p>
-                </div>
+            <div key="step-2" className="max-w-4xl w-full relative my-auto space-y-3 sm:space-y-4 animate-in fade-in zoom-in-95 duration-200">
+              {/* Minimalist Title & Subtitle OUTSIDE the box */}
+              <div className="text-center space-y-1 sm:space-y-1.5 px-2">
+                <h2 className="text-xl sm:text-2xl font-normal tracking-tight text-zinc-100 font-sans">
+                  Kategori & Jenis Website
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-400 font-sans">
+                  Pilih model atau jenis website yang paling sesuai dengan kebutuhan proyek Anda
+                </p>
+              </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
-                  {WEB_TYPE_OPTIONS.map(opt => {
-                    const IconC = opt.icon;
-                    const isSelected = projectConfig.webType === opt.id;
-                    return (
-                      <button
-                        key={opt.id}
-                        type="button"
-                        onClick={() => setProjectConfig(prev => ({ ...prev, webType: opt.id }))}
-                        className={`p-3 rounded-xl flex items-center justify-between text-left transition-all duration-200 cursor-pointer border ${
-                          isSelected
-                            ? "bg-zinc-800/90 border-zinc-600 text-white shadow-sm"
-                            : "bg-zinc-950/80 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 hover:border-zinc-700"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isSelected ? "bg-blue-600/20 text-blue-400 border border-blue-500/30" : "bg-zinc-900 text-zinc-500 border border-zinc-800"}`}>
-                            <IconC className="w-4 h-4" />
+              {/* Cards Container with 4 columns across and tall container to view 3 rows */}
+              <div className="relative mt-2">
+                <div className="relative space-y-4">
+                  {/* 4 Cards Grid Across, expanded max-h to display 3 rows easily */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-3.5 max-h-[580px] overflow-y-auto pr-1">
+                    {WEB_TYPE_OPTIONS.map(opt => {
+                      const isSelected = projectConfig.webType === opt.id;
+                      return (
+                        <div
+                          key={opt.id}
+                          onClick={() => setProjectConfig(prev => ({ ...prev, webType: opt.id }))}
+                          className={`group/card relative block overflow-hidden rounded-xl border text-left transition-all duration-300 ease-in-out hover:shadow-lg cursor-pointer ${
+                            isSelected
+                              ? "border-white bg-zinc-800/90 ring-2 ring-white/20 shadow-md"
+                              : "border-zinc-800/90 bg-zinc-950/70 hover:border-zinc-700 hover:bg-zinc-900/60"
+                          }`}
+                        >
+                          {/* Image container with aspect ratio */}
+                          <div className="aspect-[4/3] overflow-hidden bg-zinc-900 relative">
+                            <img
+                              src={opt.image}
+                              alt={opt.label}
+                              loading="lazy"
+                              className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover/card:scale-105"
+                            />
+                            {/* Selected Badge */}
+                            {isSelected && (
+                              <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-white text-zinc-950 text-[10px] font-bold shadow-md flex items-center gap-1">
+                                <Check className="w-3 h-3 text-zinc-950" />
+                                <span>Dipilih</span>
+                              </div>
+                            )}
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-semibold truncate text-white">{opt.label}</div>
-                            <div className="text-[10px] text-zinc-500 truncate leading-tight">{opt.desc}</div>
+
+                          {/* Card Content */}
+                          <div className="p-3">
+                            <h3 className="font-semibold text-xs text-white leading-tight truncate font-sans">
+                              {opt.label}
+                            </h3>
+                            <p className="mt-1 text-[11px] text-zinc-400 truncate font-sans">
+                              {opt.desc}
+                            </p>
                           </div>
                         </div>
-                        {isSelected && <Check className="w-4 h-4 text-blue-400 shrink-0 ml-2" />}
-                      </button>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
 
-                {projectConfig.webType === "Kustom (Tulis Sendiri...)" && (
-                  <input
-                    type="text"
-                    value={projectConfig.customWebType || ""}
-                    onChange={(e) => setProjectConfig(prev => ({ ...prev, customWebType: e.target.value }))}
-                    placeholder="Tulis jenis website kustom Anda..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600"
-                  />
-                )}
+                  {projectConfig.webType === "Kustom (Tulis Sendiri...)" && (
+                    <input
+                      type="text"
+                      value={projectConfig.customWebType || ""}
+                      onChange={(e) => setProjectConfig(prev => ({ ...prev, customWebType: e.target.value }))}
+                      placeholder="Tulis jenis website kustom Anda..."
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 font-sans"
+                    />
+                  )}
 
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(1)}
-                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Kembali</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(3)}
-                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
-                  >
-                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Tema Desain</span>
-                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
-                  </button>
+                  {/* Navigation Buttons: Icon Only for Back and Next */}
+                  <div className="flex items-center justify-between pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(1)}
+                      className="w-10 h-10 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                      title="Kembali ke Nama Website"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(3)}
+                      className="w-10 h-10 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 flex items-center justify-center transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95 group"
+                      title="Lanjut ke Tema Desain"
+                    >
+                      <ArrowRight className="w-4 h-4 text-zinc-950 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1848,78 +2112,112 @@ export default function SatusiteStudioWorkspace() {
           {/* STEP 3: TEMA & GAYA DESAIN                                                */}
           {/* ========================================================================= */}
           {onboardingStep === 3 && (
-            <div key="step-3" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/15 via-indigo-500/10 to-purple-600/15 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-              
-              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-5 backdrop-blur-xl">
-                <div className="text-center space-y-1.5">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
-                    <Palette className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
-                    Tema & Gaya Desain Visual
-                  </h2>
-                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
-                    Tentukan palet warna dan estetika tampilan yang sesuai dengan identitas website.
-                  </p>
-                </div>
+            <div key="step-3" className="max-w-4xl w-full relative my-auto space-y-3 sm:space-y-4 animate-in fade-in zoom-in-95 duration-200">
+              {/* Minimalist Title & Subtitle OUTSIDE the box */}
+              <div className="text-center space-y-1 sm:space-y-1.5 px-2">
+                <h2 className="text-xl sm:text-2xl font-normal tracking-tight text-zinc-100 font-sans">
+                  Tema & Gaya Desain
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-400 font-sans">
+                  Tentukan palet warna dan estetika tampilan yang sesuai dengan identitas website
+                </p>
+              </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
-                  {THEME_OPTIONS.map(opt => {
-                    const isSelected = projectConfig.theme === opt.id;
-                    return (
-                      <button
-                        key={opt.id}
-                        type="button"
-                        onClick={() => setProjectConfig(prev => ({ ...prev, theme: opt.id }))}
-                        className={`p-3 rounded-xl flex items-center justify-between text-left transition-all duration-200 cursor-pointer border ${
-                          isSelected
-                            ? "bg-zinc-800/90 border-zinc-600 text-white shadow-sm"
-                            : "bg-zinc-950/80 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 hover:border-zinc-700"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
-                            <span className={`w-3 h-3 rounded-full ${opt.dotColor} ring-2 ring-offset-1 ring-offset-zinc-900`} />
+              {/* Cards Container with 4 columns across and tall container */}
+              <div className="relative mt-2">
+                <div className="relative space-y-4">
+                  {/* 4 Cards Grid Across */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-3.5 max-h-[580px] overflow-y-auto pr-1">
+                    {THEME_OPTIONS.map(opt => {
+                      const isSelected = projectConfig.theme === opt.id;
+                      return (
+                        <div
+                          key={opt.id}
+                          onClick={() => setProjectConfig(prev => ({ ...prev, theme: opt.id }))}
+                          className={`group/card relative block overflow-hidden rounded-xl border text-left transition-all duration-300 ease-in-out hover:shadow-lg cursor-pointer ${
+                            isSelected
+                              ? "border-white bg-zinc-800/90 ring-2 ring-white/20 shadow-md"
+                              : "border-zinc-800/90 bg-zinc-950/70 hover:border-zinc-700 hover:bg-zinc-900/60"
+                          }`}
+                        >
+                          {/* Color Palette Display */}
+                          <div className="aspect-[4/3] overflow-hidden bg-zinc-950 p-2 sm:p-2.5 flex flex-col justify-between relative group-hover/card:brightness-105 transition-all">
+                            {/* Visual Color Palette Stripes */}
+                            <div className="h-full w-full rounded-lg overflow-hidden flex flex-col gap-1">
+                              {/* Main / Primary Large Swatch */}
+                              <div 
+                                className="flex-1 w-full rounded-md transition-transform duration-300 group-hover/card:scale-[1.02] border border-white/10" 
+                                style={{ backgroundColor: opt.palette?.[0] || '#18181b' }}
+                              />
+                              {/* Secondary / Accent Palette Row */}
+                              <div className="flex gap-1 h-5 sm:h-6">
+                                {opt.palette?.slice(1).map((color, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="flex-1 rounded-sm border border-white/5 transition-transform duration-200 group-hover/card:scale-105"
+                                    style={{ backgroundColor: color }}
+                                    title={color}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Selected Badge */}
+                            {isSelected && (
+                              <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-white text-zinc-950 text-[10px] font-bold shadow-md flex items-center gap-1 z-10">
+                                <Check className="w-3 h-3 text-zinc-950" />
+                                <span>Dipilih</span>
+                              </div>
+                            )}
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-semibold truncate text-white">{opt.label}</div>
-                            <div className="text-[10px] text-zinc-500 truncate leading-tight">{opt.desc}</div>
+
+                          {/* Card Content */}
+                          <div className="p-3">
+                            <div className="flex items-center gap-1.5">
+                              <span className={`w-2.5 h-2.5 rounded-full ${opt.dotColor} shrink-0`} />
+                              <h3 className="font-semibold text-xs text-white leading-tight truncate font-sans">
+                                {opt.label}
+                              </h3>
+                            </div>
+                            <p className="mt-1 text-[11px] text-zinc-400 truncate font-sans">
+                              {opt.desc}
+                            </p>
                           </div>
                         </div>
-                        {isSelected && <Check className="w-4 h-4 text-blue-400 shrink-0 ml-2" />}
-                      </button>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
 
-                {projectConfig.theme === "Kustom (Tulis Sendiri...)" && (
-                  <input
-                    type="text"
-                    value={projectConfig.customTheme || ""}
-                    onChange={(e) => setProjectConfig(prev => ({ ...prev, customTheme: e.target.value }))}
-                    placeholder="Tulis tema / palet warna kustom..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600"
-                  />
-                )}
+                  {projectConfig.theme === "Kustom (Tulis Sendiri...)" && (
+                    <input
+                      type="text"
+                      value={projectConfig.customTheme || ""}
+                      onChange={(e) => setProjectConfig(prev => ({ ...prev, customTheme: e.target.value }))}
+                      placeholder="Tulis tema / palet warna kustom..."
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 font-sans"
+                    />
+                  )}
 
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(2)}
-                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Kembali</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(4)}
-                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
-                  >
-                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Target Pengunjung</span>
-                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
-                  </button>
+                  {/* Navigation Buttons: Icon Only for Back and Next */}
+                  <div className="flex items-center justify-between pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(2)}
+                      className="w-10 h-10 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                      title="Kembali ke Kategori Website"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(4)}
+                      className="w-10 h-10 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 flex items-center justify-center transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95 group"
+                      title="Lanjut ke Target Pengunjung"
+                    >
+                      <ArrowRight className="w-4 h-4 text-zinc-950 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1929,69 +2227,85 @@ export default function SatusiteStudioWorkspace() {
           {/* STEP 4: TARGET PENGUNJUNG                                                 */}
           {/* ========================================================================= */}
           {onboardingStep === 4 && (
-            <div key="step-4" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/15 via-indigo-500/10 to-purple-600/15 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-              
-              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-5 backdrop-blur-xl">
-                <div className="text-center space-y-1.5">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
-                    <Users className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
-                    Target Pengunjung & Audiens
-                  </h2>
-                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
-                    Siapa segmen audiens utama yang ingin dijangkau oleh website ini?
-                  </p>
-                </div>
+            <div key="step-4" className="max-w-4xl w-full relative my-auto space-y-3 sm:space-y-4 animate-in fade-in zoom-in-95 duration-200">
+              {/* Minimalist Title & Subtitle OUTSIDE the box */}
+              <div className="text-center space-y-1 sm:space-y-1.5 px-2">
+                <h2 className="text-xl sm:text-2xl font-normal tracking-tight text-zinc-100 font-sans">
+                  Target Pengunjung & Audiens
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-400 font-sans">
+                  Pilih segmen audiens utama yang ingin dijangkau oleh website ini
+                </p>
+              </div>
 
-                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                  {AUDIENCE_OPTIONS.map(opt => {
-                    const IconC = opt.icon;
-                    const isSelected = projectConfig.targetAudience === opt.id;
-                    return (
-                      <button
-                        key={opt.id}
-                        type="button"
-                        onClick={() => setProjectConfig(prev => ({ ...prev, targetAudience: opt.id }))}
-                        className={`w-full p-3.5 rounded-xl flex items-center justify-between text-left transition-all duration-200 cursor-pointer border ${
-                          isSelected
-                            ? "bg-zinc-800/90 border-zinc-600 text-white shadow-sm"
-                            : "bg-zinc-950/80 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 hover:border-zinc-700"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isSelected ? "bg-blue-600/20 text-blue-400 border border-blue-500/30" : "bg-zinc-900 text-zinc-500 border border-zinc-800"}`}>
-                            <IconC className="w-4 h-4" />
+              {/* Cards Container with 4 columns across */}
+              <div className="relative mt-2">
+                <div className="relative space-y-4">
+                  {/* 4 Cards Grid Across */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-3.5 max-h-[580px] overflow-y-auto pr-1">
+                    {AUDIENCE_OPTIONS.map(opt => {
+                      const isSelected = projectConfig.targetAudience === opt.id;
+                      return (
+                        <div
+                          key={opt.id}
+                          onClick={() => setProjectConfig(prev => ({ ...prev, targetAudience: opt.id }))}
+                          className={`group/card relative block overflow-hidden rounded-xl border text-left transition-all duration-300 ease-in-out hover:shadow-lg cursor-pointer ${
+                            isSelected
+                              ? "border-white bg-zinc-800/90 ring-2 ring-white/20 shadow-md"
+                              : "border-zinc-800/90 bg-zinc-950/70 hover:border-zinc-700 hover:bg-zinc-900/60"
+                          }`}
+                        >
+                          {/* Image container with aspect ratio */}
+                          <div className="aspect-[4/3] overflow-hidden bg-zinc-900 relative">
+                            <img
+                              src={opt.image}
+                              alt={opt.label}
+                              loading="lazy"
+                              className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover/card:scale-105"
+                            />
+                            {/* Selected Badge */}
+                            {isSelected && (
+                              <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-white text-zinc-950 text-[10px] font-bold shadow-md flex items-center gap-1">
+                                <Check className="w-3 h-3 text-zinc-950" />
+                                <span>Dipilih</span>
+                              </div>
+                            )}
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-semibold text-white">{opt.label}</div>
-                            <div className="text-[10px] text-zinc-500 leading-tight">{opt.desc}</div>
+
+                          {/* Card Content */}
+                          <div className="p-3">
+                            <h3 className="font-semibold text-xs text-white leading-tight truncate font-sans">
+                              {opt.label}
+                            </h3>
+                            <p className="mt-1 text-[11px] text-zinc-400 truncate font-sans">
+                              {opt.desc}
+                            </p>
                           </div>
                         </div>
-                        {isSelected && <Check className="w-4 h-4 text-blue-400 shrink-0 ml-2" />}
-                      </button>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
 
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(3)}
-                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Kembali</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(5)}
-                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
-                  >
-                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Fitur Utama</span>
-                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
-                  </button>
+                  {/* Navigation Buttons: Icon Only for Back and Next */}
+                  <div className="flex items-center justify-between pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(3)}
+                      className="w-10 h-10 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                      title="Kembali ke Tema Desain"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(5)}
+                      className="w-10 h-10 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 flex items-center justify-center transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95 group"
+                      title="Lanjut ke Fitur Utama"
+                    >
+                      <ArrowRight className="w-4 h-4 text-zinc-950 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2001,71 +2315,92 @@ export default function SatusiteStudioWorkspace() {
           {/* STEP 5: FITUR UTAMA YANG DIINGINKAN                                       */}
           {/* ========================================================================= */}
           {onboardingStep === 5 && (
-            <div key="step-5" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/15 via-indigo-500/10 to-purple-600/15 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-              
-              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-5 backdrop-blur-xl">
-                <div className="text-center space-y-1.5">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
-                    <Sparkles className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
-                    Fitur Utama yang Diinginkan
-                  </h2>
-                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
-                    Pilih satu atau beberapa fitur utama yang ingin diintegrasikan ke website Anda.
-                  </p>
-                </div>
+            <div key="step-5" className="max-w-4xl w-full relative my-auto space-y-3 sm:space-y-4 animate-in fade-in zoom-in-95 duration-200">
+              {/* Minimalist Title & Subtitle OUTSIDE the box */}
+              <div className="text-center space-y-1 sm:space-y-1.5 px-2">
+                <h2 className="text-xl sm:text-2xl font-normal tracking-tight text-zinc-100 font-sans">
+                  Fitur Utama Website
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-400 font-sans">
+                  Pilih satu atau beberapa modul fitur penting yang ingin Anda integrasikan
+                </p>
+              </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
-                  {FEATURE_OPTIONS.map(feat => {
-                    const isSelected = projectConfig.mainFeatures.includes(feat);
-                    return (
-                      <button
-                        key={feat}
-                        type="button"
-                        onClick={() => {
-                          setProjectConfig(prev => ({
-                            ...prev,
-                            mainFeatures: isSelected
-                              ? prev.mainFeatures.filter(f => f !== feat)
-                              : [...prev.mainFeatures, feat]
-                          }));
-                        }}
-                        className={`p-3.5 rounded-xl flex items-center justify-between text-left transition-all duration-200 cursor-pointer border ${
-                          isSelected
-                            ? "bg-zinc-800/90 border-zinc-600 text-white shadow-sm"
-                            : "bg-zinc-950/80 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 hover:border-zinc-700"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <span className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] transition-colors shrink-0 ${isSelected ? "bg-blue-600/20 text-blue-400" : "bg-zinc-900 text-zinc-500"}`}>
-                            {isSelected ? <Check className="w-3 h-3 stroke-[3]" /> : <Plus className="w-3 h-3" />}
-                          </span>
-                          <span className="text-xs font-semibold text-zinc-200 truncate">{feat}</span>
+              {/* Cards Container with 4 columns across */}
+              <div className="relative mt-2">
+                <div className="relative space-y-4">
+                  {/* 4 Cards Grid Across */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-3.5 max-h-[580px] overflow-y-auto pr-1">
+                    {FEATURE_OPTIONS.map(opt => {
+                      const isSelected = projectConfig.mainFeatures.includes(opt.id);
+                      return (
+                        <div
+                          key={opt.id}
+                          onClick={() => {
+                            setProjectConfig(prev => ({
+                              ...prev,
+                              mainFeatures: isSelected
+                                ? prev.mainFeatures.filter(f => f !== opt.id)
+                                : [...prev.mainFeatures, opt.id]
+                            }));
+                          }}
+                          className={`group/card relative block overflow-hidden rounded-xl border text-left transition-all duration-300 ease-in-out hover:shadow-lg cursor-pointer ${
+                            isSelected
+                              ? "border-white bg-zinc-800/90 ring-2 ring-white/20 shadow-md"
+                              : "border-zinc-800/90 bg-zinc-950/70 hover:border-zinc-700 hover:bg-zinc-900/60"
+                          }`}
+                        >
+                          {/* Image container with aspect ratio */}
+                          <div className="aspect-[4/3] overflow-hidden bg-zinc-900 relative">
+                            <img
+                              src={opt.image}
+                              alt={opt.label}
+                              loading="lazy"
+                              className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover/card:scale-105"
+                            />
+                            {/* Selected Badge */}
+                            {isSelected && (
+                              <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-white text-zinc-950 text-[10px] font-bold shadow-md flex items-center gap-1">
+                                <Check className="w-3 h-3 text-zinc-950" />
+                                <span>Aktif</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Card Content */}
+                          <div className="p-3">
+                            <h3 className="font-semibold text-xs text-white leading-tight truncate font-sans">
+                              {opt.label}
+                            </h3>
+                            <p className="mt-1 text-[11px] text-zinc-400 truncate font-sans">
+                              {opt.desc}
+                            </p>
+                          </div>
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
 
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(4)}
-                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Kembali</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(6)}
-                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
-                  >
-                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Deskripsi Detail & Chat</span>
-                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
-                  </button>
+                  {/* Navigation Buttons: Icon Only for Back and Next */}
+                  <div className="flex items-center justify-between pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(4)}
+                      className="w-10 h-10 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                      title="Kembali ke Target Pengunjung"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(6)}
+                      className="w-10 h-10 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 flex items-center justify-center transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95 group"
+                      title="Lanjut ke Deskripsi Detail"
+                    >
+                      <ArrowRight className="w-4 h-4 text-zinc-950 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2075,71 +2410,19 @@ export default function SatusiteStudioWorkspace() {
           {/* STEP 6: DESKRIPSI DETAIL SINGKAT (CHAT AGENT + UPLOAD FILE + MICROPHONE)   */}
           {/* ========================================================================= */}
           {onboardingStep === 6 && (
-            <div key="step-6" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 via-indigo-500/15 to-purple-600/20 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+            <div key="step-6" className="max-w-4xl w-full relative my-auto space-y-3 sm:space-y-4 animate-in fade-in zoom-in-95 duration-200">
+              {/* Minimalist Title & Subtitle OUTSIDE the box */}
+              <div className="text-center space-y-1 sm:space-y-1.5 px-2">
+                <h2 className="text-xl sm:text-2xl font-normal tracking-tight text-zinc-100 font-sans">
+                  Deskripsi & Instruksi Khusus
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-400 font-sans">
+                  Tuliskan detail kebutuhan, gunakan suara, atau lampirkan file referensi
+                </p>
+              </div>
 
-              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-4 backdrop-blur-xl">
-                
-                {/* Header */}
-                <div className="text-center space-y-1.5">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner ring-1 ring-blue-500/20">
-                    <Bot className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
-                    Deskripsi & Instruksi Khusus AI Agent
-                  </h2>
-                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
-                    Tuliskan kebutuhan khusus, menu produk/layanan, atau gunakan suara dan lampirkan dokumen/foto referensi.
-                  </p>
-                </div>
-
-                {/* Quick Inspiration Chips */}
-                <div className="space-y-1.5">
-                  <div className="text-[11px] font-semibold text-zinc-400 flex items-center gap-1.5">
-                    <Sparkles className="w-3 h-3 text-blue-400" />
-                    <span>Inspirasi Cepat (Klik untuk memilih):</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {(() => {
-                      const type = projectConfig.webType;
-                      let suggestions = [
-                        "Katalog 6 produk unggulan dengan foto & checkout WhatsApp",
-                        "Panel admin kasir CRUD untuk kelola inventori & harga",
-                        "Formulir reservasi interaktif & laporan kas keuangan harian"
-                      ];
-                      if (type.includes("Kuliner") || type.includes("Restoran")) {
-                        suggestions = [
-                          "Daftar menu makanan & minuman lengkap dengan harga dan foto",
-                          "Form reservasi meja & order langsung kirim pesan WhatsApp",
-                          "Laporan kasir harian dan ringkasan pemesanan"
-                        ];
-                      } else if (type.includes("Company") || type.includes("Portofolio")) {
-                        suggestions = [
-                          "Hero section persuasif, profil keunggulan, & showcase proyek",
-                          "Testimoni klien, FAQ interaktif, & form kontak terstruktur",
-                          "Integrasi tombol WhatsApp admin & Google Maps lokasi"
-                        ];
-                      } else if (type.includes("Dashboard") || type.includes("SaaS")) {
-                        suggestions = [
-                          "Dashboard metrik grafik penjualan & analitik pengguna",
-                          "Tabel CRUD manajemen data lengkap dengan filter & search",
-                          "Fitur ekspor laporan transaksi ke format CSV & JSON"
-                        ];
-                      }
-                      return suggestions.map((sug, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => setDetailPrompt(prev => prev ? `${prev}. ${sug}` : sug)}
-                          className="px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-900 text-[11px] text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 hover:border-zinc-700 transition-all cursor-pointer text-left truncate max-w-full"
-                        >
-                          + {sug}
-                        </button>
-                      ));
-                    })()}
-                  </div>
-                </div>
-
+              {/* Input box container max-w-2xl centered inside 4xl container */}
+              <div className="max-w-2xl mx-auto w-full space-y-3">
                 {/* Attached Files List Preview */}
                 {uploadedFiles.length > 0 && (
                   <div className="flex flex-wrap gap-2 p-2 rounded-xl bg-zinc-950/90 border border-zinc-800">
@@ -2170,80 +2453,74 @@ export default function SatusiteStudioWorkspace() {
                   className="hidden"
                 />
 
-                {/* Rich Prompt Textarea with Mic & Upload Toolbars */}
-                <div className="relative border border-zinc-800 rounded-2xl bg-zinc-950/90 overflow-hidden focus-within:border-zinc-600 focus-within:ring-1 focus-within:ring-zinc-600 transition-all">
-                  <textarea
-                    autoFocus
-                    rows={4}
-                    value={detailPrompt}
-                    onChange={(e) => setDetailPrompt(e.target.value)}
-                    placeholder={`Contoh: Buatkan website untuk "${projectName || 'bisnis saya'}" dengan 6 menu produk utama, keranjang belanja, form pemesanan langsung WhatsApp, serta panel admin CRUD...`}
-                    className="w-full p-3.5 bg-transparent text-xs sm:text-[13px] text-white placeholder-zinc-500 focus:outline-none resize-none leading-relaxed font-sans"
-                  />
-                  
-                  {/* Toolbar footer inside box */}
-                  <div className="px-3 py-2 bg-zinc-900/60 border-t border-zinc-800/80 flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      {/* Upload File Button */}
+                {/* Minimalist Input Bar with Voice & Next Buttons */}
+                <div className="relative">
+                  <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 sm:p-2.5 rounded-2xl bg-zinc-950/80 border border-zinc-800/90 hover:border-zinc-700 focus-within:border-white/40 focus-within:ring-2 focus-within:ring-white/10 transition-all duration-300 backdrop-blur-xl">
+                    <textarea
+                      autoFocus
+                      rows={3}
+                      value={detailPrompt}
+                      onChange={(e) => setDetailPrompt(e.target.value)}
+                      placeholder="Tuliskan instruksi atau kebutuhan..."
+                      className="flex-1 bg-transparent border-0 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-0 px-2.5 py-1 font-sans resize-none"
+                    />
+
+                    {/* Toolbar inside input box */}
+                    <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-zinc-800/60">
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs border border-zinc-800 flex items-center gap-1.5 transition-colors cursor-pointer"
-                        title="Upload File Referensi / Gambar"
+                        className="w-9 h-9 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 flex items-center justify-center transition-all cursor-pointer border border-zinc-800 hover:scale-105 active:scale-95"
+                        title="Upload File Referensi"
                       >
-                        <Paperclip className="w-3.5 h-3.5 text-zinc-400" />
-                        <span className="text-[11px]">Upload File</span>
+                        <Paperclip className="w-4 h-4" />
                       </button>
 
-                      {/* Mic Button */}
                       <button
                         type="button"
                         onClick={toggleMicRecording}
-                        className={`px-2.5 py-1.5 rounded-lg text-xs border flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                           isRecordingMic
-                            ? "bg-rose-950/80 border-rose-600 text-rose-300 animate-pulse"
-                            : "bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border-zinc-800"
+                            ? "bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse scale-105"
+                            : "bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800 hover:scale-105 active:scale-95"
                         }`}
-                        title={isRecordingMic ? "Hentikan perekaman suara" : "Rekam suara (Voice to Text)"}
+                        title={isRecordingMic ? "Mendengarkan..." : "Input dengan Suara"}
                       >
-                        {isRecordingMic ? (
-                          <>
-                            <Radio className="w-3.5 h-3.5 text-rose-400 animate-ping" />
-                            <span className="text-[11px] font-semibold text-rose-300">Merekam...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Mic className="w-3.5 h-3.5 text-zinc-400" />
-                            <span className="text-[11px]">Gunakan Suara</span>
-                          </>
-                        )}
+                        <Mic className="w-4 h-4" />
                       </button>
                     </div>
-
-                    <div className="text-[10px] text-zinc-500 font-mono">
-                      {detailPrompt.length} karakter
-                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(5)}
-                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Kembali</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(7)}
-                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
-                  >
-                    <span className="relative z-10 font-sans tracking-tight">Lanjut ke Mode Arsitektur</span>
-                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
-                  </button>
+                  {isRecordingMic && (
+                    <div className="flex items-center justify-center pt-2 font-sans">
+                      <span className="text-red-400 text-xs font-medium flex items-center gap-1.5 animate-pulse">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                        Mendengarkan suara...
+                      </span>
+                    </div>
+                  )}
                 </div>
+              </div>
+
+              {/* Navigation Buttons: Icon Only for Back and Next */}
+              <div className="flex items-center justify-between pt-4">
+                <button
+                  type="button"
+                  onClick={() => setOnboardingStep(5)}
+                  className="w-10 h-10 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                  title="Kembali ke Fitur Utama"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setOnboardingStep(7)}
+                  className="w-10 h-10 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 flex items-center justify-center transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95 group"
+                  title="Lanjut ke Mode Arsitektur"
+                >
+                  <ArrowRight className="w-4 h-4 text-zinc-950 group-hover:translate-x-0.5 transition-transform" />
+                </button>
               </div>
             </div>
           )}
@@ -2252,98 +2529,178 @@ export default function SatusiteStudioWorkspace() {
           {/* STEP 7: FULLSTACK / FRONTEND / PRD (FINAL LAUNCH TO CANVAS)                */}
           {/* ========================================================================= */}
           {onboardingStep === 7 && (
-            <div key="step-7" className="max-w-2xl w-full relative group my-auto animate-in fade-in zoom-in-95 duration-200">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/25 via-indigo-500/20 to-purple-600/25 rounded-3xl blur-2xl opacity-90 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-
-              <div className="relative bg-[#0e0e12]/95 border border-zinc-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-5 backdrop-blur-xl">
-                
-                {/* Header */}
-                <div className="text-center space-y-1.5">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner ring-1 ring-blue-500/20">
-                    <Zap className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans">
-                    Pilih Mode Arsitektur Aplikasi
-                  </h2>
-                  <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
-                    Tentukan kedalaman arsitektur dan output kode yang akan diproduksi oleh AI Agent.
-                  </p>
+            <div key="step-7" className="max-w-5xl w-full relative my-auto space-y-5 animate-in fade-in zoom-in-95 duration-200">
+              
+              {/* Top Connected Step Line: 01 --- 02 --- 03 */}
+              <div className="relative max-w-xl mx-auto w-full flex items-center justify-between my-2">
+                <div className="absolute top-1/2 left-4 right-4 h-[1px] bg-zinc-800 -translate-y-1/2 z-0" />
+                <div className={`relative z-10 w-9 h-9 rounded-full bg-zinc-950 border ${genMode === 'prd' ? 'border-orange-500 text-orange-400 ring-2 ring-orange-500/30' : 'border-zinc-800 text-zinc-500'} text-xs font-mono font-bold flex items-center justify-center shadow-md transition-all`}>
+                  01
                 </div>
+                <div className={`relative z-10 w-9 h-9 rounded-full bg-zinc-950 border ${genMode === 'frontend' ? 'border-blue-500 text-blue-400 ring-2 ring-blue-500/30' : 'border-zinc-800 text-zinc-500'} text-xs font-mono font-bold flex items-center justify-center shadow-md transition-all`}>
+                  02
+                </div>
+                <div className={`relative z-10 w-9 h-9 rounded-full bg-zinc-950 border ${genMode === 'fullstack' ? 'border-purple-500 text-purple-400 ring-2 ring-purple-500/30' : 'border-zinc-800 text-zinc-500'} text-xs font-mono font-bold flex items-center justify-center shadow-md transition-all`}>
+                  03
+                </div>
+              </div>
 
-                {/* Mode Options Cards */}
-                <div className="space-y-3">
-                  {[
-                    {
-                      key: "fullstack" as const,
-                      title: "Fullstack Web App",
-                      tag: "Direkomendasikan",
-                      icon: Database,
-                      desc: "Kode fullstack lengkap dengan state management, database in-memory, logika CRUD backend, panel admin, & antarmuka interaktif siap pakai."
-                    },
-                    {
-                      key: "frontend" as const,
-                      title: "Frontend UI Canvas",
-                      tag: "Fokus Visual",
-                      icon: Layout,
-                      desc: "Fokus pada kesempurnaan antarmuka visual (UI/UX), komponen interaktif, animasi section, dan responsivitas mobile-first."
-                    },
-                    {
-                      key: "prd" as const,
-                      title: "Blueprint PRD",
-                      tag: "Dokumen Teknis",
-                      icon: FileText,
-                      desc: "Spesifikasi dokumen teknis lengkap, diagram entitas data, user flow persona, dan arsitektur roadmap produk MVP."
-                    }
-                  ].map(m => {
-                    const IconC = m.icon;
-                    const isSelected = genMode === m.key;
-                    return (
-                      <button
-                        key={m.key}
-                        type="button"
-                        onClick={() => setGenMode(m.key)}
-                        className={`w-full p-4 rounded-2xl flex items-start gap-3.5 text-left transition-all duration-200 cursor-pointer border ${
-                          isSelected
-                            ? "bg-zinc-800/90 border-blue-500/80 ring-1 ring-blue-500/40 text-white shadow-lg"
-                            : "bg-zinc-950/80 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 hover:border-zinc-700"
-                        }`}
-                      >
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${isSelected ? "bg-blue-600/25 text-blue-400 border border-blue-500/40" : "bg-zinc-900 text-zinc-500 border border-zinc-800"}`}>
-                          <IconC className="w-4 h-4" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2 mb-1">
-                            <span className="text-xs sm:text-sm font-bold text-white">{m.title}</span>
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isSelected ? "bg-blue-500/20 text-blue-300 border border-blue-500/30" : "bg-zinc-900 text-zinc-500 border border-zinc-800"}`}>
-                              {m.tag}
-                            </span>
+              {/* Minimalist Title & Subtitle OUTSIDE */}
+              <div className="text-center space-y-1 sm:space-y-1.5 px-2">
+                <h2 className="text-xl sm:text-2xl font-normal tracking-tight text-zinc-100 font-sans">
+                  Pilih Mode Arsitektur Aplikasi
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-400 font-sans">
+                  Tentukan alur kerja dan tingkat kedalaman arsitektur yang akan diproduksi oleh AI Agent
+                </p>
+              </div>
+
+              {/* 3-Column Grid Cards: 1. PRD (Orange) | 2. Frontend (Blue) | 3. Fullstack (Purple) */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+                {[
+                  {
+                    key: "prd" as const,
+                    step: "01",
+                    title: "Blueprint & PRD",
+                    modeTitle: "Dokumen Teknis & Spesifikasi",
+                    tierBadge: "PRO • Coba 1x Gratis",
+                    badgeStyle: "bg-orange-500/15 text-orange-400 border-orange-500/30",
+                    activeCardClass: "bg-orange-950/30 border-orange-500 ring-2 ring-orange-500/30 shadow-[0_0_30px_rgba(249,115,22,0.15)] scale-[1.01]",
+                    activeIconClass: "bg-orange-500/20 border-orange-500/40 text-orange-400",
+                    icon: FileText,
+                    desc: "Dokumen spesifikasi teknis lengkap, diagram entitas data, user flow persona, dan arsitektur roadmap produk MVP.",
+                    bullets: [
+                      "Analisis kebutuhan sistem & user stories",
+                      "Visualisasi pohon hierarki modul arsitektur",
+                      "Dokumen spesifikasi produk siap pakai"
+                    ]
+                  },
+                  {
+                    key: "frontend" as const,
+                    step: "02",
+                    title: "Frontend UI Visual",
+                    modeTitle: "Fokus Visual & Antarmuka",
+                    tierBadge: "PRO • Coba 1x Gratis",
+                    badgeStyle: "bg-blue-500/15 text-blue-400 border-blue-500/30",
+                    activeCardClass: "bg-blue-950/30 border-blue-500 ring-2 ring-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.15)] scale-[1.01]",
+                    activeIconClass: "bg-blue-500/20 border-blue-500/40 text-blue-400",
+                    icon: Layout,
+                    desc: "Fokus pada kesempurnaan antarmuka visual (UI/UX), komponen interaktif, animasi section, & responsivitas mobile-first.",
+                    bullets: [
+                      "Pemilihan palet warna kurasi modern",
+                      "Logika interaktif tombol, form & navigasi",
+                      "Preview langsung di desktop & mobile"
+                    ]
+                  },
+                  {
+                    key: "fullstack" as const,
+                    step: "03",
+                    title: "Fullstack Web App",
+                    modeTitle: "Logika End-to-End & Database",
+                    tierBadge: "MAX • Max Plan",
+                    badgeStyle: "bg-purple-500/15 text-purple-400 border-purple-500/30",
+                    activeCardClass: "bg-purple-950/30 border-purple-500 ring-2 ring-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.15)] scale-[1.01]",
+                    activeIconClass: "bg-purple-500/20 border-purple-500/40 text-purple-400",
+                    icon: Database,
+                    desc: "Kode fullstack lengkap dengan state management, database in-memory, logika CRUD backend, panel admin, & hosting.",
+                    bullets: [
+                      "Kode fullstack dengan state management",
+                      "Penyimpanan data lokal, pencarian & export",
+                      "100% file HTML/CSS/JS mandiri tanpa dependensi"
+                    ]
+                  }
+                ].map((item) => {
+                  const IconComp = item.icon;
+                  const isSelected = genMode === item.key;
+                  return (
+                    <div
+                      key={item.key}
+                      onClick={() => setGenMode(item.key)}
+                      className={`group relative flex flex-col justify-between rounded-2xl sm:rounded-3xl p-5 sm:p-6 border text-left transition-all duration-300 cursor-pointer ${
+                        isSelected
+                          ? item.activeCardClass
+                          : "bg-zinc-950/80 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-900/50"
+                      }`}
+                    >
+                      <div>
+                        {/* Icon Container & Tier Badge */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform ${isSelected ? item.activeIconClass : 'bg-zinc-900 border-zinc-800 text-zinc-400'}`}>
+                            <IconComp className="w-5 h-5" />
                           </div>
-                          <p className="text-[11px] text-zinc-400 leading-relaxed">{m.desc}</p>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border shadow-sm ${item.badgeStyle}`}>
+                            {item.tierBadge}
+                          </span>
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
 
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setOnboardingStep(6)}
-                    className="px-4 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white font-medium text-xs border border-zinc-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Kembali</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleStartBuilding()}
-                    className="relative group overflow-hidden flex-1 py-3.5 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-[13px] transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.15)] hover:shadow-[0_15px_35px_-5px_rgba(255,255,255,0.25)] flex items-center justify-center gap-2.5 cursor-pointer active:scale-[0.99]"
-                  >
-                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-black/10 to-transparent transition-transform duration-1000 ease-in-out pointer-events-none" />
-                    <span className="relative z-10 font-sans tracking-tight">Mulai Bangun & Buka Studio Canvas</span>
-                    <ArrowRight className="w-4 h-4 text-zinc-950 relative z-10 group-hover:translate-x-1.5 transition-transform duration-300 shrink-0" />
-                  </button>
-                </div>
+                        {/* Title & Subtitle */}
+                        <h3 className="text-base sm:text-lg font-bold text-white tracking-tight font-sans mb-1">
+                          {item.title}
+                        </h3>
+                        <p className="text-[11px] font-mono font-medium text-zinc-500 uppercase tracking-wider mb-2">
+                          {item.modeTitle}
+                        </p>
+
+                        {/* Description */}
+                        <p className="text-xs text-zinc-400 leading-relaxed font-sans mb-4">
+                          {item.desc}
+                        </p>
+
+                        {/* Divider */}
+                        <div className="border-t border-zinc-800/80 my-3.5" />
+
+                        {/* Bullet Features */}
+                        <div className="space-y-2.5">
+                          {item.bullets.map((bullet, bIdx) => (
+                            <div key={bIdx} className="flex items-start gap-2.5 text-xs text-zinc-300 font-sans">
+                              <span className="w-2 h-2 rounded-full bg-zinc-500 shrink-0 mt-1" />
+                              <span className="leading-snug text-zinc-300">{bullet}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Selected Badge Indicator at bottom of card */}
+                      <div className="mt-5 pt-3 border-t border-zinc-800/40 flex items-center justify-between">
+                        <span className="text-[11px] font-mono font-semibold text-zinc-500">
+                          MODE {item.step}
+                        </span>
+                        {isSelected && (
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-md flex items-center gap-1 border ${item.badgeStyle}`}>
+                            <Check className="w-3 h-3" />
+                            <span>Aktif</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Navigation Buttons: Icon Only Back and Launch Button at bottom */}
+              <div className="flex items-center justify-between pt-4">
+                <button
+                  type="button"
+                  onClick={() => setOnboardingStep(6)}
+                  className="w-10 h-10 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                  title="Kembali ke Deskripsi Detail"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleStartBuilding()}
+                  className="group/cta relative inline-flex items-center justify-center overflow-hidden rounded-xl border border-zinc-200/80 bg-white hover:bg-zinc-100 text-zinc-950 text-xs sm:text-sm font-bold shadow-md transition-all duration-300 cursor-pointer select-none px-5 py-2.5 h-10 sm:h-11"
+                  title="Studio Canvas"
+                >
+                  <span className="mr-7 text-zinc-950 font-bold transition-opacity duration-500 group-hover/cta:opacity-0">
+                    Studio Canvas
+                  </span>
+                  <span className="absolute right-1 top-1 bottom-1 rounded-lg z-10 grid w-7 place-items-center bg-zinc-950/10 group-hover/cta:bg-zinc-950/20 text-zinc-950 transition-all duration-500 group-hover/cta:w-[calc(100%-0.5rem)] group-active/cta:scale-95">
+                    <ChevronRight size={16} strokeWidth={2.5} aria-hidden="true" />
+                  </span>
+                </button>
               </div>
             </div>
           )}

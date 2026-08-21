@@ -64,21 +64,16 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                 <GenerativeArtScene client:only="react" color="#f59e0b" />
             </div>
 
-            <div class="relative z-10 max-w-4xl mx-auto w-full space-y-6 sm:space-y-7">
+            <div class="relative z-10 max-w-4xl mx-auto w-full space-y-4 sm:space-y-6">
                 
-                <!-- Mode Badge & Title -->
-                <div class="space-y-3">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950/70 border border-amber-800/50 text-[11px] font-medium text-amber-300 shadow-sm">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                        <span>STUDIO KHUSUS PRD & ARSITEKTUR SISTEM</span>
-                    </div>
-
-                    <h1 class="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white font-sans leading-tight">
-                        Susun Dokumen Spesifikasi & Blueprint Arsitektur
+                <!-- Title with Smooth Blur Fade Up Rotation -->
+                <div class="space-y-2 flex items-center justify-center min-h-[44px] sm:min-h-[52px]">
+                    <h1
+                        id="prd-animated-title"
+                        class="text-xl sm:text-2xl md:text-3xl font-normal tracking-tight text-zinc-100 font-sans leading-tight animate-title-in transition-all"
+                    >
+                        Dokumen Spesifikasi & Blueprint
                     </h1>
-                    <p class="text-xs sm:text-sm text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-                        Fokus penuh pada perancangan Product Requirement Document (PRD), analisis kebutuhan sistem, hierarki modul, dan diagram blueprint langsung bersama AI Agent.
-                    </p>
                 </div>
 
                 <!-- PROMPT STUDIO BOX (PRD DEDICATED) -->
@@ -90,7 +85,7 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                             <textarea
                                 id="studio-prompt-input"
                                 rows="3"
-                                placeholder="Tuliskan konsep atau fitur aplikasi yang ingin dibuatkan dokumen PRD & Blueprint arsitektur... (Contoh: 'Susun dokumen PRD lengkap untuk platform marketplace jasa freelance, termasuk modul otentikasi, alur escrow pembayaran, sistem ulasan, dan struktur database')"
+                                placeholder="Tuliskan konsep atau fitur aplikasi..."
                                 class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500/60 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none transition-all resize-none font-sans"
                             ></textarea>
                         </div>
@@ -117,10 +112,10 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                     class="hidden text-[11px] text-zinc-300 bg-zinc-800 px-2 py-0.5 rounded truncate max-w-[140px]"
                                 ></span>
 
-                                <!-- Static PRD Mode Badge -->
-                                <div class="h-8 px-2.5 rounded-lg bg-amber-950/60 border border-amber-800/40 text-[11px] font-medium text-amber-300 flex items-center gap-1.5 shadow-sm">
-                                    <i class="fa-solid fa-file-lines text-xs text-amber-400 shrink-0"></i>
-                                    <span>PRD Blueprint</span>
+                                <!-- Static PRD Mode Badge with White Text -->
+                                <div class="h-8 px-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-white flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-file-lines text-xs text-zinc-300 shrink-0"></i>
+                                    <span class="text-white font-medium">PRD Blueprint</span>
                                 </div>
                             </div>
 
@@ -153,46 +148,7 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                 </button>
                             </div>
                         </div>
-
-                        <!-- Suggested Prompt Chips -->
-                        <div class="pt-2 border-t border-zinc-800/60 flex flex-wrap items-center gap-1.5 text-[11px]">
-                            <span class="text-zinc-500 text-[10px] uppercase font-semibold mr-1">Rekomendasi:</span>
-                            <button
-                                type="button"
-                                class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
-                                data-prompt="Susun dokumen PRD lengkap platform marketplace jasa freelance, mencakup modul user, booking pesanan, pembayaran escrow, ulasan, dan skema basis data"
-                            >
-                                Marketplace Jasa Freelance
-                            </button>
-                            <button
-                                type="button"
-                                class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
-                                data-prompt="Rancang spesifikasi teknis dan blueprint arsitektur sistem SaaS B2B manajemen tim kerja dengan modul hierarki organisasi, penugasan task, dan log audit"
-                            >
-                                Blueprint SaaS B2B Manajemen
-                            </button>
-                            <button
-                                type="button"
-                                class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
-                                data-prompt="Buatkan dokumen PRD portal edukasi kursus online (LMS) mencakup manajemen silabus belajar, video player, kuis interaktif, dan sertifikat kelulusan"
-                            >
-                                PRD Portal Edukasi LMS
-                            </button>
-                        </div>
                     </form>
-                </div>
-
-                <!-- Mode Switcher Link -->
-                <div class="flex items-center justify-center gap-4 text-xs text-zinc-400 pt-2">
-                    <a href="/studio" class="hover:text-white transition-colors flex items-center gap-1.5">
-                        <i class="fa-solid fa-grid-2 text-[10px]"></i>
-                        <span>Lihat Semua Studio</span>
-                    </a>
-                    <span class="text-zinc-700">•</span>
-                    <a href="/app?mode=prd" class="hover:text-amber-400 transition-colors flex items-center gap-1.5">
-                        <span>Buka Workspace Kosong</span>
-                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                    </a>
                 </div>
             </div>
         </section>
@@ -300,16 +256,27 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                 }
             }
 
-            // Chip click to populate
-            document.querySelectorAll(".prompt-chip").forEach((chip) => {
-                chip.addEventListener("click", () => {
-                    const prompt = chip.getAttribute("data-prompt");
-                    if (prompt && input) {
-                        input.value = prompt;
-                        input.focus();
-                    }
-                });
-            });
+            // Smooth Blur Fade Up Rotating Titles
+            const titles = [
+                "Dokumen Spesifikasi & Blueprint",
+                "Analisis Kebutuhan & User Stories",
+                "Pohon Hierarki Modul Sistem",
+                "Arsitektur Skema Database & MVP"
+            ];
+            let currentTitleIdx = 0;
+            const titleEl = document.getElementById("prd-animated-title");
+            if (titleEl) {
+                setInterval(() => {
+                    titleEl.classList.remove("animate-title-in");
+                    titleEl.classList.add("animate-title-out");
+                    setTimeout(() => {
+                        currentTitleIdx = (currentTitleIdx + 1) % titles.length;
+                        titleEl.textContent = titles[currentTitleIdx];
+                        titleEl.classList.remove("animate-title-out");
+                        titleEl.classList.add("animate-title-in");
+                    }, 400);
+                }, 3500);
+            }
 
             // Form Submission
             if (form && input) {
@@ -394,4 +361,37 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
             });
         })();
     </script>
+
+    <style>
+        @keyframes titleFadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+                filter: blur(6px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+        @keyframes titleFadeOutUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-12px);
+                filter: blur(6px);
+            }
+        }
+        .animate-title-in {
+            animation: titleFadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-title-out {
+            animation: titleFadeOutUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
 </Layout>

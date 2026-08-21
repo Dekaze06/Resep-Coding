@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Plus,
   Trash2,
@@ -9,18 +9,12 @@ import {
   X,
   ZoomIn,
   ZoomOut,
-  Maximize2,
-  Minimize2,
   Sparkles,
   Layers,
-  ChevronRight,
   Workflow,
-  Download,
   Copy,
-  RefreshCw,
-  FolderGit2,
-  ArrowRight,
-  Sliders
+  RotateCcw,
+  GitBranch
 } from 'lucide-react';
 
 export interface SubFeatureItem {
@@ -31,8 +25,8 @@ export interface SubFeatureItem {
 export interface FeatureNode {
   id: string;
   title: string;
-  badge?: string; // e.g. "Rilis 1", "Rilis 2"
-  status?: string; // e.g. "Direncanakan", "Selesai"
+  badge?: string;
+  status?: string;
   icon?: string;
   subFeatures: SubFeatureItem[];
 }
@@ -191,20 +185,17 @@ export function InteractiveArchitectureTree({
     featureToSubs: { x1: number; y1: number; x2: number; y2: number; id: string }[];
   }>({ rootToFeatures: [], featureToSubs: [] });
 
-  // Update structure if projectName changes
   useEffect(() => {
     if (projectName && projectName !== "Proyek Baru" && structure.rootName === DEFAULT_SCHOOL_STRUCTURE.rootName) {
       setStructure(prev => ({ ...prev, rootName: projectName }));
     }
   }, [projectName]);
 
-  // Recalculate dynamic connector cables
   const updateConnectors = () => {
     if (!containerRef.current || !rootNodeRef.current) return;
     const containerRect = containerRef.current.getBoundingClientRect();
     const rootRect = rootNodeRef.current.getBoundingClientRect();
 
-    // Coordinates are relative to unscaled tree wrapper
     const rootX = (rootRect.right - containerRect.left) / zoom;
     const rootY = (rootRect.top + rootRect.height / 2 - containerRect.top) / zoom;
 
@@ -220,27 +211,14 @@ export function InteractiveArchitectureTree({
         const featOutX = (featRect.right - containerRect.left) / zoom;
         const featOutY = featInY;
 
-        r2f.push({
-          x1: rootX,
-          y1: rootY,
-          x2: featInX,
-          y2: featInY,
-          id: feat.id
-        });
+        r2f.push({ x1: rootX, y1: rootY, x2: featInX, y2: featInY, id: feat.id });
 
         const subEl = subFeatureRefs.current[feat.id];
         if (subEl) {
           const subRect = subEl.getBoundingClientRect();
           const subInX = (subRect.left - containerRect.left) / zoom;
           const subInY = (subRect.top + subRect.height / 2 - containerRect.top) / zoom;
-
-          f2s.push({
-            x1: featOutX,
-            y1: featOutY,
-            x2: subInX,
-            y2: subInY,
-            id: feat.id
-          });
+          f2s.push({ x1: featOutX, y1: featOutY, x2: subInX, y2: subInY, id: feat.id });
         }
       }
     });
@@ -257,15 +235,11 @@ export function InteractiveArchitectureTree({
     };
   }, [structure, zoom]);
 
-  // Sync upward when structure changes
   const handleStructureUpdate = (newStructure: ArchitectureStructure) => {
     setStructure(newStructure);
-    if (onStructureChange) {
-      onStructureChange(newStructure);
-    }
+    if (onStructureChange) onStructureChange(newStructure);
   };
 
-  // Node editing handlers
   const handleStartEditNode = (feat: FeatureNode) => {
     setEditingNodeId(feat.id);
     setEditTitle(feat.title);
@@ -274,47 +248,29 @@ export function InteractiveArchitectureTree({
 
   const handleSaveNode = (featId: string) => {
     const newFeatures = structure.features.map(f => {
-      if (f.id === featId) {
-        return {
-          ...f,
-          title: editTitle.trim() || f.title,
-          badge: editBadge.trim() || f.badge
-        };
-      }
+      if (f.id === featId) return { ...f, title: editTitle.trim() || f.title, badge: editBadge.trim() || f.badge };
       return f;
     });
-    const updated = { ...structure, features: newFeatures };
-    handleStructureUpdate(updated);
+    handleStructureUpdate({ ...structure, features: newFeatures });
     setEditingNodeId(null);
   };
 
   const handleDeleteNode = (featId: string) => {
-    const newFeatures = structure.features.filter(f => f.id !== featId);
-    const updated = { ...structure, features: newFeatures };
-    handleStructureUpdate(updated);
+    handleStructureUpdate({ ...structure, features: structure.features.filter(f => f.id !== featId) });
   };
 
   const handleAddFeatureNode = () => {
     const newId = `feat_${Date.now()}`;
     const newFeat: FeatureNode = {
-      id: newId,
-      title: "Fitur Baru",
-      badge: "Rilis 1",
-      status: "Direncanakan",
-      icon: "fa-solid fa-cube",
-      subFeatures: [
-        { id: `sub_${newId}_1`, name: "Sub Komponen 1" },
-        { id: `sub_${newId}_2`, name: "Sub Komponen 2" }
-      ]
+      id: newId, title: "Fitur Baru", badge: "Rilis 1", status: "Direncanakan",
+      subFeatures: [{ id: `sub_${newId}_1`, name: "Sub Komponen 1" }, { id: `sub_${newId}_2`, name: "Sub Komponen 2" }]
     };
-    const updated = { ...structure, features: [...structure.features, newFeat] };
-    handleStructureUpdate(updated);
+    handleStructureUpdate({ ...structure, features: [...structure.features, newFeat] });
     setEditingNodeId(newId);
     setEditTitle("Fitur Baru");
     setEditBadge("Rilis 1");
   };
 
-  // Sub feature editing
   const handleStartEditSub = (subId: string, currentName: string) => {
     setEditingSubId(subId);
     setEditSubText(currentName);
@@ -323,58 +279,35 @@ export function InteractiveArchitectureTree({
   const handleSaveSub = (featId: string, subId: string) => {
     const newFeatures = structure.features.map(f => {
       if (f.id === featId) {
-        return {
-          ...f,
-          subFeatures: f.subFeatures.map(s => {
-            if (s.id === subId) {
-              return { ...s, name: editSubText.trim() || s.name };
-            }
-            return s;
-          })
-        };
+        return { ...f, subFeatures: f.subFeatures.map(s => s.id === subId ? { ...s, name: editSubText.trim() || s.name } : s) };
       }
       return f;
     });
-    const updated = { ...structure, features: newFeatures };
-    handleStructureUpdate(updated);
+    handleStructureUpdate({ ...structure, features: newFeatures });
     setEditingSubId(null);
   };
 
   const handleAddSubFeature = (featId: string) => {
     const newSubId = `sub_${featId}_${Date.now()}`;
     const newFeatures = structure.features.map(f => {
-      if (f.id === featId) {
-        return {
-          ...f,
-          subFeatures: [...f.subFeatures, { id: newSubId, name: "Sub Fitur Baru" }]
-        };
-      }
+      if (f.id === featId) return { ...f, subFeatures: [...f.subFeatures, { id: newSubId, name: "Sub Fitur Baru" }] };
       return f;
     });
-    const updated = { ...structure, features: newFeatures };
-    handleStructureUpdate(updated);
+    handleStructureUpdate({ ...structure, features: newFeatures });
     setEditingSubId(newSubId);
     setEditSubText("Sub Fitur Baru");
   };
 
   const handleDeleteSubFeature = (featId: string, subId: string) => {
     const newFeatures = structure.features.map(f => {
-      if (f.id === featId) {
-        return {
-          ...f,
-          subFeatures: f.subFeatures.filter(s => s.id !== subId)
-        };
-      }
+      if (f.id === featId) return { ...f, subFeatures: f.subFeatures.filter(s => s.id !== subId) };
       return f;
     });
-    const updated = { ...structure, features: newFeatures };
-    handleStructureUpdate(updated);
+    handleStructureUpdate({ ...structure, features: newFeatures });
   };
 
-  // Save Root
   const handleSaveRoot = () => {
-    const updated = { ...structure, rootName: editRootText.trim() || structure.rootName };
-    handleStructureUpdate(updated);
+    handleStructureUpdate({ ...structure, rootName: editRootText.trim() || structure.rootName });
     setEditingRoot(false);
   };
 
@@ -388,85 +321,69 @@ export function InteractiveArchitectureTree({
     let summary = `Struktur Arsitektur & Fitur Aplikasi "${structure.rootName}":\n`;
     structure.features.forEach((f, idx) => {
       summary += `${idx + 1}. [${f.badge || 'Modul'}] ${f.title} (${f.status || 'Direncanakan'})\n`;
-      f.subFeatures.forEach((s) => {
-        summary += `   - ${s.name}\n`;
-      });
+      f.subFeatures.forEach((s) => { summary += `   - ${s.name}\n`; });
     });
     summary += `\nInstruksi: Bangun dan sesuaikan kode aplikasi sesuai spesifikasi dan struktur komponen di atas.`;
+    if (onApplyToPrompt) onApplyToPrompt(summary);
+  };
 
-    if (onApplyToPrompt) {
-      onApplyToPrompt(summary);
-    }
+  // Badge color mapping based on release phase
+  const getBadgeStyle = (badge?: string) => {
+    if (!badge) return "bg-zinc-800/60 text-zinc-500 border-zinc-700/50";
+    if (badge.includes("1")) return "bg-emerald-500/8 text-emerald-400/90 border-emerald-500/20";
+    if (badge.includes("2")) return "bg-blue-500/8 text-blue-400/90 border-blue-500/20";
+    if (badge.includes("3")) return "bg-amber-500/8 text-amber-400/90 border-amber-500/20";
+    if (badge.includes("4")) return "bg-purple-500/8 text-purple-400/90 border-purple-500/20";
+    return "bg-zinc-800/60 text-zinc-400 border-zinc-700/50";
   };
 
   return (
-    <div className="relative w-full h-full flex flex-col bg-[#0b0e14] text-zinc-200 overflow-hidden font-sans select-none">
-      {/* Top Floating Toolbar */}
-      <div className="absolute top-4 left-4 right-4 z-30 flex items-center justify-between pointer-events-none">
-        {/* Left: Info & Status */}
-        <div className="flex items-center gap-2 pointer-events-auto bg-zinc-950/85 backdrop-blur-md border border-zinc-800/80 px-3 py-1.5 rounded-xl shadow-xl">
-          <Workflow className="w-3.5 h-3.5 text-blue-400" />
-          <span className="text-xs font-semibold text-white tracking-tight">Diagram Struktur & Alur Fitur</span>
-          <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 text-[10px] font-mono">
-            {structure.features.length} Modul
+    <div className="relative w-full h-full flex flex-col bg-[#08090d] text-zinc-200 overflow-hidden select-none" style={{ fontFamily: "'Geist', 'Inter', system-ui, sans-serif" }}>
+      {/* ── Floating Toolbar ── */}
+      <div className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between pointer-events-none">
+        {/* Left: Title & Count */}
+        <div className="flex items-center gap-2.5 pointer-events-auto bg-zinc-950/80 backdrop-blur-xl border border-zinc-800/60 px-3.5 py-2 rounded-xl">
+          <Workflow className="w-3.5 h-3.5 text-zinc-500" />
+          <span className="text-[11px] font-medium text-zinc-300 tracking-tight">Diagram Struktur & Alur Fitur</span>
+          <span className="px-1.5 py-0.5 rounded-md bg-zinc-800/80 text-zinc-500 text-[10px] font-mono tabular-nums border border-zinc-700/40">
+            {structure.features.length}
           </span>
         </div>
 
-        {/* Right: Actions (Add Feature, Zoom, Copy, Send to AI) */}
-        <div className="flex items-center gap-1.5 pointer-events-auto bg-zinc-950/85 backdrop-blur-md border border-zinc-800/80 p-1 rounded-xl shadow-xl">
+        {/* Right: Actions */}
+        <div className="flex items-center gap-0.5 pointer-events-auto bg-zinc-950/80 backdrop-blur-xl border border-zinc-800/60 p-1 rounded-xl">
           <button
             onClick={handleAddFeatureNode}
-            className="px-2.5 py-1 rounded-lg bg-blue-600/30 hover:bg-blue-600 border border-blue-500/40 text-blue-300 hover:text-white text-xs font-medium flex items-center gap-1 transition-all cursor-pointer"
+            className="px-2.5 py-1.5 rounded-lg hover:bg-zinc-800/80 text-zinc-400 hover:text-zinc-200 text-[11px] font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
             title="Tambah Modul Fitur Baru"
           >
             <Plus className="w-3 h-3" />
             <span className="hidden sm:inline">Tambah Fitur</span>
           </button>
 
-          <div className="h-4 w-px bg-zinc-800 mx-1"></div>
+          <div className="h-4 w-px bg-zinc-800/60 mx-0.5"></div>
 
-          <button
-            onClick={() => setZoom(z => Math.max(0.6, z - 0.1))}
-            className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
-            title="Zoom Out"
-          >
+          <button onClick={() => setZoom(z => Math.max(0.5, z - 0.1))} className="p-1.5 rounded-lg hover:bg-zinc-800/80 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer" title="Zoom Out">
             <ZoomOut className="w-3.5 h-3.5" />
           </button>
-
-          <span className="text-[10px] font-mono text-zinc-500 w-9 text-center">
-            {Math.round(zoom * 100)}%
-          </span>
-
-          <button
-            onClick={() => setZoom(z => Math.min(1.4, z + 0.1))}
-            className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
-            title="Zoom In"
-          >
+          <span className="text-[10px] font-mono text-zinc-600 w-8 text-center tabular-nums">{Math.round(zoom * 100)}%</span>
+          <button onClick={() => setZoom(z => Math.min(1.4, z + 0.1))} className="p-1.5 rounded-lg hover:bg-zinc-800/80 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer" title="Zoom In">
             <ZoomIn className="w-3.5 h-3.5" />
           </button>
-
-          <button
-            onClick={() => setZoom(0.9)}
-            className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
-            title="Reset Ukuran"
-          >
-            <RefreshCw className="w-3 h-3" />
+          <button onClick={() => setZoom(0.9)} className="p-1.5 rounded-lg hover:bg-zinc-800/80 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer" title="Reset Zoom">
+            <RotateCcw className="w-3 h-3" />
           </button>
 
-          <div className="h-4 w-px bg-zinc-800 mx-1"></div>
+          <div className="h-4 w-px bg-zinc-800/60 mx-0.5"></div>
 
-          <button
-            onClick={handleCopyJSON}
-            className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
-            title={copiedNotification ? "Tersalin!" : "Salin JSON Struktur"}
-          >
+          <button onClick={handleCopyJSON} className="p-1.5 rounded-lg hover:bg-zinc-800/80 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer" title={copiedNotification ? "Tersalin!" : "Salin JSON Struktur"}>
             {copiedNotification ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
 
           {onApplyToPrompt && (
             <button
               onClick={handleSendToAI}
-              className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md shadow-blue-500/20 cursor-pointer"
+              className="ml-0.5 px-2.5 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-zinc-700/50 text-zinc-300 hover:text-white text-[11px] font-medium flex items-center gap-1.5 transition-all cursor-pointer"
               title="Perbarui Kode AI Sesuai Struktur Ini"
             >
               <Sparkles className="w-3 h-3" />
@@ -476,101 +393,92 @@ export function InteractiveArchitectureTree({
         </div>
       </div>
 
-      {/* Main Interactive Canvas Area */}
+      {/* ── Canvas ── */}
       <div
         ref={containerRef}
-        className="flex-1 w-full h-full overflow-auto relative p-12 flex items-center justify-center cursor-grab active:cursor-grabbing"
+        className="flex-1 w-full h-full overflow-auto relative p-12 flex items-center justify-center"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0)`,
-          backgroundSize: '24px 24px'
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0)`,
+          backgroundSize: '28px 28px'
         }}
       >
-        {/* Scaled Tree Container */}
         <div
-          className="relative flex items-center gap-16 md:gap-24 transition-transform duration-100 ease-out origin-center py-20 min-w-[900px]"
+          className="relative flex items-center gap-16 md:gap-24 transition-transform duration-150 ease-out origin-center py-20 min-w-[900px]"
           style={{ transform: `scale(${zoom})` }}
         >
-          {/* Dynamic SVG Curves */}
+          {/* ── SVG Connectors ── */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible">
-            {/* Root to Features */}
+            <defs>
+              <linearGradient id="connectorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="rgba(161,161,170,0.25)" />
+                <stop offset="100%" stopColor="rgba(161,161,170,0.08)" />
+              </linearGradient>
+            </defs>
+
             {svgLines.rootToFeatures.map(line => {
-              const dx = (line.x2 - line.x1) * 0.55;
+              const dx = (line.x2 - line.x1) * 0.5;
               const path = `M ${line.x1} ${line.y1} C ${line.x1 + dx} ${line.y1}, ${line.x2 - dx} ${line.y2}, ${line.x2} ${line.y2}`;
               return (
                 <g key={`r2f_${line.id}`}>
-                  <path
-                    d={path}
-                    fill="none"
-                    stroke="rgba(255,255,255,0.22)"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx={line.x1} cy={line.y1} r="3" fill="#60a5fa" />
-                  <circle cx={line.x2} cy={line.y2} r="3" fill="#93c5fd" />
+                  <path d={path} fill="none" stroke="url(#connectorGrad)" strokeWidth="1" strokeLinecap="round" />
+                  <circle cx={line.x1} cy={line.y1} r="2" fill="#52525b" />
+                  <circle cx={line.x2} cy={line.y2} r="2" fill="#3f3f46" />
                 </g>
               );
             })}
 
-            {/* Features to SubFeatures */}
             {svgLines.featureToSubs.map(line => {
-              const dx = (line.x2 - line.x1) * 0.55;
+              const dx = (line.x2 - line.x1) * 0.5;
               const path = `M ${line.x1} ${line.y1} C ${line.x1 + dx} ${line.y1}, ${line.x2 - dx} ${line.y2}, ${line.x2} ${line.y2}`;
               return (
                 <g key={`f2s_${line.id}`}>
-                  <path
-                    d={path}
-                    fill="none"
-                    stroke="rgba(255,255,255,0.18)"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx={line.x1} cy={line.y1} r="2.5" fill="#93c5fd" />
-                  <circle cx={line.x2} cy={line.y2} r="2.5" fill="#60a5fa" />
+                  <path d={path} fill="none" stroke="rgba(161,161,170,0.12)" strokeWidth="1" strokeLinecap="round" />
+                  <circle cx={line.x1} cy={line.y1} r="1.5" fill="#3f3f46" />
+                  <circle cx={line.x2} cy={line.y2} r="1.5" fill="#27272a" />
                 </g>
               );
             })}
           </svg>
 
-          {/* COLUMN 1: ROOT NODE */}
+          {/* ── COLUMN 1: ROOT NODE ── */}
           <div className="z-10 flex flex-col items-center">
             <div
               ref={rootNodeRef}
-              className="group relative w-60 p-4 rounded-2xl bg-gradient-to-b from-zinc-900/95 to-zinc-950/95 border border-zinc-700/80 shadow-[0_10px_30px_rgba(0,0,0,0.8)] flex items-center justify-between gap-3 hover:border-blue-500/80 transition-all duration-200"
+              className="group relative w-56 p-4 rounded-2xl bg-zinc-950/90 border border-zinc-800/70 hover:border-zinc-700/90 transition-all duration-200"
+              style={{ boxShadow: '0 0 0 1px rgba(39,39,42,0.3), 0 8px 32px rgba(0,0,0,0.5)' }}
             >
-              {/* Connector dot on the right */}
-              <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-blue-500 border-2 border-zinc-950 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+              {/* Right connector */}
+              <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-zinc-700 border border-zinc-600" />
 
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
-                  <FolderGit2 className="w-4 h-4" />
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800/80 flex items-center justify-center shrink-0">
+                  <GitBranch className="w-3.5 h-3.5 text-zinc-500" />
                 </div>
 
                 <div className="min-w-0 flex-1">
                   {editingRoot ? (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       <input
                         type="text"
                         value={editRootText}
                         onChange={(e) => setEditRootText(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSaveRoot()}
-                        className="w-full bg-zinc-800 border border-blue-500 text-white text-xs px-2 py-0.5 rounded focus:outline-none"
+                        className="w-full bg-zinc-900 border border-zinc-700 text-white text-[11px] px-2 py-1 rounded-lg focus:outline-none focus:border-zinc-600"
                         autoFocus
                       />
-                      <button onClick={handleSaveRoot} className="text-emerald-400 p-0.5"><Check className="w-3.5 h-3.5" /></button>
+                      <button onClick={handleSaveRoot} className="text-emerald-400 p-0.5 hover:bg-zinc-800 rounded cursor-pointer"><Check className="w-3.5 h-3.5" /></button>
+                      <button onClick={() => setEditingRoot(false)} className="text-zinc-500 p-0.5 hover:bg-zinc-800 rounded cursor-pointer"><X className="w-3.5 h-3.5" /></button>
                     </div>
                   ) : (
                     <div
-                      onClick={() => {
-                        setEditingRoot(true);
-                        setEditRootText(structure.rootName);
-                      }}
+                      onClick={() => { setEditingRoot(true); setEditRootText(structure.rootName); }}
                       className="cursor-pointer group/title"
                       title="Klik untuk mengubah nama proyek"
                     >
-                      <h3 className="text-xs font-bold text-white tracking-tight truncate group-hover/title:text-blue-400 transition-colors">
+                      <h3 className="text-[12px] font-semibold text-zinc-200 tracking-tight truncate group-hover/title:text-white transition-colors">
                         {structure.rootName}
                       </h3>
-                      <p className="text-[10px] text-zinc-500 mt-0.5 font-medium">
+                      <p className="text-[10px] text-zinc-600 mt-0.5 font-medium">
                         {structure.rootStatus || "Perencanaan"}
                       </p>
                     </div>
@@ -580,30 +488,29 @@ export function InteractiveArchitectureTree({
             </div>
           </div>
 
-          {/* COLUMN 2 & 3: MAIN FEATURES & SUB FEATURES */}
-          <div className="z-10 flex flex-col gap-6">
-            {structure.features.map((feat) => {
+          {/* ── COLUMN 2 & 3: FEATURES & SUB-FEATURES ── */}
+          <div className="z-10 flex flex-col gap-5">
+            {structure.features.map((feat, featureIndex) => {
               const isEditing = editingNodeId === feat.id;
 
               return (
-                <div key={feat.id} className="flex items-center gap-12 md:gap-16">
-                  {/* LEVEL 1: MAIN FEATURE CARD */}
+                <div key={feat.id} className="flex items-center gap-10 md:gap-14">
+                  {/* FEATURE CARD */}
                   <div
                     ref={(el) => { featureRefs.current[feat.id] = el; }}
-                    className="group relative w-64 p-3.5 rounded-2xl bg-[#131722]/90 border border-zinc-800/80 hover:border-blue-500/60 shadow-[0_8px_24px_rgba(0,0,0,0.6)] flex items-center justify-between gap-3 transition-all duration-200"
+                    className="group relative w-56 p-3 rounded-xl bg-zinc-950/80 border border-zinc-800/60 hover:border-zinc-700/80 transition-all duration-200"
+                    style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}
                   >
-                    {/* Left Connector Dot */}
-                    <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-blue-400 border-2 border-zinc-950 shadow-[0_0_6px_rgba(96,165,250,0.8)]" />
-                    {/* Right Connector Dot */}
-                    <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-blue-400 border-2 border-zinc-950 shadow-[0_0_6px_rgba(96,165,250,0.8)]" />
+                    {/* Connector dots */}
+                    <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-zinc-700 border border-zinc-600" />
+                    <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-zinc-700 border border-zinc-600" />
 
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      {/* Icon */}
-                      <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-300 shrink-0">
-                        {feat.icon ? <i className={`${feat.icon} text-xs`} /> : <Layers className="w-3.5 h-3.5" />}
-                      </div>
+                    <div className="flex items-start gap-2.5 min-w-0">
+                      {/* Index number */}
+                      <span className="text-[10px] font-mono text-zinc-700 mt-0.5 shrink-0 tabular-nums w-4 text-right">
+                        {String(featureIndex + 1).padStart(2, '0')}
+                      </span>
 
-                      {/* Content */}
                       <div className="min-w-0 flex-1">
                         {isEditing ? (
                           <div className="space-y-1.5">
@@ -612,131 +519,95 @@ export function InteractiveArchitectureTree({
                               value={editTitle}
                               onChange={(e) => setEditTitle(e.target.value)}
                               placeholder="Nama Fitur..."
-                              className="w-full bg-zinc-950 border border-blue-500 text-white text-xs px-2 py-1 rounded focus:outline-none"
+                              className="w-full bg-zinc-900 border border-zinc-700 text-white text-[11px] px-2 py-1 rounded-lg focus:outline-none focus:border-zinc-600"
                               autoFocus
                             />
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1.5">
                               <input
                                 type="text"
                                 value={editBadge}
                                 onChange={(e) => setEditBadge(e.target.value)}
-                                placeholder="Badge (Rilis 1)..."
-                                className="w-20 bg-zinc-950 border border-zinc-700 text-zinc-300 text-[10px] px-1.5 py-0.5 rounded focus:outline-none"
+                                placeholder="Rilis 1"
+                                className="w-16 bg-zinc-900 border border-zinc-700 text-zinc-400 text-[10px] px-1.5 py-0.5 rounded-md focus:outline-none"
                               />
-                              <button
-                                onClick={() => handleSaveNode(feat.id)}
-                                className="px-2 py-0.5 bg-blue-600 text-white text-[10px] rounded hover:bg-blue-500 font-bold"
-                              >
-                                Simpan
-                              </button>
-                              <button
-                                onClick={() => setEditingNodeId(null)}
-                                className="p-0.5 text-zinc-500 hover:text-white"
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
+                              <button onClick={() => handleSaveNode(feat.id)} className="px-2 py-0.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] rounded-md font-medium transition-colors cursor-pointer">Simpan</button>
+                              <button onClick={() => setEditingNodeId(null)} className="p-0.5 text-zinc-500 hover:text-white cursor-pointer"><X className="w-3 h-3" /></button>
                             </div>
                           </div>
                         ) : (
                           <div>
-                            <div className="flex items-center justify-between gap-1">
+                            <div className="flex items-center justify-between gap-2">
                               <h4
                                 onClick={() => handleStartEditNode(feat)}
-                                className="text-xs font-bold text-white tracking-tight truncate cursor-pointer hover:text-blue-400 transition-colors"
+                                className="text-[11px] font-semibold text-zinc-300 tracking-tight truncate cursor-pointer hover:text-white transition-colors"
                                 title="Klik untuk edit nama fitur"
                               >
                                 {feat.title}
                               </h4>
                               {feat.badge && (
-                                <span className="px-1.5 py-0.2 rounded bg-rose-500/10 text-rose-400 text-[9px] font-semibold tracking-wide shrink-0">
+                                <span className={`px-1.5 py-px rounded-md text-[9px] font-medium tracking-wide shrink-0 border ${getBadgeStyle(feat.badge)}`}>
                                   {feat.badge}
                                 </span>
                               )}
                             </div>
                             <div className="flex items-center gap-1.5 mt-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-500" />
-                              <span className="text-[10px] text-zinc-400 font-medium">
-                                {feat.status || "Direncanakan"}
-                              </span>
+                              <span className="w-1 h-1 rounded-full bg-zinc-700" />
+                              <span className="text-[10px] text-zinc-600 font-normal">{feat.status || "Direncanakan"}</span>
                             </div>
                           </div>
                         )}
                       </div>
                     </div>
 
-                    {/* Node Hover Actions */}
+                    {/* Hover Actions */}
                     {!isEditing && (
-                      <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity">
-                        <button
-                          onClick={() => handleStartEditNode(feat)}
-                          className="p-1 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded transition-colors"
-                          title="Edit Modul"
-                        >
-                          <Edit2 className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteNode(feat.id)}
-                          className="p-1 text-zinc-500 hover:text-red-400 hover:bg-zinc-800 rounded transition-colors"
-                          title="Hapus Modul"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
+                      <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 flex items-center gap-0.5 bg-zinc-900 border border-zinc-800/80 rounded-lg p-0.5 transition-opacity shadow-lg">
+                        <button onClick={() => handleStartEditNode(feat)} className="p-1 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 rounded-md transition-colors cursor-pointer" title="Edit"><Edit2 className="w-2.5 h-2.5" /></button>
+                        <button onClick={() => handleDeleteNode(feat.id)} className="p-1 text-zinc-500 hover:text-red-400 hover:bg-zinc-800 rounded-md transition-colors cursor-pointer" title="Hapus"><Trash2 className="w-2.5 h-2.5" /></button>
                       </div>
                     )}
                   </div>
 
-                  {/* LEVEL 2: SUB FEATURES CARD */}
+                  {/* SUB-FEATURES PANEL */}
                   <div
                     ref={(el) => { subFeatureRefs.current[feat.id] = el; }}
-                    className="relative w-64 p-3 rounded-2xl bg-[#10141f]/90 border border-zinc-800/80 shadow-[0_6px_20px_rgba(0,0,0,0.5)] flex flex-col justify-between"
+                    className="relative w-56 rounded-xl bg-zinc-950/60 border border-zinc-800/40 overflow-hidden"
+                    style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
                   >
-                    {/* Left Connector Dot */}
-                    <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-blue-400 border-2 border-zinc-950 shadow-[0_0_6px_rgba(96,165,250,0.8)]" />
+                    {/* Left connector */}
+                    <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-zinc-800 border border-zinc-700" />
 
-                    {/* Sub Feature Header */}
-                    <div className="flex items-center justify-between pb-2 border-b border-zinc-800/50 mb-2">
-                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-400 tracking-wider uppercase">
-                        <Layers className="w-3 h-3 text-zinc-500" />
-                        <span>SUB FITUR</span>
-                      </div>
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-3 py-2 border-b border-zinc-800/40">
+                      <span className="text-[9px] font-medium text-zinc-600 tracking-widest uppercase">Sub Fitur</span>
                       <button
                         onClick={() => handleAddSubFeature(feat.id)}
-                        className="text-[10px] text-blue-400 hover:text-blue-300 font-medium flex items-center gap-0.5"
+                        className="text-[10px] text-zinc-500 hover:text-zinc-300 font-medium flex items-center gap-0.5 transition-colors cursor-pointer"
                         title="Tambah Sub Fitur"
                       >
-                        <Plus className="w-3 h-3" />
+                        <Plus className="w-2.5 h-2.5" />
                         <span>Tambah</span>
                       </button>
                     </div>
 
-                    {/* Sub Feature Items List */}
-                    <div className="space-y-1.5">
+                    {/* Items */}
+                    <div className="px-3 py-2 space-y-px">
                       {feat.subFeatures.map((sub) => {
                         const isEditingSub = editingSubId === sub.id;
 
                         if (isEditingSub) {
                           return (
-                            <div key={sub.id} className="flex items-center gap-1">
+                            <div key={sub.id} className="flex items-center gap-1 py-1">
                               <input
                                 type="text"
                                 value={editSubText}
                                 onChange={(e) => setEditSubText(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSaveSub(feat.id, sub.id)}
-                                className="w-full bg-zinc-950 border border-blue-500 text-white text-[11px] px-2 py-0.5 rounded focus:outline-none"
+                                className="w-full bg-zinc-900 border border-zinc-700 text-white text-[10px] px-2 py-0.5 rounded-md focus:outline-none"
                                 autoFocus
                               />
-                              <button
-                                onClick={() => handleSaveSub(feat.id, sub.id)}
-                                className="text-emerald-400 p-0.5"
-                              >
-                                <Check className="w-3 h-3" />
-                              </button>
-                              <button
-                                onClick={() => setEditingSubId(null)}
-                                className="text-zinc-500 hover:text-white p-0.5"
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
+                              <button onClick={() => handleSaveSub(feat.id, sub.id)} className="text-emerald-400 p-0.5 cursor-pointer"><Check className="w-3 h-3" /></button>
+                              <button onClick={() => setEditingSubId(null)} className="text-zinc-500 p-0.5 cursor-pointer"><X className="w-3 h-3" /></button>
                             </div>
                           );
                         }
@@ -744,45 +615,26 @@ export function InteractiveArchitectureTree({
                         return (
                           <div
                             key={sub.id}
-                            className="group/sub flex items-center justify-between p-1.5 rounded-lg bg-zinc-950/60 border border-zinc-800/50 hover:border-zinc-700/80 transition-colors"
+                            className="group/sub flex items-center justify-between py-1.5 px-1 -mx-1 rounded-md hover:bg-white/[0.02] transition-colors"
                           >
                             <div
                               onClick={() => handleStartEditSub(sub.id, sub.name)}
                               className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer"
-                              title="Klik untuk mengubah teks sub fitur"
+                              title="Klik untuk mengubah"
                             >
-                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 group-hover/sub:bg-blue-400 shrink-0 transition-colors" />
-                              <span className="text-[11px] font-medium text-zinc-300 group-hover/sub:text-white truncate transition-colors">
+                              <span className="w-1 h-1 rounded-full bg-zinc-700 group-hover/sub:bg-zinc-500 shrink-0 transition-colors" />
+                              <span className="text-[10px] text-zinc-500 group-hover/sub:text-zinc-300 truncate transition-colors">
                                 {sub.name}
                               </span>
                             </div>
 
-                            <div className="opacity-0 group-hover/sub:opacity-100 flex items-center gap-1 transition-opacity">
-                              <button
-                                onClick={() => handleStartEditSub(sub.id, sub.name)}
-                                className="p-0.5 text-zinc-500 hover:text-white"
-                                title="Edit Teks"
-                              >
-                                <Edit2 className="w-2.5 h-2.5" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteSubFeature(feat.id, sub.id)}
-                                className="p-0.5 text-zinc-500 hover:text-red-400"
-                                title="Hapus Sub Fitur"
-                              >
-                                <Trash2 className="w-2.5 h-2.5" />
-                              </button>
+                            <div className="opacity-0 group-hover/sub:opacity-100 flex items-center transition-opacity">
+                              <button onClick={() => handleStartEditSub(sub.id, sub.name)} className="p-0.5 text-zinc-600 hover:text-zinc-300 cursor-pointer" title="Edit"><Edit2 className="w-2.5 h-2.5" /></button>
+                              <button onClick={() => handleDeleteSubFeature(feat.id, sub.id)} className="p-0.5 text-zinc-600 hover:text-red-400 cursor-pointer" title="Hapus"><Trash2 className="w-2.5 h-2.5" /></button>
                             </div>
                           </div>
                         );
                       })}
-                    </div>
-
-                    {/* Sub Feature Footer */}
-                    <div className="pt-2 text-right">
-                      <span className="text-[9px] text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer">
-                        Lihat semua ({feat.subFeatures.length}) &gt;
-                      </span>
                     </div>
                   </div>
                 </div>

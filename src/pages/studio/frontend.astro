@@ -17,17 +17,17 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
             class="absolute inset-0 w-full h-full opacity-20"></canvas>
     </div>
 
-    <!-- Subtle Ambient Purple & Blue Gradients -->
+    <!-- Subtle Ambient Blue & Sky Gradients -->
     <div
-        class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none z-0"
+        class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none z-0"
     >
     </div>
     <div
-        class="fixed bottom-[-10%] right-[15%] w-[500px] h-[400px] bg-blue-500/10 rounded-full blur-[140px] pointer-events-none z-0"
+        class="fixed bottom-[-10%] right-[15%] w-[500px] h-[400px] bg-sky-500/10 rounded-full blur-[140px] pointer-events-none z-0"
     >
     </div>
 
-    <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-purple-500/30 selection:text-purple-200">
+    <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-blue-500/30 selection:text-blue-200">
         <!-- SLEEK COMPACT STUDIO TOPBAR (HEADER HIDDEN) -->
         <header class="h-14 sm:h-16 px-4 sm:px-8 border-b border-zinc-800/60 bg-zinc-950/70 backdrop-blur-xl flex items-center justify-between z-20 shrink-0">
             <div class="flex items-center gap-3">
@@ -61,24 +61,19 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
         >
             <!-- 3D GENERATIVE MATTER SPHERE (Behind AI Chat Agent Box) -->
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] sm:w-[480px] sm:h-[480px] md:w-[720px] md:h-[720px] pointer-events-none z-0 flex items-center justify-center overflow-hidden opacity-60">
-                <GenerativeArtScene client:only="react" color="#8b5cf6" />
+                <GenerativeArtScene client:only="react" color="#3b82f6" />
             </div>
 
-            <div class="relative z-10 max-w-4xl mx-auto w-full space-y-6 sm:space-y-7">
+            <div class="relative z-10 max-w-4xl mx-auto w-full space-y-4 sm:space-y-6">
                 
-                <!-- Mode Badge & Title -->
-                <div class="space-y-3">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950/70 border border-purple-800/50 text-[11px] font-medium text-purple-300 shadow-sm">
-                        <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
-                        <span>STUDIO KHUSUS FRONTEND & UI/UX</span>
-                    </div>
-
-                    <h1 class="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white font-sans leading-tight">
-                        Rancang Antarmuka Visual & Animasi Modern
+                <!-- Title with Smooth Blur Fade Up Rotation -->
+                <div class="space-y-2 flex items-center justify-center min-h-[44px] sm:min-h-[52px]">
+                    <h1
+                        id="frontend-animated-title"
+                        class="text-xl sm:text-2xl md:text-3xl font-normal tracking-tight text-zinc-100 font-sans leading-tight animate-title-in transition-all"
+                    >
+                        Studio Frontend UI/UX
                     </h1>
-                    <p class="text-xs sm:text-sm text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-                        Fokus penuh pada kesempurnaan desain visual, micro-interactions, layout adaptif multi-perangkat, dan styling modern langsung bersama AI Agent.
-                    </p>
                 </div>
 
                 <!-- PROMPT STUDIO BOX (FRONTEND DEDICATED) -->
@@ -90,8 +85,8 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                             <textarea
                                 id="studio-prompt-input"
                                 rows="3"
-                                placeholder="Tuliskan ide desain antarmuka visual yang ingin dibuat... (Contoh: 'Buat landing page kafe modern bernuansa dark minimalist dengan hero section 3D, daftar menu interaktif, galeri foto grid, dan form kontak WhatsApp')"
-                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-purple-500/60 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none transition-all resize-none font-sans"
+                                placeholder="Tuliskan konsep antarmuka atau desain UI/UX..."
+                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-blue-500/60 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none transition-all resize-none font-sans"
                             ></textarea>
                         </div>
 
@@ -102,7 +97,7 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                 <label
                                     for="studio-file-upload"
                                     class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
-                                    title="Upload Dokumen / Referensi Desain"
+                                    title="Upload Referensi Desain"
                                 >
                                     <i class="fa-solid fa-paperclip text-xs"></i>
                                     <input
@@ -117,10 +112,10 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                     class="hidden text-[11px] text-zinc-300 bg-zinc-800 px-2 py-0.5 rounded truncate max-w-[140px]"
                                 ></span>
 
-                                <!-- Static Frontend Mode Badge -->
-                                <div class="h-8 px-2.5 rounded-lg bg-purple-950/60 border border-purple-800/40 text-[11px] font-medium text-purple-300 flex items-center gap-1.5 shadow-sm">
-                                    <i class="fa-solid fa-table-columns text-xs text-purple-400 shrink-0"></i>
-                                    <span>Frontend UI/UX</span>
+                                <!-- Static Frontend Mode Badge with White Text -->
+                                <div class="h-8 px-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-white flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-code text-xs text-zinc-300 shrink-0"></i>
+                                    <span class="text-white font-medium">Frontend UI/UX</span>
                                 </div>
                             </div>
 
@@ -143,8 +138,8 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                 <button
                                     type="submit"
                                     id="btn-studio-generate"
-                                    class="w-8 h-8 rounded-lg bg-purple-600 hover:bg-purple-500 text-white transition-colors flex items-center justify-center cursor-pointer group shadow-sm border-0 outline-none"
-                                    title="Generate Frontend"
+                                    class="w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors flex items-center justify-center cursor-pointer group shadow-sm border-0 outline-none"
+                                    title="Generate Frontend UI"
                                 >
                                     <i
                                         id="btn-studio-generate-icon"
@@ -153,46 +148,7 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                 </button>
                             </div>
                         </div>
-
-                        <!-- Suggested Prompt Chips -->
-                        <div class="pt-2 border-t border-zinc-800/60 flex flex-wrap items-center gap-1.5 text-[11px]">
-                            <span class="text-zinc-500 text-[10px] uppercase font-semibold mr-1">Rekomendasi:</span>
-                            <button
-                                type="button"
-                                class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
-                                data-prompt="Buatkan landing page agensi kreatif dark minimalist dengan portfolio grid, client slider, dan tombol CTA WhatsApp"
-                            >
-                                Landing Page Agensi Kreatif
-                            </button>
-                            <button
-                                type="button"
-                                class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
-                                data-prompt="Buatkan website profil kafe & restoran modern dengan menu responsif, galeri foto, reservasi meja, dan peta lokasi"
-                            >
-                                Kafe & Kuliner Modern
-                            </button>
-                            <button
-                                type="button"
-                                class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
-                                data-prompt="Buatkan antarmuka dashboard analitik UI modern dengan visualisasi kartu statistik, sidebar navigasi, dan filter tanggal"
-                            >
-                                Dashboard UI Minimalist
-                            </button>
-                        </div>
                     </form>
-                </div>
-
-                <!-- Mode Switcher Link -->
-                <div class="flex items-center justify-center gap-4 text-xs text-zinc-400 pt-2">
-                    <a href="/studio" class="hover:text-white transition-colors flex items-center gap-1.5">
-                        <i class="fa-solid fa-grid-2 text-[10px]"></i>
-                        <span>Lihat Semua Studio</span>
-                    </a>
-                    <span class="text-zinc-700">•</span>
-                    <a href="/app?mode=frontend" class="hover:text-purple-400 transition-colors flex items-center gap-1.5">
-                        <span>Buka Workspace Kosong</span>
-                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                    </a>
                 </div>
             </div>
         </section>
@@ -201,7 +157,7 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
         <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                 <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
-                    <div class="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/40 text-purple-400 flex items-center justify-center mb-3">
+                    <div class="w-9 h-9 rounded-xl bg-blue-950/60 border border-blue-800/40 text-blue-400 flex items-center justify-center mb-3">
                         <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
                     </div>
                     <h3 class="text-sm font-bold text-white mb-1.5">Tipografi & Desain Geist</h3>
@@ -211,22 +167,22 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                 </div>
 
                 <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
-                    <div class="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/40 text-purple-400 flex items-center justify-center mb-3">
+                    <div class="w-9 h-9 rounded-xl bg-blue-950/60 border border-blue-800/40 text-blue-400 flex items-center justify-center mb-3">
                         <i class="fa-solid fa-mobile-screen-button text-sm"></i>
                     </div>
-                    <h3 class="text-sm font-bold text-white mb-1.5">100% Responsif & Adaptif</h3>
+                    <h3 class="text-sm font-bold text-white mb-1.5">100% Responsif Multi-Device</h3>
                     <p class="text-xs text-zinc-400 leading-relaxed">
-                        Pratinjau langsung untuk layar desktop, tablet, dan smartphone dengan transisi mulus.
+                        Optimasi tampilan sempurna pada Desktop, Tablet, dan Mobile dengan breakpoint tailwind rapi.
                     </p>
                 </div>
 
                 <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
-                    <div class="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/40 text-purple-400 flex items-center justify-center mb-3">
+                    <div class="w-9 h-9 rounded-xl bg-blue-950/60 border border-blue-800/40 text-blue-400 flex items-center justify-center mb-3">
                         <i class="fa-solid fa-code text-sm"></i>
                     </div>
-                    <h3 class="text-sm font-bold text-white mb-1.5">HTML & CSS Murni</h3>
+                    <h3 class="text-sm font-bold text-white mb-1.5">Komponen React & Lucide</h3>
                     <p class="text-xs text-zinc-400 leading-relaxed">
-                        Menghasilkan kode bersih, modular, cepat dimuat, dan siap diekspor ke berbagai platform.
+                        Arsitektur modular berbasis komponen modern, ikon minimalis, dan transisi micro-interaction halus.
                     </p>
                 </div>
             </div>
@@ -300,16 +256,27 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                 }
             }
 
-            // Chip click to populate
-            document.querySelectorAll(".prompt-chip").forEach((chip) => {
-                chip.addEventListener("click", () => {
-                    const prompt = chip.getAttribute("data-prompt");
-                    if (prompt && input) {
-                        input.value = prompt;
-                        input.focus();
-                    }
-                });
-            });
+            // Smooth Blur Fade Up Rotating Titles
+            const titles = [
+                "Studio Frontend UI/UX",
+                "Komponen Visual & Desain Interaktif",
+                "Tata Letak Responsif & CSS Modern",
+                "Prototipe Antarmuka Web App"
+            ];
+            let currentTitleIdx = 0;
+            const titleEl = document.getElementById("frontend-animated-title");
+            if (titleEl) {
+                setInterval(() => {
+                    titleEl.classList.remove("animate-title-in");
+                    titleEl.classList.add("animate-title-out");
+                    setTimeout(() => {
+                        currentTitleIdx = (currentTitleIdx + 1) % titles.length;
+                        titleEl.textContent = titles[currentTitleIdx];
+                        titleEl.classList.remove("animate-title-out");
+                        titleEl.classList.add("animate-title-in");
+                    }, 400);
+                }, 3500);
+            }
 
             // Form Submission
             if (form && input) {
@@ -378,7 +345,7 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                     if (p.y < 0) p.y = canvas.height;
                     if (p.y > canvas.height) p.y = 0;
 
-                    ctx.fillStyle = `rgba(168, 85, 247, ${p.opacity * 0.35})`;
+                    ctx.fillStyle = `rgba(59, 130, 246, ${p.opacity * 0.35})`;
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                     ctx.fill();
@@ -394,4 +361,37 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
             });
         })();
     </script>
+
+    <style>
+        @keyframes titleFadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+                filter: blur(6px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+        @keyframes titleFadeOutUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-12px);
+                filter: blur(6px);
+            }
+        }
+        .animate-title-in {
+            animation: titleFadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-title-out {
+            animation: titleFadeOutUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
 </Layout>

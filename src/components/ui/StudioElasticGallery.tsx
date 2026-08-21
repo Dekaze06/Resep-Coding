@@ -27,6 +27,19 @@ export interface StudioItemProps {
   imageSrc: string;
   btnText: string;
   iconType: "sparkles" | "fileText" | "layout" | "database";
+  accent: {
+    text: string;
+    iconBg: string;
+    iconText: string;
+    badge: string;
+    btn: string;
+    btnHover: string;
+    btnText: string;
+    btnArrowBg: string;
+    btnArrowText: string;
+    topStrip: string;
+    borderActive: string;
+  };
 }
 
 const studioItems: StudioItemProps[] = [
@@ -49,7 +62,20 @@ const studioItems: StudioItemProps[] = [
     imageSrc:
       "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=75",
     btnText: "Buka AI Recommended",
-    iconType: "sparkles"
+    iconType: "sparkles",
+    accent: {
+      text: "text-white",
+      iconBg: "bg-zinc-900 border-zinc-800",
+      iconText: "text-zinc-200",
+      badge: "bg-zinc-800/90 text-zinc-200 border-zinc-700/60",
+      btn: "bg-white hover:bg-zinc-100 border-zinc-200/80 text-zinc-950",
+      btnHover: "hover:bg-zinc-100",
+      btnText: "text-zinc-950 font-bold",
+      btnArrowBg: "bg-zinc-950/10 group-hover/cta:bg-zinc-950/15",
+      btnArrowText: "text-zinc-800 group-hover/cta:text-zinc-950",
+      topStrip: "via-zinc-500/40",
+      borderActive: "border-zinc-800"
+    }
   },
   {
     id: "02",
@@ -70,7 +96,20 @@ const studioItems: StudioItemProps[] = [
     imageSrc:
       "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=75",
     btnText: "Buka Studio PRD",
-    iconType: "fileText"
+    iconType: "fileText",
+    accent: {
+      text: "text-white",
+      iconBg: "bg-orange-500/15 border-orange-500/30",
+      iconText: "text-orange-400",
+      badge: "bg-zinc-800/90 text-zinc-200 border-zinc-700/60",
+      btn: "bg-orange-500 hover:bg-orange-400 border-orange-400 text-zinc-950",
+      btnHover: "hover:bg-orange-400",
+      btnText: "text-zinc-950 font-bold",
+      btnArrowBg: "bg-zinc-950/15 group-hover/cta:bg-zinc-950/20",
+      btnArrowText: "text-zinc-950",
+      topStrip: "via-orange-500/50",
+      borderActive: "border-orange-500/30"
+    }
   },
   {
     id: "03",
@@ -91,7 +130,20 @@ const studioItems: StudioItemProps[] = [
     imageSrc:
       "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=75",
     btnText: "Buka Studio Frontend",
-    iconType: "layout"
+    iconType: "layout",
+    accent: {
+      text: "text-white",
+      iconBg: "bg-blue-500/15 border-blue-500/30",
+      iconText: "text-blue-400",
+      badge: "bg-zinc-800/90 text-zinc-200 border-zinc-700/60",
+      btn: "bg-blue-500 hover:bg-blue-400 border-blue-400 text-zinc-950",
+      btnHover: "hover:bg-blue-400",
+      btnText: "text-zinc-950 font-bold",
+      btnArrowBg: "bg-zinc-950/15 group-hover/cta:bg-zinc-950/20",
+      btnArrowText: "text-zinc-950",
+      topStrip: "via-blue-500/50",
+      borderActive: "border-blue-500/30"
+    }
   },
   {
     id: "04",
@@ -112,7 +164,20 @@ const studioItems: StudioItemProps[] = [
     imageSrc:
       "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=75",
     btnText: "Buka Studio Fullstack",
-    iconType: "database"
+    iconType: "database",
+    accent: {
+      text: "text-white",
+      iconBg: "bg-purple-500/15 border-purple-500/30",
+      iconText: "text-purple-400",
+      badge: "bg-zinc-800/90 text-zinc-200 border-zinc-700/60",
+      btn: "bg-purple-500 hover:bg-purple-400 border-purple-400 text-zinc-950",
+      btnHover: "hover:bg-purple-400",
+      btnText: "text-zinc-950 font-bold",
+      btnArrowBg: "bg-zinc-950/15 group-hover/cta:bg-zinc-950/20",
+      btnArrowText: "text-zinc-950",
+      topStrip: "via-purple-500/50",
+      borderActive: "border-purple-500/30"
+    }
   }
 ];
 
@@ -143,7 +208,7 @@ export function StudioElasticGallery() {
       className="w-full max-w-6xl mx-auto"
     >
       {/* Elastic Expanding Studio Cards Container */}
-      <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:h-[540px] lg:h-[570px] w-full">
+      <div className="flex flex-col md:flex-row gap-2 md:gap-4 md:h-[540px] lg:h-[570px] w-full">
         {studioItems.map((item) => {
           const isActive = activeId === item.id;
 
@@ -153,15 +218,15 @@ export function StudioElasticGallery() {
               onMouseEnter={() => setActiveId(item.id)}
               onClick={() => setActiveId(item.id)}
               className={cn(
-                // Minimalist clean styling without rainbow colors
-                "relative cursor-pointer overflow-hidden rounded-2xl md:rounded-3xl border-0 bg-zinc-950 backdrop-blur-2xl select-none",
+                // Minimalist clean styling
+                "relative cursor-pointer overflow-hidden rounded-xl md:rounded-3xl border-0 bg-zinc-950 backdrop-blur-2xl select-none",
                 // Hardware accelerated flex transition
-                "transition-[flex,box-shadow,background-color] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]",
+                "transition-[flex,box-shadow,background-color,min-height] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]",
                 isActive
                   ? "md:flex-[3.5] lg:flex-[4] shadow-[0_20px_50px_rgba(0,0,0,0.9)] bg-zinc-900/80"
                   : "md:flex-[1] bg-zinc-950/90 hover:bg-zinc-900/40",
-                // Mobile dynamic sizing
-                isActive ? "min-h-[460px] sm:min-h-[440px]" : "min-h-[74px] md:min-h-0"
+                // Mobile: compact collapsed (52px), compact active (auto-sized)
+                isActive ? "md:min-h-0" : "h-[52px] md:h-auto"
               )}
             >
               {/* Background Art Image Layer */}
@@ -185,10 +250,11 @@ export function StudioElasticGallery() {
                   )}
                 />
 
-                {/* Top Subtle Neutral Light Strip */}
+                {/* Top Subtle Accent Light Strip */}
                 <div
                   className={cn(
-                    "absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-zinc-500/40 to-transparent transition-opacity duration-500",
+                    "absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent to-transparent transition-opacity duration-500",
+                    item.accent.topStrip,
                     isActive ? "opacity-100" : "opacity-0"
                   )}
                 />
@@ -197,138 +263,139 @@ export function StudioElasticGallery() {
               {/* CARD CONTENT LAYER */}
               <div className="relative z-10 h-full w-full overflow-hidden">
                 
-                {/* 1. ACTIVE STATE VIEW (Fixed width frame to ensure zero text line reflow) */}
-                <div
-                  className={cn(
-                    "absolute inset-0 p-5 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden transition-opacity duration-300 ease-in-out",
-                    isActive
-                      ? "opacity-100 pointer-events-auto"
-                      : "opacity-0 pointer-events-none"
-                  )}
-                >
-                  {/* Responsive internal frame: Prevents text wrapping changes during card expansion */}
-                  <div className="w-full max-w-[320px] sm:max-w-[420px] md:w-[460px] lg:w-[500px] shrink-0 h-full flex flex-col justify-between">
-                    {/* Top Header Section inside Card */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between gap-3">
-                        {/* Icon & Index Number */}
-                        <div className="flex items-center gap-3">
-                          <div className="w-11 h-11 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-200 shadow-sm">
-                            {renderIcon(item.iconType, "w-5 h-5")}
-                          </div>
+                {/* 1. ACTIVE STATE VIEW */}
+                {isActive && (
+                  <div className="p-4 sm:p-5 md:p-6 lg:p-8 flex flex-col justify-between md:absolute md:inset-0 h-full">
+                    {/* Responsive internal frame */}
+                    <div className="w-full md:w-[460px] lg:w-[500px] shrink-0 h-full flex flex-col justify-between">
+                      {/* Top Header Section */}
+                      <div className="space-y-2.5 md:space-y-4">
+                        <div className="flex items-center justify-between gap-2">
+                          {/* Index & Subtitle */}
                           <div>
-                            <span className="text-[11px] font-mono font-semibold tracking-wider text-zinc-500">
+                            <span className="text-[10px] md:text-[11px] font-mono font-semibold tracking-wider text-zinc-500">
                               {item.id} / 04
                             </span>
-                            <p className="text-[10px] uppercase font-bold tracking-widest text-zinc-400">
+                            <p className="text-[9px] md:text-[10px] uppercase font-bold tracking-widest text-zinc-400">
                               {item.subtitle}
                             </p>
                           </div>
-                        </div>
 
-                        {/* Badges: Clean Minimalist Monochrome */}
-                        <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-zinc-800/90 text-zinc-200 border border-zinc-700/60 shadow-sm">
-                            {item.badge}
-                          </span>
-                          <span className="px-2 py-0.5 rounded-md bg-zinc-900/90 text-zinc-400 border border-zinc-800/60 text-[10px] font-medium">
-                            {item.trialBadge}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Title & Description */}
-                      <div className="space-y-1.5 pt-1">
-                        <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-white font-sans break-words sm:whitespace-nowrap">
-                          {item.title}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-xl">
-                          {item.description}
-                        </p>
-                      </div>
-
-                      {/* Checklist Features */}
-                      <div className="space-y-2 pt-3 border-t border-zinc-800/60">
-                        {item.features.map((feat, idx) => (
-                          <div key={idx} className="flex items-start gap-2.5 text-xs text-zinc-300">
-                            <div className="w-4 h-4 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0 mt-0.5 text-zinc-400">
-                              <Check className="w-2.5 h-2.5" />
-                            </div>
-                            <span className="leading-snug">{feat}</span>
+                          {/* Badges: Clean Minimalist Monochrome */}
+                          <div className="flex items-center gap-1 flex-wrap justify-end">
+                            <span className={cn(
+                              "px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-mono font-bold tracking-wider uppercase border shadow-sm",
+                              item.accent.badge
+                            )}>
+                              {item.badge}
+                            </span>
+                            <span className="px-1.5 py-0.5 rounded-md bg-zinc-900/90 text-zinc-400 border border-zinc-800/60 text-[9px] md:text-[10px] font-medium hidden sm:inline-block">
+                              {item.trialBadge}
+                            </span>
                           </div>
-                        ))}
+                        </div>
+
+                        {/* Title & Description: Clean Minimalist White & Zinc */}
+                        <div className="space-y-1">
+                          <h3 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-tight text-white font-sans break-words">
+                            {item.title}
+                          </h3>
+                          <p className="text-[11px] sm:text-xs md:text-sm text-zinc-400 leading-relaxed line-clamp-2 md:line-clamp-none">
+                            {item.description}
+                          </p>
+                        </div>
+
+                        {/* Checklist Features: Clean Minimalist Zinc Checkmarks */}
+                        <div className="space-y-1.5 md:space-y-2 pt-2 md:pt-3 border-t border-zinc-800/60">
+                          {item.features.map((feat, idx) => (
+                            <div key={idx} className="flex items-start gap-2 text-[11px] md:text-xs text-zinc-300">
+                              <Check size={14} className="text-zinc-500 mt-0.5 shrink-0" />
+                              <span className="leading-snug">{feat}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Bottom Action CTA Button */}
+                      <div className="pt-3 md:pt-4 mt-3 md:mt-4 border-t border-zinc-800/60 flex items-center justify-start">
+                        <a
+                          href={item.href}
+                          onClick={(e) => e.stopPropagation()}
+                          className={cn(
+                            "group/cta relative inline-flex items-center justify-center overflow-hidden rounded-lg md:rounded-xl border text-xs font-bold shadow-md transition-all duration-300 cursor-pointer select-none px-4 py-2 h-9 md:h-11 w-full sm:w-auto",
+                            item.accent.btn,
+                            item.accent.btnHover
+                          )}
+                        >
+                          <span className={cn("mr-7 transition-opacity duration-500 group-hover/cta:opacity-0", item.accent.btnText)}>
+                            {item.btnText}
+                          </span>
+                          <span className={cn(
+                            "absolute right-1 top-1 bottom-1 rounded-lg z-10 grid w-7 place-items-center transition-all duration-500 group-hover/cta:w-[calc(100%-0.5rem)] group-active/cta:scale-95",
+                            item.accent.btnArrowBg,
+                            item.accent.btnArrowText
+                          )}>
+                            <ChevronRight size={14} strokeWidth={2.5} aria-hidden="true" />
+                          </span>
+                        </a>
                       </div>
                     </div>
+                  </div>
+                )}
 
-                    {/* Bottom Action CTA Button (compact width with animated expanding pill) */}
-                    <div className="pt-4 mt-3 border-t border-zinc-800/60 flex items-center justify-start">
-                      <a
-                        href={item.href}
-                        className="group/cta relative inline-flex items-center justify-center overflow-hidden rounded-xl bg-white hover:bg-zinc-100 border border-zinc-200/80 text-zinc-950 text-xs sm:text-sm font-bold shadow-md shadow-white/5 transition-all duration-300 cursor-pointer select-none px-5 py-2.5 h-10 sm:h-11"
-                      >
-                        <span className="mr-7 transition-opacity duration-500 group-hover/cta:opacity-0">
-                          {item.btnText}
+                {/* 2. INACTIVE / COLLAPSED STATE */}
+                {!isActive && (
+                  <div className="absolute inset-0 flex flex-col justify-between p-3 md:py-7 items-center">
+                    {/* Desktop Vertical Layout */}
+                    <div className="hidden md:flex flex-col justify-between items-center h-full w-full">
+                      {/* Top: Number */}
+                      <div className="flex flex-col items-center gap-2.5">
+                        <span className="text-xs font-mono font-bold text-zinc-500">
+                          {item.id}
                         </span>
-                        <span className="absolute right-1 top-1 bottom-1 rounded-lg z-10 grid w-7 sm:w-8 place-items-center transition-all duration-500 bg-zinc-950/10 group-hover/cta:bg-zinc-950/15 group-hover/cta:w-[calc(100%-0.5rem)] group-active/cta:scale-95 text-zinc-800 group-hover/cta:text-zinc-950">
-                          <ChevronRight size={15} strokeWidth={2.5} aria-hidden="true" />
+                      </div>
+
+                      {/* Middle: Rotated Title */}
+                      <div className="py-4 flex items-center justify-center">
+                        <span className={cn(
+                          "whitespace-nowrap text-xs font-semibold uppercase tracking-widest [writing-mode:vertical-rl] transition-colors",
+                          item.accent.iconText
+                        )}>
+                          {item.shortTitle}
                         </span>
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                      </div>
 
-                {/* 2. INACTIVE / COLLAPSED STATE (Minimalist Neutral) */}
-                <div
-                  className={cn(
-                    "absolute inset-0 flex flex-col justify-between p-4 md:py-7 items-center transition-opacity duration-200 ease-in-out",
-                    isActive
-                      ? "opacity-0 pointer-events-none"
-                      : "opacity-100 pointer-events-auto"
-                  )}
-                >
-                  {/* Desktop Vertical Layout */}
-                  <div className="hidden md:flex flex-col justify-between items-center h-full w-full">
-                    {/* Top: Number & Icon */}
-                    <div className="flex flex-col items-center gap-2.5">
-                      <span className="text-xs font-mono font-bold text-zinc-500">
-                        {item.id}
-                      </span>
-                      <div className="w-9 h-9 rounded-xl bg-zinc-900 border border-zinc-800/80 flex items-center justify-center text-zinc-400 shadow-sm">
-                        {renderIcon(item.iconType, "w-4 h-4")}
+                      {/* Bottom: Badge Pill */}
+                      <div className="flex flex-col items-center gap-2">
+                        <span className={cn(
+                          "px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold uppercase tracking-wider border",
+                          item.accent.badge
+                        )}>
+                          {item.badge}
+                        </span>
                       </div>
                     </div>
 
-                    {/* Middle: Rotated Title */}
-                    <div className="py-4 flex items-center justify-center">
-                      <span className="whitespace-nowrap text-xs font-semibold uppercase tracking-widest text-zinc-400 [writing-mode:vertical-rl]">
-                        {item.shortTitle}
-                      </span>
-                    </div>
-
-                    {/* Bottom: Badge Pill */}
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold uppercase tracking-wider bg-zinc-900 border border-zinc-800 text-zinc-400">
-                        {item.badge}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Mobile Compact Strip Header */}
-                  <div className="flex md:hidden items-center justify-between w-full h-full">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400">
-                        {renderIcon(item.iconType, "w-4 h-4")}
+                    {/* Mobile Compact Strip Header */}
+                    <div className="flex md:hidden items-center justify-between w-full h-full">
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-mono text-zinc-500">{item.id}</span>
+                          <span className={cn("text-[11px] font-bold", item.accent.iconText)}>{item.shortTitle}</span>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-[10px] font-mono text-zinc-500 mr-2">{item.id}</span>
-                        <span className="text-xs font-bold text-zinc-200">{item.shortTitle}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={cn(
+                          "px-1.5 py-0.5 rounded-full text-[8px] font-mono font-semibold uppercase border",
+                          item.accent.badge
+                        )}>
+                          {item.badge}
+                        </span>
+                        <ChevronRight size={14} className="text-zinc-600" />
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold uppercase bg-zinc-900 border border-zinc-800 text-zinc-400">
-                      {item.badge}
-                    </span>
                   </div>
-                </div>
+                )}
 
               </div>
             </div>
@@ -340,3 +407,4 @@ export function StudioElasticGallery() {
 }
 
 export default StudioElasticGallery;
+
