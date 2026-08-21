@@ -84,7 +84,7 @@ export default function ServicesGrid() {
   const isInView = useInView(containerRef, { once: false, margin: "-60px" });
 
   return (
-    <div ref={containerRef} className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
+    <div ref={containerRef} className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
       {services.map((item, index) => {
         const IconComponent = item.icon;
         return (
@@ -101,10 +101,10 @@ export default function ServicesGrid() {
               delay: index * 0.05,
               ease: smoothEasing,
             }}
-            className="bg-zinc-900/40 rounded-xl overflow-hidden space-y-0 transition-colors hover:bg-zinc-900/70 group flex flex-col justify-between shadow-sm border border-zinc-800/40"
+            className="bg-zinc-900/40 rounded-xl overflow-hidden space-y-0 transition-colors hover:bg-zinc-900/70 group flex flex-col justify-between shadow-sm border border-zinc-800/40 hover:border-zinc-700/60"
           >
             {/* Image Area */}
-            <div className="relative w-full h-20 sm:h-28 md:h-32 overflow-hidden">
+            <div className="relative w-full h-20 sm:h-32 overflow-hidden">
               <img
                 src={item.imageSrc}
                 alt={item.title}
@@ -113,7 +113,7 @@ export default function ServicesGrid() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/95 via-zinc-950/50 to-transparent" />
               {/* Icon badge overlaid on image */}
-              <div className="absolute bottom-2 left-2 sm:bottom-2.5 sm:left-3 w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-zinc-950/80 backdrop-blur-md text-zinc-300 flex items-center justify-center text-[10px] sm:text-xs group-hover:text-white transition-colors">
+              <div className="absolute bottom-1.5 left-2 sm:bottom-2.5 sm:left-3 w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-zinc-950/80 backdrop-blur-md text-zinc-300 flex items-center justify-center text-xs group-hover:text-white transition-colors">
                 <IconComponent className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </div>
             </div>
@@ -122,28 +122,28 @@ export default function ServicesGrid() {
             <div className="p-2.5 sm:p-4 space-y-2 sm:space-y-3 flex flex-col flex-1 justify-between">
               <div className="space-y-1.5 sm:space-y-2.5">
                 <div className="space-y-0.5 sm:space-y-1">
-                  <h3 className="text-[11px] sm:text-sm font-semibold text-white group-hover:text-zinc-200 transition-colors font-sans truncate">
+                  <h3 className="text-xs sm:text-sm font-semibold text-white group-hover:text-zinc-200 transition-colors font-sans truncate">
                     {item.title}
                   </h3>
-                  <p className="text-[9.5px] sm:text-[11px] text-zinc-400 leading-tight line-clamp-2 sm:line-clamp-none">
+                  <p className="text-[10px] sm:text-[11px] text-zinc-400 leading-snug line-clamp-2">
                     {item.description}
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-1.5 sm:space-y-2 pt-1.5 sm:pt-2.5 border-t border-zinc-800/60">
-                <ul className="hidden sm:block text-[11px] text-zinc-400 space-y-1">
+              <div className="space-y-1.5 sm:space-y-2 pt-2 sm:pt-2.5 border-t border-zinc-800/60">
+                <ul className="text-[9px] sm:text-[11px] text-zinc-400 space-y-0.5 sm:space-y-1">
                   {item.bullets.map((bullet, bIdx) => (
-                    <li key={bIdx} className="flex items-center gap-1.5">
-                      <Check className="w-3 h-3 text-zinc-400 shrink-0" />
-                      <span>{bullet}</span>
+                    <li key={bIdx} className="flex items-center gap-1 sm:gap-1.5">
+                      <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-zinc-400 shrink-0" />
+                      <span className="truncate">{bullet}</span>
                     </li>
                   ))}
                 </ul>
                 <div className="pt-0.5">
                   <a
                     href={item.ctaHref}
-                    className="w-full px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 hover:text-white text-[10px] sm:text-[11px] font-semibold transition-all inline-flex items-center justify-between shadow-sm group/btn cursor-pointer"
+                    className="w-full px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 hover:text-white text-[10px] sm:text-[11px] font-semibold transition-all inline-flex items-center justify-between shadow-sm group/btn cursor-pointer"
                   >
                     <span>{item.ctaText}</span>
                     <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-zinc-500 group-hover/btn:text-zinc-200 group-hover/btn:translate-x-0.5 transition-transform" />

@@ -171,7 +171,7 @@ export default function AdminPortal() {
 
   // AI Model Settings
   const [primaryModel, setPrimaryModel] = useState<string>('gemini-3.7-flash');
-  const [fallbackModel, setFallbackModel] = useState<string>('gemini-3.7-flash');
+  const [fallbackModel, setFallbackModel] = useState<string>('gemini-3.6-flash');
   const [temperature, setTemperature] = useState<number>(0.7);
   const [topP, setTopP] = useState<number>(0.95);
   const [savedModelSuccess, setSavedModelSuccess] = useState<boolean>(false);
@@ -1257,8 +1257,7 @@ export default function AdminPortal() {
                     onChange={(e) => setPrimaryModel(e.target.value)}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700 font-mono text-xs"
                   >
-                    <option value="gemini-3.7-flash">Gemini 3.7 Flash (Eksklusif - Ultra Fast & High Reasoning)</option>
-                    <option value="gemini-3.7-flash-thinking">Gemini 3.7 Flash Thinking (Deep Code Architecture)</option>
+                    <option value="gemini-3.7-flash">gemini-3.7-flash (Model Utama - High Reasoning & Fast Generation)</option>
                   </select>
                 </div>
 
@@ -1269,8 +1268,7 @@ export default function AdminPortal() {
                     onChange={(e) => setFallbackModel(e.target.value)}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700 font-mono text-xs"
                   >
-                    <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
-                    <option value="gemini-3.7-flash">Gemini 3.7 Flash</option>
+                    <option value="gemini-3.6-flash">gemini-3.6-flash (Model Cadangan)</option>
                   </select>
                 </div>
 

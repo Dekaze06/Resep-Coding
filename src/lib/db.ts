@@ -549,7 +549,7 @@ export const SystemConfigDB = {
     if (!memoryConfig) {
       memoryConfig = readJsonFile<SystemConfigData>('system-config.json', {
         primaryModel: 'gemini-3.7-flash',
-        fallbackModel: 'gemini-3.7-flash',
+        fallbackModel: 'gemini-3.6-flash',
         temperature: 0.7,
         topP: 0.95,
         systemStatus: 'healthy',

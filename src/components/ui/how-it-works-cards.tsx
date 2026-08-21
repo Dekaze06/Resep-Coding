@@ -79,43 +79,38 @@ function StepCard({
         ease: smoothEasing,
       }}
       className={cn(
-        "relative bg-zinc-900/40 border border-zinc-800/40 rounded-2xl p-4 sm:p-6 space-y-3 sm:space-y-4 flex flex-col justify-between",
-        "min-w-[82vw] xs:min-w-[300px] sm:min-w-0 snap-center shrink-0 sm:shrink",
+        "relative bg-zinc-900/40 rounded-2xl p-4 sm:p-6 space-y-3 sm:space-y-4 flex flex-col justify-between",
         "transition-all duration-300 ease-out",
-        "hover:scale-[1.02] sm:hover:scale-[1.03] hover:bg-zinc-900/70 hover:shadow-xl hover:shadow-zinc-950/60",
+        "hover:scale-[1.02] hover:bg-zinc-900/70 hover:shadow-xl hover:shadow-zinc-950/60",
+        "min-w-[260px] sm:min-w-0 snap-center shrink-0 sm:shrink border border-zinc-800/40",
         "group"
       )}
     >
-      {/* Icon & Mobile step badge */}
+      {/* Icon */}
       <div className="space-y-3 sm:space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-zinc-900 text-zinc-300 flex items-center justify-center group-hover:text-white transition-colors">
-            <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
-          </div>
-          <span className="sm:hidden font-mono text-[11px] font-bold text-zinc-500 px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800">
-            Langkah {step.number}
-          </span>
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-zinc-900 text-zinc-300 flex items-center justify-center group-hover:text-white transition-colors">
+          <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
 
         {/* Title & Description */}
         <div className="space-y-1.5 sm:space-y-2">
-          <h4 className="text-sm sm:text-base font-semibold text-white font-sans tracking-tight">
+          <h4 className="text-xs sm:text-base font-semibold text-white font-sans tracking-tight">
             {step.title}
           </h4>
-          <p className="text-xs text-zinc-400 leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-zinc-400 leading-relaxed">
             {step.description}
           </p>
         </div>
       </div>
 
       {/* Benefits List */}
-      <ul className="space-y-2 pt-2.5 sm:pt-3 border-t border-zinc-800/50">
+      <ul className="space-y-2 sm:space-y-2.5 pt-2.5 sm:pt-3 border-t border-zinc-800/50">
         {step.benefits.map((benefit, bIdx) => (
-          <li key={bIdx} className="flex items-center gap-2">
+          <li key={bIdx} className="flex items-center gap-2 sm:gap-2.5">
             <div className="flex h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0 items-center justify-center rounded-full bg-zinc-700/50 group-hover:bg-zinc-600/60 transition-colors">
-              <div className="h-1.5 w-1.5 rounded-full bg-zinc-400 group-hover:bg-zinc-300 transition-colors" />
+              <div className="h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-zinc-400 group-hover:bg-zinc-300 transition-colors" />
             </div>
-            <span className="text-[10.5px] sm:text-xs text-zinc-400 group-hover:text-zinc-300 transition-colors leading-snug">
+            <span className="text-[10px] sm:text-xs text-zinc-400 group-hover:text-zinc-300 transition-colors leading-snug">
               {benefit}
             </span>
           </li>
@@ -130,9 +125,9 @@ export default function HowItWorksCards() {
   const isInView = useInView(containerRef, { once: false, margin: "-60px" });
 
   return (
-    <div ref={containerRef} className="space-y-4 sm:space-y-5">
-      {/* Step Number Indicators with Connecting Line (Desktop) */}
-      <div className="hidden sm:block relative w-full max-w-full">
+    <div ref={containerRef} className="space-y-5">
+      {/* Step Number Indicators with Connecting Line */}
+      <div className="relative w-full max-w-full">
         {/* Connecting horizontal line */}
         <div
           aria-hidden="true"
@@ -155,7 +150,7 @@ export default function HowItWorksCards() {
               }}
               className="flex items-center justify-center justify-self-center"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-900 font-mono font-semibold text-xs text-zinc-300 ring-4 ring-zinc-950">
+              <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-zinc-900 font-mono font-semibold text-[11px] sm:text-xs text-zinc-300 ring-4 ring-zinc-950">
                 {step.number}
               </div>
             </motion.div>
@@ -163,8 +158,8 @@ export default function HowItWorksCards() {
         </div>
       </div>
 
-      {/* Step Cards: Horizontal Slide on Mobile, Grid on Tablet/Desktop */}
-      <div className="flex overflow-x-auto snap-x snap-mandatory pb-3 sm:pb-0 gap-3.5 sm:grid sm:grid-cols-3 sm:gap-5 sm:overflow-visible scrollbar-none px-0.5">
+      {/* Step Cards Horizontal Scrollable on Mobile, Grid on Desktop */}
+      <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 sm:gap-5 pb-3 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 sm:overflow-visible no-scrollbar">
         {steps.map((step, index) => (
           <StepCard
             key={step.number}

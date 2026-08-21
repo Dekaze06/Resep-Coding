@@ -78,7 +78,7 @@ const PLANS: PricingPlan[] = [
       { text: "1-Click Cloud Deploy (Vercel/Netlify) + Custom Domain", included: true, highlight: true },
       { text: "Sinkronisasi & Auto-Push ke Repositori GitHub", included: true, highlight: true },
       { text: "Testing & QA Suite (Lighthouse, A11y & Simulator)", included: true },
-      { text: "Unlimited AI Token + Engine Gemini Pro & Claude", included: true },
+      { text: "Unlimited AI Token + Engine Gemini 3.7 & 3.6 Flash", included: true },
       { text: "Dukungan Prioritas 24/7 & Dedicated Support", included: true },
     ],
     ctaText: "Pilih Paket Max",
@@ -89,6 +89,13 @@ const PLANS: PricingPlan[] = [
 function formatIDR(amount: number): string {
   if (amount === 0) return "Rp 0";
   return `Rp ${amount.toLocaleString("id-ID")}`;
+}
+
+function formatCompactPrice(amount: number): string {
+  if (amount === 0) return "Rp 0";
+  if (amount >= 1000000) return `Rp ${(amount / 1000000).toFixed(2).replace(".00", "")}jt`;
+  if (amount >= 1000) return `Rp ${Math.round(amount / 1000)}rb`;
+  return `Rp ${amount}`;
 }
 
 export function PricingSection({
@@ -103,14 +110,14 @@ export function PricingSection({
   const isInView = useInView(containerRef, { once: true, margin: "-60px" });
 
   return (
-    <div ref={containerRef} className={cn("max-w-7xl mx-auto space-y-12 relative z-10", className)}>
+    <div ref={containerRef} className={cn("max-w-7xl mx-auto space-y-8 sm:space-y-12 relative z-10", className)}>
       {/* Header with Switcher */}
       {showHeader && (
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center max-w-3xl mx-auto space-y-4"
+          className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4"
         >
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight font-sans">
             Investasi Sesuai Kebutuhan Anda
@@ -120,13 +127,13 @@ export function PricingSection({
           </p>
 
           {/* Billing Switcher Toggle */}
-          <div className="pt-4 flex items-center justify-center">
-            <div className="p-1 rounded-2xl bg-zinc-900/90 border border-zinc-800 flex items-center gap-1 shadow-inner">
+          <div className="pt-2 sm:pt-4 flex items-center justify-center">
+            <div className="p-1 rounded-xl sm:rounded-2xl bg-zinc-900/90 border border-zinc-800 flex items-center gap-1 shadow-inner">
               <button
                 type="button"
                 onClick={() => setIsAnnual(false)}
                 className={cn(
-                  "relative px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 cursor-pointer select-none",
+                  "relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold transition-all duration-300 cursor-pointer select-none",
                   !isAnnual ? "text-white bg-zinc-800 shadow-sm" : "text-zinc-400 hover:text-zinc-200"
                 )}
               >
@@ -136,13 +143,13 @@ export function PricingSection({
                 type="button"
                 onClick={() => setIsAnnual(true)}
                 className={cn(
-                  "relative px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 flex items-center gap-1.5 cursor-pointer select-none",
+                  "relative px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-1.5 cursor-pointer select-none",
                   isAnnual ? "text-white bg-zinc-800 shadow-sm" : "text-zinc-400 hover:text-zinc-200"
                 )}
               >
                 <span>Tahunan</span>
-                <span className="px-1.5 py-0.5 rounded-md bg-white/10 text-white border border-white/10 text-[10px] font-medium">
-                  Hemat 20%
+                <span className="px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded bg-white/10 text-white border border-white/10 text-[8px] sm:text-[10px] font-medium">
+                  -20%
                 </span>
               </button>
             </div>
@@ -150,8 +157,8 @@ export function PricingSection({
         </motion.div>
       )}
 
-      {/* Pricing Cards: Horizontal Snap Scroll on Mobile, 3-Col Grid on Desktop */}
-      <div className="flex overflow-x-auto snap-x snap-mandatory pt-6 pb-4 lg:pt-6 lg:pb-0 gap-4 lg:grid lg:grid-cols-3 lg:gap-8 items-stretch scrollbar-none px-2">
+      {/* Pricing Cards Grid (3 Columns on Mobile & Desktop) */}
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-4 lg:gap-8 items-stretch">
         {PLANS.map((plan, index) => {
           const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
 
@@ -165,31 +172,30 @@ export function PricingSection({
                 delay: index * 0.12,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              whileHover={{ y: -6, transition: { duration: 0.25 } }}
+              whileHover={{ y: -4, transition: { duration: 0.25 } }}
               className={cn(
-                "relative rounded-2xl sm:rounded-3xl p-5 sm:p-7 flex flex-col justify-between transition-all duration-300 group",
-                "min-w-[82vw] xs:min-w-[320px] lg:min-w-0 snap-center shrink-0 lg:shrink",
+                "relative rounded-xl sm:rounded-3xl p-2.5 sm:p-5 lg:p-7 flex flex-col justify-between transition-all duration-300 group",
                 plan.featured
-                  ? "bg-zinc-900/90 border-2 border-zinc-500/80 shadow-[0_20px_50px_rgba(0,0,0,0.85)] ring-1 ring-zinc-500/20"
+                  ? "bg-zinc-900/90 border-2 border-zinc-500/80 shadow-[0_15px_40px_rgba(0,0,0,0.85)] ring-1 ring-zinc-500/20"
                   : "bg-zinc-900/40 border border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-900/60 shadow-xl"
               )}
             >
               {/* Popular Pill Badge */}
               {plan.featured && plan.popularBadge && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3.5 py-1 rounded-full bg-white text-zinc-950 font-bold text-[9.5px] sm:text-[10px] uppercase tracking-wider shadow-lg flex items-center gap-1.5 z-20 whitespace-nowrap pointer-events-none">
-                  <Zap className="w-3 h-3 fill-zinc-950 text-zinc-950" />
+                <div className="absolute -top-2.5 sm:-top-3.5 left-1/2 -translate-x-1/2 px-2 py-0.5 sm:px-4 sm:py-1 rounded-full bg-white text-zinc-950 font-bold text-[7px] sm:text-[10px] uppercase tracking-wider shadow-lg flex items-center gap-1 whitespace-nowrap">
+                  <Zap className="w-2 h-2 sm:w-3 sm:h-3 fill-zinc-950 text-zinc-950" />
                   <span>{plan.popularBadge}</span>
                 </div>
               )}
 
               {/* Card Header & Content */}
-              <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-2.5 sm:space-y-5">
                 {/* Category Badge & Title */}
-                <div className="space-y-1.5 sm:space-y-2">
-                  <div className="flex items-center justify-between gap-2">
+                <div className="space-y-1 sm:space-y-2">
+                  <div className="flex items-center justify-between gap-1">
                     <span
                       className={cn(
-                        "px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[10px] sm:text-[11px] font-medium border",
+                        "px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded text-[8px] sm:text-[11px] font-medium border truncate",
                         plan.featured
                           ? "bg-zinc-800 border-zinc-700 text-zinc-200"
                           : "bg-zinc-900 border border-zinc-800 text-zinc-400"
@@ -197,70 +203,63 @@ export function PricingSection({
                     >
                       {plan.badge}
                     </span>
-                    {plan.featured && (
-                      <span className="text-[10px] text-zinc-400 font-mono flex items-center gap-1">
-                        <Shield className="w-3 h-3 text-zinc-400" />
-                        Garansi Aktif
-                      </span>
-                    )}
                   </div>
 
-                  <h3 className="text-lg sm:text-2xl font-bold text-white tracking-tight">
+                  <h3 className="text-xs sm:text-xl lg:text-2xl font-bold text-white tracking-tight truncate">
                     {plan.name}
                   </h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed min-h-[32px] sm:min-h-[36px]">
+                  <p className="text-[9px] sm:text-xs text-zinc-400 leading-tight line-clamp-2 sm:line-clamp-none min-h-0 sm:min-h-[36px]">
                     {plan.description}
                   </p>
                 </div>
 
                 {/* Price Display with AnimatePresence */}
-                <div className="pt-1.5 sm:pt-2 pb-3 sm:pb-4 border-b border-zinc-800/80">
-                  <div className="flex items-baseline gap-1">
+                <div className="pt-1 pb-2 sm:pt-2 sm:pb-4 border-b border-zinc-800/80">
+                  <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-1">
                     <AnimatePresence mode="wait">
-                      <motion.span
+                      <motion.div
                         key={price}
-                        initial={{ opacity: 0, y: -8 }}
+                        initial={{ opacity: 0, y: -4 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 8 }}
+                        exit={{ opacity: 0, y: 4 }}
                         transition={{ duration: 0.2 }}
-                        className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-sans"
                       >
-                        {formatIDR(price)}
-                      </motion.span>
+                        <span className="sm:hidden text-xs font-extrabold text-white tracking-tight font-sans block">
+                          {formatCompactPrice(price)}
+                        </span>
+                        <span className="hidden sm:inline text-xl lg:text-3xl xl:text-4xl font-extrabold text-white tracking-tight font-sans">
+                          {formatIDR(price)}
+                        </span>
+                      </motion.div>
                     </AnimatePresence>
-                    <span className="text-[11px] sm:text-xs text-zinc-400">
-                      {plan.monthlyPrice === 0 ? "/ selamanya" : "/ bulan"}
+                    <span className="text-[8px] sm:text-xs text-zinc-400">
+                      {plan.monthlyPrice === 0 ? "/ gratis" : "/ bln"}
                     </span>
                   </div>
-                  {isAnnual && plan.monthlyPrice > 0 && (
-                    <p className="text-[9.5px] sm:text-[10px] text-zinc-400 mt-0.5 sm:mt-1 font-mono">
-                      Ditagih tahunan (Hemat {formatIDR((plan.monthlyPrice - plan.annualPrice) * 12)}/thn)
-                    </p>
-                  )}
                 </div>
 
                 {/* Features List */}
-                <div className="space-y-2 sm:space-y-3 text-xs">
+                <div className="space-y-1.5 sm:space-y-3 text-xs">
                   <p
                     className={cn(
-                      "text-[10.5px] sm:text-[11px] font-medium uppercase tracking-wider",
+                      "text-[8px] sm:text-[11px] font-medium uppercase tracking-wider truncate",
                       plan.featured ? "text-zinc-200" : "text-zinc-400"
                     )}
                   >
                     {plan.id === "starter"
-                      ? "Fitur yang didapat:"
+                      ? "Fitur dasar:"
                       : plan.id === "pro"
-                      ? "Semua fitur Gratis, ditambah:"
-                      : "Semua Fitur Tanpa Batas:"}
+                      ? "Semua fitur Pro:"
+                      : "Fitur Max:"}
                   </p>
-                  <ul className="space-y-2 sm:space-y-2.5">
+                  <ul className="space-y-1.5 sm:space-y-2.5">
                     {plan.features.map((feature, idx) => (
                       <li
                         key={idx}
                         className={cn(
-                          "flex items-start gap-2 sm:gap-2.5 transition-colors text-[11px] sm:text-xs",
+                          "flex items-start gap-1 sm:gap-2.5 transition-colors",
                           !feature.included
-                            ? "text-zinc-500"
+                            ? "text-zinc-600"
                             : feature.highlight
                             ? "text-white font-medium"
                             : "text-zinc-300"
@@ -269,7 +268,7 @@ export function PricingSection({
                         {feature.included ? (
                           <div
                             className={cn(
-                              "w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5",
+                              "w-3 h-3 sm:w-4 sm:h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5",
                               plan.featured
                                 ? "bg-white text-zinc-950"
                                 : "bg-zinc-800 text-zinc-300 border border-zinc-700"
@@ -278,11 +277,11 @@ export function PricingSection({
                             <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 stroke-[3]" />
                           </div>
                         ) : (
-                          <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-zinc-950 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 border border-zinc-800">
+                          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-zinc-950 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 border border-zinc-800">
                             <X className="w-2 h-2 sm:w-2.5 sm:h-2.5" />
                           </div>
                         )}
-                        <span className={cn(!feature.included && "line-through")}>
+                        <span className={cn("text-[8px] sm:text-xs leading-tight line-clamp-2 sm:line-clamp-none", !feature.included && "line-through opacity-70")}>
                           {feature.text}
                         </span>
                       </li>
@@ -292,18 +291,18 @@ export function PricingSection({
               </div>
 
               {/* CTA Action Button */}
-              <div className="pt-4 sm:pt-6 mt-4 sm:mt-6 border-t border-zinc-800/80">
+              <div className="pt-2.5 sm:pt-6 mt-2.5 sm:mt-6 border-t border-zinc-800/80">
                 <a
                   href={plan.ctaHref}
                   className={cn(
-                    "w-full py-2.5 sm:py-3 px-4 rounded-xl font-semibold text-xs transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer select-none group/btn shadow-md",
+                    "w-full py-1.5 sm:py-3 px-1.5 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-[9px] sm:text-xs transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 cursor-pointer select-none group/btn shadow-md",
                     plan.featured
                       ? "bg-white hover:bg-zinc-100 text-zinc-950 hover:shadow-white/10"
                       : "bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 hover:text-white"
                   )}
                 >
-                  <span>{plan.ctaText}</span>
-                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                  <span className="truncate">{plan.ctaText}</span>
+                  <ArrowRight className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5 shrink-0" />
                 </a>
               </div>
             </motion.div>
