@@ -97,15 +97,10 @@ ${body.desc}`;
             });
         }
 
-        // AI Model Engine with robust multi-model fallback cascade
+        // AI Model Engine: gemini-3.7-flash (Model Utama) with fallback to gemini-3.6-flash
         const candidateModels = [
             'gemini-3.7-flash',
-            'gemini-3.6-flash',
-            'gemini-3.5-flash',
-            'gemini-3-flash-preview',
-            'gemini-flash-latest',
-            'gemini-3.1-flash-lite',
-            'gemini-3.1-pro-preview'
+            'gemini-3.6-flash'
         ];
 
         let geminiData = null;

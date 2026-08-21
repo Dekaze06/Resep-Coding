@@ -1269,8 +1269,8 @@ export default function AdminPortal() {
                     onChange={(e) => setFallbackModel(e.target.value)}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700 font-mono text-xs"
                   >
+                    <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
                     <option value="gemini-3.7-flash">Gemini 3.7 Flash</option>
-                    <option value="gemini-3.7-flash-thinking">Gemini 3.7 Flash Thinking</option>
                   </select>
                 </div>
 
