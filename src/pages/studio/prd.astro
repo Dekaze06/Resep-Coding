@@ -160,7 +160,79 @@ import PrdSheetViewer from "../../components/PrdSheetViewer";
                                 <i class="fa-solid fa-circle-notch fa-spin text-amber-400"></i>
                                 <span id="prd-status-text">AI sedang menganalisis kebutuhan & menyusun Dokumen PRD (.md)...</span>
                             </div>
-                            <span class="text-[10px] font-mono uppercase tracking-wider text-amber-400/80">Gemini 3.7 Flash</span>
+                            <span class="text-[10px] font-mono uppercase tracking-wider text-amber-400/80">AI Studio Engine</span>
+                        </div>
+
+                        <!-- Saved PRD Box in Chat Agent Area -->
+                        <div
+                            id="saved-prd-box"
+                            class="hidden p-4 rounded-2xl bg-[#09090b] border border-amber-500/30 text-xs space-y-3 shadow-xl transition-all"
+                        >
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 shadow-sm">
+                                        <i class="fa-solid fa-file-contract text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <span id="saved-prd-title" class="font-bold text-white text-xs sm:text-sm">Dokumen PRD Blueprint (.md)</span>
+                                            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">Tersimpan di Database</span>
+                                        </div>
+                                        <span id="saved-prd-meta" class="text-[11px] text-zinc-400">Dokumen PRD siap dibuka dan dieksplorasi kembali</span>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    id="btn-delete-saved-prd"
+                                    class="w-7 h-7 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                                    title="Hapus Dokumen Tersimpan"
+                                >
+                                    <i class="fa-solid fa-xmark text-xs"></i>
+                                </button>
+                            </div>
+
+                            <!-- Quick Action Buttons -->
+                            <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-zinc-800/80">
+                                <button
+                                    type="button"
+                                    id="btn-open-saved-prd"
+                                    class="flex-1 min-w-[150px] py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+                                >
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                                    <span>Buka Dokumen PRD (.md)</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    id="btn-copy-saved-prd"
+                                    class="py-2 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                    title="Salin Isi Dokumen (.md)"
+                                >
+                                    <i id="icon-copy-saved-prd" class="fa-solid fa-copy text-xs"></i>
+                                    <span id="label-copy-saved-prd">Salin .md</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    id="btn-download-saved-prd"
+                                    class="py-2 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                    title="Unduh File .md"
+                                >
+                                    <i class="fa-solid fa-download text-xs"></i>
+                                    <span>Unduh .md</span>
+                                </button>
+
+                                <a
+                                    id="btn-continue-studio-prd"
+                                    href="/app?mode=prd"
+                                    class="py-2 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                    title="Lanjut Bangun Aplikasi di Studio"
+                                >
+                                    <i class="fa-solid fa-code text-xs text-blue-400"></i>
+                                    <span>Buka di Studio</span>
+                                </a>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -211,8 +283,115 @@ import PrdSheetViewer from "../../components/PrdSheetViewer";
             const statusBanner = document.getElementById("prd-generation-status");
             const statusText = document.getElementById("prd-status-text");
 
+            // Saved PRD Box Elements
+            const savedPrdBox = document.getElementById("saved-prd-box");
+            const savedPrdTitle = document.getElementById("saved-prd-title");
+            const savedPrdMeta = document.getElementById("saved-prd-meta");
+            const btnOpenSavedPrd = document.getElementById("btn-open-saved-prd");
+            const btnCopySavedPrd = document.getElementById("btn-copy-saved-prd");
+            const iconCopySavedPrd = document.getElementById("icon-copy-saved-prd");
+            const labelCopySavedPrd = document.getElementById("label-copy-saved-prd");
+            const btnDownloadSavedPrd = document.getElementById("btn-download-saved-prd");
+            const btnDeleteSavedPrd = document.getElementById("btn-delete-saved-prd");
+
             let attachedFiles = [];
             let isGenerating = false;
+            let currentSavedPrd = "";
+
+            function updateSavedPrdBox(markdown) {
+                if (!markdown || !markdown.trim()) {
+                    if (savedPrdBox) savedPrdBox.classList.add("hidden");
+                    currentSavedPrd = "";
+                    return;
+                }
+
+                currentSavedPrd = markdown;
+                try {
+                    localStorage.setItem("satusite_active_prd", markdown);
+                } catch (e) {}
+
+                const titleMatch = markdown.match(/#\s*(?:Planning Blueprint:?|PRD:?|Rencana:?)\s*([^\r\n]+)/i);
+                const title = titleMatch ? titleMatch[1].trim() : "Dokumen PRD & Blueprint (.md)";
+                const wordCount = markdown.split(/\s+/).filter(Boolean).length;
+                const lineCount = markdown.split("\n").length;
+
+                if (savedPrdTitle) savedPrdTitle.textContent = title;
+                if (savedPrdMeta) savedPrdMeta.textContent = `${wordCount.toLocaleString()} Kata • ${lineCount} Baris • Format Markdown (.md)`;
+                if (savedPrdBox) {
+                    savedPrdBox.classList.remove("hidden");
+                }
+            }
+
+            // Hydrate saved PRD on mount
+            try {
+                const saved = localStorage.getItem("satusite_active_prd");
+                if (saved && saved.trim()) {
+                    updateSavedPrdBox(saved);
+                }
+            } catch (e) {}
+
+            // Open saved PRD button
+            if (btnOpenSavedPrd) {
+                btnOpenSavedPrd.addEventListener("click", () => {
+                    const md = currentSavedPrd || localStorage.getItem("satusite_active_prd") || "";
+                    if (md) {
+                        window.dispatchEvent(new CustomEvent("open-prd-sheet", {
+                            detail: { markdown: md }
+                        }));
+                    }
+                });
+            }
+
+            // Copy saved PRD
+            if (btnCopySavedPrd) {
+                btnCopySavedPrd.addEventListener("click", async () => {
+                    const md = currentSavedPrd || localStorage.getItem("satusite_active_prd") || "";
+                    if (!md) return;
+                    try {
+                        await navigator.clipboard.writeText(md);
+                        if (iconCopySavedPrd) iconCopySavedPrd.className = "fa-solid fa-check text-xs text-emerald-400";
+                        if (labelCopySavedPrd) labelCopySavedPrd.textContent = "Tersalin!";
+                        setTimeout(() => {
+                            if (iconCopySavedPrd) iconCopySavedPrd.className = "fa-solid fa-copy text-xs";
+                            if (labelCopySavedPrd) labelCopySavedPrd.textContent = "Salin .md";
+                        }, 2000);
+                    } catch (e) {}
+                });
+            }
+
+            // Download saved PRD
+            if (btnDownloadSavedPrd) {
+                btnDownloadSavedPrd.addEventListener("click", () => {
+                    const md = currentSavedPrd || localStorage.getItem("satusite_active_prd") || "";
+                    if (!md) return;
+                    const titleMatch = md.match(/#\s*(?:Planning Blueprint:?|PRD:?|Rencana:?)\s*([^\r\n]+)/i);
+                    const rawTitle = titleMatch ? titleMatch[1].trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") : "prd-document";
+                    const filename = `${rawTitle || "prd-blueprint"}.md`;
+
+                    const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+            }
+
+            // Delete saved PRD
+            if (btnDeleteSavedPrd) {
+                btnDeleteSavedPrd.addEventListener("click", () => {
+                    if (confirm("Hapus dokumen PRD tersimpan dari sesi ini?")) {
+                        try {
+                            localStorage.removeItem("satusite_active_prd");
+                        } catch (e) {}
+                        currentSavedPrd = "";
+                        if (savedPrdBox) savedPrdBox.classList.add("hidden");
+                    }
+                });
+            }
 
             function readFile(file) {
                 return new Promise((resolve) => {
@@ -383,19 +562,35 @@ import PrdSheetViewer from "../../components/PrdSheetViewer";
                         statusText.textContent = "AI sedang menganalisis kebutuhan & menyusun Dokumen PRD (.md)...";
                     }
 
+                    let ownerEmail = "guest@satusite.com";
+                    try {
+                        const userRaw = localStorage.getItem("satusite_auth_user");
+                        if (userRaw) {
+                            const userObj = JSON.parse(userRaw);
+                            if (userObj && userObj.email) {
+                                ownerEmail = userObj.email;
+                            }
+                        }
+                    } catch (e) {}
+
                     try {
                         const res = await fetch("/api/generate-prd", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
                                 prompt: promptText,
-                                desc: promptText
+                                desc: promptText,
+                                owner: ownerEmail,
+                                webName: promptText.slice(0, 40)
                             })
                         });
 
                         const data = await res.json();
                         if (res.ok && data && (data.markdown || data.prd)) {
                             const markdownDoc = data.markdown || data.prd;
+
+                            // Update saved PRD box UI & local storage
+                            updateSavedPrdBox(markdownDoc);
 
                             // Dispatch event to open smooth PRD slide-over sheet from the right
                             window.dispatchEvent(new CustomEvent("open-prd-sheet", {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { PrdSheetViewer } from "./PrdSheetViewer";
 import {
   Code2,
   Eye,
@@ -571,6 +572,7 @@ export default function SatusiteStudioWorkspace() {
   const [showCanvas, setShowCanvas] = useState<boolean>(true);
   const [inputPrompt, setInputPrompt] = useState<string>("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [activePrdDoc, setActivePrdDoc] = useState<string | null>(null);
 
   const [activeTab, setActiveTab] = useState<"preview" | "code" | "architecture" | "database" | "logs">("preview");
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
@@ -652,6 +654,12 @@ export default function SatusiteStudioWorkspace() {
       setArchitectureStructure(p.structure);
     } else {
       setArchitectureStructure(null);
+    }
+    if (p.prd) {
+      setActivePrdDoc(p.prd);
+      try {
+        localStorage.setItem("satusite_active_prd", p.prd);
+      } catch (e) {}
     }
     setShowHistoryModal(false);
     try {
@@ -962,6 +970,17 @@ export default function SatusiteStudioWorkspace() {
     }
 
     try {
+      const savedPrd = localStorage.getItem("satusite_active_prd");
+      if (savedPrd && savedPrd.trim()) {
+        setActivePrdDoc(savedPrd);
+      }
+    } catch (e) {}
+
+    window.getActiveProjectPrd = () => {
+      return (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || null;
+    };
+
+    try {
       const params = new URLSearchParams(window.location.search);
       const qPrompt = params.get("prompt");
       const qId = params.get("id");
@@ -1011,6 +1030,12 @@ export default function SatusiteStudioWorkspace() {
         }
         if (p.messages && p.messages.length > 0) setMessages(p.messages);
         if (p.structure) setArchitectureStructure(p.structure);
+        if (p.prd) {
+          setActivePrdDoc(p.prd);
+          try {
+            localStorage.setItem("satusite_active_prd", p.prd);
+          } catch (e) {}
+        }
       } else if (qPrompt) {
         const newId = "proj_" + Date.now();
         setProjectId(newId);
@@ -1042,6 +1067,7 @@ export default function SatusiteStudioWorkspace() {
         messages: newMessages,
         structure: structToSave,
         projectConfig: projectConfig,
+        prd: activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null),
         updatedAt: Date.now(),
         createdAt: store.projects[projectId]?.createdAt || Date.now()
       };
@@ -1265,7 +1291,14 @@ export default function SatusiteStudioWorkspace() {
         saveProjectState(code, finalMessages, customName, smartStruct);
       }
 
-      if (isPrd) {
+      if (isPrd || data.markdown || data.prd) {
+        const prdText = data.markdown || data.prd || (isPrd && data.code ? data.code : "");
+        if (prdText) {
+          setActivePrdDoc(prdText);
+          try {
+            localStorage.setItem("satusite_active_prd", prdText);
+          } catch (e) {}
+        }
         setActiveTab("architecture");
       }
 
@@ -1280,7 +1313,7 @@ export default function SatusiteStudioWorkspace() {
 
       let userFriendlyError = err.message || "Terjadi kendala saat menghubungi AI.";
       if (userFriendlyError.includes("429") || userFriendlyError.includes("quota") || userFriendlyError.includes("RESOURCE_EXHAUSTED")) {
-        userFriendlyError = "Batas kuota gratis AI Gemini Cloud sedang penuh sesaat. Sistem telah mengalihkan ke model cadangan, silakan coba kirim ulang prompt Anda dalam 30 detik.";
+        userFriendlyError = "Batas kuota AI Cloud sedang penuh sesaat. Sistem telah mengalihkan ke model cadangan, silakan coba kirim ulang prompt Anda dalam 30 detik.";
       } else if (userFriendlyError.includes("{") && userFriendlyError.includes("error")) {
         try {
           const parsed = JSON.parse(userFriendlyError.slice(userFriendlyError.indexOf("{")));
@@ -2943,6 +2976,20 @@ export default function SatusiteStudioWorkspace() {
                 <span className="text-[11px] font-semibold text-zinc-300">AI Agent</span>
               </div>
               <div className="flex items-center gap-1.5">
+                {activePrdDoc && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
+                      window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
+                    }}
+                    className="px-2 py-1 rounded-md bg-amber-500/15 hover:bg-amber-500/25 text-[11px] text-amber-300 hover:text-amber-200 flex items-center gap-1 border border-amber-500/30 transition-colors cursor-pointer"
+                    title="Buka Dokumen PRD (.md)"
+                  >
+                    <FileText className="w-3 h-3 text-amber-400" />
+                    <span>Dokumen PRD (.md)</span>
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     loadSavedProjects();
@@ -3002,6 +3049,36 @@ export default function SatusiteStudioWorkspace() {
 
             {/* Messages stream */}
             <div className="flex-1 overflow-y-auto p-3 space-y-3">
+              {/* Persistent Saved PRD Card Widget in chat agent box */}
+              {activePrdDoc && (
+                <div className="p-3 rounded-2xl bg-amber-950/25 border border-amber-500/30 space-y-2 text-xs animate-fade-in shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-white text-[11px]">Dokumen PRD (.md) Tersimpan</div>
+                        <div className="text-[10px] text-zinc-400">Blueprint Arsitektur & Spesifikasi</div>
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-mono font-bold text-amber-300 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30">
+                      .md
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
+                      window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
+                    }}
+                    className="w-full py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Buka Dokumen PRD (.md)</span>
+                  </button>
+                </div>
+              )}
               {messages.map((m) => (
                 <div
                   key={m.id}
@@ -3047,16 +3124,30 @@ export default function SatusiteStudioWorkspace() {
                       )}
 
                       {m.hasCodeUpdate && (
-                        <button
-                          onClick={() => {
-                            setShowCanvas(true);
-                            setActiveTab("preview");
-                          }}
-                          className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-600/20 hover:bg-blue-600/30 text-[10px] text-blue-400 hover:text-blue-300 font-semibold border border-blue-500/30 transition-all cursor-pointer"
-                        >
-                          <Eye className="w-3 h-3" />
-                          <span>Lihat Hasil di Canvas</span>
-                        </button>
+                        <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                          <button
+                            onClick={() => {
+                              setShowCanvas(true);
+                              setActiveTab("preview");
+                            }}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-600/20 hover:bg-blue-600/30 text-[10px] text-blue-400 hover:text-blue-300 font-semibold border border-blue-500/30 transition-all cursor-pointer"
+                          >
+                            <Eye className="w-3 h-3" />
+                            <span>Lihat Hasil di Canvas</span>
+                          </button>
+                          {(activePrdDoc || genMode === "prd") && (
+                            <button
+                              onClick={() => {
+                                const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
+                                window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
+                              }}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-[10px] text-amber-300 hover:text-amber-200 font-semibold border border-amber-500/30 transition-all cursor-pointer"
+                            >
+                              <FileText className="w-3 h-3 text-amber-400" />
+                              <span>Buka Dokumen PRD (.md)</span>
+                            </button>
+                          )}
+                        </div>
                       )}
                     </div>
 
@@ -3973,6 +4064,9 @@ export default function SatusiteStudioWorkspace() {
           </div>
         </div>
       )}
+
+      {/* Slide-Over PRD Sheet Viewer */}
+      <PrdSheetViewer />
 
     </div>
   );

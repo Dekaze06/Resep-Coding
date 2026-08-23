@@ -78,7 +78,7 @@ const PLANS: PricingPlan[] = [
       { text: "1-Click Cloud Deploy (Vercel/Netlify) + Custom Domain", included: true, highlight: true },
       { text: "Sinkronisasi & Auto-Push ke Repositori GitHub", included: true, highlight: true },
       { text: "Testing & QA Suite (Lighthouse, A11y & Simulator)", included: true },
-      { text: "Unlimited AI Token + Engine Gemini 3.7 & 3.6 Flash", included: true },
+      { text: "Unlimited AI Token + High-Speed Autonomous Neural Engine", included: true },
       { text: "Dukungan Prioritas 24/7 & Dedicated Support", included: true },
     ],
     ctaText: "Pilih Paket Max",

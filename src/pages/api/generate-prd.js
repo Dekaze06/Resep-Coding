@@ -1,4 +1,5 @@
 export const prerender = false;
+import { ProjectsDB } from '../../lib/db.ts';
 
 export async function POST({ request }) {
     try {
@@ -240,11 +241,33 @@ Sistem dirancang untuk menyajikan platform digital yang tangguh, cepat, dan eleg
 - **Tipografi**: Plus Jakarta Sans / Inter / Geist Sans.
 - **Gambar**: Unsplash WebP teroptimasi (\`?auto=format&fit=crop&w=1200&q=80&fm=webp\`).`;
 
+            let fallbackProjectId = null;
+            try {
+                const ownerEmail = body.owner || 'guest@satusite.com';
+                const projName = body.webName || (body.prompt ? body.prompt.slice(0, 45).trim() : 'Dokumen PRD Blueprint');
+                const saved = await ProjectsDB.createAsync({
+                    name: projName,
+                    category: body.webType || 'Product Blueprint & PRD',
+                    mode: 'prd',
+                    owner: ownerEmail,
+                    status: 'Live',
+                    prompt: body.prompt || '',
+                    prdContext: fallbackPrd,
+                    code: fallbackPrd,
+                    architectureNodes: []
+                });
+                fallbackProjectId = saved?.id;
+            } catch (dbErr) {
+                console.warn('[DB] Auto-save fallback PRD to database failed:', dbErr);
+            }
+
             return new Response(JSON.stringify({
                 success: true,
                 markdown: fallbackPrd,
                 prd: fallbackPrd,
                 format: 'markdown',
+                projectId: fallbackProjectId,
+                savedToDatabase: !!fallbackProjectId,
                 agentTeam: ['Lead Architect', 'System Analyst', 'Fullstack Planner'],
                 note: 'Generated via SatuSite Engine'
             }), {
@@ -264,11 +287,33 @@ Sistem dirancang untuk menyajikan platform digital yang tangguh, cepat, dan eleg
             });
         }
 
+        let savedProjectId = null;
+        try {
+            const ownerEmail = body.owner || 'guest@satusite.com';
+            const projName = body.webName || (body.prompt ? body.prompt.slice(0, 45).trim() : 'Dokumen PRD Blueprint');
+            const saved = await ProjectsDB.createAsync({
+                name: projName,
+                category: body.webType || 'Product Blueprint & PRD',
+                mode: 'prd',
+                owner: ownerEmail,
+                status: 'Live',
+                prompt: body.prompt || '',
+                prdContext: markdown,
+                code: markdown,
+                architectureNodes: []
+            });
+            savedProjectId = saved?.id;
+        } catch (dbErr) {
+            console.warn('[DB] Auto-save PRD to database failed:', dbErr);
+        }
+
         return new Response(JSON.stringify({
             success: true,
             markdown: markdown,
             prd: markdown,
-            format: 'markdown'
+            format: 'markdown',
+            projectId: savedProjectId,
+            savedToDatabase: !!savedProjectId
         }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }

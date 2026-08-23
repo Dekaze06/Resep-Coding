@@ -185,9 +185,9 @@ export default function AdminPortal() {
   // System Logs
   const [logFilter, setLogFilter] = useState<'ALL' | 'SYSTEM' | 'AUTH' | 'API' | 'DEPLOY'>('ALL');
   const [logs, setLogs] = useState<{ id: number; time: string; tag: string; message: string }[]>([
-    { id: 1, time: new Date().toLocaleTimeString(), tag: 'SYSTEM', message: 'Satusite Studio Platform v3.7 Online & Stabil' },
+    { id: 1, time: new Date().toLocaleTimeString(), tag: 'SYSTEM', message: 'Satusite Studio Platform Online & Stabil' },
     { id: 2, time: new Date().toLocaleTimeString(), tag: 'AUTH', message: 'Superadmin session aktif (dekaze08@gmail.com)' },
-    { id: 3, time: new Date().toLocaleTimeString(), tag: 'API', message: 'Gemini 3.7 Flash Engine aktif (Latency: 1.8s)' },
+    { id: 3, time: new Date().toLocaleTimeString(), tag: 'API', message: 'Autonomous AI Engine aktif (Latency: 1.8s)' },
     { id: 4, time: new Date().toLocaleTimeString(), tag: 'DEPLOY', message: '312 Vercel & Netlify Edge nodes dalam sinkronisasi' },
     { id: 5, time: new Date().toLocaleTimeString(), tag: 'DB', message: 'MongoDB Atlas Cloud Cluster Connected (satusite_db)' }
   ]);
@@ -879,11 +879,11 @@ export default function AdminPortal() {
                     <div className="space-y-2.5 text-xs">
                       <div className="flex items-center justify-between text-zinc-400">
                         <span>Engine Utama:</span>
-                        <span className="font-mono text-white">{primaryModel || 'gemini-3.7-flash'}</span>
+                        <span className="font-mono text-emerald-400 font-semibold">Autonomous High-Speed Engine (Active)</span>
                       </div>
                       <div className="flex items-center justify-between text-zinc-400">
                         <span>Model Cadangan:</span>
-                        <span className="font-mono text-white">{fallbackModel || 'gemini-3.7-flash'}</span>
+                        <span className="font-mono text-zinc-300">Secondary Fallback Engine (Ready)</span>
                       </div>
                       <div className="flex items-center justify-between text-zinc-400">
                         <span>Database Driver:</span>
@@ -930,7 +930,7 @@ export default function AdminPortal() {
                   <div className="p-4 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-1">
                     <div className="text-[11px] text-zinc-500 font-mono uppercase">Rata-rata Token per Build</div>
                     <div className="text-2xl font-semibold text-white font-mono">{totalProj > 0 ? '~2,150' : '0'}</div>
-                    <div className="text-[10px] text-zinc-400">Gemini 3.7 Flash Engine</div>
+                    <div className="text-[10px] text-zinc-400">Autonomous AI Engine</div>
                   </div>
                   <div className="p-4 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-1">
                     <div className="text-[11px] text-zinc-500 font-mono uppercase">Total Pelanggan Buletin</div>
@@ -1257,7 +1257,7 @@ export default function AdminPortal() {
                     onChange={(e) => setPrimaryModel(e.target.value)}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700 font-mono text-xs"
                   >
-                    <option value="gemini-3.7-flash">gemini-3.7-flash (Model Utama - High Reasoning & Fast Generation)</option>
+                    <option value="gemini-3.7-flash">Primary High-Speed Neural Engine (Active)</option>
                   </select>
                 </div>
 
@@ -1268,7 +1268,7 @@ export default function AdminPortal() {
                     onChange={(e) => setFallbackModel(e.target.value)}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-zinc-700 font-mono text-xs"
                   >
-                    <option value="gemini-3.6-flash">gemini-3.6-flash (Model Cadangan)</option>
+                    <option value="gemini-3.6-flash">Secondary High-Bandwidth Engine (Standby)</option>
                   </select>
                 </div>
 
@@ -1351,7 +1351,7 @@ export default function AdminPortal() {
 
                 <div className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-white">Gemini API Relay</span>
+                    <span className="text-xs font-semibold text-white">AI Neural API Relay</span>
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                   </div>
                   <div className="text-xs text-zinc-400">Status: 100% Operational</div>
@@ -1391,7 +1391,7 @@ export default function AdminPortal() {
                 </div>
                 <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between font-mono">
                   <span className="text-zinc-300">koleksi: satusite_db.system_config</span>
-                  <span className="text-emerald-400">Tersinkron (gemini-3.7-flash)</span>
+                  <span className="text-emerald-400">Tersinkron (Optimal)</span>
                 </div>
               </div>
             </div>

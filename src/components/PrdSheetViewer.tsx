@@ -238,6 +238,30 @@ export default function PrdSheetViewer() {
   const contentRef = useRef(content)
   contentRef.current = content
 
+  // Hydrate from localStorage or window state on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("satusite_active_prd")
+      if (saved && !contentRef.current) {
+        setContent(saved)
+        contentRef.current = saved
+      }
+    } catch (e) {}
+
+    // Expose helpers on window
+    window.getActiveProjectPrd = () => {
+      return contentRef.current || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || null
+    }
+
+    window.updateActiveProjectPrd = (newContent: string) => {
+      setContent(newContent)
+      contentRef.current = newContent
+      try {
+        localStorage.setItem("satusite_active_prd", newContent)
+      } catch (e) {}
+    }
+  }, [])
+
   // Set initial width responsively
   useEffect(() => {
     const handleResize = () => {
@@ -254,20 +278,64 @@ export default function PrdSheetViewer() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
+  const syncToDatabase = useCallback(async (markdownText: string) => {
+    if (!markdownText || !markdownText.trim()) return
+    try {
+      let ownerEmail = "guest@satusite.com"
+      const userRaw = typeof localStorage !== "undefined" ? localStorage.getItem("satusite_auth_user") : null
+      if (userRaw) {
+        const user = JSON.parse(userRaw)
+        if (user && user.email) ownerEmail = user.email
+      }
+      const titleMatch = markdownText.match(/#\s*(?:Planning Blueprint:?|PRD:?|Rencana:?)\s*([^\r\n]+)/i)
+      const docName = titleMatch ? titleMatch[1].trim() : "Dokumen PRD Blueprint"
+
+      await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: docName,
+          category: "Product Blueprint & PRD",
+          mode: "prd",
+          owner: ownerEmail,
+          prdContext: markdownText,
+          code: markdownText
+        })
+      })
+    } catch (err) {
+      console.warn("[PRD] Sync to database error:", err)
+    }
+  }, [])
+
   // Auto-save on close
   const handleClose = useCallback(() => {
+    if (contentRef.current) {
+      try {
+        localStorage.setItem("satusite_active_prd", contentRef.current)
+      } catch (e) {}
+      syncToDatabase(contentRef.current)
+    }
     if (window.updateActiveProjectPrd) {
       window.updateActiveProjectPrd(contentRef.current)
     }
     setOpen(false)
     document.body.style.overflow = ""
     setTimeout(() => setVisible(false), 350)
-  }, [])
+  }, [syncToDatabase])
 
   useEffect(() => {
     const handleOpenPrd = (e: any) => {
-      const md = e.detail?.markdown || e.detail?.prd || ""
-      setContent(md)
+      let md = e.detail?.markdown || e.detail?.prd || ""
+      if (!md) {
+        md = contentRef.current || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") || "" : "")
+      }
+      if (md) {
+        setContent(md)
+        contentRef.current = md
+        try {
+          localStorage.setItem("satusite_active_prd", md)
+        } catch (err) {}
+      }
       setVisible(true)
       setActiveTab("rendered")
       document.body.style.overflow = "hidden"

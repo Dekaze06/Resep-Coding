@@ -516,7 +516,7 @@ export default function ClientPortal() {
 
                 <div className="p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-1.5">
                   <div className="text-[11px] text-zinc-500 font-mono uppercase">AI Engine & DB</div>
-                  <div className="text-2xl font-semibold text-white tracking-tight font-mono">Gemini 3.7 Flash</div>
+                  <div className="text-2xl font-semibold text-white tracking-tight font-mono">Autonomous AI</div>
                   <div className="text-[11px] text-zinc-400">MongoDB Atlas Live Sync</div>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
+import { PrdSheetViewer } from "./PrdSheetViewer";
 import {
   Sparkles,
   Send,
@@ -363,8 +364,8 @@ export default function FrontendCanvasViewer() {
 
   // Check Planning availability
   const checkPrd = useCallback(() => {
-    if (typeof window !== "undefined" && window.getActiveProjectPrd) {
-      const prd = window.getActiveProjectPrd();
+    if (typeof window !== "undefined") {
+      const prd = (window.getActiveProjectPrd ? window.getActiveProjectPrd() : null) || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null);
       setPrdAvailable(!!(prd && prd.trim()));
     }
   }, []);
@@ -857,8 +858,22 @@ export default function FrontendCanvasViewer() {
                 </div>
               </div>
 
-              {/* Planning Context Indicator */}
+              {/* Planning Context & Open PRD Document */}
               <div className="flex items-center gap-2">
+                {prdAvailable && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const md = (window.getActiveProjectPrd ? window.getActiveProjectPrd() : null) || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
+                      window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
+                    }}
+                    className="px-2.5 py-1 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-[10px] font-semibold text-amber-300 border border-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                    title="Buka Dokumen PRD (.md)"
+                  >
+                    <FileText className="w-3 h-3 text-amber-400" />
+                    <span>Dokumen PRD (.md)</span>
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => setIncludePrd(!includePrd)}
@@ -901,6 +916,36 @@ export default function FrontendCanvasViewer() {
 
             {/* Chat Messages List */}
             <div ref={chatScrollRef} className="flex-1 p-4 overflow-y-auto space-y-4 prd-scroll-area">
+              {/* Saved PRD Persistent Widget at the top of chat if available */}
+              {prdAvailable && (
+                <div className="p-3 rounded-2xl bg-amber-950/25 border border-amber-500/30 space-y-2 text-xs animate-fade-in shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-white text-xs">Dokumen PRD (.md) Tersimpan</div>
+                        <div className="text-[10px] text-zinc-400">Arsitektur & Spesifikasi Proyek</div>
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-mono font-bold text-amber-300 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30">
+                      .md
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const md = (window.getActiveProjectPrd ? window.getActiveProjectPrd() : null) || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
+                      window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
+                    }}
+                    className="w-full py-1.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Buka Dokumen PRD (.md)</span>
+                  </button>
+                </div>
+              )}
               {messages.map((msg) => (
                 <div
                   key={msg.id}
@@ -1376,6 +1421,7 @@ export default function FrontendCanvasViewer() {
           </div>
         </div>
       </div>
+      <PrdSheetViewer />
     </div>,
     document.body
   );

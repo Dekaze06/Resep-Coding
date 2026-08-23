@@ -23,7 +23,7 @@ export interface CardScrollRevealProps {
 export function CardScrollReveal({
   src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920&auto=format&fit=crop",
   alt = "AI Agent Canvas Preview",
-  badgeText = "AI Agent 3.7 Studio",
+  badgeText = "AI Agent Studio",
   title = "Generasi Website & Aplikasi Real-Time",
   subtitle = "AI Agent merancang UI, kode HTML/CSS/JS mandiri, dan integrasi data otomatis",
   height = "240px",
