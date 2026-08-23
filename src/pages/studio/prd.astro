@@ -104,7 +104,7 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                         id="studio-file-upload"
                                         type="file"
                                         class="hidden"
-                                        accept="image/*,.txt,.pdf,.json,.doc,.docx"
+                                        accept=".md,.markdown,.txt,.json,.csv,.pdf,.doc,.docx,.html,.yaml,.yml,.sql,image/*"
                                     />
                                 </label>
                                 <span
@@ -138,12 +138,12 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                 <button
                                     type="submit"
                                     id="btn-studio-generate"
-                                    class="w-8 h-8 rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors flex items-center justify-center cursor-pointer group shadow-sm border-0 outline-none"
-                                    title="Generate PRD Blueprint"
+                                    class="w-8 h-8 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 flex items-center justify-center transition-all cursor-pointer shadow-md"
+                                    title="Generate Blueprint"
                                 >
                                     <i
                                         id="btn-studio-generate-icon"
-                                        class="fa-solid fa-arrow-up text-xs text-white group-hover:-translate-y-0.5 transition-transform"
+                                        class="fa-solid fa-arrow-up text-xs text-zinc-950"
                                     ></i>
                                 </button>
                             </div>
@@ -153,19 +153,9 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
             </div>
         </section>
 
-        <!-- PRD HIGHLIGHT SECTION -->
-        <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
-                    <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center mb-3">
-                        <i class="fa-solid fa-file-contract text-sm"></i>
-                    </div>
-                    <h3 class="text-sm font-bold text-white mb-1.5">Dokumen PRD Komprehensif</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed">
-                        Lengkap dengan latar belakang produk, target pengguna, user stories, acceptance criteria, dan daftar prioritas rilis.
-                    </p>
-                </div>
-
+        <!-- SUB-HEADER SECTION / FEATURES -->
+        <section class="max-w-4xl mx-auto px-4 py-8 sm:py-12 border-t border-zinc-800/60">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
                     <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center mb-3">
                         <i class="fa-solid fa-diagram-project text-sm"></i>
@@ -178,11 +168,11 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
 
                 <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
                     <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center mb-3">
-                        <i class="fa-solid fa-arrow-right-arrow-left text-sm"></i>
+                        <i class="fa-solid fa-file-contract text-sm"></i>
                     </div>
-                    <h3 class="text-sm font-bold text-white mb-1.5">Konversi Otomatis ke Kode</h3>
+                    <h3 class="text-sm font-bold text-white mb-1.5">Dokumen PRD Komprehensif</h3>
                     <p class="text-xs text-zinc-400 leading-relaxed">
-                        Gunakan blueprint dokumen PRD yang telah disusun untuk langsung menghasilkan kode frontend atau fullstack dengan 1 klik.
+                        Lengkap dengan latar belakang produk, target pengguna, user stories, acceptance criteria, dan daftar prioritas rilis.
                     </p>
                 </div>
             </div>
@@ -200,20 +190,82 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
             const voiceIcon = document.getElementById("icon-studio-voice");
             const generateIcon = document.getElementById("btn-studio-generate-icon");
 
-            let attachedFileName = "";
+            let attachedFiles = [];
             let isGeneratingPrompt = false;
             let navTimer = null;
 
-            if (fileUpload && fileIndicator) {
-                fileUpload.addEventListener("change", (e) => {
+            function readFile(file) {
+                return new Promise((resolve) => {
+                    const isText = file.type.startsWith("text/") || 
+                        file.name.endsWith(".md") || 
+                        file.name.endsWith(".markdown") || 
+                        file.name.endsWith(".txt") || 
+                        file.name.endsWith(".json") || 
+                        file.name.endsWith(".csv") || 
+                        file.name.endsWith(".html") || 
+                        file.name.endsWith(".yaml") || 
+                        file.name.endsWith(".yml") || 
+                        file.name.endsWith(".sql");
+                    if (isText) {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => resolve(ev.target.result || "");
+                        reader.onerror = () => resolve("");
+                        reader.readAsText(file);
+                    } else {
+                        resolve(`[Dokumen Terlampir: ${file.name}, Tipe: ${file.type || 'Dokumen'}, Ukuran: ${(file.size / 1024).toFixed(1)} KB]`);
+                    }
+                });
+            }
+
+            async function handleSelectedFile(file) {
+                if (!file) return;
+                const sizeKb = (file.size / 1024).toFixed(1) + " KB";
+                const content = await readFile(file);
+                attachedFiles = [{
+                    name: file.name,
+                    size: sizeKb,
+                    type: file.type || "file",
+                    content: content
+                }];
+                if (fileIndicator) {
+                    fileIndicator.textContent = file.name;
+                    fileIndicator.classList.remove("hidden");
+                }
+            }
+
+            if (fileUpload) {
+                fileUpload.addEventListener("change", async (e) => {
                     const file = e.target.files && e.target.files[0];
                     if (file) {
-                        attachedFileName = file.name;
-                        fileIndicator.textContent = file.name;
-                        fileIndicator.classList.remove("hidden");
+                        await handleSelectedFile(file);
                     } else {
-                        attachedFileName = "";
-                        fileIndicator.classList.add("hidden");
+                        attachedFiles = [];
+                        if (fileIndicator) fileIndicator.classList.add("hidden");
+                    }
+                });
+            }
+
+            // Drag and drop support on form
+            if (form) {
+                form.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+                form.addEventListener("drop", async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                        await handleSelectedFile(e.dataTransfer.files[0]);
+                    }
+                });
+            }
+
+            // Paste support on input
+            if (input) {
+                input.addEventListener("paste", async (e) => {
+                    if (e.clipboardData.files && e.clipboardData.files.length > 0) {
+                        e.preventDefault();
+                        await handleSelectedFile(e.clipboardData.files[0]);
                     }
                 });
             }
@@ -290,8 +342,16 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                     }
 
                     let promptText = input.value.trim();
-                    if (attachedFileName) {
-                        promptText = `[Lampiran: ${attachedFileName}] ` + promptText;
+                    if (!promptText && attachedFiles.length > 0) {
+                        promptText = `Rancang dokumen arsitektur dan spesifikasi teknis (PRD) berdasarkan dokumen lampiran ${attachedFiles[0].name}.`;
+                    }
+                    if (attachedFiles.length > 0) {
+                        promptText = `[Lampiran: ${attachedFiles[0].name}] ` + promptText;
+                        try {
+                            sessionStorage.setItem("satusite_pending_attached_docs", JSON.stringify(attachedFiles));
+                        } catch (err) {
+                            console.warn("Storage save error:", err);
+                        }
                     }
                     if (!promptText) return;
 

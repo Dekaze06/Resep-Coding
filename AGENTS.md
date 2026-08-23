@@ -10,13 +10,8 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 
 ## Design & UI Guidelines (STRICT)
 
-- **NO EMOJIS / EMOTICONS**: Never use emoji or emoticon characters anywhere (chat responses, explanations, UI text, icons, buttons, menus).
-- **Clean Minimalist Aesthetic (Recommended Standard)**:
-  - Focus on clean, minimalist, professional, and elegant design.
-  - Flexible with user color themes, but avoid multi-color/rainbow badges and visual clutter.
-  - Use subtle borders (`border-zinc-800` or neutral borders), clean typography hierarchy, and proportional spacing.
-- **Recommended Typography**: Use `Geist` font family (`Geist Sans` / `Geist Mono`) for crisp modern presentation.
-- **Recommended Animations**: Use professional, subtle section animations and micro-interactions (smooth hover transitions, subtle scroll reveal, backdrop-blur modals).
+- **NO EMOJIS / EMOTICONS**: Never use emoji or emoticon characters anywhere (chat responses, explanations, UI text, icons, buttons, menus). Use professional icon fonts (e.g. Font Awesome, Lucide) or inline SVGs when icons are needed.
+- **Pure Gemini 3.7 Flash Suggestions**: Generate clean, modern, responsive, and high-quality web interfaces and components based naturally on Gemini 3.7 Flash's intelligence and user specifications.
 
 ## Documentation
 

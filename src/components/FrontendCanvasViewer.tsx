@@ -24,7 +24,8 @@ import {
   PlusCircle,
   Edit3,
   ChevronDown,
-  MessageSquare
+  MessageSquare,
+  Paperclip
 } from "lucide-react";
 
 interface ChatMessage {
@@ -272,11 +273,85 @@ export default function FrontendCanvasViewer() {
     },
   ]);
   const [inputPrompt, setInputPrompt] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState<Array<{ name: string; size: string; type: string; content?: string }>>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState("");
   const [includePrd, setIncludePrd] = useState(true);
   const [prdAvailable, setPrdAvailable] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const readFileContent = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const isTextDoc =
+        file.type.startsWith("text/") ||
+        file.name.endsWith(".md") ||
+        file.name.endsWith(".markdown") ||
+        file.name.endsWith(".txt") ||
+        file.name.endsWith(".json") ||
+        file.name.endsWith(".csv") ||
+        file.name.endsWith(".html") ||
+        file.name.endsWith(".yaml") ||
+        file.name.endsWith(".yml") ||
+        file.name.endsWith(".sql") ||
+        file.name.endsWith(".ts") ||
+        file.name.endsWith(".js") ||
+        file.name.endsWith(".xml");
+
+      if (isTextDoc) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          resolve((e.target?.result as string) || "");
+        };
+        reader.onerror = () => resolve("");
+        reader.readAsText(file);
+      } else {
+        resolve(`[Dokumen / Berkas Terlampir: ${file.name}, Tipe: ${file.type || 'Dokumen'}, Ukuran: ${(file.size / 1024).toFixed(1)} KB]`);
+      }
+    });
+  };
+
+  const addFilesToUpload = async (files: FileList | File[]) => {
+    if (!files || files.length === 0) return;
+    const newFileList: Array<{ name: string; size: string; type: string; content?: string }> = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const sizeKb = (file.size / 1024).toFixed(1) + " KB";
+      const content = await readFileContent(file);
+      newFileList.push({
+        name: file.name,
+        size: sizeKb,
+        type: file.type || "file",
+        content
+      });
+    }
+    setUploadedFiles((prev) => [...prev, ...newFileList]);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      await addFilesToUpload(e.target.files);
+    }
+    e.target.value = "";
+  };
+
+  const handleFileDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      await addFilesToUpload(e.dataTransfer.files);
+    }
+  };
+
+  const handleFilePaste = async (e: React.ClipboardEvent) => {
+    if (e.clipboardData.files && e.clipboardData.files.length > 0) {
+      e.preventDefault();
+      await addFilesToUpload(e.clipboardData.files);
+    }
+  };
+
+  const removeUploadedFile = (index: number) => {
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
 
   // Left chat pane width resizing
   const [chatWidth, setChatWidth] = useState(430);
@@ -403,38 +478,74 @@ export default function FrontendCanvasViewer() {
     const interceptorScript = `
 <script id="satusite-nav-sandbox">
 (function() {
+  document.addEventListener('submit', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }, true);
+
   document.addEventListener('click', function(e) {
-    var a = e.target.closest('a');
+    var a = e.target.closest('button, a');
     if (!a) return;
-    var href = a.getAttribute('href');
+    var href = a.getAttribute('href') || '';
     
     // If empty or dummy hash
     if (!href || href === '#' || href === 'javascript:void(0)') {
-      e.preventDefault();
+      if (a.tagName && a.tagName.toLowerCase() === 'a') {
+        e.preventDefault();
+        e.stopPropagation();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       return;
     }
     
-    // In-page smooth scroll anchor
-    if (href.startsWith('#')) {
+    // If link is root or home (e.g. /, /index.html, #top, #hero)
+    if (href === '/' || href === '/index.html' || href === 'index.html' || href === '#top' || href === '#hero' || href === '/#top' || href === '/#hero' || href === '/#') {
       e.preventDefault();
+      e.stopPropagation();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // In-page smooth scroll anchor
+    if (href.startsWith('#') || href.startsWith('/#')) {
+      e.preventDefault();
+      e.stopPropagation();
       try {
-        var targetEl = document.querySelector(href);
+        var cleanId = href.replace(/^(\/#|#)/, '');
+        var targetEl = document.getElementById(cleanId) || document.querySelector('#' + cleanId);
         if (targetEl) {
-          targetEl.scrollIntoView({ behavior: 'smooth' });
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-      } catch(err) {}
+      } catch(err) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       return;
     }
     
     // External link
-    if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//') || href.startsWith('wa.me')) {
+    if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//') || href.startsWith('wa.me') || href.startsWith('tel:') || href.startsWith('mailto:')) {
       e.preventDefault();
+      e.stopPropagation();
       window.open(href.startsWith('wa.me') ? 'https://' + href : href, '_blank');
       return;
     }
     
     // Local / relative path: prevent iframe from reloading the parent SATU SITE app
     e.preventDefault();
+    e.stopPropagation();
+    try {
+      var cleanSlug = href.replace(/^\//, '').replace(/\.html$/, '');
+      var matchEl = document.getElementById(cleanSlug) || document.querySelector('#' + cleanSlug);
+      if (matchEl) {
+        matchEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } catch(err) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, true);
 })();
 </script>
@@ -572,13 +683,33 @@ export default function FrontendCanvasViewer() {
 
   // Submit Prompt to AI Agent API
   const handleSubmitPrompt = async (customPrompt?: string) => {
-    const promptToSend = customPrompt || inputPrompt;
-    if (!promptToSend.trim() || isGenerating) return;
+    const rawPrompt = customPrompt || inputPrompt;
+    if ((!rawPrompt.trim() && uploadedFiles.length === 0) || isGenerating) return;
+
+    let promptToSend = rawPrompt.trim() || "Mohon perbarui dan kembangkan antarmuka web ini sesuai dengan spesifikasi pada dokumen/PRD terlampir.";
+    let fileMetaLabels: string[] = [];
+    if (uploadedFiles.length > 0) {
+      fileMetaLabels = uploadedFiles.map((f) => `${f.name} (${f.size})`);
+      const docsContext = uploadedFiles
+        .filter((f) => f.content)
+        .map((f) => `=== LAMPIRAN DOKUMEN / PRD: ${f.name} ===\n${f.content}`)
+        .join("\n\n");
+      if (docsContext) {
+        promptToSend = rawPrompt.trim()
+          ? `${rawPrompt.trim()}\n\n${docsContext}`
+          : `Mohon perbarui dan kembangkan antarmuka web ini sesuai dengan spesifikasi pada dokumen/PRD terlampir:\n\n${docsContext}`;
+      }
+      setUploadedFiles([]);
+    }
+
+    const userMsgText = fileMetaLabels.length > 0
+      ? `${rawPrompt.trim() || 'Lampiran Dokumen / PRD'}\n\n[Lampiran: ${fileMetaLabels.join(", ")}]`
+      : rawPrompt.trim();
 
     const userMsg: ChatMessage = {
       id: "msg_" + Date.now(),
       role: "user",
-      text: promptToSend,
+      text: userMsgText,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
@@ -825,10 +956,42 @@ export default function FrontendCanvasViewer() {
 
             {/* Chat Input Floating Pill */}
             <div className="p-3 border-t border-white/10 bg-[#19191c]">
-              <div className="relative flex flex-col bg-[#222227] border border-white/15 rounded-2xl focus-within:border-cyan-400/60 focus-within:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all">
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onDrop={handleFileDrop}
+                className="relative flex flex-col bg-[#222227] border border-white/15 rounded-2xl focus-within:border-cyan-400/60 focus-within:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all"
+              >
+                {/* Uploaded Documents / PRD chips */}
+                {uploadedFiles.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 px-3 pt-2.5 pb-1 border-b border-white/10">
+                    {uploadedFiles.map((f, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-neutral-900 border border-white/10 text-[10px] text-neutral-300"
+                      >
+                        <FileText className="w-3 h-3 text-cyan-400 shrink-0" />
+                        <span className="truncate max-w-[130px] font-medium">{f.name}</span>
+                        <span className="text-neutral-500 text-[9px]">({f.size})</span>
+                        <button
+                          type="button"
+                          onClick={() => removeUploadedFile(idx)}
+                          className="ml-0.5 text-neutral-400 hover:text-rose-400 cursor-pointer"
+                          title="Hapus Lampiran"
+                        >
+                          <X className="w-2.5 h-2.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <textarea
                   value={inputPrompt}
                   onChange={(e) => setInputPrompt(e.target.value)}
+                  onPaste={handleFilePaste}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -836,13 +999,27 @@ export default function FrontendCanvasViewer() {
                     }
                   }}
                   rows={2}
-                  placeholder="Diskusikan ide atau ketik instruksi desain web..."
+                  placeholder="Diskusikan ide, lampirkan dokumen PRD/spesifikasi, atau drag file ke sini..."
                   className="w-full bg-transparent p-3 text-xs text-neutral-100 placeholder-neutral-500 focus:outline-none resize-none"
                   disabled={isGenerating}
                 />
 
                 <div className="flex items-center justify-between px-3 pb-2.5 pt-1 border-t border-white/5">
                   <div className="flex items-center gap-1.5">
+                    <label
+                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer border border-white/10"
+                      title="Lampirkan Dokumen PRD (.md, .txt, .json, .pdf, .docx, .csv, dll)"
+                    >
+                      <Paperclip className="w-3.5 h-3.5" />
+                      <input
+                        type="file"
+                        multiple
+                        accept=".md,.markdown,.txt,.json,.csv,.pdf,.doc,.docx,.html,.yaml,.yml,.sql,image/*"
+                        className="hidden"
+                        onChange={handleFileUpload}
+                      />
+                    </label>
+
                     <button
                       type="button"
                       onClick={() => handleSubmitPrompt("Refactor dan rapikan seluruh tampilan web ini agar lebih modern, mewah, dan estetik dengan animasi halus.")}
@@ -858,7 +1035,7 @@ export default function FrontendCanvasViewer() {
                   <button
                     type="button"
                     onClick={() => handleSubmitPrompt()}
-                    disabled={!inputPrompt.trim() || isGenerating}
+                    disabled={(!inputPrompt.trim() && uploadedFiles.length === 0) || isGenerating}
                     className="w-7 h-7 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-30 disabled:pointer-events-none text-neutral-950 flex items-center justify-center transition-all shadow-[0_0_12px_rgba(6,182,212,0.3)] cursor-pointer"
                     title="Kirim (Enter)"
                   >

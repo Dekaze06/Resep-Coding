@@ -59,7 +59,8 @@ import {
   MicOff,
   FileUp,
   Radio,
-  Heart
+  Heart,
+  Circle
 } from "lucide-react";
 import CardScrollReveal from "./ui/CardScrollReveal";
 import InteractiveArchitectureTree from "./ui/InteractiveArchitectureTree";
@@ -553,7 +554,7 @@ export default function SatusiteStudioWorkspace() {
   const [isConfigCompleted, setIsConfigCompleted] = useState<boolean>(false);
   const [onboardingStep, setOnboardingStep] = useState<number>(1);
   const [detailPrompt, setDetailPrompt] = useState<string>("");
-  const [uploadedFiles, setUploadedFiles] = useState<Array<{ name: string; size: string; type: string }>>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<Array<{ name: string; size: string; type: string; content?: string }>>([]);
   const [isRecordingMic, setIsRecordingMic] = useState<boolean>(false);
   const [isRecordingStep1Mic, setIsRecordingStep1Mic] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -574,6 +575,7 @@ export default function SatusiteStudioWorkspace() {
   const [activeTab, setActiveTab] = useState<"preview" | "code" | "architecture" | "database" | "logs">("preview");
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [generationTaskIndex, setGenerationTaskIndex] = useState<number>(0);
   const [currentThinkingStep, setCurrentThinkingStep] = useState<string>("");
   const [copied, setCopied] = useState<boolean>(false);
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
@@ -813,21 +815,75 @@ export default function SatusiteStudioWorkspace() {
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const readFileContent = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const isTextDoc =
+        file.type.startsWith("text/") ||
+        file.name.endsWith(".md") ||
+        file.name.endsWith(".markdown") ||
+        file.name.endsWith(".txt") ||
+        file.name.endsWith(".json") ||
+        file.name.endsWith(".csv") ||
+        file.name.endsWith(".html") ||
+        file.name.endsWith(".yaml") ||
+        file.name.endsWith(".yml") ||
+        file.name.endsWith(".sql") ||
+        file.name.endsWith(".ts") ||
+        file.name.endsWith(".js") ||
+        file.name.endsWith(".xml");
+
+      if (isTextDoc) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          resolve((e.target?.result as string) || "");
+        };
+        reader.onerror = () => resolve("");
+        reader.readAsText(file);
+      } else {
+        // Binary files (PDF, images, docx): include metadata
+        resolve(`[Dokumen / Berkas Terlampir: ${file.name}, Tipe: ${file.type || 'Dokumen'}, Ukuran: ${(file.size / 1024).toFixed(1)} KB]`);
+      }
+    });
+  };
+
+  const addFilesToUpload = async (files: FileList | File[]) => {
     if (!files || files.length === 0) return;
-    const newFileList: Array<{ name: string; size: string; type: string }> = [];
+    const newFileList: Array<{ name: string; size: string; type: string; content?: string }> = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const sizeKb = (file.size / 1024).toFixed(1) + " KB";
+      const content = await readFileContent(file);
       newFileList.push({
         name: file.name,
         size: sizeKb,
-        type: file.type || "file"
+        type: file.type || "file",
+        content
       });
     }
     setUploadedFiles(prev => [...prev, ...newFileList]);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      await addFilesToUpload(e.target.files);
+    }
     if (fileInputRef.current) fileInputRef.current.value = "";
+    e.target.value = "";
+  };
+
+  const handleFileDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      await addFilesToUpload(e.dataTransfer.files);
+    }
+  };
+
+  const handleFilePaste = async (e: React.ClipboardEvent) => {
+    if (e.clipboardData.files && e.clipboardData.files.length > 0) {
+      e.preventDefault();
+      await addFilesToUpload(e.clipboardData.files);
+    }
   };
 
   const removeUploadedFile = (index: number) => {
@@ -847,7 +903,7 @@ export default function SatusiteStudioWorkspace() {
     setShowCanvas(true);
 
     const fileAttachmentsText = uploadedFiles.length > 0 
-      ? `\n\n[Lampiran Dokumen/File: ${uploadedFiles.map(f => `${f.name} (${f.size})`).join(", ")}]` 
+      ? `\n\n[Lampiran Dokumen/PRD: ${uploadedFiles.map(f => `${f.name} (${f.size})`).join(", ")}]` 
       : "";
 
     const welcomeMsg: ChatMessage = {
@@ -860,10 +916,25 @@ export default function SatusiteStudioWorkspace() {
 
     setMessages([welcomeMsg]);
     
+    // Extract document contents if any
+    let attachedDocContext = "";
+    if (uploadedFiles.length > 0) {
+      const docSnippets = uploadedFiles
+        .filter(f => f.content)
+        .map(f => `=== LAMPIRAN DOKUMEN / PRD: ${f.name} ===\n${f.content}`)
+        .join("\n\n");
+      if (docSnippets) {
+        attachedDocContext = `\n\n${docSnippets}`;
+      }
+    }
+
     // Construct effective comprehensive prompt
-    const effectivePrompt = detailPrompt.trim()
+    const basePrompt = detailPrompt.trim()
       ? `${detailPrompt.trim()}${fileAttachmentsText}`
       : `Buatkan website profesional "${finalName}" untuk kategori ${finalType} dengan nuansa desain ${finalTheme}, ditujukan bagi ${projectConfig.targetAudience}, lengkap dengan fitur ${projectConfig.mainFeatures.join(", ")}.${fileAttachmentsText}`;
+
+    const effectivePrompt = basePrompt + attachedDocContext;
+    setUploadedFiles([]);
 
     // Automatically trigger AI Generation in the workspace
     handleSendPrompt(effectivePrompt, finalName, undefined, modeToUse);
@@ -902,6 +973,27 @@ export default function SatusiteStudioWorkspace() {
         setGenMode(qMode);
       }
 
+      // Check if there are attached documents passed via sessionStorage from studio entrypoints
+      let pendingDocsContext = "";
+      try {
+        const pendingRaw = sessionStorage.getItem("satusite_pending_attached_docs");
+        if (pendingRaw) {
+          const pendingFiles = JSON.parse(pendingRaw);
+          if (Array.isArray(pendingFiles) && pendingFiles.length > 0) {
+            const snippets = pendingFiles
+              .filter((f: any) => f.content)
+              .map((f: any) => `=== LAMPIRAN DOKUMEN / PRD: ${f.name} ===\n${f.content}`)
+              .join("\n\n");
+            if (snippets) {
+              pendingDocsContext = `\n\n${snippets}`;
+            }
+          }
+          sessionStorage.removeItem("satusite_pending_attached_docs");
+        }
+      } catch (e) {
+        console.warn("Error parsing pending attached docs:", e);
+      }
+
       const storeRaw = localStorage.getItem("satusite_projects_store") || localStorage.getItem("emergent_projects_store");
       const store = storeRaw ? JSON.parse(storeRaw) : null;
 
@@ -927,7 +1019,8 @@ export default function SatusiteStudioWorkspace() {
         setProjectConfig(prev => ({ ...prev, webName: name }));
         setIsConfigCompleted(true);
         setHasGenerated(true);
-        handleSendPrompt(qPrompt, name, newId, initialMode);
+        const finalPrompt = qPrompt + pendingDocsContext;
+        handleSendPrompt(finalPrompt, name, newId, initialMode);
       }
     } catch (err) {
       console.warn("Error parsing init query params:", err);
@@ -966,13 +1059,30 @@ export default function SatusiteStudioWorkspace() {
 
 
   const handleSendPrompt = async (promptToSend?: string, customName?: string, customId?: string, modeOverride?: "fullstack" | "frontend" | "prd") => {
-    const text = (promptToSend || inputPrompt).trim();
-    if (!text || isGenerating) return;
+    const rawText = (promptToSend || inputPrompt).trim();
+    if ((!rawText && uploadedFiles.length === 0) || isGenerating) return;
+
+    let text = rawText || "Mohon rancang dan bangun aplikasi sesuai dengan spesifikasi pada dokumen/PRD terlampir.";
+    let fileMetaLabels: string[] = [];
+    if (uploadedFiles.length > 0) {
+      fileMetaLabels = uploadedFiles.map(f => `${f.name} (${f.size})`);
+      const docsContext = uploadedFiles
+        .filter(f => f.content)
+        .map(f => `=== LAMPIRAN DOKUMEN / PRD: ${f.name} ===\n${f.content}`)
+        .join("\n\n");
+      if (docsContext) {
+        text = rawText
+          ? `${rawText}\n\n${docsContext}`
+          : `Mohon rancang dan bangun aplikasi sesuai dengan spesifikasi pada dokumen/PRD terlampir:\n\n${docsContext}`;
+      }
+      setUploadedFiles([]);
+    }
 
     setHasGenerated(true);
     setShowCanvas(true);
     setInputPrompt("");
     setIsGenerating(true);
+    setGenerationTaskIndex(0);
 
     const effectiveMode = modeOverride || genMode;
     const isFull = effectiveMode === "fullstack";
@@ -986,10 +1096,14 @@ export default function SatusiteStudioWorkspace() {
         : "AI Agent menyusun tata letak visual & styling responsif..."
     );
 
+    const userMsgText = fileMetaLabels.length > 0
+      ? `${rawText}\n\n[Lampiran: ${fileMetaLabels.join(", ")}]`
+      : rawText;
+
     const userMsg: ChatMessage = {
       id: "msg_" + Date.now(),
       role: "user",
-      text: text,
+      text: userMsgText,
       timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
     };
 
@@ -997,6 +1111,7 @@ export default function SatusiteStudioWorkspace() {
     setMessages(updatedMessages);
 
     const thinkingTimer1 = setTimeout(() => {
+      setGenerationTaskIndex(1);
       setCurrentThinkingStep(
         isPrd
           ? "AI Agent menyusun entity-relationship & arsitektur data..."
@@ -1012,9 +1127,10 @@ export default function SatusiteStudioWorkspace() {
           ? `[ARCHITECT] In-memory database schema & CRUD endpoints configured for "${text.slice(0, 25)}..."`
           : `[DESIGNER] Layout tokens, palette & responsive grid initialized for "${text.slice(0, 25)}..."`
       ]);
-    }, 1200);
+    }, 1100);
 
     const thinkingTimer2 = setTimeout(() => {
+      setGenerationTaskIndex(2);
       setCurrentThinkingStep(
         isPrd
           ? "AI Agent menyusun blueprint interaktif & spesifikasi teknis..."
@@ -1030,7 +1146,18 @@ export default function SatusiteStudioWorkspace() {
           ? `[BACKEND] localStorage adapter & state synchronization connected`
           : `[FRONTEND] Interactive components, modals, filters & views generated`
       ]);
-    }, 2400);
+    }, 2300);
+
+    const thinkingTimer3 = setTimeout(() => {
+      setGenerationTaskIndex(3);
+      setCurrentThinkingStep(
+        isPrd
+          ? "AI Agent memverifikasi Acceptance Criteria & kelengkapan blueprint..."
+          : isFull
+          ? "AI Agent memvalidasi operasi CRUD & audit anti-slop visual..."
+          : "AI Agent mengaudit interaktivitas, no emoji & format WebP..."
+      );
+    }, 3800);
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -1059,6 +1186,7 @@ export default function SatusiteStudioWorkspace() {
 
       clearTimeout(thinkingTimer1);
       clearTimeout(thinkingTimer2);
+      clearTimeout(thinkingTimer3);
 
       const data = await res.json();
 
@@ -1100,20 +1228,23 @@ export default function SatusiteStudioWorkspace() {
         hasCodeUpdate: data.hasCodeUpdate,
         steps: isPrd
           ? [
-              "Spesifikasi teknis & persona pengguna tersusun",
-              "Skema relasi database & API contract siap",
-              "Dokumen PRD & blueprint interaktif selesai"
+              "Analisis Kebutuhan Sistem & User Personas selesai",
+              "Skema Database ERD & REST API Contracts siap",
+              "Dashboard PRD Interaktif & Topology Diagram aktif",
+              "Ekspor Markdown & Acceptance Criteria terverifikasi"
             ]
           : isFull
           ? [
-              "Skema data & model entitas siap",
-              "Handler CRUD & penyimpanan localStorage aktif",
-              "Antarmuka & logika bisnis terhubung"
+              "Analisis Arsitektur Domain & Model Data AppDB siap",
+              "Handler CRUD (Create/Read/Update/Delete) & localStorage aktif",
+              "Integrasi 4-Panel Switcher (Katalog POS, CRUD, KPI Chart, API Inspector)",
+              "Audit Anti-Slop Visual, Tipografi Modern Sans & WebP lolos"
             ]
           : [
-              "Tata letak responsif (Desktop/Tablet/Mobile) selesai",
-              "Komponen section lengkap terpasang",
-              "Animasi & interaksi visual aktif"
+              "Analisis Desain Sistem & Kategori Industri selesai",
+              "Layout Responsif (Desktop/Tablet/Mobile) & Palet 60-30-10 terpasang",
+              "Section Lengkap, Quick-View Modal & WhatsApp Cart aktif",
+              "Audit Navigasi Anchor, Tanpa Emoji & Format WebP terverifikasi"
             ]
       };
 
@@ -1295,6 +1426,15 @@ export default function SatusiteStudioWorkspace() {
           }
 
           function initInteractivity() {
+            // Prevent form submission from reloading or navigating parent page
+            document.addEventListener('submit', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+            }, true);
+
+            // Detect if this is a PRD page (has specific PRD tab infrastructure)
+            var isPrdPage = !!(document.querySelector('#prd-tab-bar, #view-doc, [data-prd-tabs]'));
+
             document.addEventListener('click', function(e) {
               var btn = e.target.closest('button, a');
               if (!btn) return;
@@ -1302,11 +1442,84 @@ export default function SatusiteStudioWorkspace() {
               var text = (btn.textContent || '').trim().toLowerCase();
               var href = btn.getAttribute('href');
 
+              // ========================================================
+              // PRIORITY 1: ANCHOR / HREF-BASED NAVIGATION (always first)
+              // ========================================================
+              
+              // If the element has an href, handle navigation before text-matching
+              if (href && href.length > 0) {
+                // If empty or dummy hash
+                if (href === '#' || href === 'javascript:void(0)') {
+                  if (btn.tagName && btn.tagName.toLowerCase() === 'a') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                  return;
+                }
+                
+                // If link is root, home, top, hero
+                if (href === '/' || href === '/index.html' || href === 'index.html' || href === '#top' || href === '#hero' || href === '/#top' || href === '/#hero' || href === '/#') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  return;
+                }
+
+                // In-page smooth scroll anchor (e.g. #katalog, #fitur, #kontak, #keunggulan, #galeri)
+                if (href.startsWith('#') || href.startsWith('/#')) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  try {
+                    var cleanId = href.replace(/^(\/#|#)/, '');
+                    var targetEl = document.getElementById(cleanId) || document.querySelector('[id="' + cleanId + '"]');
+                    if (targetEl) {
+                      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  } catch(err) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                  return;
+                }
+                
+                // External link (e.g. WhatsApp, external docs, tel, mailto)
+                if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//') || href.startsWith('wa.me') || href.startsWith('tel:') || href.startsWith('mailto:')) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  var fullUrl = href.startsWith('wa.me') ? 'https://' + href : href;
+                  window.open(fullUrl, '_blank');
+                  return;
+                }
+                
+                // Local / relative path: prevent iframe from reloading the parent SATUSITE app
+                e.preventDefault();
+                e.stopPropagation();
+                try {
+                  var cleanSlug = href.replace(/^\//, '').replace(/\.html$/, '');
+                  var matchEl = document.getElementById(cleanSlug) || document.querySelector('[id="' + cleanSlug + '"]');
+                  if (matchEl) {
+                    matchEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                } catch(err) {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+                return;
+              }
+
+              // ========================================================
+              // PRIORITY 2: PRD TAB SWITCHING (only on PRD pages)
+              // ========================================================
+              if (!isPrdPage) return;
+
               // TAB SWITCHER: Visual Blueprint
               if (text.includes('visual') || text.includes('blueprint')) {
-                var visualContainer = document.querySelector('#view-visual, #tab-visual, #visual-view, [id*="visual"], [id*="blueprint"]');
-                var docContainer = document.querySelector('#view-doc, #tab-doc, #doc-view, #document-view, [id*="doc"]');
-                var demoContainer = document.querySelector('#view-demo, #tab-demo, #demo-view');
+                var visualContainer = document.querySelector('#view-visual, #tab-visual');
+                var docContainer = document.querySelector('#view-doc, #tab-doc');
+                var demoContainer = document.querySelector('#view-demo, #tab-demo');
 
                 if (!visualContainer || (visualContainer.innerText || '').trim().length < 50) {
                   if (!visualContainer) {
@@ -1346,9 +1559,9 @@ export default function SatusiteStudioWorkspace() {
 
               // TAB SWITCHER: Live Web Demo / Prototype Demo
               if (text.includes('demo') || text.includes('prototype') || text.includes('live')) {
-                var demoContainer = document.querySelector('#view-demo, #tab-demo, #demo-view, [id*="demo"]');
-                var docContainer = document.querySelector('#view-doc, #tab-doc, #doc-view, #document-view, [id*="doc"]');
-                var visualContainer = document.querySelector('#view-visual, #tab-visual, #visual-view, [id*="visual"], [id*="blueprint"]');
+                var demoContainer = document.querySelector('#view-demo, #tab-demo');
+                var docContainer = document.querySelector('#view-doc, #tab-doc');
+                var visualContainer = document.querySelector('#view-visual, #tab-visual');
 
                 if (!demoContainer || (demoContainer.innerText || '').trim().length < 50) {
                   if (!demoContainer) {
@@ -1388,9 +1601,9 @@ export default function SatusiteStudioWorkspace() {
 
               // TAB SWITCHER: Dokumen PRD
               if (text.includes('dokumen') || (text.includes('prd') && !text.includes('salin') && !text.includes('unduh'))) {
-                var visualContainer = document.querySelector('#view-visual, #tab-visual, #visual-view, [id*="visual"], [id*="blueprint"]');
-                var docContainer = document.querySelector('#view-doc, #tab-doc, #doc-view, #document-view, [id*="doc"]');
-                var demoContainer = document.querySelector('#view-demo, #tab-demo, #demo-view');
+                var visualContainer = document.querySelector('#view-visual, #tab-visual');
+                var docContainer = document.querySelector('#view-doc, #tab-doc');
+                var demoContainer = document.querySelector('#view-demo, #tab-demo');
 
                 if (docContainer) {
                   e.preventDefault();
@@ -1445,39 +1658,6 @@ export default function SatusiteStudioWorkspace() {
                 document.body.removeChild(a);
                 return;
               }
-              
-              // If empty or dummy hash
-              if (!href || href === '#' || href === 'javascript:void(0)') {
-                e.preventDefault();
-                e.stopPropagation();
-                return;
-              }
-              
-              // In-page smooth scroll anchor (e.g. #ringkasan, #tech-stack, #erd, #api-endpoints)
-              if (href.startsWith('#')) {
-                e.preventDefault();
-                e.stopPropagation();
-                try {
-                  var targetId = href.slice(1);
-                  var targetEl = document.getElementById(targetId) || document.querySelector(href);
-                  if (targetEl) {
-                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                } catch(err) {}
-                return;
-              }
-              
-              // External link (e.g. WhatsApp, external docs)
-              if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//') || href.startsWith('wa.me')) {
-                e.preventDefault();
-                e.stopPropagation();
-                window.open(href.startsWith('wa.me') ? 'https://' + href : href, '_blank');
-                return;
-              }
-              
-              // Local / relative path: prevent iframe from reloading the parent SATUSITE app
-              e.preventDefault();
-              e.stopPropagation();
             }, true);
           }
 
@@ -1526,10 +1706,42 @@ export default function SatusiteStudioWorkspace() {
     const isDropdownOpen = showModeDropdown === dropdownKey;
 
     return (
-      <div className={`bg-zinc-900/60 rounded-xl focus-within:bg-zinc-900/80 transition-colors ${isCentered ? "border border-zinc-800/80 shadow-lg" : ""}`}>
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onDrop={handleFileDrop}
+        className={`bg-zinc-900/60 rounded-xl focus-within:bg-zinc-900/80 transition-colors ${isCentered ? "border border-zinc-800/80 shadow-lg" : ""}`}
+      >
+        {/* Uploaded Documents / PRD chips */}
+        {uploadedFiles.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 px-3 pt-2.5 pb-1 border-b border-zinc-800/40">
+            {uploadedFiles.map((f, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-[10px] text-zinc-300 animate-in fade-in"
+              >
+                <FileText className="w-3 h-3 text-blue-400 shrink-0" />
+                <span className="truncate max-w-[130px] font-medium">{f.name}</span>
+                <span className="text-zinc-500 text-[9px]">({f.size})</span>
+                <button
+                  type="button"
+                  onClick={() => removeUploadedFile(idx)}
+                  className="ml-0.5 text-zinc-500 hover:text-rose-400 cursor-pointer"
+                  title="Hapus Lampiran"
+                >
+                  <X className="w-2.5 h-2.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         <textarea
           value={inputPrompt}
           onChange={(e) => setInputPrompt(e.target.value)}
+          onPaste={handleFilePaste}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -1538,10 +1750,10 @@ export default function SatusiteStudioWorkspace() {
           }}
           placeholder={
             genMode === "prd"
-              ? "Ketik ide atau kebutuhan sistem untuk dibuatkan dokumen PRD & Blueprint arsitektur..."
+              ? "Ketik ide atau lampirkan/drag dokumen PRD/Spesifikasi (.md, .txt, .json, .pdf)..."
               : genMode === "fullstack"
-              ? "Ketik instruksi aplikasi fullstack (contoh: 'Buat app kasir toko kopi dengan pencarian & ringkasan penjualan')..."
-              : "Ketik instruksi desain frontend (contoh: 'Buat landing page agensi modern dengan hero, galeri & form kontak')..."
+              ? "Ketik instruksi atau lampirkan/drag PRD/dokumen (contoh: 'Buat app kasir sesuai lampiran PRD')..."
+              : "Ketik instruksi atau lampirkan/drag dokumen desain (contoh: 'Buat landing page sesuai PRD')..."
           }
           rows={isCentered ? 3 : 2}
           disabled={isGenerating}
@@ -1553,17 +1765,16 @@ export default function SatusiteStudioWorkspace() {
             <label
               htmlFor={`ws-file-upload-${dropdownKey}`}
               className="p-1.5 rounded-md hover:bg-zinc-800/60 text-zinc-500 hover:text-white transition-colors cursor-pointer"
-              title="Lampirkan File"
+              title="Lampirkan Dokumen PRD (.md, .txt, .json, .pdf, .docx, .csv, dll)"
             >
               <Paperclip className="w-3.5 h-3.5" />
               <input
                 id={`ws-file-upload-${dropdownKey}`}
                 type="file"
+                multiple
+                accept=".md,.markdown,.txt,.json,.csv,.pdf,.doc,.docx,.html,.yaml,.yml,.sql,image/*"
                 className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) setInputPrompt((prev) => `${prev ? prev + ' ' : ''}[File: ${f.name}]`);
-                }}
+                onChange={handleFileUpload}
               />
             </label>
 
@@ -1704,7 +1915,7 @@ export default function SatusiteStudioWorkspace() {
                 handleSendPrompt();
               }
             }}
-            disabled={!isGenerating && !inputPrompt.trim()}
+            disabled={!isGenerating && !inputPrompt.trim() && uploadedFiles.length === 0}
             className="w-6 h-6 rounded-md bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center transition-all disabled:opacity-20 cursor-pointer border-0 outline-none"
             title={isGenerating ? "Hentikan" : "Kirim"}
           >
@@ -2449,19 +2660,27 @@ export default function SatusiteStudioWorkspace() {
                   ref={fileInputRef}
                   onChange={handleFileUpload}
                   multiple
-                  accept="image/*,.pdf,.txt,.json,.doc,.docx"
+                  accept=".md,.markdown,.txt,.json,.csv,.pdf,.doc,.docx,.html,.yaml,.yml,.sql,image/*"
                   className="hidden"
                 />
 
                 {/* Minimalist Input Bar with Voice & Next Buttons */}
-                <div className="relative">
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onDrop={handleFileDrop}
+                  className="relative"
+                >
                   <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 sm:p-2.5 rounded-2xl bg-zinc-950/80 border border-zinc-800/90 hover:border-zinc-700 focus-within:border-white/40 focus-within:ring-2 focus-within:ring-white/10 transition-all duration-300 backdrop-blur-xl">
                     <textarea
                       autoFocus
                       rows={3}
                       value={detailPrompt}
                       onChange={(e) => setDetailPrompt(e.target.value)}
-                      placeholder="Tuliskan instruksi atau kebutuhan..."
+                      onPaste={handleFilePaste}
+                      placeholder="Tuliskan instruksi, lampirkan dokumen PRD/spesifikasi, atau drag file ke sini..."
                       className="flex-1 bg-transparent border-0 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-0 px-2.5 py-1 font-sans resize-none"
                     />
 
@@ -2808,11 +3027,20 @@ export default function SatusiteStudioWorkspace() {
                       <p className="whitespace-pre-line">{m.text}</p>
 
                       {m.steps && m.steps.length > 0 && (
-                        <div className="mt-2 pt-1.5 border-t border-zinc-800/40 space-y-0.5">
+                        <div className="mt-2.5 pt-2 border-t border-zinc-800/60 space-y-1.5 bg-zinc-950/40 -mx-1 p-2.5 rounded-lg border border-zinc-800/40">
+                          <div className="flex items-center justify-between text-[10px] text-zinc-400 font-semibold mb-1">
+                            <span className="flex items-center gap-1.5 text-zinc-300">
+                              <Workflow className="w-3 h-3 text-blue-400" />
+                              <span>Detail Task Selesai</span>
+                            </span>
+                            <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 font-bold">
+                              4/4 Selesai
+                            </span>
+                          </div>
                           {m.steps.map((s, idx) => (
-                            <div key={idx} className="flex items-center gap-1.5 text-[10px] text-zinc-500">
-                              <CheckCircle2 className="w-2.5 h-2.5 text-blue-400/70 shrink-0" />
-                              <span>{s}</span>
+                            <div key={idx} className="flex items-start gap-1.5 text-[10px] text-zinc-400">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
+                              <span className="leading-tight">{s}</span>
                             </div>
                           ))}
                         </div>
@@ -2824,9 +3052,10 @@ export default function SatusiteStudioWorkspace() {
                             setShowCanvas(true);
                             setActiveTab("preview");
                           }}
-                          className="mt-2 text-[10px] text-blue-400 hover:text-blue-300 font-medium transition-colors cursor-pointer"
+                          className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-600/20 hover:bg-blue-600/30 text-[10px] text-blue-400 hover:text-blue-300 font-semibold border border-blue-500/30 transition-all cursor-pointer"
                         >
-                          Lihat hasil di Canvas
+                          <Eye className="w-3 h-3" />
+                          <span>Lihat Hasil di Canvas</span>
                         </button>
                       )}
                     </div>
@@ -2848,18 +3077,75 @@ export default function SatusiteStudioWorkspace() {
               ))}
 
               {isGenerating && (
-                <div className="bg-zinc-900/50 rounded-lg p-3 space-y-1.5 animate-fade-in-up">
-                  <div className="flex items-center gap-2 text-xs text-blue-400">
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    <span className="font-medium">
-                      {genMode === "prd"
-                        ? "Membuat PRD..."
-                        : genMode === "fullstack"
-                        ? "Membangun aplikasi fullstack..."
-                        : "Memproses website..."}
+                <div className="bg-zinc-900/80 rounded-xl p-3 border border-blue-500/20 space-y-2.5 animate-fade-in-up shadow-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs text-blue-400 font-semibold">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
+                      <span>
+                        {genMode === "prd"
+                          ? "Menyusun Blueprint PRD..."
+                          : genMode === "fullstack"
+                          ? "Membangun Aplikasi Fullstack..."
+                          : "Memproses Frontend UI..."}
+                      </span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[9px] font-mono font-bold uppercase">
+                      Task {generationTaskIndex + 1}/4
                     </span>
                   </div>
-                  <p className="text-[10px] text-zinc-500">{currentThinkingStep}</p>
+
+                  {/* Live Step Progress List */}
+                  <div className="space-y-1.5 pt-1 border-t border-zinc-800/60">
+                    {(genMode === "prd"
+                      ? [
+                          "Analisis Kebutuhan Sistem & User Personas",
+                          "Penyusunan Skema Relasi Database (ERD)",
+                          "Spesifikasi REST API Contracts & Endpoint",
+                          "Finalisasi Blueprint PRD & Live Demo"
+                        ]
+                      : genMode === "fullstack"
+                      ? [
+                          "Analisis Arsitektur Domain & Model Data AppDB",
+                          "Penyusunan State Storage & Operasi CRUD",
+                          "Integrasi 4-Panel Switcher & KPI Charts",
+                          "Audit Anti-Slop Visual & UI Responsif"
+                        ]
+                      : [
+                          "Analisis Desain Sistem & Kategori Industri",
+                          "Penyusunan Layout Responsif & Palet 60-30-10",
+                          "Integrasi Quick-View Modal & WhatsApp Cart",
+                          "Audit Navigasi Anchor & Validasi Interaksi"
+                        ]
+                    ).map((taskTitle, tIdx) => {
+                      const isDone = tIdx < generationTaskIndex;
+                      const isCurrent = tIdx === generationTaskIndex;
+                      return (
+                        <div
+                          key={tIdx}
+                          className={`flex items-center gap-2 text-[10px] transition-all ${
+                            isDone
+                              ? "text-zinc-300"
+                              : isCurrent
+                              ? "text-blue-400 font-medium"
+                              : "text-zinc-600"
+                          }`}
+                        >
+                          {isDone ? (
+                            <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                          ) : isCurrent ? (
+                            <Loader2 className="w-3 h-3 text-blue-400 animate-spin shrink-0" />
+                          ) : (
+                            <Circle className="w-3 h-3 text-zinc-700 shrink-0" />
+                          )}
+                          <span className="truncate">{taskTitle}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="text-[10px] text-zinc-500 font-mono bg-zinc-950/60 px-2 py-1 rounded border border-zinc-800/40 truncate">
+                    {currentThinkingStep}
+                  </div>
                 </div>
               )}
 
@@ -3644,17 +3930,17 @@ export default function SatusiteStudioWorkspace() {
                 </label>
                 <div className="flex flex-wrap gap-1.5">
                   {FEATURE_OPTIONS.map(feat => {
-                    const isSelected = projectConfig.mainFeatures.includes(feat);
+                    const isSelected = projectConfig.mainFeatures.includes(feat.id);
                     return (
                       <button
-                        key={feat}
+                        key={feat.id}
                         type="button"
                         onClick={() => {
                           setProjectConfig(prev => ({
                             ...prev,
                             mainFeatures: isSelected
-                              ? prev.mainFeatures.filter(f => f !== feat)
-                              : [...prev.mainFeatures, feat]
+                              ? prev.mainFeatures.filter(f => f !== feat.id)
+                              : [...prev.mainFeatures, feat.id]
                           }));
                         }}
                         className={`px-2.5 py-1 rounded-lg text-[10.5px] font-medium transition-all cursor-pointer border flex items-center gap-1 ${
@@ -3664,7 +3950,7 @@ export default function SatusiteStudioWorkspace() {
                         }`}
                       >
                         {isSelected ? <Check className="w-2.5 h-2.5 text-blue-400" /> : <Plus className="w-2.5 h-2.5 text-zinc-500" />}
-                        <span>{feat}</span>
+                        <span>{feat.label || feat.id}</span>
                       </button>
                     );
                   })}

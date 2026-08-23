@@ -4,11 +4,11 @@
     "name": "dekaze 01",
     "email": "dekaze01@gmail.com",
     "avatar": "https://lh3.googleusercontent.com/a/ACg8ocJY3PRWQDy0nME4Y3Lzzt-nGzmIPKtDYNGNognW_sukk7_Dcd5X=s96-c",
-    "role": "Gratis",
+    "role": "Max",
     "status": "active",
     "isVerified": true,
-    "quota": 115,
-    "projectsCount": 7,
+    "quota": 5000,
+    "projectsCount": 12,
     "authProvider": "google",
     "joinedAt": "18 Agu 2026",
     "lastLoginAt": "2026-08-21T12:13:18.229Z"
@@ -45,12 +45,12 @@
     "status": "active",
     "isVerified": true,
     "quota": 15,
-    "projectsCount": 0,
+    "projectsCount": 3,
     "authProvider": "google",
     "id": "usr_1787066793184",
     "joinedAt": "18 Agu 2026",
     "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLxpNzXSUyUFZ-0LvP9V54iHMKZU0SWQmixDzsYHh9z_A1fSA=s96-c",
-    "lastLoginAt": "2026-08-20T10:37:41.659Z"
+    "lastLoginAt": "2026-08-22T10:43:15.345Z"
   },
   {
     "id": "usr_g_1787067726457",
