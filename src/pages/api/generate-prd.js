@@ -105,7 +105,9 @@ Pastikan output Anda berformat Markdown terstruktur dengan bagian-bagian berikut
   - Transisi hover lembut (transition-all duration-200, hover:-translate-y-0.5), smooth scroll anchor navigation, dan modal popover dengan backdrop-blur.`;
 
         let prompt = '';
-        if (body.type === 'wizard') {
+        if (body.prompt && typeof body.prompt === 'string') {
+            prompt = body.prompt;
+        } else if (body.type === 'wizard') {
             const { category = 'Bisnis & Jasa', businessName = '', features = [], colorStyle = 'Modern Cyan', notes = '' } = body;
             prompt = `Buatkan Dokumen Planning Blueprint Website berdasarkan informasi wizard berikut:
 - **Kategori Website**: ${category}
@@ -113,18 +115,17 @@ Pastikan output Anda berformat Markdown terstruktur dengan bagian-bagian berikut
 - **Fitur yang Diinginkan**: ${Array.isArray(features) && features.length > 0 ? features.join(', ') : 'WhatsApp Direct Order, Katalog Filterable, Form Reservasi, Mobile Responsif, Toast Feedback'}
 - **Gaya Desain & Warna**: ${colorStyle}
 - **Catatan / Deskripsi Tambahan**: ${notes || 'Buatkan rancangan website yang elegan, modern, berbasis data realistis Indonesia, dan bebas dari gaya generik.'}`;
-        } else if (body.type === 'manual') {
+        } else if (body.type === 'manual' || body.desc) {
             prompt = `Buatkan Dokumen Planning Blueprint Website berdasarkan deskripsi aplikasi berikut:
-${body.desc}`;
+${body.desc || body.prompt || ''}`;
         } else if (body.type === 'cloning') {
             prompt = `Buatkan Dokumen Planning Blueprint Website untuk membuat versi website yang lebih baik dari referensi berikut:
 - **URL Referensi**: ${body.url}
 - **Deskripsi Khusus & Fitur Tambahan**: ${body.desc}`;
+        } else if (body.text) {
+            prompt = body.text;
         } else {
-            return new Response(JSON.stringify({ error: 'Tipe request tidak valid.' }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' }
-            });
+            prompt = 'Buatkan Dokumen PRD dan Planning Blueprint Aplikasi Web yang komprehensif.';
         }
 
         // AI Model Engine: gemini-3.7-flash (Model Utama) with fallback to gemini-3.6-flash
@@ -241,7 +242,9 @@ Sistem dirancang untuk menyajikan platform digital yang tangguh, cepat, dan eleg
 
             return new Response(JSON.stringify({
                 success: true,
+                markdown: fallbackPrd,
                 prd: fallbackPrd,
+                format: 'markdown',
                 agentTeam: ['Lead Architect', 'System Analyst', 'Fullstack Planner'],
                 note: 'Generated via SatuSite Engine'
             }), {
@@ -261,7 +264,12 @@ Sistem dirancang untuk menyajikan platform digital yang tangguh, cepat, dan eleg
             });
         }
 
-        return new Response(JSON.stringify({ success: true, markdown }), {
+        return new Response(JSON.stringify({
+            success: true,
+            markdown: markdown,
+            prd: markdown,
+            format: 'markdown'
+        }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });

@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
+import PrdSheetViewer from "../../components/PrdSheetViewer";
 ---
 
 <Layout
@@ -138,15 +139,28 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                 <button
                                     type="submit"
                                     id="btn-studio-generate"
-                                    class="w-8 h-8 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 flex items-center justify-center transition-all cursor-pointer shadow-md"
-                                    title="Generate Blueprint"
+                                    class="h-8 px-3 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md text-xs font-semibold"
+                                    title="Generate Blueprint PRD (.md)"
                                 >
                                     <i
                                         id="btn-studio-generate-icon"
                                         class="fa-solid fa-arrow-up text-xs text-zinc-950"
                                     ></i>
+                                    <span id="btn-studio-generate-label" class="hidden sm:inline">Generate PRD</span>
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- Generation Status Banner (shown during generation) -->
+                        <div
+                            id="prd-generation-status"
+                            class="hidden items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs transition-all animate-pulse"
+                        >
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-notch fa-spin text-amber-400"></i>
+                                <span id="prd-status-text">AI sedang menganalisis kebutuhan & menyusun Dokumen PRD (.md)...</span>
+                            </div>
+                            <span class="text-[10px] font-mono uppercase tracking-wider text-amber-400/80">Gemini 3.7 Flash</span>
                         </div>
                     </form>
                 </div>
@@ -170,13 +184,16 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                     <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center mb-3">
                         <i class="fa-solid fa-file-contract text-sm"></i>
                     </div>
-                    <h3 class="text-sm font-bold text-white mb-1.5">Dokumen PRD Komprehensif</h3>
+                    <h3 class="text-sm font-bold text-white mb-1.5">Dokumen PRD Komprehensif (.md)</h3>
                     <p class="text-xs text-zinc-400 leading-relaxed">
-                        Lengkap dengan latar belakang produk, target pengguna, user stories, acceptance criteria, dan daftar prioritas rilis.
+                        Lengkap dengan latar belakang produk, target pengguna, user stories, skema database, API endpoints, dan checklist MVP.
                     </p>
                 </div>
             </div>
         </section>
+
+        <!-- PRD Slide-over Sheet Viewer (Smooth from the Right) -->
+        <PrdSheetViewer client:load />
     </div>
 
     <!-- Client Script -->
@@ -188,11 +205,14 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
             const fileIndicator = document.getElementById("studio-file-indicator");
             const voiceBtn = document.getElementById("btn-studio-voice");
             const voiceIcon = document.getElementById("icon-studio-voice");
+            const generateBtn = document.getElementById("btn-studio-generate");
             const generateIcon = document.getElementById("btn-studio-generate-icon");
+            const generateLabel = document.getElementById("btn-studio-generate-label");
+            const statusBanner = document.getElementById("prd-generation-status");
+            const statusText = document.getElementById("prd-status-text");
 
             let attachedFiles = [];
-            let isGeneratingPrompt = false;
-            let navTimer = null;
+            let isGenerating = false;
 
             function readFile(file) {
                 return new Promise((resolve) => {
@@ -330,16 +350,11 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                 }, 3500);
             }
 
-            // Form Submission
+            // On-Page Asynchronous PRD Generation with Smooth Right Drawer Slide-in
             if (form && input) {
-                form.addEventListener("submit", (e) => {
+                form.addEventListener("submit", async (e) => {
                     e.preventDefault();
-                    if (isGeneratingPrompt) {
-                        if (navTimer) clearTimeout(navTimer);
-                        isGeneratingPrompt = false;
-                        if (generateIcon) generateIcon.className = "fa-solid fa-arrow-up text-xs";
-                        return;
-                    }
+                    if (isGenerating) return;
 
                     let promptText = input.value.trim();
                     if (!promptText && attachedFiles.length > 0) {
@@ -347,20 +362,73 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                     }
                     if (attachedFiles.length > 0) {
                         promptText = `[Lampiran: ${attachedFiles[0].name}] ` + promptText;
-                        try {
-                            sessionStorage.setItem("satusite_pending_attached_docs", JSON.stringify(attachedFiles));
-                        } catch (err) {
-                            console.warn("Storage save error:", err);
+                        if (attachedFiles[0].content) {
+                            promptText += `\n\nIsi Lampiran:\n${attachedFiles[0].content.slice(0, 8000)}`;
                         }
                     }
-                    if (!promptText) return;
+                    if (!promptText) {
+                        input.focus();
+                        return;
+                    }
 
-                    isGeneratingPrompt = true;
-                    if (generateIcon) generateIcon.className = "fa-solid fa-square text-[10px] text-white";
+                    isGenerating = true;
+                    if (generateBtn) generateBtn.disabled = true;
+                    if (generateIcon) generateIcon.className = "fa-solid fa-spinner fa-spin text-xs text-zinc-950";
+                    if (generateLabel) generateLabel.textContent = "Menyusun...";
+                    if (statusBanner) {
+                        statusBanner.classList.remove("hidden");
+                        statusBanner.classList.add("flex");
+                    }
+                    if (statusText) {
+                        statusText.textContent = "AI sedang menganalisis kebutuhan & menyusun Dokumen PRD (.md)...";
+                    }
 
-                    navTimer = setTimeout(() => {
-                        window.location.href = `/app?prompt=${encodeURIComponent(promptText)}&mode=prd`;
-                    }, 400);
+                    try {
+                        const res = await fetch("/api/generate-prd", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                prompt: promptText,
+                                desc: promptText
+                            })
+                        });
+
+                        const data = await res.json();
+                        if (res.ok && data && (data.markdown || data.prd)) {
+                            const markdownDoc = data.markdown || data.prd;
+
+                            // Dispatch event to open smooth PRD slide-over sheet from the right
+                            window.dispatchEvent(new CustomEvent("open-prd-sheet", {
+                                detail: {
+                                    markdown: markdownDoc,
+                                    prompt: promptText
+                                }
+                            }));
+
+                            if (statusBanner) {
+                                statusBanner.classList.add("hidden");
+                                statusBanner.classList.remove("flex");
+                            }
+                        } else {
+                            const errMsg = data?.error || "Gagal menyusun PRD. Silakan coba kembali.";
+                            if (statusText) statusText.textContent = errMsg;
+                            alert(errMsg);
+                        }
+                    } catch (err) {
+                        console.error("Error generating PRD:", err);
+                        const errMsg = "Terjadi gangguan jaringan saat menyusun PRD. Silakan periksa koneksi Anda.";
+                        if (statusText) statusText.textContent = errMsg;
+                        alert(errMsg);
+                    } finally {
+                        isGenerating = false;
+                        if (generateBtn) generateBtn.disabled = false;
+                        if (generateIcon) generateIcon.className = "fa-solid fa-arrow-up text-xs text-zinc-950";
+                        if (generateLabel) generateLabel.textContent = "Generate PRD";
+                        if (statusBanner) {
+                            statusBanner.classList.add("hidden");
+                            statusBanner.classList.remove("flex");
+                        }
+                    }
                 });
             }
         });
