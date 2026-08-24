@@ -236,6 +236,8 @@ export default function PrdSheetViewer() {
   const isResizing = useRef(false)
   const panelRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef(content)
+  const originalContentRef = useRef("")
+  const activeProjectIdRef = useRef<string | null>(null)
   contentRef.current = content
 
   // Hydrate from localStorage or window state on mount
@@ -245,6 +247,7 @@ export default function PrdSheetViewer() {
       if (saved && !contentRef.current) {
         setContent(saved)
         contentRef.current = saved
+        originalContentRef.current = saved
       }
     } catch (e) {}
 
@@ -278,7 +281,7 @@ export default function PrdSheetViewer() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  const syncToDatabase = useCallback(async (markdownText: string) => {
+  const syncToDatabase = useCallback(async (markdownText: string, projId?: string | null) => {
     if (!markdownText || !markdownText.trim()) return
     try {
       let ownerEmail = "guest@satusite.com"
@@ -294,6 +297,7 @@ export default function PrdSheetViewer() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          id: projId || undefined,
           name: docName,
           category: "Product Blueprint & PRD",
           mode: "prd",
@@ -307,13 +311,18 @@ export default function PrdSheetViewer() {
     }
   }, [])
 
-  // Auto-save on close
+  // Auto-save on close (only syncs if content was actually modified)
   const handleClose = useCallback(() => {
     if (contentRef.current) {
       try {
         localStorage.setItem("satusite_active_prd", contentRef.current)
       } catch (e) {}
-      syncToDatabase(contentRef.current)
+      
+      // Only sync to database if user actually edited the content
+      if (originalContentRef.current && contentRef.current !== originalContentRef.current) {
+        syncToDatabase(contentRef.current, activeProjectIdRef.current)
+        originalContentRef.current = contentRef.current
+      }
     }
     if (window.updateActiveProjectPrd) {
       window.updateActiveProjectPrd(contentRef.current)
@@ -332,6 +341,10 @@ export default function PrdSheetViewer() {
       if (md) {
         setContent(md)
         contentRef.current = md
+        originalContentRef.current = md
+        if (e.detail?.projectId) {
+          activeProjectIdRef.current = e.detail.projectId
+        }
         try {
           localStorage.setItem("satusite_active_prd", md)
         } catch (err) {}
@@ -352,7 +365,6 @@ export default function PrdSheetViewer() {
 
     window.addEventListener("open-prd-sheet", handleOpenPrd)
     window.addEventListener("close-prd-sheet", handleClosePrd)
-
     return () => {
       window.removeEventListener("open-prd-sheet", handleOpenPrd)
       window.removeEventListener("close-prd-sheet", handleClosePrd)

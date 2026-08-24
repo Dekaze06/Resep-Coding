@@ -44,7 +44,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const raw = await request.text();
     const body = raw ? JSON.parse(raw) : {};
-    const { name, category = 'Web App', mode = 'fullstack', prompt = '', code = '', owner = 'demo@satusite.studio', isFeatured = false, prdContext = '', architectureNodes = [] } = body;
+    const { id, name, category = 'Web App', mode = 'fullstack', prompt = '', code = '', owner = 'demo@satusite.studio', isFeatured = false, prdContext = '', architectureNodes = [] } = body;
 
     if (!name) {
       return new Response(JSON.stringify({ success: false, error: 'Nama proyek wajib diisi.' }), {
@@ -53,6 +53,60 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
+    // 1. If explicit ID provided, update existing
+    if (id) {
+      const existing = await ProjectsDB.getByIdAsync(id);
+      if (existing) {
+        const updated = await ProjectsDB.updateAsync(id, {
+          name,
+          category,
+          mode,
+          owner,
+          prompt: prompt || existing.prompt,
+          code: code || existing.code,
+          prdContext: prdContext || existing.prdContext,
+          architectureNodes: architectureNodes && architectureNodes.length > 0 ? architectureNodes : existing.architectureNodes
+        });
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Proyek berhasil diperbarui.',
+          project: updated
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
+    // 2. Prevent duplicates: if a project with same mode and name already exists for this owner, update it
+    const all = await ProjectsDB.getAllAsync(owner);
+    const existingSameName = all.find(p => 
+      p.mode === mode && 
+      p.name.trim().toLowerCase() === name.trim().toLowerCase()
+    );
+
+    if (existingSameName) {
+      const updated = await ProjectsDB.updateAsync(existingSameName.id, {
+        name,
+        category,
+        mode,
+        owner,
+        prompt: prompt || existingSameName.prompt,
+        code: code || existingSameName.code,
+        prdContext: prdContext || existingSameName.prdContext,
+        architectureNodes: architectureNodes && architectureNodes.length > 0 ? architectureNodes : existingSameName.architectureNodes
+      });
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Dokumen PRD berhasil disinkronkan.',
+        project: updated
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 3. Create new project if not exists
     const created = await ProjectsDB.createAsync({
       id: body.id,
       name,

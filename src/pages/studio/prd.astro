@@ -113,10 +113,31 @@ import PrdSheetViewer from "../../components/PrdSheetViewer";
                                     class="hidden text-[11px] text-zinc-300 bg-zinc-800 px-2 py-0.5 rounded truncate max-w-[140px]"
                                 ></span>
 
-                                <!-- Static PRD Mode Badge with White Text -->
-                                <div class="h-8 px-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-white flex items-center gap-1.5 shadow-sm">
-                                    <i class="fa-solid fa-file-lines text-xs text-zinc-300 shrink-0"></i>
-                                    <span class="text-white font-medium">PRD Blueprint</span>
+                                <!-- Interactive Active Plan Pill Badge with Close Button on Left -->
+                                <div
+                                    id="container-active-plan-badge"
+                                    class="hidden h-8 pl-1.5 pr-2.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-[11px] font-semibold text-amber-300 items-center gap-1.5 shadow-sm transition-all animate-fade-in"
+                                >
+                                    <!-- Close Button di Ujung Kiri -->
+                                    <button
+                                        type="button"
+                                        id="btn-close-active-plan"
+                                        class="w-5 h-5 rounded-md text-amber-400/80 hover:text-amber-200 hover:bg-amber-500/30 flex items-center justify-center transition-colors cursor-pointer"
+                                        title="Tutup & Lepas Dokumen Aktif"
+                                    >
+                                        <i class="fa-solid fa-xmark text-[10px]"></i>
+                                    </button>
+
+                                    <!-- Clickable Document Name Trigger -->
+                                    <button
+                                        type="button"
+                                        id="btn-active-plan-badge"
+                                        class="flex items-center gap-1.5 cursor-pointer max-w-[140px] sm:max-w-[220px] truncate text-left focus:outline-none"
+                                        title="Buka Dokumen Plan (.md)"
+                                    >
+                                        <i class="fa-solid fa-file-lines text-xs text-amber-400 shrink-0"></i>
+                                        <span id="label-plan-badge" class="truncate font-semibold text-amber-300">Plan</span>
+                                    </button>
                                 </div>
                             </div>
 
@@ -162,104 +183,37 @@ import PrdSheetViewer from "../../components/PrdSheetViewer";
                             </div>
                             <span class="text-[10px] font-mono uppercase tracking-wider text-amber-400/80">AI Studio Engine</span>
                         </div>
-
-                        <!-- Saved PRD Box in Chat Agent Area -->
-                        <div
-                            id="saved-prd-box"
-                            class="hidden p-4 rounded-2xl bg-[#09090b] border border-amber-500/30 text-xs space-y-3 shadow-xl transition-all"
-                        >
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 shadow-sm">
-                                        <i class="fa-solid fa-file-contract text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <div class="flex items-center gap-2">
-                                            <span id="saved-prd-title" class="font-bold text-white text-xs sm:text-sm">Dokumen PRD Blueprint (.md)</span>
-                                            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">Tersimpan di Database</span>
-                                        </div>
-                                        <span id="saved-prd-meta" class="text-[11px] text-zinc-400">Dokumen PRD siap dibuka dan dieksplorasi kembali</span>
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    id="btn-delete-saved-prd"
-                                    class="w-7 h-7 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 flex items-center justify-center transition-colors cursor-pointer shrink-0"
-                                    title="Hapus Dokumen Tersimpan"
-                                >
-                                    <i class="fa-solid fa-xmark text-xs"></i>
-                                </button>
-                            </div>
-
-                            <!-- Quick Action Buttons -->
-                            <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-zinc-800/80">
-                                <button
-                                    type="button"
-                                    id="btn-open-saved-prd"
-                                    class="flex-1 min-w-[150px] py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
-                                >
-                                    <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
-                                    <span>Buka Dokumen PRD (.md)</span>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    id="btn-copy-saved-prd"
-                                    class="py-2 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                                    title="Salin Isi Dokumen (.md)"
-                                >
-                                    <i id="icon-copy-saved-prd" class="fa-solid fa-copy text-xs"></i>
-                                    <span id="label-copy-saved-prd">Salin .md</span>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    id="btn-download-saved-prd"
-                                    class="py-2 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                                    title="Unduh File .md"
-                                >
-                                    <i class="fa-solid fa-download text-xs"></i>
-                                    <span>Unduh .md</span>
-                                </button>
-
-                                <a
-                                    id="btn-continue-studio-prd"
-                                    href="/app?mode=prd"
-                                    class="py-2 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                                    title="Lanjut Bangun Aplikasi di Studio"
-                                >
-                                    <i class="fa-solid fa-code text-xs text-blue-400"></i>
-                                    <span>Buka di Studio</span>
-                                </a>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
         </section>
 
-        <!-- SUB-HEADER SECTION / FEATURES -->
-        <section class="max-w-4xl mx-auto px-4 py-8 sm:py-12 border-t border-zinc-800/60">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
-                    <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center mb-3">
-                        <i class="fa-solid fa-diagram-project text-sm"></i>
+
+        <!-- DAFTAR PLAN YANG SUDAH DI-GENERATE (List2 Style Layout) -->
+        <section id="prd-history-list-section" class="max-w-5xl mx-auto px-4 pb-20 pt-6">
+            <div class="space-y-6">
+                <!-- Header with Title and Search Filter at the Top -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800/80">
+                    <h2 class="text-xl sm:text-2xl font-semibold text-white tracking-tight">Daftar Plan</h2>
+
+                    <!-- Search Filter Input -->
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500"></i>
+                        <input
+                            type="text"
+                            id="search-prd-history"
+                            placeholder="Cari plan..."
+                            class="w-full pl-8 pr-3 py-2 rounded-xl bg-zinc-900/90 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500/50 transition-colors shadow-inner"
+                        />
                     </div>
-                    <h3 class="text-sm font-bold text-white mb-1.5">Pohon Arsitektur Interaktif</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed">
-                        Visualisasi grafis struktur hierarki modul utama dan sub-fitur yang terorganisir rapi dan dapat dieksplorasi.
-                    </p>
                 </div>
 
-                <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
-                    <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center mb-3">
-                        <i class="fa-solid fa-file-contract text-sm"></i>
+                <!-- Plan Rows Container with Separator layout -->
+                <div id="prd-history-container" class="flex flex-col divide-y divide-zinc-800/80 border-y border-zinc-800/80">
+                    <div class="py-12 text-center text-zinc-500 text-xs">
+                        <i class="fa-solid fa-circle-notch fa-spin text-sm text-amber-400 mb-2"></i>
+                        <p>Memuat daftar plan...</p>
                     </div>
-                    <h3 class="text-sm font-bold text-white mb-1.5">Dokumen PRD Komprehensif (.md)</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed">
-                        Lengkap dengan latar belakang produk, target pengguna, user stories, skema database, API endpoints, dan checklist MVP.
-                    </p>
                 </div>
             </div>
         </section>
@@ -283,115 +237,331 @@ import PrdSheetViewer from "../../components/PrdSheetViewer";
             const statusBanner = document.getElementById("prd-generation-status");
             const statusText = document.getElementById("prd-status-text");
 
-            // Saved PRD Box Elements
-            const savedPrdBox = document.getElementById("saved-prd-box");
-            const savedPrdTitle = document.getElementById("saved-prd-title");
-            const savedPrdMeta = document.getElementById("saved-prd-meta");
-            const btnOpenSavedPrd = document.getElementById("btn-open-saved-prd");
-            const btnCopySavedPrd = document.getElementById("btn-copy-saved-prd");
-            const iconCopySavedPrd = document.getElementById("icon-copy-saved-prd");
-            const labelCopySavedPrd = document.getElementById("label-copy-saved-prd");
-            const btnDownloadSavedPrd = document.getElementById("btn-download-saved-prd");
-            const btnDeleteSavedPrd = document.getElementById("btn-delete-saved-prd");
+            // Active Plan Button in Prompt Bar
+            const containerActivePlanBadge = document.getElementById("container-active-plan-badge");
+            const btnCloseActivePlan = document.getElementById("btn-close-active-plan");
+            const btnActivePlanBadge = document.getElementById("btn-active-plan-badge");
+            const labelPlanBadge = document.getElementById("label-plan-badge");
+
+            // PRD History List Elements
+            const prdHistoryContainer = document.getElementById("prd-history-container");
+            const searchPrdHistory = document.getElementById("search-prd-history");
+            let allPrdProjects = [];
 
             let attachedFiles = [];
             let isGenerating = false;
             let currentSavedPrd = "";
+            let currentSavedTitle = "";
 
-            function updateSavedPrdBox(markdown) {
+            function updatePlanButton(markdown, customTitle) {
                 if (!markdown || !markdown.trim()) {
-                    if (savedPrdBox) savedPrdBox.classList.add("hidden");
                     currentSavedPrd = "";
+                    currentSavedTitle = "";
+                    if (containerActivePlanBadge) {
+                        containerActivePlanBadge.classList.add("hidden");
+                        containerActivePlanBadge.classList.remove("flex");
+                    }
                     return;
                 }
 
                 currentSavedPrd = markdown;
+                let title = customTitle;
+                if (!title) {
+                    const titleMatch = markdown.match(/#\s*(?:Planning Blueprint:?|PRD:?|Rencana:?)\s*([^\r\n]+)/i);
+                    title = titleMatch ? titleMatch[1].trim() : "Dokumen Plan";
+                }
+                currentSavedTitle = title;
+
                 try {
                     localStorage.setItem("satusite_active_prd", markdown);
+                    localStorage.setItem("satusite_active_prd_title", title);
                 } catch (e) {}
 
-                const titleMatch = markdown.match(/#\s*(?:Planning Blueprint:?|PRD:?|Rencana:?)\s*([^\r\n]+)/i);
-                const title = titleMatch ? titleMatch[1].trim() : "Dokumen PRD & Blueprint (.md)";
-                const wordCount = markdown.split(/\s+/).filter(Boolean).length;
-                const lineCount = markdown.split("\n").length;
+                if (labelPlanBadge) {
+                    labelPlanBadge.textContent = title;
+                }
 
-                if (savedPrdTitle) savedPrdTitle.textContent = title;
-                if (savedPrdMeta) savedPrdMeta.textContent = `${wordCount.toLocaleString()} Kata • ${lineCount} Baris • Format Markdown (.md)`;
-                if (savedPrdBox) {
-                    savedPrdBox.classList.remove("hidden");
+                if (containerActivePlanBadge) {
+                    containerActivePlanBadge.classList.remove("hidden");
+                    containerActivePlanBadge.classList.add("flex");
                 }
             }
 
-            // Hydrate saved PRD on mount
+            // Hydrate Plan button on mount if active PRD exists
             try {
                 const saved = localStorage.getItem("satusite_active_prd");
+                const savedTitle = localStorage.getItem("satusite_active_prd_title") || "";
                 if (saved && saved.trim()) {
-                    updateSavedPrdBox(saved);
+                    updatePlanButton(saved, savedTitle);
                 }
             } catch (e) {}
 
-            // Open saved PRD button
-            if (btnOpenSavedPrd) {
-                btnOpenSavedPrd.addEventListener("click", () => {
+            // Close / dismiss active Plan badge
+            if (btnCloseActivePlan) {
+                btnCloseActivePlan.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    currentSavedPrd = "";
+                    currentSavedTitle = "";
+                    try {
+                        localStorage.removeItem("satusite_active_prd");
+                        localStorage.removeItem("satusite_active_prd_title");
+                    } catch (err) {}
+                    if (containerActivePlanBadge) {
+                        containerActivePlanBadge.classList.add("hidden");
+                        containerActivePlanBadge.classList.remove("flex");
+                    }
+                });
+            }
+
+            // Open Plan sheet when Plan badge is clicked
+            if (btnActivePlanBadge) {
+                btnActivePlanBadge.addEventListener("click", () => {
                     const md = currentSavedPrd || localStorage.getItem("satusite_active_prd") || "";
                     if (md) {
                         window.dispatchEvent(new CustomEvent("open-prd-sheet", {
-                            detail: { markdown: md }
+                            detail: { markdown: md, title: currentSavedTitle }
                         }));
                     }
                 });
             }
 
-            // Copy saved PRD
-            if (btnCopySavedPrd) {
-                btnCopySavedPrd.addEventListener("click", async () => {
-                    const md = currentSavedPrd || localStorage.getItem("satusite_active_prd") || "";
-                    if (!md) return;
-                    try {
-                        await navigator.clipboard.writeText(md);
-                        if (iconCopySavedPrd) iconCopySavedPrd.className = "fa-solid fa-check text-xs text-emerald-400";
-                        if (labelCopySavedPrd) labelCopySavedPrd.textContent = "Tersalin!";
-                        setTimeout(() => {
-                            if (iconCopySavedPrd) iconCopySavedPrd.className = "fa-solid fa-copy text-xs";
-                            if (labelCopySavedPrd) labelCopySavedPrd.textContent = "Salin .md";
-                        }, 2000);
-                    } catch (e) {}
+            // --- PRD HISTORY LIST FETCHER & RENDERER ---
+            async function loadPrdHistory() {
+                if (!prdHistoryContainer) return;
+                try {
+                    const res = await fetch("/api/projects?mode=prd");
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && Array.isArray(data.projects)) {
+                            allPrdProjects = data.projects;
+                            renderPrdHistoryList(allPrdProjects);
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Failed fetching PRD history:", e);
+                }
+
+                // Fallback from localStorage
+                try {
+                    const storeRaw = localStorage.getItem("satusite_projects_store") || localStorage.getItem("emergent_projects_store");
+                    if (storeRaw) {
+                        const parsed = JSON.parse(storeRaw);
+                        if (parsed && parsed.projects) {
+                            const list = Object.values(parsed.projects).filter((p) => p.prd || p.mode === "prd");
+                            allPrdProjects = list;
+                            renderPrdHistoryList(allPrdProjects);
+                            return;
+                        }
+                    }
+                } catch (e) {}
+
+                renderPrdHistoryList([]);
+            }
+
+            function renderPrdHistoryList(list) {
+                if (!prdHistoryContainer) return;
+
+                if (!list || list.length === 0) {
+                    prdHistoryContainer.innerHTML = `
+                        <div class="py-16 text-center text-zinc-500 text-xs">
+                            <i class="fa-solid fa-file-lines text-2xl text-zinc-600 mb-2 block"></i>
+                            <p class="font-medium text-zinc-400">Belum ada plan yang di-generate</p>
+                            <p class="text-[11px] text-zinc-600 mt-1">Tulis instruksi di atas untuk mulai membuat Plan pertama Anda.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                prdHistoryContainer.innerHTML = list.map((item, idx) => {
+                    const docText = item.prdContext || item.prd || item.code || "";
+                    const title = item.name || "Dokumen Plan Blueprint";
+                    const wordCount = docText ? docText.split(/\s+/).filter(Boolean).length : 0;
+                    const lineCount = docText ? docText.split("\n").length : 0;
+                    const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "Tersimpan";
+
+                    // Extract clean summary / description from PRD
+                    let description = "";
+                    const taglineMatch = docText.match(/(?:Tagline\s*\/?\s*Value Proposition|Ringkasan Konsep|Overview|Deskripsi):\s*([^\r\n]+)/i);
+                    if (taglineMatch) {
+                        description = taglineMatch[1].replace(/[*_#`]/g, "").trim();
+                    } else if (item.prompt) {
+                        description = item.prompt.replace(/[*_#`]/g, "").trim();
+                    } else {
+                        const lines = docText.split("\n").map(l => l.replace(/[*_#`]/g, "").trim()).filter(l => l && !l.startsWith("#") && !l.startsWith("-"));
+                        description = lines.length > 0 ? lines[0] : "Dokumen Blueprint arsitektur & spesifikasi teknis MVP.";
+                    }
+
+                    return `
+                        <div data-row-prd-idx="${idx}" class="grid items-center gap-4 px-3 sm:px-5 py-4 sm:py-5 grid-cols-1 md:grid-cols-4 hover:bg-zinc-900/40 transition-colors group cursor-pointer">
+                            <!-- Col 1: Icon/Badge + Title + Sub-category -->
+                            <div class="order-2 md:order-none flex items-center gap-3 min-w-0">
+                                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 text-amber-400 shadow-sm group-hover:border-amber-500/30 group-hover:bg-amber-500/10 transition-all">
+                                    <i class="fa-solid fa-file-lines text-sm"></i>
+                                </span>
+                                <div class="flex flex-col gap-0.5 min-w-0">
+                                    <h3 class="font-semibold text-white text-xs sm:text-sm truncate group-hover:text-amber-300 transition-colors">${title}</h3>
+                                    <p class="text-[11px] text-zinc-500 flex items-center gap-1.5 flex-wrap">
+                                        <span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">.md</span>
+                                        <span>•</span>
+                                        <span>${wordCount.toLocaleString()} Kata</span>
+                                        <span>•</span>
+                                        <span>${dateStr}</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Col 2: Description / Value Proposition (col-span-2) -->
+                            <p class="order-1 md:order-none md:col-span-2 text-xs sm:text-sm font-normal text-zinc-300 line-clamp-2 leading-relaxed">
+                                ${description}
+                            </p>
+
+                            <!-- Col 3: Actions -->
+                            <div class="order-3 md:order-none flex items-center justify-end gap-1.5 ml-auto shrink-0" onclick="event.stopPropagation()">
+                                <button
+                                    type="button"
+                                    data-copy-prd-idx="${idx}"
+                                    class="w-8 h-8 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700/60 flex items-center justify-center transition-colors cursor-pointer"
+                                    title="Salin .md"
+                                >
+                                    <i class="fa-solid fa-copy text-xs"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    data-download-prd-idx="${idx}"
+                                    class="w-8 h-8 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700/60 flex items-center justify-center transition-colors cursor-pointer"
+                                    title="Unduh .md"
+                                >
+                                    <i class="fa-solid fa-download text-xs"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    data-delete-prd-id="${item.id}"
+                                    data-delete-prd-title="${title.replace(/"/g, '&quot;')}"
+                                    class="w-8 h-8 rounded-xl bg-zinc-800/80 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 border border-zinc-700/60 flex items-center justify-center transition-colors cursor-pointer"
+                                    title="Hapus Plan"
+                                >
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+
+                // Wire click on entire document row to open PRD sheet
+                prdHistoryContainer.querySelectorAll("[data-row-prd-idx]").forEach((row) => {
+                    row.addEventListener("click", () => {
+                        const idx = parseInt(row.getAttribute("data-row-prd-idx"), 10);
+                        const item = list[idx];
+                        if (item) {
+                            const docText = item.prdContext || item.prd || item.code || "";
+                            updatePlanButton(docText, item.name);
+                            window.dispatchEvent(new CustomEvent("open-prd-sheet", {
+                                detail: { markdown: docText, prompt: item.prompt || item.name, projectId: item.id }
+                            }));
+                        }
+                    });
+                });
+
+                prdHistoryContainer.querySelectorAll("[data-copy-prd-idx]").forEach((btn) => {
+                    btn.addEventListener("click", async (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(btn.getAttribute("data-copy-prd-idx"), 10);
+                        const item = list[idx];
+                        if (item) {
+                            const docText = item.prdContext || item.prd || item.code || "";
+                            try {
+                                await navigator.clipboard.writeText(docText);
+                                const originalHtml = btn.innerHTML;
+                                btn.innerHTML = `<i class="fa-solid fa-check text-xs text-emerald-400"></i>`;
+                                setTimeout(() => {
+                                    btn.innerHTML = originalHtml;
+                                }, 2000);
+                            } catch (e) {}
+                        }
+                    });
+                });
+
+                prdHistoryContainer.querySelectorAll("[data-download-prd-idx]").forEach((btn) => {
+                    btn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(btn.getAttribute("data-download-prd-idx"), 10);
+                        const item = list[idx];
+                        if (item) {
+                            const docText = item.prdContext || item.prd || item.code || "";
+                            const rawTitle = (item.name || "plan-blueprint").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                            const filename = `${rawTitle}.md`;
+                            const blob = new Blob([docText], { type: "text/markdown;charset=utf-8" });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        }
+                    });
+                });
+
+                prdHistoryContainer.querySelectorAll("[data-delete-prd-id]").forEach((btn) => {
+                    btn.addEventListener("click", async (e) => {
+                        e.stopPropagation();
+                        const id = btn.getAttribute("data-delete-prd-id");
+                        const docTitle = btn.getAttribute("data-delete-prd-title") || "dokumen ini";
+                        if (!id) return;
+
+                        if (confirm(`Apakah Anda yakin ingin menghapus "${docTitle}"?`)) {
+                            try {
+                                const res = await fetch(`/api/projects/${id}`, {
+                                    method: "DELETE"
+                                });
+                                if (res.ok) {
+                                    if (currentSavedTitle === docTitle) {
+                                        currentSavedPrd = "";
+                                        currentSavedTitle = "";
+                                        try {
+                                            localStorage.removeItem("satusite_active_prd");
+                                            localStorage.removeItem("satusite_active_prd_title");
+                                        } catch (e) {}
+                                        if (containerActivePlanBadge) {
+                                            containerActivePlanBadge.classList.add("hidden");
+                                            containerActivePlanBadge.classList.remove("flex");
+                                        }
+                                    }
+                                    loadPrdHistory();
+                                } else {
+                                    alert("Gagal menghapus dokumen plan.");
+                                }
+                            } catch (err) {
+                                console.error("Delete PRD error:", err);
+                                alert("Terjadi kesalahan saat menghapus plan.");
+                            }
+                        }
+                    });
                 });
             }
 
-            // Download saved PRD
-            if (btnDownloadSavedPrd) {
-                btnDownloadSavedPrd.addEventListener("click", () => {
-                    const md = currentSavedPrd || localStorage.getItem("satusite_active_prd") || "";
-                    if (!md) return;
-                    const titleMatch = md.match(/#\s*(?:Planning Blueprint:?|PRD:?|Rencana:?)\s*([^\r\n]+)/i);
-                    const rawTitle = titleMatch ? titleMatch[1].trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") : "prd-document";
-                    const filename = `${rawTitle || "prd-blueprint"}.md`;
-
-                    const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                });
-            }
-
-            // Delete saved PRD
-            if (btnDeleteSavedPrd) {
-                btnDeleteSavedPrd.addEventListener("click", () => {
-                    if (confirm("Hapus dokumen PRD tersimpan dari sesi ini?")) {
-                        try {
-                            localStorage.removeItem("satusite_active_prd");
-                        } catch (e) {}
-                        currentSavedPrd = "";
-                        if (savedPrdBox) savedPrdBox.classList.add("hidden");
+            // Search filter listener
+            if (searchPrdHistory) {
+                searchPrdHistory.addEventListener("input", (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    if (!query) {
+                        renderPrdHistoryList(allPrdProjects);
+                    } else {
+                        const filtered = allPrdProjects.filter((p) => {
+                            const name = (p.name || "").toLowerCase();
+                            const prd = (p.prdContext || p.prd || p.code || "").toLowerCase();
+                            const prompt = (p.prompt || "").toLowerCase();
+                            return name.includes(query) || prd.includes(query) || prompt.includes(query);
+                        });
+                        renderPrdHistoryList(filtered);
                     }
                 });
             }
+
+            // Load initial PRD history from database
+            loadPrdHistory();
 
             function readFile(file) {
                 return new Promise((resolve) => {
@@ -588,15 +758,22 @@ import PrdSheetViewer from "../../components/PrdSheetViewer";
                         const data = await res.json();
                         if (res.ok && data && (data.markdown || data.prd)) {
                             const markdownDoc = data.markdown || data.prd;
+                            const titleMatch = markdownDoc.match(/#\s*(?:Planning Blueprint:?|PRD:?|Rencana:?)\s*([^\r\n]+)/i);
+                            const planTitle = data.name || (titleMatch ? titleMatch[1].trim() : promptText.slice(0, 35));
 
-                            // Update saved PRD box UI & local storage
-                            updateSavedPrdBox(markdownDoc);
+                            // Update Plan button in prompt bar & local storage with generated PRD name
+                            updatePlanButton(markdownDoc, planTitle);
+
+                            // Refresh database list
+                            loadPrdHistory();
 
                             // Dispatch event to open smooth PRD slide-over sheet from the right
                             window.dispatchEvent(new CustomEvent("open-prd-sheet", {
                                 detail: {
                                     markdown: markdownDoc,
-                                    prompt: promptText
+                                    prompt: promptText,
+                                    projectId: data.projectId,
+                                    title: planTitle
                                 }
                             }));
 
