@@ -224,7 +224,7 @@ function parseInlineFormatting(text: string): React.ReactNode {
   })
 }
 
-export default function PrdSheetViewer() {
+export function PrdSheetViewer() {
   const [open, setOpen] = useState(false)
   const [visible, setVisible] = useState(false)
   const [content, setContent] = useState("")
@@ -771,3 +771,5 @@ export default function PrdSheetViewer() {
     document.body
   )
 }
+
+export default PrdSheetViewer;
