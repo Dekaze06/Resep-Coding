@@ -14,7 +14,12 @@ import {
   Code2,
   ArrowRight,
   Eye,
-  Sliders
+  Sliders,
+  Layout,
+  Server,
+  ShieldCheck,
+  ArrowUpRight,
+  Loader2
 } from "lucide-react"
 
 declare global {
@@ -230,6 +235,8 @@ export function PrdSheetViewer() {
   const [content, setContent] = useState("")
   const [activeTab, setActiveTab] = useState<"rendered" | "raw" | "visual">("rendered")
   const [copied, setCopied] = useState(false)
+  const [showModeSelectionModal, setShowModeSelectionModal] = useState(false)
+  const [isNavigating, setIsNavigating] = useState<"frontend" | "fullstack" | null>(null)
 
   // Resizing state
   const [width, setWidth] = useState(680)
@@ -428,14 +435,35 @@ export function PrdSheetViewer() {
     URL.revokeObjectURL(url)
   }
 
-  // Seamless jump to Studio App / Canvas
+  // Open mode selection modal when clicking "Lanjut Bangun Aplikasi di Studio"
   const handleLaunchCanvas = () => {
-    handleClose()
+    setShowModeSelectionModal(true)
+  }
+
+  // Handle selected mode (frontend or fullstack) and navigate to Studio Canvas
+  const handleSelectMode = (selectedMode: "frontend" | "fullstack") => {
+    setIsNavigating(selectedMode)
+
+    if (contentRef.current) {
+      try {
+        localStorage.setItem("satusite_active_prd", contentRef.current)
+      } catch (e) {}
+    }
+
+    const titleMatch = content.match(/#\s*(?:Planning Blueprint:?|PRD:?|Rencana:?)\s*([^\r\n]+)/i)
+    const title = titleMatch ? titleMatch[1].trim() : "Aplikasi PRD"
+
+    const promptText = selectedMode === "frontend"
+      ? `Bangun antarmuka frontend multi-halaman interaktif berdasarkan dokumen PRD: ${title}`
+      : `Bangun aplikasi fullstack lengkap (Astro, Node.js, Auth & Admin) berdasarkan dokumen PRD: ${title}`
+
     setTimeout(() => {
-      const titleMatch = content.match(/#\s*(?:Planning Blueprint:?|PRD:?|Rencana:?)\s*([^\r\n]+)/i)
-      const title = titleMatch ? titleMatch[1].trim() : "Aplikasi PRD"
-      window.location.href = `/app?prompt=${encodeURIComponent(`Bangun aplikasi lengkap berdasarkan dokumen PRD: ${title}`)}&mode=fullstack`
-    }, 300)
+      setShowModeSelectionModal(false)
+      handleClose()
+      setTimeout(() => {
+        window.location.href = `/app?prompt=${encodeURIComponent(promptText)}&mode=${selectedMode}`
+      }, 250)
+    }, 450)
   }
 
   // Parse summary points for Visual tab
@@ -767,6 +795,119 @@ export function PrdSheetViewer() {
           </button>
         </div>
       </div>
+
+      {/* MODE SELECTION MODAL: SIMPLE FRONTEND VS FULLSTACK */}
+      {showModeSelectionModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-2xl space-y-4 text-left">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80">
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                  Pilih Mode Studio
+                </h3>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  Pilih tipe arsitektur untuk lanjut ke Studio Canvas:
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => !isNavigating && setShowModeSelectionModal(false)}
+                className="w-7 h-7 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* 2 Simple Choice Buttons */}
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              {/* Option 1: Frontend */}
+              <button
+                type="button"
+                disabled={!!isNavigating}
+                onClick={() => handleSelectMode("frontend")}
+                className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between space-y-3 group ${
+                  isNavigating === "frontend"
+                    ? "bg-blue-950/40 border-blue-500 shadow-md ring-1 ring-blue-500"
+                    : "bg-zinc-950 hover:bg-zinc-900/90 border-zinc-800 hover:border-blue-500/50"
+                }`}
+              >
+                <div>
+                  <div className="font-bold text-white text-sm group-hover:text-blue-400 transition-colors">
+                    Frontend
+                  </div>
+                  <div className="text-[11px] text-zinc-400 mt-1">
+                    Multi-Halaman & UI
+                  </div>
+                </div>
+
+                <div className={`w-full py-2 rounded-lg text-xs font-semibold text-center transition-all ${
+                  isNavigating === "frontend"
+                    ? "bg-blue-600 text-white"
+                    : "bg-zinc-800 group-hover:bg-blue-600 text-zinc-200 group-hover:text-white"
+                }`}>
+                  {isNavigating === "frontend" ? (
+                    <span className="flex items-center justify-center gap-1.5">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <span>Memuat...</span>
+                    </span>
+                  ) : (
+                    "Pilih Frontend"
+                  )}
+                </div>
+              </button>
+
+              {/* Option 2: Fullstack */}
+              <button
+                type="button"
+                disabled={!!isNavigating}
+                onClick={() => handleSelectMode("fullstack")}
+                className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between space-y-3 group ${
+                  isNavigating === "fullstack"
+                    ? "bg-purple-950/40 border-purple-500 shadow-md ring-1 ring-purple-500"
+                    : "bg-zinc-950 hover:bg-zinc-900/90 border-zinc-800 hover:border-purple-500/50"
+                }`}
+              >
+                <div>
+                  <div className="font-bold text-white text-sm group-hover:text-purple-400 transition-colors">
+                    Fullstack
+                  </div>
+                  <div className="text-[11px] text-zinc-400 mt-1">
+                    Astro & Node.js CRUD
+                  </div>
+                </div>
+
+                <div className={`w-full py-2 rounded-lg text-xs font-semibold text-center transition-all ${
+                  isNavigating === "fullstack"
+                    ? "bg-purple-600 text-white"
+                    : "bg-zinc-800 group-hover:bg-purple-600 text-zinc-200 group-hover:text-white"
+                }`}>
+                  {isNavigating === "fullstack" ? (
+                    <span className="flex items-center justify-center gap-1.5">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <span>Memuat...</span>
+                    </span>
+                  ) : (
+                    "Pilih Fullstack"
+                  )}
+                </div>
+              </button>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between pt-2 border-t border-zinc-800/80 text-[11px] text-zinc-500">
+              <span>PRD otomatis dimuat ke Studio Canvas</span>
+              <button
+                type="button"
+                onClick={() => !isNavigating && setShowModeSelectionModal(false)}
+                className="hover:text-zinc-300 transition-colors cursor-pointer text-xs"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>,
     document.body
   )

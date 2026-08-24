@@ -177,6 +177,40 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                 </div>
             </div>
         </section>
+
+        <!-- DAFTAR PROYEK FULLSTACK YANG SUDAH DI-GENERATE (List2 Style Layout) -->
+        <section id="fullstack-history-list-section" class="max-w-5xl mx-auto px-4 pb-20 pt-4">
+            <div class="space-y-6">
+                <!-- Header with Title and Search Filter at the Top -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800/80">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-lg bg-purple-600/20 text-purple-400 border border-purple-500/30 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-database"></i>
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-white tracking-tight">Daftar Proyek Fullstack</h2>
+                    </div>
+
+                    <!-- Search Filter Input -->
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500"></i>
+                        <input
+                            type="text"
+                            id="search-fullstack-history"
+                            placeholder="Cari proyek fullstack..."
+                            class="w-full pl-8 pr-3 py-2 rounded-xl bg-zinc-900/90 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500/50 transition-colors shadow-inner"
+                        />
+                    </div>
+                </div>
+
+                <!-- History Rows Container with Separator layout -->
+                <div id="fullstack-history-container" class="flex flex-col divide-y divide-zinc-800/80 border-y border-zinc-800/80">
+                    <div class="py-12 text-center text-zinc-500 text-xs">
+                        <i class="fa-solid fa-circle-notch fa-spin text-sm text-purple-400 mb-2"></i>
+                        <p>Memuat daftar proyek fullstack...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <!-- Client Script -->
@@ -249,13 +283,17 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
             if (form) {
                 form.addEventListener("dragover", (e) => {
                     e.preventDefault();
-                    e.stopPropagation();
+                    form.classList.add("border-purple-500/50");
+                });
+                form.addEventListener("dragleave", () => {
+                    form.classList.remove("border-purple-500/50");
                 });
                 form.addEventListener("drop", async (e) => {
                     e.preventDefault();
-                    e.stopPropagation();
-                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                        await handleSelectedFile(e.dataTransfer.files[0]);
+                    form.classList.remove("border-purple-500/50");
+                    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+                    if (file) {
+                        await handleSelectedFile(file);
                     }
                 });
             }
@@ -270,43 +308,238 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                 });
             }
 
-            if (voiceBtn) {
+            // Voice Speech-to-Text Support
+            if (voiceBtn && input) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (!SpeechRecognition) {
-                    voiceBtn.style.display = "none";
-                } else {
+                if (SpeechRecognition) {
                     const recognition = new SpeechRecognition();
                     recognition.lang = "id-ID";
-                    let isListening = false;
+                    recognition.interimResults = false;
 
-                    recognition.onresult = (ev) => {
-                        const transcript = ev.results[0][0].transcript;
-                        if (input) {
-                            input.value = input.value ? `${input.value} ${transcript}` : transcript;
-                            input.focus();
-                        }
+                    recognition.onstart = () => {
+                        if (voiceIcon) voiceIcon.className = "fa-solid fa-circle-notch fa-spin text-xs text-purple-400";
                     };
-
+                    recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        input.value = input.value ? `${input.value} ${transcript}` : transcript;
+                    };
                     recognition.onend = () => {
-                        isListening = false;
+                        if (voiceIcon) voiceIcon.className = "fa-solid fa-microphone text-xs";
+                    };
+                    recognition.onerror = () => {
                         if (voiceIcon) voiceIcon.className = "fa-solid fa-microphone text-xs";
                     };
 
                     voiceBtn.addEventListener("click", () => {
-                        if (isListening) {
-                            recognition.stop();
-                        } else {
+                        try {
+                            recognition.start();
+                        } catch (e) {
                             try {
-                                recognition.start();
-                                isListening = true;
-                                if (voiceIcon) voiceIcon.className = "fa-solid fa-microphone-slash text-xs text-red-400 animate-pulse";
-                            } catch (err) {
-                                console.warn("Voice error:", err);
-                            }
+                                recognition.stop();
+                            } catch (err) {}
                         }
                     });
                 }
             }
+
+            // --- FULLSTACK PROJECTS HISTORY FETCHER & RENDERER ---
+            const fullstackHistoryContainer = document.getElementById("fullstack-history-container");
+            const searchFullstackInput = document.getElementById("search-fullstack-history");
+            let allFullstackProjects = [];
+
+            async function loadFullstackHistory() {
+                if (!fullstackHistoryContainer) return;
+                let fetchedProjects = [];
+                try {
+                    const res = await fetch("/api/projects?mode=fullstack");
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && Array.isArray(data.projects)) {
+                            fetchedProjects = data.projects;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Failed fetching fullstack history:", e);
+                }
+
+                // Merge fallback from localStorage
+                try {
+                    const storeRaw = localStorage.getItem("satusite_projects_store") || localStorage.getItem("emergent_projects_store");
+                    if (storeRaw) {
+                        const parsed = JSON.parse(storeRaw);
+                        if (parsed && parsed.projects) {
+                            const list = Object.values(parsed.projects).filter((p) => p.mode === "fullstack" || (!p.mode && !p.prd));
+                            list.forEach(lp => {
+                                if (!fetchedProjects.some(fp => fp.id === lp.id)) {
+                                    fetchedProjects.unshift({
+                                        id: lp.id,
+                                        name: lp.name || "Aplikasi Fullstack",
+                                        category: lp.category || "Fullstack App",
+                                        mode: "fullstack",
+                                        prompt: lp.prompt || (lp.messages && lp.messages[0]?.text) || "",
+                                        code: lp.code || "",
+                                        createdAt: lp.createdAt || lp.updatedAt || Date.now()
+                                    });
+                                }
+                            });
+                        }
+                    }
+                } catch (e) {}
+
+                allFullstackProjects = fetchedProjects;
+                renderFullstackHistoryList(allFullstackProjects);
+            }
+
+            function renderFullstackHistoryList(list) {
+                if (!fullstackHistoryContainer) return;
+
+                if (!list || list.length === 0) {
+                    fullstackHistoryContainer.innerHTML = `
+                        <div class="py-16 text-center text-zinc-500 text-xs">
+                            <i class="fa-solid fa-database text-2xl text-zinc-600 mb-2 block"></i>
+                            <p class="font-medium text-zinc-400">Belum ada proyek Fullstack yang dibuat</p>
+                            <p class="text-[11px] text-zinc-600 mt-1">Tulis deskripsi ide sistem di atas untuk mulai membuat proyek Fullstack pertama Anda.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                fullstackHistoryContainer.innerHTML = list.map((item, idx) => {
+                    const title = item.name || "Aplikasi Fullstack Web App";
+                    const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "Tersimpan";
+                    const promptText = item.prompt ? item.prompt.replace(/[*_#`]/g, "").trim() : "Aplikasi web mandiri dengan database in-memory, logika CRUD & panel manajemen.";
+
+                    return `
+                        <div data-row-full-idx="${idx}" class="grid items-center gap-4 px-3 sm:px-5 py-4 sm:py-5 grid-cols-1 md:grid-cols-4 hover:bg-zinc-900/40 transition-colors group cursor-pointer">
+                            <!-- Col 1: Icon/Badge + Title + Meta -->
+                            <div class="order-2 md:order-none flex items-center gap-3 min-w-0">
+                                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 text-purple-400 shadow-sm group-hover:border-purple-500/30 group-hover:bg-purple-500/10 transition-all">
+                                    <i class="fa-solid fa-database text-sm"></i>
+                                </span>
+                                <div class="flex flex-col gap-0.5 min-w-0">
+                                    <h3 class="font-semibold text-white text-xs sm:text-sm truncate group-hover:text-purple-300 transition-colors">${title}</h3>
+                                    <p class="text-[11px] text-zinc-500 flex items-center gap-1.5 flex-wrap">
+                                        <span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">Fullstack</span>
+                                        <span>•</span>
+                                        <span>${dateStr}</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Col 2: Description / Prompt (col-span-2) -->
+                            <p class="order-1 md:order-none md:col-span-2 text-xs sm:text-sm font-normal text-zinc-300 line-clamp-2 leading-relaxed">
+                                ${promptText}
+                            </p>
+
+                            <!-- Col 3: Actions -->
+                            <div class="order-3 md:order-none flex items-center justify-end gap-1.5 ml-auto shrink-0" onclick="event.stopPropagation()">
+                                <a
+                                    href="/app?id=${item.id}"
+                                    class="px-3 py-1.5 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-200 hover:text-white border border-zinc-700/60 flex items-center gap-1.5 text-xs transition-colors"
+                                    title="Buka di Studio Canvas"
+                                >
+                                    <span>Studio</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </a>
+                                <button
+                                    type="button"
+                                    data-download-full-idx="${idx}"
+                                    class="w-8 h-8 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700/60 flex items-center justify-center transition-colors cursor-pointer"
+                                    title="Unduh HTML"
+                                >
+                                    <i class="fa-solid fa-download text-xs"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    data-delete-full-id="${item.id}"
+                                    data-delete-full-title="${title.replace(/"/g, '&quot;')}"
+                                    class="w-8 h-8 rounded-xl bg-zinc-800/80 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 border border-zinc-700/60 flex items-center justify-center transition-colors cursor-pointer"
+                                    title="Hapus Proyek"
+                                >
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+
+                // Row click handler to open studio
+                document.querySelectorAll("[data-row-full-idx]").forEach(row => {
+                    row.addEventListener("click", () => {
+                        const idx = parseInt(row.getAttribute("data-row-full-idx") || "0", 10);
+                        const item = allFullstackProjects[idx];
+                        if (item && item.id) {
+                            window.location.href = `/app?id=${item.id}`;
+                        }
+                    });
+                });
+
+                // Download handler
+                document.querySelectorAll("[data-download-full-idx]").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(btn.getAttribute("data-download-full-idx") || "0", 10);
+                        const item = allFullstackProjects[idx];
+                        if (!item) return;
+                        const code = item.code || `<!DOCTYPE html><html><head><title>${item.name}</title></head><body><h1>${item.name}</h1></body></html>`;
+                        const blob = new Blob([code], { type: "text/html;charset=utf-8;" });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `${(item.name || "fullstack-project").toLowerCase().replace(/[^a-z0-9]/g, "-")}.html`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    });
+                });
+
+                // Delete handler
+                document.querySelectorAll("[data-delete-full-id]").forEach(btn => {
+                    btn.addEventListener("click", async (e) => {
+                        e.stopPropagation();
+                        const id = btn.getAttribute("data-delete-full-id");
+                        const title = btn.getAttribute("data-delete-full-title") || "Proyek ini";
+                        if (!id) return;
+                        if (!confirm(`Hapus proyek "${title}" secara permanen?`)) return;
+
+                        try {
+                            await fetch(`/api/projects/${id}`, { method: "DELETE" });
+                        } catch (err) {}
+
+                        try {
+                            const storeRaw = localStorage.getItem("satusite_projects_store") || localStorage.getItem("emergent_projects_store");
+                            if (storeRaw) {
+                                const store = JSON.parse(storeRaw);
+                                if (store && store.projects && store.projects[id]) {
+                                    delete store.projects[id];
+                                    localStorage.setItem("satusite_projects_store", JSON.stringify(store));
+                                }
+                            }
+                        } catch (err) {}
+
+                        allFullstackProjects = allFullstackProjects.filter(p => p.id !== id);
+                        renderFullstackHistoryList(allFullstackProjects);
+                    });
+                });
+            }
+
+            // Realtime search filter
+            if (searchFullstackInput) {
+                searchFullstackInput.addEventListener("input", (e) => {
+                    const q = (e.target.value || "").toLowerCase().trim();
+                    if (!q) {
+                        renderFullstackHistoryList(allFullstackProjects);
+                        return;
+                    }
+                    const filtered = allFullstackProjects.filter(p => {
+                        const name = (p.name || "").toLowerCase();
+                        const prompt = (p.prompt || "").toLowerCase();
+                        return name.includes(q) || prompt.includes(q);
+                    });
+                    renderFullstackHistoryList(filtered);
+                });
+            }
+
+            loadFullstackHistory();
 
             // Smooth Blur Fade Up Rotating Titles
             const titles = [

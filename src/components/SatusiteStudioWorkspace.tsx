@@ -641,6 +641,9 @@ export default function SatusiteStudioWorkspace() {
     if (p.projectConfig) {
       setProjectConfig(p.projectConfig);
     }
+    if (p.mode) {
+      setGenMode(p.mode);
+    }
     setIsConfigCompleted(true);
     if (p.code) {
       setCode(p.code);
@@ -682,6 +685,8 @@ export default function SatusiteStudioWorkspace() {
           loadSavedProjects();
         }
       }
+      // Also delete from database
+      fetch(`/api/projects/${targetId}`, { method: "DELETE" }).catch(() => {});
     } catch (err) {
       console.warn("Failed deleting project:", err);
     }
@@ -1059,24 +1064,45 @@ export default function SatusiteStudioWorkspace() {
       const currentName = newName || projectName;
 
       const structToSave = newStructure !== undefined ? newStructure : architectureStructure;
+      const currentPrd = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null);
 
       store.projects[projectId] = {
         id: projectId,
         name: currentName,
         code: newCode,
+        mode: genMode || "fullstack",
+        category: projectConfig.webType || "Web App",
+        prompt: newMessages && newMessages.length > 0 ? (newMessages[0]?.text || "") : "",
         messages: newMessages,
         structure: structToSave,
         projectConfig: projectConfig,
-        prd: activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null),
+        prd: currentPrd,
         updatedAt: Date.now(),
         createdAt: store.projects[projectId]?.createdAt || Date.now()
       };
       store.activeId = projectId;
       localStorage.setItem("satusite_projects_store", JSON.stringify(store));
+
+      // Asynchronous background sync to database
+      fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: projectId,
+          name: currentName,
+          category: projectConfig.webType || (genMode === "prd" ? "Product Blueprint & PRD" : "Web App"),
+          mode: genMode || "fullstack",
+          owner: currentUser?.email || "guest@satusite.com",
+          prompt: newMessages && newMessages.length > 0 ? (newMessages[0]?.text || "") : "",
+          code: newCode,
+          prdContext: currentPrd
+        })
+      }).catch(err => console.warn("[Sync] Error syncing project to DB:", err));
+
     } catch (e) {
       console.warn("Failed saving project:", e);
     }
-  }, [projectId, projectName, architectureStructure, projectConfig]);
+  }, [projectId, projectName, architectureStructure, projectConfig, genMode, activePrdDoc, currentUser]);
 
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -3017,35 +3043,6 @@ export default function SatusiteStudioWorkspace() {
               </div>
             </div>
 
-            {/* Project Config summary badge */}
-            <div className="px-3 py-1.5 border-b border-zinc-800/40 bg-zinc-900/40 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="w-4 h-4 rounded bg-zinc-900 border border-zinc-800 text-blue-400 flex items-center justify-center shrink-0">
-                  <SlidersHorizontal className="w-2.5 h-2.5" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-semibold text-zinc-200 text-[11px] truncate">
-                      {projectConfig.webName || projectName}
-                    </span>
-                    <span className="px-1 py-0.2 rounded bg-zinc-900 text-zinc-400 text-[9px] border border-zinc-800 shrink-0 capitalize">
-                      {genMode}
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-zinc-500 truncate">
-                    {projectConfig.webType === "Kustom (Tulis Sendiri...)" ? (projectConfig.customWebType || "Kustom") : projectConfig.webType} • {projectConfig.theme === "Kustom (Tulis Sendiri...)" ? (projectConfig.customTheme || "Kustom") : projectConfig.theme}
-                  </div>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowConfigEditModal(true)}
-                className="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-[10px] font-medium text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 transition-colors cursor-pointer shrink-0 ml-2"
-                title="Ubah Konfigurasi Dasar"
-              >
-                Ubah
-              </button>
-            </div>
 
             {/* Messages stream */}
             <div className="flex-1 overflow-y-auto p-3 space-y-3">
@@ -3818,252 +3815,6 @@ export default function SatusiteStudioWorkspace() {
         </div>
       )}
 
-      {/* EDIT CONFIG MODAL */}
-      {showConfigEditModal && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-zinc-800/90 rounded-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex justify-between items-center pb-3 border-b border-zinc-800/60">
-              <h3 className="font-semibold text-white text-sm flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-blue-400" />
-                <span>Ubah Konfigurasi Proyek</span>
-              </h3>
-              <button
-                type="button"
-                onClick={() => {
-                  setOpenDropdown(null);
-                  setShowConfigEditModal(false);
-                }}
-                className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="space-y-3.5 text-xs">
-              <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
-                  <FileText className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>Nama Website / Brand:</span>
-                </label>
-                <input
-                  type="text"
-                  value={projectConfig.webName}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setProjectConfig(prev => ({ ...prev, webName: val }));
-                    if (val.trim()) setProjectName(val.trim());
-                  }}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-600"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* Modal Dropdown: Jenis Web */}
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
-                    <Layout className="w-3.5 h-3.5 text-zinc-400" />
-                    <span>Jenis / Kategori:</span>
-                  </label>
-                  <div className="relative custom-dropdown-container">
-                    <button
-                      type="button"
-                      onClick={() => setOpenDropdown(openDropdown === "modal_type" ? null : "modal_type")}
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 flex items-center justify-between transition-colors cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2 truncate">
-                        <div className="w-4 h-4 rounded bg-zinc-900 text-blue-400 flex items-center justify-center shrink-0">
-                          {(() => {
-                            const found = WEB_TYPE_OPTIONS.find(o => o.id === projectConfig.webType);
-                            const IconComp = found?.icon || ShoppingBag;
-                            return <IconComp className="w-2.5 h-2.5" />;
-                          })()}
-                        </div>
-                        <span className="truncate">{projectConfig.webType}</span>
-                      </div>
-                      <ChevronDown className={`w-3 h-3 text-zinc-400 shrink-0 transition-transform ${openDropdown === "modal_type" ? "rotate-180" : ""}`} />
-                    </button>
-
-                    {openDropdown === "modal_type" && (
-                      <div className="absolute top-full left-0 right-0 mt-1 p-1 bg-[#121216] border border-zinc-800 rounded-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100 max-h-52 overflow-y-auto space-y-0.5 custom-dropdown-container">
-                        {WEB_TYPE_OPTIONS.map(opt => {
-                          const isSelected = projectConfig.webType === opt.id;
-                          return (
-                            <button
-                              key={opt.id}
-                              type="button"
-                              onClick={() => {
-                                setProjectConfig(prev => ({ ...prev, webType: opt.id }));
-                                setOpenDropdown(null);
-                              }}
-                              className={`w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-left text-xs transition-colors cursor-pointer ${
-                                isSelected ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
-                              }`}
-                            >
-                              <span className="truncate">{opt.label}</span>
-                              {isSelected && <Check className="w-3 h-3 text-blue-400 shrink-0" />}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Modal Dropdown: Tema */}
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
-                    <Palette className="w-3.5 h-3.5 text-zinc-400" />
-                    <span>Tema Desain:</span>
-                  </label>
-                  <div className="relative custom-dropdown-container">
-                    <button
-                      type="button"
-                      onClick={() => setOpenDropdown(openDropdown === "modal_theme" ? null : "modal_theme")}
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 flex items-center justify-between transition-colors cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2 truncate">
-                        {(() => {
-                          const found = THEME_OPTIONS.find(o => o.id === projectConfig.theme);
-                          const dotCls = found?.dotColor || "bg-blue-500 ring-blue-500/40";
-                          return <span className={`w-2 h-2 rounded-full ${dotCls} shrink-0`} />;
-                        })()}
-                        <span className="truncate">{projectConfig.theme.split(" (")[0]}</span>
-                      </div>
-                      <ChevronDown className={`w-3 h-3 text-zinc-400 shrink-0 transition-transform ${openDropdown === "modal_theme" ? "rotate-180" : ""}`} />
-                    </button>
-
-                    {openDropdown === "modal_theme" && (
-                      <div className="absolute top-full left-0 right-0 mt-1 p-1 bg-[#121216] border border-zinc-800 rounded-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100 max-h-52 overflow-y-auto space-y-0.5 custom-dropdown-container">
-                        {THEME_OPTIONS.map(opt => {
-                          const isSelected = projectConfig.theme === opt.id;
-                          return (
-                            <button
-                              key={opt.id}
-                              type="button"
-                              onClick={() => {
-                                setProjectConfig(prev => ({ ...prev, theme: opt.id }));
-                                setOpenDropdown(null);
-                              }}
-                              className={`w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-left text-xs transition-colors cursor-pointer ${
-                                isSelected ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
-                              }`}
-                            >
-                              <div className="flex items-center gap-2 truncate">
-                                <span className={`w-2 h-2 rounded-full ${opt.dotColor} shrink-0`} />
-                                <span className="truncate">{opt.label}</span>
-                              </div>
-                              {isSelected && <Check className="w-3 h-3 text-blue-400 shrink-0" />}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Modal Dropdown: Target Pengunjung */}
-              <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
-                  <Users className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>Target Pengunjung:</span>
-                </label>
-                <div className="relative custom-dropdown-container">
-                  <button
-                    type="button"
-                    onClick={() => setOpenDropdown(openDropdown === "modal_audience" ? null : "modal_audience")}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 flex items-center justify-between transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2 truncate">
-                      <div className="w-4 h-4 rounded bg-zinc-900 text-blue-400 flex items-center justify-center shrink-0">
-                        {(() => {
-                          const found = AUDIENCE_OPTIONS.find(o => o.id === projectConfig.targetAudience);
-                          const IconComp = found?.icon || Users;
-                          return <IconComp className="w-2.5 h-2.5" />;
-                        })()}
-                      </div>
-                      <span className="truncate">{projectConfig.targetAudience}</span>
-                    </div>
-                    <ChevronDown className={`w-3 h-3 text-zinc-400 shrink-0 transition-transform ${openDropdown === "modal_audience" ? "rotate-180" : ""}`} />
-                  </button>
-
-                  {openDropdown === "modal_audience" && (
-                    <div className="absolute top-full left-0 right-0 mt-1 p-1 bg-[#121216] border border-zinc-800 rounded-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100 max-h-52 overflow-y-auto space-y-0.5 custom-dropdown-container">
-                      {AUDIENCE_OPTIONS.map(opt => {
-                        const isSelected = projectConfig.targetAudience === opt.id;
-                        return (
-                          <button
-                            key={opt.id}
-                            type="button"
-                            onClick={() => {
-                              setProjectConfig(prev => ({ ...prev, targetAudience: opt.id }));
-                              setOpenDropdown(null);
-                            }}
-                            className={`w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-left text-xs transition-colors cursor-pointer ${
-                              isSelected ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
-                            }`}
-                          >
-                            <span className="truncate">{opt.label}</span>
-                            {isSelected && <Check className="w-3 h-3 text-blue-400 shrink-0" />}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Fitur Kunci Tags */}
-              <div className="space-y-1.5 pt-1">
-                <label className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>Fitur Kunci:</span>
-                </label>
-                <div className="flex flex-wrap gap-1.5">
-                  {FEATURE_OPTIONS.map(feat => {
-                    const isSelected = projectConfig.mainFeatures.includes(feat.id);
-                    return (
-                      <button
-                        key={feat.id}
-                        type="button"
-                        onClick={() => {
-                          setProjectConfig(prev => ({
-                            ...prev,
-                            mainFeatures: isSelected
-                              ? prev.mainFeatures.filter(f => f !== feat.id)
-                              : [...prev.mainFeatures, feat.id]
-                          }));
-                        }}
-                        className={`px-2.5 py-1 rounded-lg text-[10.5px] font-medium transition-all cursor-pointer border flex items-center gap-1 ${
-                          isSelected
-                            ? "bg-zinc-800 text-white border-zinc-600 shadow-sm"
-                            : "bg-zinc-950 text-zinc-400 border-zinc-800/80 hover:text-zinc-200"
-                        }`}
-                      >
-                        {isSelected ? <Check className="w-2.5 h-2.5 text-blue-400" /> : <Plus className="w-2.5 h-2.5 text-zinc-500" />}
-                        <span>{feat.label || feat.id}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-3 border-t border-zinc-800/60">
-              <button
-                type="button"
-                onClick={() => {
-                  setOpenDropdown(null);
-                  setShowConfigEditModal(false);
-                }}
-                className="px-4 py-2 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs transition-colors cursor-pointer shadow-sm"
-              >
-                Simpan & Tutup
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Slide-Over PRD Sheet Viewer */}
       <PrdSheetViewer />

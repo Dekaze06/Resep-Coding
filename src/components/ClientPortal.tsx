@@ -127,6 +127,33 @@ export default function ClientPortal() {
         }
       }
 
+      // 3. Merge LocalStorage projects to ensure no created projects are missed
+      try {
+        const storeRaw = localStorage.getItem('satusite_projects_store') || localStorage.getItem('emergent_projects_store');
+        if (storeRaw) {
+          const store = JSON.parse(storeRaw);
+          if (store && store.projects) {
+            const localList = Object.values(store.projects) as any[];
+            localList.forEach((lp: any) => {
+              if (lp && lp.id && !serverProjects.some(sp => sp.id === lp.id)) {
+                serverProjects.unshift({
+                  id: lp.id,
+                  name: lp.name || 'Proyek Web',
+                  category: lp.category || lp.projectConfig?.webType || (lp.mode === 'prd' ? 'Product Blueprint & PRD' : 'Web App'),
+                  mode: lp.mode || (lp.prd ? 'prd' : 'fullstack'),
+                  updatedAt: lp.updatedAt ? new Date(lp.updatedAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Hari ini',
+                  status: 'Live',
+                  views: 0,
+                  code: lp.code,
+                  prompt: lp.prompt || (lp.messages && lp.messages[0]?.text) || '',
+                  owner: activeEmail || 'guest@satusite.com'
+                });
+              }
+            });
+          }
+        }
+      } catch (e) {}
+
       // Filter by current user if logged in
       if (activeEmail) {
         const userProjects = serverProjects.filter(p => !p.owner || p.owner.toLowerCase() === activeEmail.toLowerCase());
@@ -206,11 +233,22 @@ export default function ClientPortal() {
   };
 
   const handleDeleteProject = async (id: string) => {
-    if (!confirm('Hapus proyek ini secara permanen dari server?')) return;
+    if (!confirm('Hapus proyek ini secara permanen dari server dan penyimpanan lokal?')) return;
     setProjects(prev => prev.filter(p => p.id !== id));
 
     try {
       await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+    } catch (e) {}
+
+    try {
+      const storeRaw = localStorage.getItem('satusite_projects_store') || localStorage.getItem('emergent_projects_store');
+      if (storeRaw) {
+        const store = JSON.parse(storeRaw);
+        if (store && store.projects && store.projects[id]) {
+          delete store.projects[id];
+          localStorage.setItem('satusite_projects_store', JSON.stringify(store));
+        }
+      }
     } catch (e) {}
   };
 
@@ -610,48 +648,60 @@ export default function ClientPortal() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {projects.slice(0, 4).map(p => (
-                      <div key={p.id} className="p-4 rounded-xl bg-zinc-950 border border-zinc-800/70 space-y-3 hover:border-zinc-700 transition-all flex flex-col justify-between">
-                        <div className="space-y-1.5">
-                          <div className="flex items-start justify-between gap-2">
-                            <h4 className="font-medium text-white text-xs">{p.name}</h4>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-300 bg-zinc-900 border border-zinc-800">
-                              {p.mode || 'fullstack'}
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">
-                            {p.prompt || 'Aplikasi web mandiri dengan arsitektur modern.'}
-                          </p>
-                        </div>
+                    {projects.slice(0, 4).map(p => {
+                      const isPrd = p.mode === 'prd';
+                      const isFront = p.mode === 'frontend';
+                      const studioHref = isPrd ? '/studio/prd' : `/app?id=${p.id}`;
+                      const modeBadgeClass = isPrd
+                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                        : isFront
+                        ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
+                        : 'bg-purple-500/10 text-purple-400 border-purple-500/30';
+                      const modeLabel = isPrd ? 'PRD Blueprint' : isFront ? 'Frontend UI' : 'Fullstack App';
 
-                        <div className="flex items-center justify-between pt-2.5 border-t border-zinc-800/60 text-xs">
-                          <span className="text-[10px] text-zinc-500 font-mono">{p.updatedAt}</span>
+                      return (
+                        <div key={p.id} className="p-4 rounded-xl bg-zinc-950 border border-zinc-800/70 space-y-3 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                          <div className="space-y-1.5">
+                            <div className="flex items-start justify-between gap-2">
+                              <h4 className="font-medium text-white text-xs">{p.name}</h4>
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${modeBadgeClass}`}>
+                                {modeLabel}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">
+                              {p.prompt || 'Aplikasi web mandiri dengan arsitektur modern.'}
+                            </p>
+                          </div>
 
-                          <div className="flex items-center gap-1.5">
-                            <a
-                              href={`/app?id=${p.id}`}
-                              className="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 transition-colors text-[11px]"
-                            >
-                              Studio
-                            </a>
-                            <a
-                              href={`/deploy?id=${p.id}`}
-                              className="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 transition-colors text-[11px]"
-                            >
-                              Deploy
-                            </a>
-                            <button
-                              type="button"
-                              onClick={() => handleDownloadProject(p)}
-                              className="p-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 transition-colors cursor-pointer"
-                              title="Unduh HTML"
-                            >
-                              {downloadSuccess === p.id ? <Check className="w-3 h-3 text-zinc-200" /> : <Download className="w-3 h-3" />}
-                            </button>
+                          <div className="flex items-center justify-between pt-2.5 border-t border-zinc-800/60 text-xs">
+                            <span className="text-[10px] text-zinc-500 font-mono">{p.updatedAt}</span>
+
+                            <div className="flex items-center gap-1.5">
+                              <a
+                                href={studioHref}
+                                className="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 transition-colors text-[11px]"
+                              >
+                                Studio
+                              </a>
+                              <a
+                                href={`/deploy?id=${p.id}`}
+                                className="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 transition-colors text-[11px]"
+                              >
+                                Deploy
+                              </a>
+                              <button
+                                type="button"
+                                onClick={() => handleDownloadProject(p)}
+                                className="p-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 transition-colors cursor-pointer"
+                                title="Unduh HTML"
+                              >
+                                {downloadSuccess === p.id ? <Check className="w-3 h-3 text-zinc-200" /> : <Download className="w-3 h-3" />}
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -705,60 +755,77 @@ export default function ClientPortal() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredProjects.map(p => (
-                    <div key={p.id} className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-4 hover:border-zinc-700 transition-all flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-start justify-between gap-2">
-                          <h4 className="font-semibold text-white text-xs leading-snug">{p.name}</h4>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 uppercase">
-                            {p.category}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-zinc-400 line-clamp-3 leading-relaxed">
-                          {p.prompt || 'Aplikasi web mandiri yang dirancang oleh AI Agent.'}
-                        </p>
-                      </div>
+                  {filteredProjects.map(p => {
+                    const isPrd = p.mode === 'prd';
+                    const isFront = p.mode === 'frontend';
+                    const studioHref = isPrd ? '/studio/prd' : `/app?id=${p.id}`;
+                    const modeBadgeClass = isPrd
+                      ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                      : isFront
+                      ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
+                      : 'bg-purple-500/10 text-purple-400 border-purple-500/30';
+                    const modeLabel = isPrd ? 'PRD' : isFront ? 'Frontend' : 'Fullstack';
 
-                      <div className="pt-3 border-t border-zinc-800/60 space-y-3">
-                        <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono">
-                          <span className="flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
-                            <span>{p.status}</span>
-                          </span>
-                          <span>{p.updatedAt}</span>
+                    return (
+                      <div key={p.id} className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-4 hover:border-zinc-700 transition-all flex flex-col justify-between">
+                        <div className="space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <h4 className="font-semibold text-white text-xs leading-snug">{p.name}</h4>
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${modeBadgeClass}`}>
+                                {modeLabel}
+                              </span>
+                              <span className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 uppercase">
+                                {p.category}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-[11px] text-zinc-400 line-clamp-3 leading-relaxed">
+                            {p.prompt || 'Aplikasi web mandiri yang dirancang oleh AI Agent.'}
+                          </p>
                         </div>
 
-                        <div className="grid grid-cols-4 gap-1">
-                          <a
-                            href={`/app?id=${p.id}`}
-                            className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
-                          >
-                            Studio
-                          </a>
-                          <a
-                            href={`/deploy?id=${p.id}`}
-                            className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
-                          >
-                            Deploy
-                          </a>
-                          <a
-                            href={`/github?id=${p.id}`}
-                            className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
-                          >
-                            GitHub
-                          </a>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteProject(p.id)}
-                            className="py-1.5 rounded-lg bg-zinc-900 hover:bg-red-950/60 text-zinc-400 hover:text-red-400 text-[11px] flex items-center justify-center border border-zinc-800 transition-colors cursor-pointer"
-                            title="Hapus"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                        <div className="pt-3 border-t border-zinc-800/60 space-y-3">
+                          <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono">
+                            <span className="flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+                              <span>{p.status}</span>
+                            </span>
+                            <span>{p.updatedAt}</span>
+                          </div>
+
+                          <div className="grid grid-cols-4 gap-1">
+                            <a
+                              href={studioHref}
+                              className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
+                            >
+                              Studio
+                            </a>
+                            <a
+                              href={`/deploy?id=${p.id}`}
+                              className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
+                            >
+                              Deploy
+                            </a>
+                            <a
+                              href={`/github?id=${p.id}`}
+                              className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white text-[11px] font-medium flex items-center justify-center border border-zinc-800 transition-colors"
+                            >
+                              GitHub
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteProject(p.id)}
+                              className="py-1.5 rounded-lg bg-zinc-900 hover:bg-red-950/60 text-zinc-400 hover:text-red-400 text-[11px] flex items-center justify-center border border-zinc-800 transition-colors cursor-pointer"
+                              title="Hapus"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 
