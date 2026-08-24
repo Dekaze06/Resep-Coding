@@ -65,6 +65,8 @@ import {
 } from "lucide-react";
 import CardScrollReveal from "./ui/CardScrollReveal";
 import InteractiveArchitectureTree from "./ui/InteractiveArchitectureTree";
+import AgentPlanTree, { DEFAULT_STUDIO_TASKS, type Task, type Subtask } from "./ui/AgentPlanTree";
+import AgentChat, { type AgentMessage, type AttachedFile, type AttachedImage } from "./ui/AgentChat";
 
 export interface ProjectConfig {
   webType: string;
@@ -326,6 +328,8 @@ interface ChatMessage {
   hasCodeUpdate?: boolean;
   agentName?: string;
   steps?: string[];
+  planTasks?: Task[];
+  showPlanTree?: boolean;
 }
 
 export const WEB_TYPE_OPTIONS = [
@@ -549,6 +553,7 @@ export default function SatusiteStudioWorkspace() {
   const [openDropdown, setOpenDropdown] = useState<"type" | "theme" | "audience" | "modal_type" | "modal_theme" | "modal_audience" | null>(null);
   const [projectId, setProjectId] = useState<string>("proj_default");
   const [projectName, setProjectName] = useState<string>("Proyek Baru");
+  const [showPlanPanel, setShowPlanPanel] = useState<boolean>(false);
   const [code, setCode] = useState<string>("");
   const [architectureStructure, setArchitectureStructure] = useState<ArchitectureStructure | null>(null);
   const [hasGenerated, setHasGenerated] = useState<boolean>(false);
@@ -1109,6 +1114,123 @@ export default function SatusiteStudioWorkspace() {
   }, [messages, isGenerating]);
 
 
+
+  const chatAttachedFiles: AttachedFile[] = useMemo(() => {
+    return uploadedFiles.map((f, idx) => ({
+      id: `file_${idx}_${f.name}`,
+      filename: f.name,
+      size: typeof f.size === "string" ? parseInt(f.size, 10) || undefined : f.size
+    }));
+  }, [uploadedFiles]);
+
+  const formattedAgentMessages: AgentMessage[] = useMemo(() => {
+    return messages.map((m) => {
+      const parts: any[] = [
+        { type: "text", text: m.text }
+      ];
+
+      if (m.steps && m.steps.length > 0) {
+        parts.push({
+          type: "widget",
+          content: (
+            <div className="mt-2.5 pt-2 border-t border-zinc-800/60 space-y-1.5 bg-zinc-950/40 -mx-1 p-2.5 rounded-lg border border-zinc-800/40">
+              <div className="flex items-center justify-between text-[10px] text-zinc-400 font-semibold mb-1">
+                <span className="flex items-center gap-1.5 text-zinc-300">
+                  <Workflow className="w-3 h-3 text-blue-400" />
+                  <span>Detail Task Selesai</span>
+                </span>
+                <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 font-bold">
+                  4/4 Selesai
+                </span>
+              </div>
+              {m.steps.map((s, idx) => (
+                <div key={idx} className="flex items-start gap-1.5 text-[10px] text-zinc-400">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="leading-tight">{s}</span>
+                </div>
+              ))}
+            </div>
+          )
+        });
+      }
+
+      if (m.role === "agent") {
+        parts.push({
+          type: "widget",
+          content: (
+            <div className="mt-2.5 pt-2 border-t border-zinc-800/60 flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setMessages(prev =>
+                    prev.map(msg =>
+                      msg.id === m.id
+                        ? { ...msg, showPlanTree: !msg.showPlanTree }
+                        : msg
+                    )
+                  );
+                }}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white text-[10px] font-medium border border-zinc-700/60 transition-colors cursor-pointer"
+              >
+                <Layers className="w-3 h-3 text-blue-400" />
+                <span>{m.showPlanTree ? "Tutup Rencana Tugas" : "Lihat Rencana Tugas (Interactive Plan)"}</span>
+              </button>
+              {m.hasCodeUpdate && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCanvas(true);
+                    setActiveTab("preview");
+                  }}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-600/20 hover:bg-blue-600/30 text-[10px] text-blue-400 hover:text-blue-300 font-semibold border border-blue-500/30 transition-all cursor-pointer"
+                >
+                  <Eye className="w-3 h-3" />
+                  <span>Lihat Hasil di Canvas</span>
+                </button>
+              )}
+              {(activePrdDoc || genMode === "prd") && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
+                    window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
+                  }}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-[10px] text-amber-300 hover:text-amber-200 font-semibold border border-amber-500/30 transition-all cursor-pointer"
+                >
+                  <FileText className="w-3 h-3 text-amber-400" />
+                  <span>Buka Dokumen PRD (.md)</span>
+                </button>
+              )}
+            </div>
+          )
+        });
+
+        if (m.showPlanTree) {
+          parts.push({
+            type: "widget",
+            content: (
+              <div className="mt-2.5 pt-1 animate-fade-in">
+                <AgentPlanTree
+                  tasks={m.planTasks}
+                  mode={genMode}
+                  title="Interactive Execution Plan"
+                  compact={true}
+                />
+              </div>
+            )
+          });
+        }
+      }
+
+      return {
+        id: m.id,
+        role: m.role === "user" ? ("user" as const) : ("assistant" as const),
+        parts,
+        timestamp: m.timestamp,
+        agentName: m.agentName || "AI Agent"
+      };
+    });
+  }, [messages, activePrdDoc, genMode]);
 
   const handleSendPrompt = async (promptToSend?: string, customName?: string, customId?: string, modeOverride?: "fullstack" | "frontend" | "prd") => {
     const rawText = (promptToSend || inputPrompt).trim();
@@ -2995,13 +3117,26 @@ export default function SatusiteStudioWorkspace() {
           {/* LEFT PANE: 35% CHAT AGENT */}
           <aside className={`w-full ${showCanvas ? "md:w-[35%]" : "md:w-full max-w-3xl mx-auto"} border-r border-zinc-800/60 bg-zinc-950 flex flex-col shrink-0 overflow-hidden z-20 transition-all duration-500`}>
             
-            {/* Agent status — minimal */}
-            <div className="px-3 py-2 border-b border-zinc-800/40 flex items-center justify-between text-xs">
+            {/* Agent status header */}
+            <div className="px-3 py-2 border-b border-zinc-800/40 flex items-center justify-between text-xs bg-zinc-950/90 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
                 <span className="text-[11px] font-semibold text-zinc-300">AI Agent</span>
               </div>
               <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setShowPlanPanel(!showPlanPanel)}
+                  className={`px-2 py-1 rounded-lg text-[11px] font-medium flex items-center gap-1 border transition-colors cursor-pointer ${
+                    showPlanPanel
+                      ? "bg-blue-600/25 text-blue-300 border-blue-500/40 shadow-sm"
+                      : "bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border-zinc-800/60"
+                  }`}
+                  title="Lihat Task Breakdown & Rencana Eksekusi"
+                >
+                  <Layers className="w-3 h-3 text-blue-400" />
+                  <span>Rencana Plan</span>
+                </button>
                 {activePrdDoc && (
                   <button
                     type="button"
@@ -3009,7 +3144,7 @@ export default function SatusiteStudioWorkspace() {
                       const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
                       window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
                     }}
-                    className="px-2 py-1 rounded-md bg-amber-500/15 hover:bg-amber-500/25 text-[11px] text-amber-300 hover:text-amber-200 flex items-center gap-1 border border-amber-500/30 transition-colors cursor-pointer"
+                    className="px-2 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-[11px] text-amber-300 hover:text-amber-200 flex items-center gap-1 border border-amber-500/30 transition-colors cursor-pointer"
                     title="Buka Dokumen PRD (.md)"
                   >
                     <FileText className="w-3 h-3 text-amber-400" />
@@ -3021,7 +3156,7 @@ export default function SatusiteStudioWorkspace() {
                     loadSavedProjects();
                     setShowHistoryModal(true);
                   }}
-                  className="px-2 py-1 rounded-md bg-zinc-900/80 hover:bg-zinc-800 text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 border border-zinc-800/60 transition-colors cursor-pointer"
+                  className="px-2 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-[11px] text-zinc-400 hover:text-white flex items-center gap-1 border border-zinc-800/60 transition-colors cursor-pointer"
                   title="Riwayat Percakapan & Sesi"
                 >
                   <History className="w-3 h-3 text-zinc-400" />
@@ -3030,7 +3165,7 @@ export default function SatusiteStudioWorkspace() {
                 {code && !showCanvas && (
                   <button
                     onClick={() => setShowCanvas(true)}
-                    className="px-2.5 py-1 rounded-md bg-blue-600/20 hover:bg-blue-600/30 text-[11px] text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1.5 border border-blue-500/30 transition-all cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-[11px] text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1.5 border border-blue-500/30 transition-all cursor-pointer"
                     title="Buka kembali Canvas Viewer"
                   >
                     <Eye className="w-3 h-3" />
@@ -3043,206 +3178,151 @@ export default function SatusiteStudioWorkspace() {
               </div>
             </div>
 
-
-            {/* Messages stream */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-3">
-              {/* Persistent Saved PRD Card Widget in chat agent box */}
-              {activePrdDoc && (
-                <div className="p-3 rounded-2xl bg-amber-950/25 border border-amber-500/30 space-y-2 text-xs animate-fade-in shadow-md">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
-                        <FileText className="w-4 h-4" />
+            {/* AgentChat Component */}
+            <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+              <AgentChat
+                messages={formattedAgentMessages}
+                onSend={(msg) => handleSendPrompt(msg.content)}
+                onStop={() => abortControllerRef.current?.abort()}
+                status={isGenerating ? "streaming" : "ready"}
+                inputValue={inputPrompt}
+                onInputChange={setInputPrompt}
+                placeholder={
+                  genMode === "prd"
+                    ? "Ketik instruksi atau kebutuhan PRD..."
+                    : genMode === "fullstack"
+                    ? "Ketik instruksi fitur fullstack / CRUD..."
+                    : "Ketik instruksi styling / halaman frontend..."
+                }
+                attachments={{
+                  onAttach: () => fileInputRef.current?.click(),
+                  files: chatAttachedFiles,
+                  onRemoveFile: (id) => {
+                    const idx = parseInt(id.split("_")[1], 10);
+                    if (!isNaN(idx)) {
+                      setUploadedFiles(prev => prev.filter((_, i) => i !== idx));
+                    }
+                  }
+                }}
+                headerWidget={
+                  <div className="space-y-3">
+                    {/* Interactive Agent Plan Tree Panel */}
+                    {showPlanPanel && (
+                      <div className="animate-fade-in">
+                        <AgentPlanTree
+                          mode={genMode}
+                          title={`Rencana Tugas Studio (${genMode.toUpperCase()})`}
+                        />
                       </div>
-                      <div>
-                        <div className="font-bold text-white text-[11px]">Dokumen PRD (.md) Tersimpan</div>
-                        <div className="text-[10px] text-zinc-400">Blueprint Arsitektur & Spesifikasi</div>
-                      </div>
-                    </div>
-                    <span className="text-[9px] font-mono font-bold text-amber-300 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30">
-                      .md
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
-                      window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
-                    }}
-                    className="w-full py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
-                  >
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>Buka Dokumen PRD (.md)</span>
-                  </button>
-                </div>
-              )}
-              {messages.map((m) => (
-                <div
-                  key={m.id}
-                  className={`flex flex-col ${m.role === "user" ? "items-end" : "items-start"} animate-fade-in-up group/msg`}
-                >
-                  {/* Sender label & timestamp */}
-                  <div className="flex items-center gap-1.5 mb-1 px-1 text-[10px] text-zinc-500">
-                    <span className="font-medium text-zinc-400">
-                      {m.role === "user" ? "Anda" : "AI Agent"}
-                    </span>
-                    <span className="text-[9px] text-zinc-600">{m.timestamp}</span>
-                  </div>
+                    )}
 
-                  {/* Message bubble + copy icon beside it */}
-                  <div className={`flex items-start gap-1 max-w-[92%] ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                    <div
-                      className={`flex-1 rounded-xl p-2.5 text-xs leading-relaxed ${
-                        m.role === "user"
-                          ? "bg-zinc-800/60 text-zinc-100 border border-zinc-700/40"
-                          : "bg-zinc-900/60 text-zinc-300 border border-zinc-800/60"
-                      }`}
-                    >
-                      <p className="whitespace-pre-line">{m.text}</p>
-
-                      {m.steps && m.steps.length > 0 && (
-                        <div className="mt-2.5 pt-2 border-t border-zinc-800/60 space-y-1.5 bg-zinc-950/40 -mx-1 p-2.5 rounded-lg border border-zinc-800/40">
-                          <div className="flex items-center justify-between text-[10px] text-zinc-400 font-semibold mb-1">
-                            <span className="flex items-center gap-1.5 text-zinc-300">
-                              <Workflow className="w-3 h-3 text-blue-400" />
-                              <span>Detail Task Selesai</span>
-                            </span>
-                            <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 font-bold">
-                              4/4 Selesai
-                            </span>
-                          </div>
-                          {m.steps.map((s, idx) => (
-                            <div key={idx} className="flex items-start gap-1.5 text-[10px] text-zinc-400">
-                              <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
-                              <span className="leading-tight">{s}</span>
+                    {/* Persistent Saved PRD Card Widget in chat agent box */}
+                    {activePrdDoc && (
+                      <div className="p-3 rounded-2xl bg-amber-950/25 border border-amber-500/30 space-y-2 text-xs animate-fade-in shadow-md">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                              <FileText className="w-4 h-4" />
                             </div>
-                          ))}
+                            <div>
+                              <div className="font-bold text-white text-[11px]">Dokumen PRD (.md) Tersimpan</div>
+                              <div className="text-[10px] text-zinc-400">Blueprint Arsitektur & Spesifikasi</div>
+                            </div>
+                          </div>
+                          <span className="text-[9px] font-mono font-bold text-amber-300 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30">
+                            .md
+                          </span>
                         </div>
-                      )}
-
-                      {m.hasCodeUpdate && (
-                        <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                          <button
-                            onClick={() => {
-                              setShowCanvas(true);
-                              setActiveTab("preview");
-                            }}
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-600/20 hover:bg-blue-600/30 text-[10px] text-blue-400 hover:text-blue-300 font-semibold border border-blue-500/30 transition-all cursor-pointer"
-                          >
-                            <Eye className="w-3 h-3" />
-                            <span>Lihat Hasil di Canvas</span>
-                          </button>
-                          {(activePrdDoc || genMode === "prd") && (
-                            <button
-                              onClick={() => {
-                                const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
-                                window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
-                              }}
-                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-[10px] text-amber-300 hover:text-amber-200 font-semibold border border-amber-500/30 transition-all cursor-pointer"
-                            >
-                              <FileText className="w-3 h-3 text-amber-400" />
-                              <span>Buka Dokumen PRD (.md)</span>
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Copy button beside the chat bubble */}
-                    <button
-                      onClick={() => handleCopyMessage(m.id, m.text)}
-                      className="shrink-0 p-1.5 rounded-md text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/60 transition-all opacity-0 group-hover/msg:opacity-100 focus:opacity-100 cursor-pointer mt-0.5"
-                      title="Salin Pesan"
-                    >
-                      {copiedMsgId === m.id ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              ))}
-
-              {isGenerating && (
-                <div className="bg-zinc-900/80 rounded-xl p-3 border border-blue-500/20 space-y-2.5 animate-fade-in-up shadow-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs text-blue-400 font-semibold">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
-                      <span>
-                        {genMode === "prd"
-                          ? "Menyusun Blueprint PRD..."
-                          : genMode === "fullstack"
-                          ? "Membangun Aplikasi Fullstack..."
-                          : "Memproses Frontend UI..."}
-                      </span>
-                    </div>
-                    <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[9px] font-mono font-bold uppercase">
-                      Task {generationTaskIndex + 1}/4
-                    </span>
-                  </div>
-
-                  {/* Live Step Progress List */}
-                  <div className="space-y-1.5 pt-1 border-t border-zinc-800/60">
-                    {(genMode === "prd"
-                      ? [
-                          "Analisis Kebutuhan Sistem & User Personas",
-                          "Penyusunan Skema Relasi Database (ERD)",
-                          "Spesifikasi REST API Contracts & Endpoint",
-                          "Finalisasi Blueprint PRD & Live Demo"
-                        ]
-                      : genMode === "fullstack"
-                      ? [
-                          "Analisis Arsitektur Domain & Model Data AppDB",
-                          "Penyusunan State Storage & Operasi CRUD",
-                          "Integrasi 4-Panel Switcher & KPI Charts",
-                          "Audit Anti-Slop Visual & UI Responsif"
-                        ]
-                      : [
-                          "Analisis Desain Sistem & Kategori Industri",
-                          "Penyusunan Layout Responsif & Palet 60-30-10",
-                          "Integrasi Quick-View Modal & WhatsApp Cart",
-                          "Audit Navigasi Anchor & Validasi Interaksi"
-                        ]
-                    ).map((taskTitle, tIdx) => {
-                      const isDone = tIdx < generationTaskIndex;
-                      const isCurrent = tIdx === generationTaskIndex;
-                      return (
-                        <div
-                          key={tIdx}
-                          className={`flex items-center gap-2 text-[10px] transition-all ${
-                            isDone
-                              ? "text-zinc-300"
-                              : isCurrent
-                              ? "text-blue-400 font-medium"
-                              : "text-zinc-600"
-                          }`}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
+                            window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
+                          }}
+                          className="w-full py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
                         >
-                          {isDone ? (
-                            <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                          ) : isCurrent ? (
-                            <Loader2 className="w-3 h-3 text-blue-400 animate-spin shrink-0" />
-                          ) : (
-                            <Circle className="w-3 h-3 text-zinc-700 shrink-0" />
-                          )}
-                          <span className="truncate">{taskTitle}</span>
+                          <FileText className="w-3.5 h-3.5" />
+                          <span>Buka Dokumen PRD (.md)</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                }
+                footerWidget={
+                  isGenerating ? (
+                    <div className="bg-zinc-900/90 rounded-2xl p-3 border border-blue-500/30 space-y-2.5 animate-fade-in-up shadow-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs text-blue-400 font-semibold">
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
+                          <span>
+                            {genMode === "prd"
+                              ? "Menyusun Blueprint PRD..."
+                              : genMode === "fullstack"
+                              ? "Membangun Aplikasi Fullstack..."
+                              : "Memproses Frontend UI..."}
+                          </span>
                         </div>
-                      );
-                    })}
-                  </div>
+                        <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[9px] font-mono font-bold uppercase">
+                          Task {generationTaskIndex + 1}/4
+                        </span>
+                      </div>
 
-                  <div className="text-[10px] text-zinc-500 font-mono bg-zinc-950/60 px-2 py-1 rounded border border-zinc-800/40 truncate">
-                    {currentThinkingStep}
-                  </div>
-                </div>
-              )}
+                      {/* Live Step Progress List */}
+                      <div className="space-y-1.5 pt-1 border-t border-zinc-800/60">
+                        {(genMode === "prd"
+                          ? [
+                              "Analisis Kebutuhan Sistem & User Personas",
+                              "Penyusunan Skema Relasi Database (ERD)",
+                              "Spesifikasi REST API Contracts & Endpoint",
+                              "Finalisasi Blueprint PRD & Live Demo"
+                            ]
+                          : genMode === "fullstack"
+                          ? [
+                              "Analisis Arsitektur Domain & Model Data AppDB",
+                              "Penyusunan State Storage & Operasi CRUD",
+                              "Integrasi 4-Panel Switcher & KPI Charts",
+                              "Audit Anti-Slop Visual & UI Responsif"
+                            ]
+                          : [
+                              "Analisis Desain Sistem & Kategori Industri",
+                              "Penyusunan Layout Responsif & Palet 60-30-10",
+                              "Integrasi Quick-View Modal & WhatsApp Cart",
+                              "Audit Navigasi Anchor & Validasi Interaksi"
+                            ]
+                        ).map((taskTitle, tIdx) => {
+                          const isDone = tIdx < generationTaskIndex;
+                          const isCurrent = tIdx === generationTaskIndex;
+                          return (
+                            <div
+                              key={tIdx}
+                              className={`flex items-center gap-2 text-[10px] transition-all ${
+                                isDone
+                                  ? "text-zinc-300"
+                                  : isCurrent
+                                  ? "text-blue-400 font-medium"
+                                  : "text-zinc-600"
+                              }`}
+                            >
+                              {isDone ? (
+                                <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                              ) : isCurrent ? (
+                                <Loader2 className="w-3 h-3 text-blue-400 animate-spin shrink-0" />
+                              ) : (
+                                <Circle className="w-3 h-3 text-zinc-700 shrink-0" />
+                              )}
+                              <span className="truncate">{taskTitle}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
 
-              <div ref={chatBottomRef} />
-            </div>
-
-            {/* Prompt input bar */}
-            <div className="p-2.5 border-t border-zinc-800/40 bg-zinc-950">
-              {renderPromptInput(false)}
+                      <div className="text-[10px] text-zinc-400 font-mono bg-zinc-950/80 px-2.5 py-1 rounded-lg border border-zinc-800/50 truncate">
+                        {currentThinkingStep}
+                      </div>
+                    </div>
+                  ) : null
+                }
+              />
             </div>
           </aside>
 
