@@ -61,7 +61,8 @@ import {
   FileUp,
   Radio,
   Heart,
-  Circle
+  Circle,
+  Archive
 } from "lucide-react";
 import CardScrollReveal from "./ui/CardScrollReveal";
 import InteractiveArchitectureTree from "./ui/InteractiveArchitectureTree";
@@ -609,6 +610,30 @@ export default function SatusiteStudioWorkspace() {
     "[SANDBOX] Hot-reloader active",
     "[DATABASE] In-memory collection mounted",
   ]);
+
+  // Live Database Explorer State (Emergent-style Realtime Relational Storage)
+  const [liveDbCollections, setLiveDbCollections] = useState<Record<string, any[]> | null>(null);
+  const [selectedDbTable, setSelectedDbTable] = useState<string>("");
+  const [dbSearchQuery, setDbSearchQuery] = useState<string>("");
+  const [dbViewMode, setDbViewMode] = useState<"table" | "json">("table");
+  const [isExportingZip, setIsExportingZip] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data && e.data.type === "SATUSITE_DB_SYNC" && e.data.data) {
+        const incoming = e.data.data;
+        if (typeof incoming === "object" && incoming !== null) {
+          setLiveDbCollections(incoming);
+          const keys = Object.keys(incoming);
+          if (keys.length > 0) {
+            setSelectedDbTable((prev) => (prev && incoming[prev] ? prev : keys[0]));
+          }
+        }
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -1509,21 +1534,131 @@ export default function SatusiteStudioWorkspace() {
       "index.html": code,
       "styles.css": `/* Satusite Dark Blue Tokens */\n:root {\n  --color-primary: #2563eb;\n  --color-darkblue: #1d4ed8;\n  --bg-dark: #09090b;\n  --bg-card: #121215;\n  --border-subtle: #27272a;\n}`,
       "app.js": `// Satusite Application Handlers\nconsole.log("[Satusite App] Initialized");`,
-      "database.json": JSON.stringify({
-        schema: "Satusite Studio v2.5",
-        collections: {
-          users: [
-            { id: "usr_1", name: "Alex Rivera", role: "Admin", status: "Active" },
-            { id: "usr_2", name: "Sarah Chen", role: "Developer", status: "Active" }
-          ],
-          metrics: {
-            mrr: 48250,
-            activeSubscriptions: 1420
-          }
-        }
-      }, null, 2)
+      "database.json": liveDbCollections
+        ? JSON.stringify(liveDbCollections, null, 2)
+        : JSON.stringify({
+            schema: "Satusite Studio v2.5",
+            collections: {
+              users: [
+                { id: "usr_1", name: "Budi Santoso", role: "Superadmin", email: "admin@satusite.com", status: "Aktif" },
+                { id: "usr_2", name: "Siti Rahma", role: "Staff Kasir", email: "siti@satusite.com", status: "Aktif" },
+                { id: "usr_3", name: "Dewi Lestari", role: "Pelanggan", email: "dewi@gmail.com", status: "Aktif" }
+              ]
+            }
+          }, null, 2)
     };
-  }, [code]);
+  }, [code, liveDbCollections]);
+
+  const activeCollections = useMemo<Record<string, any[]>>(() => {
+    if (liveDbCollections && typeof liveDbCollections === "object" && Object.keys(liveDbCollections).length > 0) {
+      return liveDbCollections;
+    }
+    try {
+      const parsed = JSON.parse(fileContents["database.json"]);
+      if (parsed) {
+        if (parsed.collections && typeof parsed.collections === "object") {
+          return parsed.collections;
+        }
+        if (typeof parsed === "object" && !Array.isArray(parsed)) {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+    return {
+      users: [
+        { id: "usr_1", name: "Budi Santoso", role: "Superadmin", email: "admin@satusite.com", status: "Aktif" },
+        { id: "usr_2", name: "Siti Rahma", role: "Staff Kasir", email: "siti@satusite.com", status: "Aktif" },
+        { id: "usr_3", name: "Dewi Lestari", role: "Pelanggan", email: "dewi@gmail.com", status: "Aktif" }
+      ]
+    };
+  }, [liveDbCollections, fileContents]);
+
+  const currentTableKey = useMemo(() => {
+    const keys = Object.keys(activeCollections);
+    if (selectedDbTable && keys.includes(selectedDbTable)) {
+      return selectedDbTable;
+    }
+    return keys[0] || "";
+  }, [selectedDbTable, activeCollections]);
+
+  const currentTableRows = useMemo<any[]>(() => {
+    if (!currentTableKey || !activeCollections[currentTableKey]) return [];
+    const val = activeCollections[currentTableKey];
+    const rows = Array.isArray(val) ? val : [val];
+    if (!dbSearchQuery.trim()) return rows;
+    const q = dbSearchQuery.toLowerCase();
+    return rows.filter((r: any) => {
+      if (typeof r === "object" && r !== null) {
+        return Object.values(r).some((v: any) => String(v).toLowerCase().includes(q));
+      }
+      return String(r).toLowerCase().includes(q);
+    });
+  }, [activeCollections, currentTableKey, dbSearchQuery]);
+
+  const currentTableColumns = useMemo<string[]>(() => {
+    if (!currentTableRows || currentTableRows.length === 0) return [];
+    const firstRow = currentTableRows[0];
+    if (typeof firstRow === "object" && firstRow !== null) {
+      return Object.keys(firstRow);
+    }
+    return ["value"];
+  }, [currentTableRows]);
+
+  const handleExportZip = async () => {
+    try {
+      setIsExportingZip(true);
+      const JSZip = (await import("jszip")).default;
+      const zip = new JSZip();
+      const slug = (projectName || "satusite-fullstack").toLowerCase().replace(/[^a-z0-9]/g, "-") || "satusite-app";
+
+      // 1. index.html
+      zip.file(
+        "index.html",
+        code ||
+          "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"/><title>Satusite App</title></head><body><h1>Aplikasi Siap Pakai</h1></body></html>"
+      );
+
+      // 2. README.md
+      const readme = `# ${projectName || "Aplikasi Fullstack Web App"}\n\nAplikasi web mandiri berarsitektur fullstack yang dihasilkan oleh Satusite Studio AI Agent.\n\n## Struktur Berkas Proyek:\n- \`index.html\`: Antarmuka SPA lengkap dengan Reactive DataStore, UI Responsif, dan Interaktivitas CRUD.\n- \`database.json\`: Salinan struktur koleksi data dan seed awal aplikasi.\n- \`package.json\`: Konfigurasi dependensi dan perintah server lokal.\n\n## Cara Menjalankan Secara Lokal:\n1. Buka berkas \`index.html\` langsung dengan browser apa saja (Google Chrome, Microsoft Edge, Safari, Firefox).\n2. Atau jalankan server lokal sederhana:\n   \`\`\`bash\n   npx serve .\n   \`\`\`\n   Lalu buka \`http://localhost:3000\` di peramban Anda.\n\n## Panduan Deployment:\nAnda dapat mengunggah berkas-berkas ini langsung ke layanan hosting statis:\n- **Vercel**: \`npx vercel\`\n- **Netlify**: Drag & drop folder ini di dashboard Netlify Drop\n- **GitHub Pages**: Buat repositori dan aktifkan GitHub Pages di branch main\n- **cPanel / Cloud Hosting**: Unggah langsung ke direktori \`public_html\`\n`;
+      zip.file("README.md", readme);
+
+      // 3. database.json
+      const dbPayload = activeCollections || {};
+      zip.file("database.json", JSON.stringify(dbPayload, null, 2));
+
+      // 4. package.json
+      const pkg = {
+        name: slug,
+        version: "1.0.0",
+        private: true,
+        description: `${projectName} - Generated by Satusite Fullstack Studio`,
+        scripts: {
+          dev: "serve . -p 3000",
+          start: "serve . -p 3000"
+        },
+        devDependencies: {
+          serve: "^14.2.4"
+        }
+      };
+      zip.file("package.json", JSON.stringify(pkg, null, 2));
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${slug}-fullstack.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setShowExportModal(false);
+    } catch (err) {
+      console.error("Gagal export ZIP:", err);
+      alert("Terjadi kendala saat membuat bundel ZIP. Silakan unduh sebagai berkas .html.");
+    } finally {
+      setIsExportingZip(false);
+    }
+  };
 
   const previewSrcDoc = useMemo(() => {
     if (!code) return "";
@@ -1644,6 +1779,11 @@ export default function SatusiteStudioWorkspace() {
                   e.preventDefault();
                   e.stopPropagation();
                   window.scrollTo({ top: 0, behavior: 'smooth' });
+                  return;
+                }
+
+                // SPA Hash Route (e.g. #/login, #/dashboard, #/items, #!/home) -> do NOT preventDefault, let hash router handle screen rendering
+                if (href.startsWith('#/') || href.startsWith('#!')) {
                   return;
                 }
 
@@ -1842,11 +1982,53 @@ export default function SatusiteStudioWorkspace() {
             }, true);
           }
 
+          // Emergent-grade Relational Database Synchronizer to Studio Workspace
+          function syncDatabaseToStudio() {
+            try {
+              var payload = null;
+              if (window.DataStore && typeof window.DataStore.exportAll === 'function') {
+                payload = window.DataStore.exportAll();
+              } else if (window.db && typeof window.db.exportAll === 'function') {
+                payload = window.db.exportAll();
+              } else if (window.AppDB && typeof window.AppDB.exportAll === 'function') {
+                payload = window.AppDB.exportAll();
+              } else {
+                var collections = {};
+                for (var i = 0; i < localStorage.length; i++) {
+                  var k = localStorage.key(i);
+                  if (k && !k.startsWith('satusite_') && !k.startsWith('emergent_')) {
+                    try {
+                      var val = JSON.parse(localStorage.getItem(k));
+                      if (Array.isArray(val) || (typeof val === 'object' && val !== null)) {
+                        collections[k] = val;
+                      }
+                    } catch(e) {}
+                  }
+                }
+                if (Object.keys(collections).length > 0) {
+                  payload = collections;
+                }
+              }
+              if (payload) {
+                window.parent.postMessage({ type: 'SATUSITE_DB_SYNC', data: payload }, '*');
+              }
+            } catch(e) {}
+          }
+
           if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initInteractivity);
+            document.addEventListener('DOMContentLoaded', function() {
+              initInteractivity();
+              syncDatabaseToStudio();
+            });
           } else {
             initInteractivity();
+            syncDatabaseToStudio();
           }
+
+          window.addEventListener('hashchange', function() {
+            setTimeout(syncDatabaseToStudio, 400);
+          });
+          setInterval(syncDatabaseToStudio, 2500);
         })();
       </script>
     `;
@@ -3487,20 +3669,266 @@ export default function SatusiteStudioWorkspace() {
                 </div>
               )}
 
-              {/* TAB 4: DATABASE */}
+              {/* TAB 4: DATABASE EXPLORER (EMERGENT-GRADE RELATIONAL STORAGE) */}
               {activeTab === "database" && (
-                <div className="flex-1 p-6 overflow-y-auto bg-zinc-950 space-y-4 text-xs">
-                  <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-5 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Database className="w-4 h-4 text-blue-400" />
-                        <h3 className="font-semibold text-white text-sm">Koleksi Mock Data (JSON)</h3>
+                <div className="flex-1 flex flex-col bg-zinc-950 overflow-hidden">
+                  {/* Database Subheader & View Switcher */}
+                  <div className="h-11 border-b border-zinc-800/60 bg-zinc-950/90 px-4 flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-md bg-purple-600/20 text-purple-400 flex items-center justify-center">
+                        <Database className="w-3.5 h-3.5" />
                       </div>
-                      <span className="text-blue-400 font-mono text-[11px]">Terhubung</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-white text-xs">Pusat Data Relasional</span>
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800">
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              liveDbCollections ? "bg-emerald-400 animate-pulse" : "bg-blue-400"
+                            }`}
+                          />
+                          <span className="text-[10px] text-zinc-400 font-mono">
+                            {liveDbCollections ? "Sinkron Otomatis dari Pratinjau" : "Data Model Awal"}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/60 font-mono text-zinc-300">
-                      <pre>{fileContents["database.json"]}</pre>
+
+                    <div className="flex items-center gap-1.5">
+                      {/* View Mode Toggle: Grid vs JSON */}
+                      <div className="flex items-center p-0.5 rounded-lg bg-zinc-900 border border-zinc-800">
+                        <button
+                          type="button"
+                          onClick={() => setDbViewMode("table")}
+                          className={`px-2 py-1 rounded-md text-[10px] font-medium flex items-center gap-1 transition-colors ${
+                            dbViewMode === "table" ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300"
+                          }`}
+                        >
+                          <Layout className="w-3 h-3" />
+                          <span>Tabel Data</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDbViewMode("json")}
+                          className={`px-2 py-1 rounded-md text-[10px] font-medium flex items-center gap-1 transition-colors ${
+                            dbViewMode === "json" ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300"
+                          }`}
+                        >
+                          <Code2 className="w-3 h-3" />
+                          <span>Skema JSON</span>
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const payload = activeCollections[currentTableKey] || activeCollections;
+                          navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+                          setCopied(true);
+                          setTimeout(() => setCopied(false), 2000);
+                        }}
+                        className="px-2 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 text-[11px] font-medium flex items-center gap-1 transition-colors"
+                        title="Salin JSON Koleksi Ini"
+                      >
+                        {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        <span className="hidden sm:inline">{copied ? "Tersalin" : "Salin JSON"}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const payload = activeCollections[currentTableKey] || activeCollections;
+                          const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = `${currentTableKey || "database"}.json`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        }}
+                        className="px-2 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 text-[11px] font-medium flex items-center gap-1 transition-colors"
+                        title="Unduh Tabel JSON"
+                      >
+                        <Download className="w-3 h-3" />
+                        <span className="hidden sm:inline">Ekspor</span>
+                      </button>
                     </div>
+                  </div>
+
+                  {/* Table Selector Tabs & Quick Search Bar */}
+                  <div className="px-4 py-2 border-b border-zinc-800/40 bg-zinc-900/30 flex flex-wrap items-center justify-between gap-2 shrink-0">
+                    {/* Collection Pills */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                      {Object.keys(activeCollections).map((tblName) => {
+                        const count = Array.isArray(activeCollections[tblName])
+                          ? activeCollections[tblName].length
+                          : 1;
+                        const isSelected = currentTableKey === tblName;
+                        return (
+                          <button
+                            key={tblName}
+                            type="button"
+                            onClick={() => setSelectedDbTable(tblName)}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                              isSelected
+                                ? "bg-purple-600 text-white shadow-sm font-semibold"
+                                : "bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800/80"
+                            }`}
+                          >
+                            <span>{tblName}</span>
+                            <span
+                              className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                                isSelected ? "bg-white/20 text-white" : "bg-zinc-800 text-zinc-500"
+                              }`}
+                            >
+                              {count}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Search Input Filter */}
+                    <div className="relative w-full sm:w-56 shrink-0">
+                      <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <input
+                        type="text"
+                        value={dbSearchQuery}
+                        onChange={(e) => setDbSearchQuery(e.target.value)}
+                        placeholder={`Cari di ${currentTableKey}...`}
+                        className="w-full pl-8 pr-7 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-purple-500/60"
+                      />
+                      {dbSearchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setDbSearchQuery("")}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Main Database Table Grid / JSON View */}
+                  <div className="flex-1 overflow-auto p-4 bg-[#0a0a0f]">
+                    {dbViewMode === "table" ? (
+                      currentTableRows.length > 0 ? (
+                        <div className="rounded-xl border border-zinc-800/80 overflow-hidden bg-zinc-950 shadow-sm">
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs">
+                              <thead className="bg-zinc-900/90 text-zinc-400 font-mono text-[10px] uppercase tracking-wider border-b border-zinc-800/80 sticky top-0 z-10 backdrop-blur-sm">
+                                <tr>
+                                  <th className="py-2.5 px-3 w-10 text-center text-zinc-600">#</th>
+                                  {currentTableColumns.map((col) => (
+                                    <th key={col} className="py-2.5 px-3 font-semibold text-zinc-300">
+                                      {col}
+                                    </th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-zinc-800/50 text-zinc-300">
+                                {currentTableRows.map((row: any, rIdx: number) => (
+                                  <tr key={rIdx} className="hover:bg-zinc-900/50 transition-colors">
+                                    <td className="py-2.5 px-3 text-center text-zinc-600 font-mono text-[10px]">
+                                      {rIdx + 1}
+                                    </td>
+                                    {currentTableColumns.map((col) => {
+                                      const val = row[col];
+                                      const isStatusCol = col.toLowerCase().includes("status");
+                                      const isPriceCol =
+                                        col.toLowerCase().includes("price") ||
+                                        col.toLowerCase().includes("harga") ||
+                                        col.toLowerCase().includes("total") ||
+                                        col.toLowerCase().includes("amount") ||
+                                        col.toLowerCase().includes("subtotal") ||
+                                        col.toLowerCase().includes("mrr");
+
+                                      if (isStatusCol && typeof val === "string") {
+                                        const s = val.toLowerCase();
+                                        const isGreen =
+                                          s.includes("active") ||
+                                          s.includes("aktif") ||
+                                          s.includes("selesai") ||
+                                          s.includes("paid") ||
+                                          s.includes("lunas") ||
+                                          s.includes("sukses");
+                                        const isYellow =
+                                          s.includes("pending") ||
+                                          s.includes("proses") ||
+                                          s.includes("menunggu");
+                                        const isRed =
+                                          s.includes("batal") ||
+                                          s.includes("failed") ||
+                                          s.includes("gagal") ||
+                                          s.includes("cancel");
+
+                                        return (
+                                          <td key={col} className="py-2.5 px-3 whitespace-nowrap">
+                                            <span
+                                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                                                isGreen
+                                                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                                  : isYellow
+                                                  ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                                                  : isRed
+                                                  ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                                                  : "bg-zinc-800 text-zinc-300 border-zinc-700"
+                                              }`}
+                                            >
+                                              {val}
+                                            </span>
+                                          </td>
+                                        );
+                                      }
+
+                                      if (isPriceCol && (typeof val === "number" || (!isNaN(Number(val)) && val !== ""))) {
+                                        return (
+                                          <td key={col} className="py-2.5 px-3 whitespace-nowrap font-mono text-emerald-400 font-medium">
+                                            Rp {Number(val).toLocaleString("id-ID")}
+                                          </td>
+                                        );
+                                      }
+
+                                      if (typeof val === "object" && val !== null) {
+                                        return (
+                                          <td key={col} className="py-2.5 px-3 font-mono text-[11px] text-zinc-400 max-w-xs truncate">
+                                            {JSON.stringify(val)}
+                                          </td>
+                                        );
+                                      }
+
+                                      return (
+                                        <td key={col} className="py-2.5 px-3 text-zinc-200">
+                                          {String(val ?? "-")}
+                                        </td>
+                                      );
+                                    })}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                          <div className="px-4 py-2 bg-zinc-950 border-t border-zinc-800/80 text-[11px] text-zinc-500 font-mono flex items-center justify-between">
+                            <span>Tabel: {currentTableKey}</span>
+                            <span>Menampilkan {currentTableRows.length} entitas data</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="h-64 flex flex-col items-center justify-center text-center p-6 rounded-2xl bg-zinc-950/60 border border-zinc-800/60 space-y-2">
+                          <Database className="w-8 h-8 text-zinc-600 mb-1" />
+                          <h4 className="text-sm font-semibold text-zinc-300">Tidak ada baris data ditemukan</h4>
+                          <p className="text-xs text-zinc-500 max-w-md">
+                            {dbSearchQuery
+                              ? `Pencarian "${dbSearchQuery}" tidak cocok dengan entitas di tabel ${currentTableKey}.`
+                              : `Tabel ${currentTableKey} saat ini kosong atau belum memiliki rekaman data.`}
+                          </p>
+                        </div>
+                      )
+                    ) : (
+                      <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/80 font-mono text-xs text-zinc-300 overflow-x-auto leading-relaxed">
+                        <pre>{JSON.stringify(activeCollections[currentTableKey] || activeCollections, null, 2)}</pre>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -3652,6 +4080,33 @@ export default function SatusiteStudioWorkspace() {
             </div>
 
             <div className="space-y-2 text-xs">
+              {/* Emergent-grade 1-Click Fullstack Project ZIP Export */}
+              <button
+                type="button"
+                onClick={handleExportZip}
+                disabled={isExportingZip}
+                className="w-full p-3 rounded-xl border border-purple-500/40 hover:border-purple-500/80 bg-purple-950/20 hover:bg-purple-950/40 text-left transition-all flex items-center justify-between group cursor-pointer"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-semibold text-white group-hover:text-purple-300 transition-colors">
+                      Unduh Bundel Proyek Fullstack (.zip)
+                    </h4>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                      Rekomendasi
+                    </span>
+                  </div>
+                  <p className="text-zinc-400 text-[11px] mt-0.5">
+                    Paket lengkap: index.html, database.json, package.json, dan README siap deploy
+                  </p>
+                </div>
+                {isExportingZip ? (
+                  <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
+                ) : (
+                  <Archive className="w-4 h-4 text-purple-400 group-hover:text-white transition-colors" />
+                )}
+              </button>
+
               <button
                 onClick={() => {
                   const element = document.createElement("a");

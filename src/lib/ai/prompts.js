@@ -37,15 +37,31 @@ Build a polished marketing/brand experience (landing page, company profile, port
 - Add interactions that fit the domain, for example: live search + category filter, quick-view modal, cart drawer with WhatsApp checkout (https://wa.me/62... with a pre-formatted order message), booking form with date/time, pricing monthly/yearly toggle, testimonial slider, FAQ accordion, dark/light toggle persisted in localStorage.
 - The hero must state a concrete value proposition with a primary and a secondary CTA plus supporting visual or social proof.`,
 
-    fullstack: `STUDIO: FULLSTACK (Web Application)
-Build a complete, working web application simulated fully client-side.
-- DATA LAYER: implement createStore(namespace, seed) over localStorage exposing list/get/create/update/remove; ids via crypto.randomUUID() with fallback; createdAt/updatedAt timestamps. Seed 10 to 20 realistic records per entity.
-- AUTH: login and register screens with roles (admin, user), session stored in localStorage, guarded routes, logout. Show demo credentials on the login screen (admin@demo.id / admin123 and user@demo.id / user123).
-- APP SHELL: sidebar navigation (collapsible drawer on mobile), topbar with global search and profile menu.
-- ADMIN DASHBOARD: KPI cards computed from real data, one chart (Chart.js) or CSS bar chart, recent activity table.
-- CRUD MODULES for each main entity: data table with search, filter, sort, pagination; create/edit modal with validation; delete confirmation dialog; empty state; CSV export.
-- USER PORTAL: profile editing and the user's own records/history.
-- A small public landing/home screen introducing the product, linking to login.`,
+    fullstack: `STUDIO: FULLSTACK (Complete Web Application ala Emergent)
+Build a complete, fully functional web application with client-side relational storage, simulated backend, authentication, and admin CRUD.
+- DATA LAYER (Reactive DataStore):
+  * Implement an in-memory & localStorage database engine: const db = new DataStore('app_store', { users: [...], items: [...], orders: [...], logs: [...] });
+  * Provide complete methods: db.list(table, filterFn), db.get(table, id), db.insert(table, row), db.update(table, id, updates), db.delete(table, id), db.exportAll().
+  * Seed realistic Indonesian data (10-15 items per entity with prices in Rupiah, real status, created_at timestamps).
+  * Sync to parent window so the studio database tab updates live: try { window.parent.postMessage({ type: 'SATUSITE_DB_SYNC', data: db.exportAll() }, '*'); } catch(e) {}
+  * Provide a "Reset Data" button in settings/admin so the user can restore factory seed records anytime.
+- AUTHENTICATION & ACCESS CONTROL (RBAC):
+  * Multi-screen hash routing: #/ (public landing), #/login, #/register, #/app/dashboard, #/app/items, #/app/orders, #/app/profile, #/app/settings.
+  * Login screen with 1-click quick login buttons: [Demo Admin (admin@demo.id)] and [Demo User (user@demo.id)].
+  * Protect app routes: redirect unauthenticated users to #/login; restrict admin management to admin role.
+- DASHBOARD & BUSINESS ANALYTICS:
+  * KPI cards computed dynamically from actual table records (Total Omzet Rupiah, Total Pesanan, Pelanggan Aktif, Item Siap Jual).
+  * Interactive chart (Chart.js via CDN or clean SVG bar/trend chart) displaying monthly/category breakdown that re-renders dynamically when records change.
+  * Recent activity feed reading from audit logs.
+- COMPLETE CRUD MODULES:
+  * Interactive data tables with: instant live search, category/status filter, column sorting, pagination.
+  * Modal Tambah Data with strict field validation.
+  * Modal Edit Data pre-filled with existing values.
+  * Modal Konfirmasi Hapus Data with safety prompt.
+  * CSV/JSON Data Exporter directly from the table.
+- SHELL & USER EXPERIENCE:
+  * Responsive sidebar with active navigation indicator, collapsible on mobile.
+  * Top bar with search input, notifications popover, and profile dropdown (User name, Role badge, Logout).`,
 
     prd: `STUDIO: PLANNING (PRD rendered as HTML document)
 Produce a beautifully typeset product requirements document as an HTML page: sticky table of contents sidebar on desktop, readable 70ch column, styled tables, callout boxes, print-friendly @media print styles. Cover: executive summary, problem & goals with measurable KPIs, personas, user stories with acceptance criteria, sitemap & user flows, prioritised features (MoSCoW), functional and non-functional requirements, data model tables, API endpoints table, design system (palette hex, typography, components), tech stack, milestones, risks & mitigations, open questions.`,
