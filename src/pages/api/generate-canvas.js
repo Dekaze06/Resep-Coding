@@ -1,18 +1,82 @@
 import { UsersDB } from '../../lib/db';
+import { generate, getApiKey, stripEmoji, parseJsonLoose } from '../../lib/ai/gemini.js';
+import {
+    buildCanvasSystemPrompt,
+    DESIGN_BRIEF_SYSTEM_PROMPT,
+    buildDesignBriefPrompt,
+    formatDesignBrief,
+} from '../../lib/ai/prompts.js';
 
 export const prerender = false;
+
+const VALID_MODES = ['frontend', 'fullstack', 'prd'];
+const MAX_CONTINUATIONS = 2;
+const CONTINUE_PROMPT = 'Kode HTML terpotong. LANJUTKAN tepat dari karakter terakhir tanpa mengulang bagian sebelumnya, hingga selesai dengan </body></html>. Tulis HANYA kelanjutan kode, tanpa penjelasan dan tanpa pembuka blok kode.';
+
+function json(data, status = 200) {
+    return new Response(JSON.stringify(data), {
+        status,
+        headers: { 'Content-Type': 'application/json' },
+    });
+}
+
+/** Split a model reply into chat message + HTML document. */
+function extractHtml(reply) {
+    const fenced = reply.match(/```(?:html|HTML|xml)?\s*\n?([\s\S]*?)(?:```|$)/i);
+    if (fenced && fenced[1] && /<html|<!DOCTYPE|<body/i.test(fenced[1])) {
+        return {
+            code: fenced[1].trim(),
+            message: reply.replace(/```(?:html|HTML|xml)?[\s\S]*?(?:```|$)/gi, '').trim(),
+        };
+    }
+    const start = reply.search(/<!DOCTYPE|<html/i);
+    if (start >= 0) {
+        return { code: reply.slice(start).trim(), message: reply.slice(0, start).trim() };
+    }
+    return { code: '', message: reply.trim() };
+}
+
+/** Detect HTML that was cut off before its closing tags. */
+function isCodeTruncated(htmlCode) {
+    if (!htmlCode || htmlCode.trim().length < 100) return false;
+    const trimmed = htmlCode.trim();
+    if (/<\/html>\s*$/i.test(trimmed)) return false;
+    if (/<html/i.test(trimmed) && !/<\/html>/i.test(trimmed)) return true;
+    if (trimmed.lastIndexOf('<script') > trimmed.lastIndexOf('</script>')) return true;
+    if (/<body/i.test(trimmed) && !/<\/body>/i.test(trimmed)) return true;
+    return false;
+}
+
+/** Deterministic clean-up so the canvas always receives a valid document. */
+function finalizeHtml(code) {
+    let html = code.replace(/```\s*$/g, '').trim();
+    const start = html.search(/<!DOCTYPE|<html/i);
+    if (start > 0) html = html.slice(start);
+    if (!/^<!DOCTYPE/i.test(html)) html = `<!DOCTYPE html>\n${html}`;
+
+    const headOpen = html.match(/<head[^>]*>/i);
+    if (headOpen) {
+        const inject = [];
+        if (!/<meta[^>]+charset/i.test(html)) inject.push('<meta charset="UTF-8">');
+        if (!/name=["']viewport["']/i.test(html)) inject.push('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+        if (inject.length) html = html.replace(headOpen[0], `${headOpen[0]}\n    ${inject.join('\n    ')}`);
+    }
+
+    // Close a document that is still truncated after continuation attempts.
+    if (html.lastIndexOf('<script') > html.lastIndexOf('</script>')) html += '\n</script>';
+    if (/<body/i.test(html) && !/<\/body>/i.test(html)) html += '\n</body>';
+    if (!/<\/html>\s*$/i.test(html)) html += '\n</html>';
+
+    return stripEmoji(html);
+}
 
 export async function POST({ request }) {
     try {
         let body;
         try {
-            const text = await request.text();
-            body = JSON.parse(text);
-        } catch (parseErr) {
-            return new Response(JSON.stringify({ error: 'Request body tidak valid (JSON parse error).' }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' }
-            });
+            body = JSON.parse(await request.text());
+        } catch {
+            return json({ error: 'Request body tidak valid (JSON parse error).' }, 400);
         }
 
         const {
@@ -20,380 +84,175 @@ export async function POST({ request }) {
             chatHistory = [],
             currentCode = '',
             prdContext = '',
-            projectName = 'Emergent App',
+            projectName = 'Proyek Baru',
             projectConfig = null,
-            activeAgent = 'all',
-            mode = 'fullstack', // 'fullstack' | 'frontend'
-            modelChoice = 'auto',
-            userEmail = ''
+            mode: rawMode = 'fullstack',
+            userEmail = '',
         } = body;
 
         if (!prompt || !prompt.trim()) {
-            return new Response(JSON.stringify({ error: 'Prompt tidak boleh kosong.' }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' }
-            });
+            return json({ error: 'Prompt tidak boleh kosong.' }, 400);
         }
 
-        // User lookup (unlimited generation for all users)
+        const mode = VALID_MODES.includes(rawMode) ? rawMode : 'fullstack';
+        const isEdit = !!(currentCode && currentCode.trim());
+
         let user = null;
         if (userEmail) {
             user = await UsersDB.getByEmailAsync(userEmail);
         }
 
-        const apiKey = import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-        if (!apiKey) {
-            return new Response(JSON.stringify({
-                error: 'GEMINI_API_KEY belum dikonfigurasi di server (.env).'
-            }), {
-                status: 500,
-                headers: { 'Content-Type': 'application/json' }
-            });
+        if (!getApiKey()) {
+            return json({ error: 'GEMINI_API_KEY belum dikonfigurasi di server (.env).' }, 500);
         }
 
-        const systemPrompt = `Anda adalah AI Fullstack Architect & Senior Software Engineer di SATUSITE STUDIO yang ditenagai oleh model Gemini 3.7 Flash.
-Tugas Anda adalah merancang dan membangun antarmuka web, aplikasi web interaktif, prototipe digital, atau dokumen arsitektur sesuai kebutuhan dan instruksi pengguna dengan kualitas tinggi dan standar industri modern.
+        // ---- Stage 1: creative brief (fresh builds only) -------------------
+        let designBrief = null;
+        if (!isEdit && mode !== 'prd') {
+            const briefRes = await generate({
+                systemPrompt: DESIGN_BRIEF_SYSTEM_PROMPT,
+                contents: [{
+                    role: 'user',
+                    parts: [{ text: buildDesignBriefPrompt({ prompt, mode, projectName, projectConfig, prdContext }) }],
+                }],
+                temperature: 0.9,
+                maxOutputTokens: 4096,
+                responseMimeType: 'application/json',
+                attemptsPerModel: 1,
+            });
+            designBrief = parseJsonLoose(briefRes?.text);
+        }
 
-PEDOMAN UTAMA:
-1. DILARANG KERAS MENGGUNAKAN EMOJI / EMOTICON APAPUN (ATURAN MUTLAK):
-   - JANGAN PERNAH menyertakan karakter emoji atau emoticon apa pun di seluruh bagian: judul, teks tombol, badge status, menu, kartu, footer, komentar kode, maupun di pesan obrolan.
-   - Gunakan icon garis netral profesional dari FontAwesome 6 CDN (misal: <i class="fa-solid fa-arrow-right"></i>, <i class="fa-solid fa-check"></i>, <i class="fa-solid fa-user"></i>, <i class="fa-solid fa-gauge"></i>, <i class="fa-solid fa-magnifying-glass"></i>, dll.) atau inline SVG jika memerlukan representasi ikon visual.
-
-2. SUGGESTION & DESAIN MURNI GEMINI 3.7 FLASH:
-   - Berikan rekomendasi terbaik dan bangun solusi secara murni dari kecerdasan Gemini 3.7 Flash, disesuaikan secara fleksibel dengan prompt dan spesifikasi yang diminta pengguna.
-   - Hasilkan antarmuka yang modern, bersih, proporsional, estetis, dan responsif di berbagai perangkat (desktop, tablet, mobile).
-   - Dukung opsi tema yang fleksibel (Dark Mode & Light Mode) dengan estetika premium.
-
-3. ARSITEKTUR FRONTEND MULTI-HALAMAN (JS, CSS & TAILWIND):
-   Jika mode adalah Frontend (atau saat membuat UI website/aplikasi frontend), rancang antarmuka sebagai sistem Multi-Halaman SPA Router yang mulus tanpa reload halaman, dengan pemanfaatan JavaScript, Modern CSS, dan Tailwind CSS secara maksimal:
-   a. Halaman Beranda / Home (#page-home):
-      - Hero section visual menarik dengan CTA, kartu highlight fitur unggulan, showcase singkat, dan testimoni ulasan.
-   b. Halaman Katalog / Layanan / Portofolio (#page-catalog):
-      - Grid kartu produk/layanan interaktif dengan pencarian langsung (live search) dan filter kategori.
-      - Modal interaktif (Quick-View Detail) saat item diklik.
-   c. Halaman Tentang Kami / Profil (#page-about):
-      - Kisah perusahaan/produk, visi & misi, nilai utama, dan metrik pencapaian.
-   d. Halaman Kontak & FAQ Interaktif (#page-contact):
-      - Formulir kontak responsif (nama, email/wa, pesan) dengan simulasi kirim toast feedback & integrasi WhatsApp.
-      - Accordion FAQ interaktif yang dapat dibuka-tutup dengan animasi mulus.
-   e. Interaktivitas JavaScript (Vanilla JS):
-      - Navigasi halaman instan tanpa refresh (fungsi navigatePage(pageId)).
-      - Toggle tema Gelap & Terang (Dark/Light mode).
-      - Modal dialog interaktif dan toast notifikasi visual.
-
-4. ARSITEKTUR FULLSTACK MULTI-HALAMAN (STANDAR ASTRO + NODE.JS):
-   Jika mode adalah Fullstack (atau pengguna meminta web app lengkap), rancang antarmuka sebagai sistem Multi-Halaman SPA Router yang mencakup:
-   a. Halaman Publik / Beranda (src/pages/index.astro).
-   b. Halaman Autentikasi (src/pages/login.astro & register.astro) dengan pilihan peran User vs Administrator.
-   c. Portal Akun Pengguna (src/pages/portal/index.astro) dengan profil & riwayat aktivitas.
-   d. Portal Admin & CRUD Management Dashboard (src/pages/admin/index.astro) dengan tabel CRUD lengkap (Tambah modal, Edit, Hapus konfirmasi, Filter, dan Ekspor CSV/JSON).
-   e. Lapisan Simulasi API Node.js / LocalStorage Engine terpadu.
-
-5. STRUKTUR KODE MANDIRI (SELF-CONTAINED HTML5 SIAP EKSPOR):
-   - Hasilkan kode satu file HTML5 lengkap dan mandiri yang menggabungkan HTML5 semantik, styling (Tailwind CSS CDN + FontAwesome 6 CDN), dan JavaScript modular fungsional.
-   - Pastikan seluruh navigasi halaman, tombol, form input, modal, accordion, dan fungsi interaktif 100% bekerja secara nyata di Canvas browser.
-
-6. ATURAN REVISI & EDITING BERTAHAP (INCREMENTAL EDITING):
-   - Jika terdapat "KODE TERKINI (REFERENSI UPDATE)", pertahankan logika dan fungsionalitas yang sudah bekerja dengan baik, lalu terapkan perubahan yang diminta secara presisi dengan menghasilkan kembali seluruh file HTML5 utuh.
-
-FORMAT OUTPUT:
-1. Tulis ringkasan penjelasan teknis singkat dan hal yang dikerjakan untuk panel obrolan (bersih, profesional, to the point, tanpa emoji).
-2. Letakkan SELURUH kode HTML5 lengkap HANYA di dalam blok markdown:
-\`\`\`html
-<!DOCTYPE html>
-<html lang="id">
-...
-</html>
-\`\`\`
-Jika pengguna hanya mengajukan pertanyaan atau diskusi tanpa memerlukan pembuatan/pembaruan kode, jawablah secara informatif dan profesional tanpa blok kode HTML.`;
-
-        // Assemble conversational prompt context
-        let fullUserPrompt = `Proyek: ${projectName}\nActive Agent: ${activeAgent}\n\n`;
+        // ---- Stage 2: build ------------------------------------------------
+        let userPrompt = `Proyek: ${projectName}\nStudio: ${mode}\n\n`;
 
         if (projectConfig && typeof projectConfig === 'object') {
-            fullUserPrompt += `=== KONFIGURASI SPESIFIKASI PROYEK ===\n`;
-            if (projectConfig.webName) fullUserPrompt += `- Nama Website: ${projectConfig.webName}\n`;
-            if (projectConfig.webType) fullUserPrompt += `- Jenis / Kategori Website: ${projectConfig.webType}\n`;
-            if (projectConfig.theme) fullUserPrompt += `- Tema & Gaya Desain: ${projectConfig.theme}\n`;
-            if (projectConfig.targetAudience) fullUserPrompt += `- Target Pengunjung: ${projectConfig.targetAudience}\n`;
-            if (projectConfig.mainFeatures && (Array.isArray(projectConfig.mainFeatures) ? projectConfig.mainFeatures.length : projectConfig.mainFeatures)) {
-                const feats = Array.isArray(projectConfig.mainFeatures) ? projectConfig.mainFeatures.join(', ') : projectConfig.mainFeatures;
-                fullUserPrompt += `- Fitur Kunci: ${feats}\n`;
-            }
-            fullUserPrompt += `\n`;
+            userPrompt += `=== KONFIGURASI PROYEK ===\n`;
+            if (projectConfig.webName) userPrompt += `- Nama Website: ${projectConfig.webName}\n`;
+            if (projectConfig.webType) userPrompt += `- Jenis Website: ${projectConfig.webType}\n`;
+            if (projectConfig.theme) userPrompt += `- Tema & Gaya: ${projectConfig.theme}\n`;
+            if (projectConfig.targetAudience) userPrompt += `- Target Pengunjung: ${projectConfig.targetAudience}\n`;
+            const feats = Array.isArray(projectConfig.mainFeatures) ? projectConfig.mainFeatures.join(', ') : projectConfig.mainFeatures;
+            if (feats) userPrompt += `- Fitur Kunci: ${feats}\n`;
+            userPrompt += `\n`;
         }
+
+        if (designBrief) userPrompt += formatDesignBrief(designBrief);
 
         if (prdContext && prdContext.trim()) {
-            fullUserPrompt += `=== DOKUMEN ARSITEKTUR / PRD ===\n${prdContext.slice(0, 15000)}\n\n`;
+            userPrompt += `=== DOKUMEN PRD ===\n${prdContext.slice(0, 15000)}\n\n`;
         }
 
-        if (currentCode && currentCode.trim()) {
-            fullUserPrompt += `=== KODE TERKINI (REFERENSI UPDATE) ===\n\`\`\`html\n${currentCode.slice(0, 100000)}\n\`\`\`\n\n`;
+        if (isEdit) {
+            userPrompt += `=== CURRENT CODE (source of truth) ===\n\`\`\`html\n${currentCode.slice(0, 100000)}\n\`\`\`\n\n`;
         }
 
-        fullUserPrompt += `=== DETAIL INSTRUKSI PENGGUNA ===\n${prompt}`;
+        userPrompt += `=== INSTRUKSI PENGGUNA ===\n${prompt}`;
 
-        // Build contents payload with past history ensuring proper alternation
         const contents = [];
-        
         if (Array.isArray(chatHistory) && chatHistory.length > 0) {
-            const pastMessages = chatHistory.filter((m, idx) => {
-                if (idx === chatHistory.length - 1 && m.role === 'user' && m.text.trim() === prompt.trim()) {
-                    return false;
-                }
-                return true;
-            });
-
-            const recent = pastMessages.slice(-6);
-            for (const msg of recent) {
+            const past = chatHistory.filter((m, idx) => !(
+                idx === chatHistory.length - 1 && m.role === 'user' && (m.text || '').trim() === prompt.trim()
+            ));
+            for (const msg of past.slice(-6)) {
+                if (!msg?.text) continue;
                 contents.push({
                     role: msg.role === 'user' ? 'user' : 'model',
-                    parts: [{ text: msg.text }]
+                    parts: [{ text: String(msg.text).slice(0, 4000) }],
                 });
             }
         }
+        contents.push({ role: 'user', parts: [{ text: userPrompt }] });
 
-        contents.push({
-            role: 'user',
-            parts: [{ text: fullUserPrompt }]
+        const systemPrompt = buildCanvasSystemPrompt(mode, isEdit);
+        const result = await generate({
+            systemPrompt,
+            contents,
+            temperature: isEdit ? 0.4 : 0.7,
+            maxOutputTokens: 65536,
         });
 
-        // AI Model Engine: gemini-3.7-flash (Model Utama) with fallback to gemini-3.8-flash
-        const candidateModels = [
-            'gemini-3.7-flash',
-            'gemini-3.8-flash'
-        ];
-
-        let geminiResponse = null;
-        let lastErrorText = '';
-
-        // Helper: call Gemini with given contents and return parsed JSON or null
-        async function callGemini(reqContents, maxTokens = 65536) {
-            for (const model of candidateModels) {
-                for (let attempt = 1; attempt <= 2; attempt++) {
-                    try {
-                        const res = await fetch(
-                            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-goog-api-key': apiKey,
-                                },
-                                body: JSON.stringify({
-                                    systemInstruction: {
-                                        parts: [{ text: systemPrompt }]
-                                    },
-                                    contents: reqContents,
-                                    generationConfig: {
-                                        temperature: 0.7,
-                                        maxOutputTokens: maxTokens,
-                                    }
-                                })
-                            }
-                        );
-
-                        if (res.ok) {
-                            return await res.json();
-                        } else {
-                            lastErrorText = await res.text();
-                            console.warn(`Model ${model} (attempt ${attempt}) returned ${res.status}:`, lastErrorText.slice(0, 150));
-                            if (attempt === 1) {
-                                await new Promise(r => setTimeout(r, 1200));
-                            }
-                        }
-                    } catch (err) {
-                        console.warn(`Failed calling ${model} (attempt ${attempt}):`, err.message);
-                    }
-                }
-            }
-            return null;
-        }
-
-        // Helper: check if HTML code is truncated (missing closing tags)
-        function isCodeTruncated(htmlCode) {
-            if (!htmlCode || htmlCode.trim().length < 100) return false;
-            const trimmed = htmlCode.trim();
-            // If it ends properly with </html> or </body>, it's complete
-            if (trimmed.endsWith('</html>') || trimmed.endsWith('</html>\n')) return false;
-            // Check for common truncation indicators
-            const hasHtmlOpen = trimmed.includes('<html');
-            const hasHtmlClose = trimmed.includes('</html>');
-            const hasBodyClose = trimmed.includes('</body>');
-            const hasScriptClose = trimmed.includes('</script>');
-            const lastScriptOpen = trimmed.lastIndexOf('<script');
-            const lastScriptClose = trimmed.lastIndexOf('</script>');
-            
-            // If HTML was opened but never closed
-            if (hasHtmlOpen && !hasHtmlClose) return true;
-            // If there's an unclosed script tag at the end
-            if (lastScriptOpen > lastScriptClose) return true;
-            // If body was never closed
-            if (trimmed.includes('<body') && !hasBodyClose) return true;
-            
-            return false;
-        }
-
-        // Initial API call
-        geminiResponse = await callGemini(contents);
-
-        // If cloud models are unavailable, synthesize high-quality full application
-        if (!geminiResponse) {
+        if (!result) {
             const cleanTitle = (projectName && projectName !== 'Proyek Baru' && projectName !== 'Emergent App')
                 ? projectName
                 : prompt.slice(0, 40);
-
-            const fallbackCode = generateFallbackHtml(prompt, mode, cleanTitle);
-
-            return new Response(JSON.stringify({
+            return json({
                 success: true,
                 message: `Aplikasi "${cleanTitle}" berhasil disusun lengkap dengan arsitektur, antarmuka responsif, dan logika interaktif siap pakai.`,
-                code: fallbackCode,
+                code: generateFallbackHtml(prompt, mode, cleanTitle),
                 hasCodeUpdate: true,
                 agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester'],
-                quotaRemaining: 99999
-            }), {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' }
+                quotaRemaining: 99999,
             });
         }
 
-        let rawReply = geminiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        if (!rawReply) {
-            const fallbackCode = generateFallbackHtml(prompt, mode, projectName || 'Satusite App');
-            return new Response(JSON.stringify({
-                success: true,
-                message: 'Aplikasi berhasil disusun dan disiapkan di Canvas.',
-                code: fallbackCode,
-                hasCodeUpdate: true,
-                agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester'],
-                quotaRemaining: 99999
-            }), {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' }
+        let rawReply = result.text;
+        let finishReason = result.finishReason;
+
+        // Auto-continuation when output hit the token limit or is cut off.
+        for (let i = 0; i < MAX_CONTINUATIONS; i++) {
+            const { code: partial } = extractHtml(rawReply);
+            if (!partial) break;
+            if (finishReason !== 'MAX_TOKENS' && !isCodeTruncated(partial)) break;
+
+            console.log(`[Auto-Continue] attempt ${i + 1}/${MAX_CONTINUATIONS} (finishReason: ${finishReason})`);
+            const cont = await generate({
+                systemPrompt,
+                contents: [
+                    ...contents,
+                    { role: 'model', parts: [{ text: rawReply }] },
+                    { role: 'user', parts: [{ text: CONTINUE_PROMPT }] },
+                ],
+                temperature: 0.3,
+                maxOutputTokens: 32768,
             });
-        }
+            if (!cont) break;
 
-        // Auto-continuation: if code appears truncated, request AI to continue
-        const MAX_CONTINUATIONS = 2;
-        for (let contIdx = 0; contIdx < MAX_CONTINUATIONS; contIdx++) {
-            // Extract code so far to check truncation
-            let tempCode = '';
-            const tempFenced = rawReply.match(/```(?:html|HTML|xml)?\s*\n?([\s\S]*?)(?:```|$)/i);
-            if (tempFenced && tempFenced[1] && (tempFenced[1].includes('<html') || tempFenced[1].includes('<!DOCTYPE') || tempFenced[1].includes('<body'))) {
-                tempCode = tempFenced[1].trim();
-            } else if (rawReply.includes('<html') || rawReply.includes('<!DOCTYPE') || rawReply.includes('<body')) {
-                tempCode = rawReply.trim();
-            }
-
-            if (!tempCode || !isCodeTruncated(tempCode)) break;
-
-            console.log(`[Auto-Continue] Code truncated, continuation attempt ${contIdx + 1}/${MAX_CONTINUATIONS}`);
-
-            // Build continuation prompt
-            const continuationContents = [
-                ...contents,
-                {
-                    role: 'model',
-                    parts: [{ text: rawReply }]
-                },
-                {
-                    role: 'user',
-                    parts: [{ text: 'LANJUTKAN kode HTML yang terpotong dari titik terakhir. JANGAN ulangi bagian yang sudah ada. Langsung lanjutkan penulisan kode dari posisi terakhir hingga selesai dengan tag penutup </body></html> yang lengkap. HANYA tulis kelanjutan kode, tanpa penjelasan.' }]
-                }
-            ];
-
-            const contResponse = await callGemini(continuationContents, 32768);
-            if (!contResponse) break;
-
-            const contReply = contResponse?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-            if (!contReply) break;
-
-            // Extract continuation code
-            let contCode = '';
-            const contFenced = contReply.match(/```(?:html|HTML|xml)?\s*\n?([\s\S]*?)(?:```|$)/i);
-            if (contFenced && contFenced[1]) {
-                contCode = contFenced[1].trim();
-            } else {
-                contCode = contReply.trim();
-            }
-
-            // Append continuation to the raw reply's code
+            const contFenced = cont.text.match(/```(?:html|HTML|xml)?\s*\n?([\s\S]*?)(?:```|$)/i);
+            const contCode = (contFenced && contFenced[1] ? contFenced[1] : cont.text).trim();
             rawReply = rawReply.replace(/```\s*$/, '') + '\n' + contCode;
-            if (!rawReply.endsWith('```')) {
-                // Ensure the fenced block is properly closed for extraction
-            }
+            finishReason = cont.finishReason;
         }
 
-        // Separate explanation and clean HTML code
-        let extractedCode = '';
-        let messageText = '';
-        let hasCodeUpdate = false;
+        const extracted = extractHtml(rawReply);
+        const hasCodeUpdate = !!extracted.code;
+        const code = hasCodeUpdate ? finalizeHtml(extracted.code) : '';
 
-        const fencedMatch = rawReply.match(/```(?:html|HTML|xml)?\s*\n?([\s\S]*?)(?:```|$)/i);
-
-        if (fencedMatch && fencedMatch[1] && (fencedMatch[1].includes('<html') || fencedMatch[1].includes('<!DOCTYPE') || fencedMatch[1].includes('<body'))) {
-            extractedCode = fencedMatch[1].trim();
-            messageText = rawReply.replace(/```(?:html|HTML|xml)?[\s\S]*?(?:```|$)/gi, '').trim();
-            hasCodeUpdate = true;
-        } else {
-            // Check if entire reply is HTML
-            if (rawReply.includes('<html') || rawReply.includes('<!DOCTYPE') || rawReply.includes('<body') || rawReply.includes('<div') || rawReply.includes('<section')) {
-                extractedCode = rawReply.trim();
-                messageText = isPrd
-                    ? 'Blueprint arsitektur & PRD telah berhasil dirancang.'
-                    : 'Aplikasi telah berhasil disusun dengan tata letak lengkap.';
-                hasCodeUpdate = true;
-            } else {
-                messageText = rawReply.trim();
-                hasCodeUpdate = false;
-            }
-        }
-
-        // Clean any residual markdown artifacts
-        if (extractedCode) {
-            const validStart = extractedCode.search(/<!DOCTYPE|<html|<div|<section|<main/i);
-            if (validStart > 0) {
-                extractedCode = extractedCode.slice(validStart).trim();
-            }
-            extractedCode = extractedCode.replace(/```\s*$/g, '').trim();
-        }
-
+        let messageText = stripEmoji(extracted.message || '').trim();
         if (!messageText) {
             messageText = hasCodeUpdate
-                ? 'Aplikasi telah berhasil diperbarui dengan fitur dan komponen interaktif baru.'
-                : rawReply;
+                ? (mode === 'prd'
+                    ? 'Blueprint arsitektur & PRD telah berhasil dirancang.'
+                    : 'Aplikasi telah berhasil disusun dengan tata letak dan interaksi lengkap.')
+                : stripEmoji(rawReply);
         }
 
         if (user && hasCodeUpdate) {
             await UsersDB.updateUser(user.id, {
-                projectsCount: Math.max(1, (user.projectsCount || 0) + 1)
+                projectsCount: Math.max(1, (user.projectsCount || 0) + 1),
             });
         }
 
-        return new Response(JSON.stringify({
+        return json({
             success: true,
             message: messageText,
-            code: extractedCode,
-            hasCodeUpdate: hasCodeUpdate,
+            code,
+            hasCodeUpdate,
             agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester'],
             quotaRemaining: 99999,
-            raw: rawReply
-        }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
+            model: result.model,
+            designBrief,
+            raw: rawReply,
         });
-
     } catch (e) {
-        console.error("Error in generate-canvas API:", e);
-        return new Response(JSON.stringify({
-            error: 'Terjadi kesalahan internal pada server AI: ' + (e.message || e)
-        }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        console.error('Error in generate-canvas API:', e);
+        return json({ error: 'Terjadi kesalahan internal pada server AI: ' + (e.message || e) }, 500);
     }
-}function generateFallbackHtml(prompt, mode, title) {
+}
+
+
+
+function generateFallbackHtml(prompt, mode, title) {
     const isPrd = mode === 'prd';
     const isFullstack = mode === 'fullstack';
     const safeTitle = (title || 'SatuSite Modern App').replace(/[<>&"]/g, '');

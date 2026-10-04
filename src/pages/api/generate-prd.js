@@ -1,82 +1,113 @@
 export const prerender = false;
 import { ProjectsDB } from '../../lib/db.ts';
+import { generate, getApiKey, stripEmoji } from '../../lib/ai/gemini.js';
+import { PRD_SYSTEM_PROMPT, buildPrdUserPrompt } from '../../lib/ai/prompts.js';
+
+function json(data, status = 200) {
+    return new Response(JSON.stringify(data), {
+        status,
+        headers: { 'Content-Type': 'application/json' },
+    });
+}
 
 export async function POST({ request }) {
     try {
         let body;
         try {
-            const text = await request.text();
-            body = JSON.parse(text);
-        } catch (parseErr) {
-            return new Response(JSON.stringify({ error: 'Request body tidak valid (JSON parse error).' }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' }
-            });
+            body = JSON.parse(await request.text());
+        } catch {
+            return json({ error: 'Request body tidak valid (JSON parse error).' }, 400);
         }
 
-        const apiKey = import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-        if (!apiKey) {
-            return new Response(JSON.stringify({
-                error: 'GEMINI_API_KEY belum dikonfigurasi di server (.env).'
-            }), {
-                status: 500,
-                headers: { 'Content-Type': 'application/json' }
-            });
+        if (!getApiKey()) {
+            return json({ error: 'GEMINI_API_KEY belum dikonfigurasi di server (.env).' }, 500);
         }
 
-        const systemInstructions = `Anda adalah Senior Product Strategist dan Lead UI/UX System Architect di SATUSITE STUDIO yang ditenagai oleh model Gemini 3.7 Flash.
-Tugas Anda adalah membuat dokumen Rencana & Cetak Biru Website / Aplikasi ("Planning Blueprint & PRD") yang mendalam, profesional, rapi, dan terstruktur sesuai kebutuhan pengguna.
+        const promptText = buildPrdUserPrompt(body);
 
-PEDOMAN UTAMA:
-1. DILARANG KERAS MENGGUNAKAN EMOJI / EMOTICON APAPUN di seluruh isi dokumen PRD/Blueprint (gunakan icon font/SVG atau teks profesional).
-2. Manfaatkan kecerdasan dan kemampuan analisis Gemini 3.7 Flash secara murni untuk merumuskan konsep produk, arsitektur sistem, skema database, spesifikasi API, dan rekomendasi desain terbaik yang disesuaikan dengan konteks proyek.
-3. Gunakan data model dan estimasi yang realistis, terstruktur, dan siap diimplementasikan.
+        const result = await generate({
+            systemPrompt: PRD_SYSTEM_PROMPT,
+            contents: [{ role: 'user', parts: [{ text: promptText }] }],
+            temperature: 0.6,
+            maxOutputTokens: 8192,
+        });
 
-FORMAT OUTPUT (MARKDOWN TERSTRUKTUR):
-Pastikan output Anda berformat Markdown terstruktur dengan bagian-bagian berikut:
+        const ownerEmail = body.owner || 'guest@satusite.com';
+        const projName = body.webName || (body.prompt ? body.prompt.slice(0, 45).trim() : 'Dokumen PRD Blueprint');
 
-# Planning Blueprint: [Nama Website / Bisnis]
+        if (!result || !result.text) {
+            // Intelligent fallback template
+            const fallbackPrd = `# Planning Blueprint: ${projName}
 
-> **Tagline / Value Proposition**: [Slogan singkat & bernilai tinggi]
-> **Kategori Industri**: [Kategori Web / Produk] | **Target Pengunjung**: [Target audiens utama & persona pembeli]
+> **Value Proposition**: Solusi digital terintegrasi dengan standar arsitektur clean minimalis dan performa tinggi.
+> **Kategori**: ${body.webType || 'Aplikasi Web & Bisnis'} | **Target Pengguna**: Pelanggan & Pengelola Bisnis | **Platform**: Web Responsif & PWA
 
 ---
 
-## 1. Ringkasan Konsep & Problem Statement
-[Jelaskan latar belakang masalah yang diselesaikan, proposisi nilai unik (Unique Value Proposition), dan visi solusi digital dalam 2-3 paragraf ringkas yang persuasif].
-
-### User Personas & Kebutuhan Utama
-- **Primary Persona**: [Nama persona, peran/pekerjaan, tantangan utama, dan kebutuhan spesifik pada website/aplikasi].
-- **Secondary Persona**: [Nama persona pengelola/admin, target operasional, dan ekspektasi sistem].
+## 1. Ringkasan Eksekutif
+Sistem dirancang untuk menyajikan platform digital yang tangguh, cepat, dan elegan guna menjawab kebutuhan interaksi data dan layanan bisnis modern. Dengan tata letak minimalis dan alur pengguna yang intuitif, platform ini memaksimalkan efisiensi dan kepuasan pengguna.
 
 ---
 
-## 2. Peta Halaman (Sitemap) & Arsitektur Navigasi
+## 2. Latar Belakang & Problem Statement
+Banyak platform digital di industri ini mengalami kendala antarmuka yang lambat, alur pemesanan yang rumit, serta integrasi data yang terfragmentasi. Proyek ini memecahkan masalah tersebut dengan menyatukan seluruh siklus interaksi ke dalam satu sistem yang mulus dan terukur.
+
+---
+
+## 3. Tujuan & Metrik Keberhasilan
+| Tujuan Utama | KPI Kunci | Target | Metode Pengukuran |
+| :--- | :--- | :--- | :--- |
+| Kecepatan Akses Mobile | Largest Contentful Paint (LCP) | < 2.0 detik | Google Lighthouse |
+| Konversi Alur Pesanan | Checkout Completion Rate | > 35% | Analitik Interaksi |
+| Reliabilitas Sistem | Uptime Ketersediaan | 99.9% | Server Health Monitor |
+
+---
+
+## 4. User Personas
+### Persona 1: Pelanggan Utama
+- **Profil**: Pengguna mobile aktif yang membutuhkan kemudahan akses informasi secara cepat.
+- **Pain Points**: Kecepatan muat halaman yang lambat, form pemesanan yang terlalu panjang.
+- **Kebutuhan**: Filter katalog instan, kalkulasi harga otomatis, dan opsi konfirmasi cepat ke WhatsApp.
+
+### Persona 2: Administrator / Pengelola Bisnis
+- **Profil**: Pemilik usaha atau staf operasional yang mengelola pesanan harian.
+- **Pain Points**: Kesulitan memantau riwayat pesanan dan mengupdate data produk secara real-time.
+- **Kebutuhan**: Dashboard manajemen CRUD yang ringkas, aman, dan mudah dioperasikan.
+
+---
+
+## 5. User Stories & Acceptance Criteria
+1. **US-01**: Sebagai Pengunjung, saya ingin mencari dan memfilter produk/layanan berdasarkan kategori agar menemukan item yang sesuai dalam hitungan detik.
+   - *Given*: Pengunjung membuka halaman katalog.
+   - *When*: Pengunjung mengetik kata kunci atau mengklik tab kategori.
+   - *Then*: Daftar kartu produk diperbarui secara instan tanpa reload halaman.
+2. **US-02**: Sebagai Pembeli, saya ingin menambahkan item ke keranjang dan mengonfirmasi pesanan ke WhatsApp dengan rincian otomatis.
+   - *Given*: Pembeli telah memilih minimal satu produk.
+   - *When*: Pembeli menekan tombol Checkout WhatsApp.
+   - *Then*: Tautan WhatsApp API terbuka dengan format rincian invoice rapi dalam mata uang Rupiah.
+
+---
+
+## 6. Sitemap & Alur Pengguna
 - **Beranda (Home)**: Hero section persuasif, kartu katalog unggulan dengan live search/filter, highlight keunggulan, ulasan pelanggan autentik, formulir booking/order instan, dan footer navigasi.
-- **Katalog / Daftar Layanan**: Grid produk/menu/layanan interaktif dengan filter kategori instan, modal detail produk, dan sticky cart order.
-- **Tentang Kami & Keunggulan**: Cerita brand/bisnis, standar kualitas, tim profesional, dan sertifikasi/legalitas.
+- **Katalog & Layanan**: Grid produk/menu/layanan interaktif dengan filter kategori instan, modal detail produk, dan sticky cart order.
+- **Tentang Kami**: Cerita brand/bisnis, standar kualitas, tim profesional, dan sertifikasi/legalitas.
 - **Kontak & Lokasi**: Jam operasional, alamat fisik terintegrasi, dan tombol direct WhatsApp dengan format invoice pesan terstruktur.
 
 ---
 
-## 3. Matriks Prioritas Fitur (MVP Scope Matrix)
-- **P0 - Must Have (Core MVP)**:
-  - [x] Sistem showcase produk/layanan interaktif dengan filter kategori instan.
-  - [x] Keranjang belanja dinamis / Form reservasi bertahap dengan kalkulasi subtotal.
-  - [x] Integrasi pemesanan langsung ke WhatsApp dengan generator format pesan otomatis.
-  - [x] Tampilan responsif mobile-first dengan performa rendering cepat.
-- **P1 - Should Have (Next Sprint)**:
-  - [x] Fitur pencarian instan (live instant search) & filter harga/rating.
-  - [x] Modal kustomisasi item (detail varian, catatan khusus, & kustomisasi).
-  - [x] Toast notification feedback sistematis untuk setiap aksi user.
-  - [x] Penyimpanan state keranjang / preferensi di browser localStorage.
-- **P2 - Could Have (Future Expansion)**:
-  - [ ] Integrasi Payment Gateway otomatis (QRIS / Virtual Account).
-  - [ ] Dashboard analitik omzet & manajemen inventori multi-cabang.
+## 7. Prioritas Fitur (MoSCoW)
+| Fitur | Prioritas | Alasan |
+| :--- | :--- | :--- |
+| Katalog Produk Filterable & Live Search | Must Have | Fondasi utama pengalaman pengguna dan eksplorasi data |
+| Sticky Cart & WhatsApp Order Formatter | Must Have | Alur konversi transaksi utama bisnis |
+| Mode Gelap & Terang (Dark/Light Mode) | Should Have | Standar kenyamanan antarmuka modern |
+| Riwayat Pesanan di LocalStorage | Should Have | Mempertahankan state pengguna saat koneksi terputus |
+| Ekspor Laporan CSV untuk Admin | Could Have | Memudahkan rekap data administratif |
 
 ---
 
-## 4. Skema Database & Relasi Entitas (ERD Tables)
+## 8. Model Data (ERD Entities)
 - \`tbl_categories\` (id PK, name, slug, icon, is_active)
 - \`tbl_items\` (id PK, category_id FK, name, description, price, image_url, stock, status)
 - \`tbl_orders\` (id PK, customer_name, customer_phone, total_amount, order_items JSON, status, created_at)
@@ -84,167 +115,26 @@ Pastikan output Anda berformat Markdown terstruktur dengan bagian-bagian berikut
 
 ---
 
-## 5. Spesifikasi REST API Endpoints
-- \`GET /api/v1/items\` — Ambil daftar item/layanan aktif dengan filter kategori & search.
-- \`GET /api/v1/items/:id\` — Ambil rincian lengkap satu item beserta varian dan ulasannya.
-- \`POST /api/v1/orders\` — Buat pesanan baru (Payload: { customer_name, customer_phone, items: [{ id, qty, notes }] }).
-- \`POST /api/v1/contact\` — Kirim pesan formulir konsultasi/booking ke sistem.
+## 9. Spesifikasi REST API Endpoints
+| Method | Endpoint | Deskripsi | Status |
+| :--- | :--- | :--- | :--- |
+| GET | /api/v1/items | Mengambil daftar item aktif dengan filter kategori & search | 200 OK |
+| GET | /api/v1/items/:id | Mengambil rincian lengkap satu item beserta varian | 200 OK |
+| POST | /api/v1/orders | Menyimpan data pesanan baru | 201 Created |
+| POST | /api/v1/contact | Mengirim pesan formulir konsultasi/booking | 200 OK |
 
 ---
 
-## 6. Rekomendasi Desain & Gaya Visual
-- **Nuansa Gaya**: Clean Minimalist (Modern, Elegan, & Proporsional)
-- **Palet Warna Utama (Aturan 60-30-10)**:
-  - 60% Warna Dasar: \`[HEX, misal: #09090b - Obsidian Dark / #fafafa - Clean Light]\`
-  - 30% Permukaan Kartu & Kontainer: \`[HEX, misal: #121215 - Deep Surface Card]\` dengan border subtle \`#27272a (border-zinc-800)\`
-  - 10% Warna Aksen Tunggal: \`[HEX, misal: #2563eb / #10b981 / #06b6d4 - disesuaikan dengan brand]\`
-- **Tipografi Modern Sans**:
-  - Font Utama: Plus Jakarta Sans / Inter / Geist Sans (Rapi, keterbacaan tinggi, modern)
-- **Format Gambar**:
-  - Wajib menggunakan foto Unsplash resolusi tinggi berformat WebP: \`?auto=format&fit=crop&w=1200&q=80&fm=webp\`
-- **Animasi Section & Interaksi**:
-  - Transisi hover lembut (transition-all duration-200, hover:-translate-y-0.5), smooth scroll anchor navigation, dan modal popover dengan backdrop-blur.`;
-
-        let prompt = '';
-        if (body.prompt && typeof body.prompt === 'string') {
-            prompt = body.prompt;
-        } else if (body.type === 'wizard') {
-            const { category = 'Bisnis & Jasa', businessName = '', features = [], colorStyle = 'Modern Cyan', notes = '' } = body;
-            prompt = `Buatkan Dokumen Planning Blueprint Website berdasarkan informasi wizard berikut:
-- **Kategori Website**: ${category}
-- **Nama Bisnis / Website**: ${businessName || 'Web Project'}
-- **Fitur yang Diinginkan**: ${Array.isArray(features) && features.length > 0 ? features.join(', ') : 'WhatsApp Direct Order, Katalog Filterable, Form Reservasi, Mobile Responsif, Toast Feedback'}
-- **Gaya Desain & Warna**: ${colorStyle}
-- **Catatan / Deskripsi Tambahan**: ${notes || 'Buatkan rancangan website yang elegan, modern, berbasis data realistis Indonesia, dan bebas dari gaya generik.'}`;
-        } else if (body.type === 'manual' || body.desc) {
-            prompt = `Buatkan Dokumen Planning Blueprint Website berdasarkan deskripsi aplikasi berikut:
-${body.desc || body.prompt || ''}`;
-        } else if (body.type === 'cloning') {
-            prompt = `Buatkan Dokumen Planning Blueprint Website untuk membuat versi website yang lebih baik dari referensi berikut:
-- **URL Referensi**: ${body.url}
-- **Deskripsi Khusus & Fitur Tambahan**: ${body.desc}`;
-        } else if (body.text) {
-            prompt = body.text;
-        } else {
-            prompt = 'Buatkan Dokumen PRD dan Planning Blueprint Aplikasi Web yang komprehensif.';
-        }
-
-        // AI Model Engine: gemini-3.7-flash (Model Utama) with fallback to gemini-3.8-flash
-        const candidateModels = [
-            'gemini-3.7-flash',
-            'gemini-3.8-flash'
-        ];
-
-        let geminiData = null;
-        let lastError = '';
-
-        for (const model of candidateModels) {
-            for (let attempt = 1; attempt <= 2; attempt++) {
-                try {
-                    const geminiResponse = await fetch(
-                        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-                        {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-goog-api-key': apiKey,
-                            },
-                            body: JSON.stringify({
-                                contents: [
-                                    {
-                                        parts: [
-                                            { text: `${systemInstructions}\n\n${prompt}` }
-                                        ]
-                                    }
-                                ],
-                                generationConfig: {
-                                    temperature: 0.7,
-                                    maxOutputTokens: 8192,
-                                }
-                            })
-                        }
-                    );
-
-                    if (geminiResponse.ok) {
-                        geminiData = await geminiResponse.json();
-                        break;
-                    } else {
-                        lastError = await geminiResponse.text();
-                        console.warn(`Planning Gen: Model ${model} (attempt ${attempt}) returned ${geminiResponse.status}:`, lastError.slice(0, 150));
-                        if (attempt === 1) {
-                            await new Promise(r => setTimeout(r, 1200));
-                        }
-                    }
-                } catch (fetchErr) {
-                    console.warn(`Planning Gen: Failed calling ${model} (attempt ${attempt}):`, fetchErr.message);
-                }
-            }
-            if (geminiData) break;
-        }
-
-        if (!geminiData) {
-            const fallbackPrd = `# Planning Blueprint: Platform Digital Modern
-
-> **Tagline / Value Proposition**: Solusi Digital Terintegrasi dengan Standar Estetika Clean Minimalis
-> **Kategori Industri**: Bisnis & Layanan Profesional | **Target Pengunjung**: Pelanggan & Pengelola Bisnis
-
----
-
-## 1. Ringkasan Konsep & Problem Statement
-Sistem dirancang untuk menyajikan platform digital yang tangguh, cepat, dan elegan guna menjawab kebutuhan interaksi data dan layanan bisnis modern. Dengan tata letak minimalis dan alur pengguna yang intuitif, platform ini memaksimalkan konversi pelanggan.
-
-### User Personas
-- **Pelanggan Utama**: Mencari informasi produk/layanan secara instan, membandingkan harga, dan melakukan pemesanan tanpa hambatan.
-- **Admin / Pengelola**: Memantau aktivitas pesanan, mengelola daftar katalog, dan menganalisis performa bisnis.
-
----
-
-## 2. Peta Halaman (Sitemap)
-- **Beranda (Home)**: Hero section persuasif, showcase produk/layanan dengan filter kategori, ulasan pelanggan autentik, dan form booking/kontak cepat.
-- **Katalog & Menu**: Tampilan kartu grid interaktif, modal detail varian, dan floating cart pemesanan.
-- **Tentang Kami**: Informasi reputasi bisnis, tim ahli, dan standar mutu.
-- **Kontak & Lokasi**: Informasi jam operasional, peta lokasi, dan tombol WhatsApp direct order.
-
----
-
-## 3. Matriks Prioritas Fitur (MVP Scope)
-- **P0 (Core MVP)**:
-  - [x] Katalog produk/layanan dengan filter kategori dinamis.
-  - [x] Floating cart bar dan generator pesanan otomatis ke WhatsApp.
-  - [x] Form reservasi/kontak dengan validasi instan.
-- **P1 (Next Sprint)**:
-  - [x] Live search instan dan modal detail produk.
-  - [x] Penyimpanan state di browser localStorage.
-  - [x] Feedback toast notification interaktif.
-- **P2 (Future Expansion)**:
-  - [ ] Otomasi payment gateway QRIS.
-  - [ ] Dashboard analitik pendapatan terintegrasi.
-
----
-
-## 4. Skema Database (ERD Tables)
-- \`tbl_categories\` (id PK, name, slug, is_active)
-- \`tbl_items\` (id PK, category_id FK, name, description, price, image_url, status)
-- \`tbl_orders\` (id PK, customer_name, customer_phone, total_amount, order_items JSON, status, created_at)
-
----
-
-## 5. Spesifikasi REST API Endpoints
-- \`GET /api/v1/items\` — Mengambil daftar item aktif
-- \`POST /api/v1/orders\` — Menyimpan pesanan baru
-- \`POST /api/v1/contact\` — Mengirim pesan formulir kontak
-
----
-
-## 6. Rekomendasi Desain & Visual
-- **Nuansa Desain**: Clean Minimalist dengan border subtle \`border-zinc-800\`.
-- **Tipografi**: Plus Jakarta Sans / Inter / Geist Sans.
-- **Gambar**: Unsplash WebP teroptimasi (\`?auto=format&fit=crop&w=1200&q=80&fm=webp\`).`;
+## 10. Rekomendasi Design System
+- **Palet Warna 60-30-10**:
+  - 60% Background: Obsidian Dark (#09090b) / Clean White (#ffffff)
+  - 30% Surface Card: Deep Zinc Card (#121215) dengan border halus #27272a
+  - 10% Aksen Tunggal: Electric Cyan (#06b6d4) atau Indigo (#6366f1)
+- **Tipografi**: Heading: Plus Jakarta Sans / Inter; Body: Inter (keterbacaan tinggi, anti-lelah mata)
+- **Icon**: Font Awesome 6 CDN atau clean inline SVG (tanpa emoji)`;
 
             let fallbackProjectId = null;
             try {
-                const ownerEmail = body.owner || 'guest@satusite.com';
-                const projName = body.webName || (body.prompt ? body.prompt.slice(0, 45).trim() : 'Dokumen PRD Blueprint');
                 const saved = await ProjectsDB.createAsync({
                     name: projName,
                     category: body.webType || 'Product Blueprint & PRD',
@@ -254,14 +144,14 @@ Sistem dirancang untuk menyajikan platform digital yang tangguh, cepat, dan eleg
                     prompt: body.prompt || '',
                     prdContext: fallbackPrd,
                     code: fallbackPrd,
-                    architectureNodes: []
+                    architectureNodes: [],
                 });
                 fallbackProjectId = saved?.id;
             } catch (dbErr) {
                 console.warn('[DB] Auto-save fallback PRD to database failed:', dbErr);
             }
 
-            return new Response(JSON.stringify({
+            return json({
                 success: true,
                 markdown: fallbackPrd,
                 prd: fallbackPrd,
@@ -269,28 +159,14 @@ Sistem dirancang untuk menyajikan platform digital yang tangguh, cepat, dan eleg
                 projectId: fallbackProjectId,
                 savedToDatabase: !!fallbackProjectId,
                 agentTeam: ['Lead Architect', 'System Analyst', 'Fullstack Planner'],
-                note: 'Generated via SatuSite Engine'
-            }), {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' }
+                note: 'Generated via SatuSite Engine',
             });
         }
 
-        const markdown = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-
-        if (!markdown) {
-            return new Response(JSON.stringify({
-                error: 'AI tidak mengembalikan teks. Silakan coba lagi.'
-            }), {
-                status: 500,
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
+        const markdown = stripEmoji(result.text).trim();
 
         let savedProjectId = null;
         try {
-            const ownerEmail = body.owner || 'guest@satusite.com';
-            const projName = body.webName || (body.prompt ? body.prompt.slice(0, 45).trim() : 'Dokumen PRD Blueprint');
             const saved = await ProjectsDB.createAsync({
                 name: projName,
                 category: body.webType || 'Product Blueprint & PRD',
@@ -300,31 +176,24 @@ Sistem dirancang untuk menyajikan platform digital yang tangguh, cepat, dan eleg
                 prompt: body.prompt || '',
                 prdContext: markdown,
                 code: markdown,
-                architectureNodes: []
+                architectureNodes: [],
             });
             savedProjectId = saved?.id;
         } catch (dbErr) {
             console.warn('[DB] Auto-save PRD to database failed:', dbErr);
         }
 
-        return new Response(JSON.stringify({
+        return json({
             success: true,
-            markdown: markdown,
+            markdown,
             prd: markdown,
             format: 'markdown',
             projectId: savedProjectId,
-            savedToDatabase: !!savedProjectId
-        }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
+            savedToDatabase: !!savedProjectId,
+            model: result.model,
         });
     } catch (e) {
-        console.error("Error generating Planning via Gemini:", e);
-        return new Response(JSON.stringify({
-            error: 'Terjadi kesalahan pada server AI: ' + (e.message || e)
-        }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        console.error('Error generating Planning via Gemini:', e);
+        return json({ error: 'Terjadi kesalahan pada server AI: ' + (e.message || e) }, 500);
     }
 }
