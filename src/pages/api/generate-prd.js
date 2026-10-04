@@ -129,10 +129,10 @@ ${body.desc || body.prompt || ''}`;
             prompt = 'Buatkan Dokumen PRD dan Planning Blueprint Aplikasi Web yang komprehensif.';
         }
 
-        // AI Model Engine: gemini-3.7-flash (Model Utama) with fallback to gemini-3.6-flash
+        // AI Model Engine: gemini-3.7-flash (Model Utama) with fallback to gemini-3.8-flash
         const candidateModels = [
             'gemini-3.7-flash',
-            'gemini-3.6-flash'
+            'gemini-3.8-flash'
         ];
 
         let geminiData = null;

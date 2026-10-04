@@ -158,10 +158,10 @@ Jika pengguna hanya mengajukan pertanyaan atau diskusi tanpa memerlukan pembuata
             parts: [{ text: fullUserPrompt }]
         });
 
-        // AI Model Engine: gemini-3.7-flash (Model Utama) with fallback to gemini-3.6-flash
+        // AI Model Engine: gemini-3.7-flash (Model Utama) with fallback to gemini-3.8-flash
         const candidateModels = [
             'gemini-3.7-flash',
-            'gemini-3.6-flash'
+            'gemini-3.8-flash'
         ];
 
         let geminiResponse = null;
