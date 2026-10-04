@@ -727,6 +727,10 @@ export default function SatusiteStudioWorkspace() {
     setProjectId(newId);
     setProjectName("Proyek Baru");
     setCode("");
+    setActivePrdDoc(null);
+    try {
+      localStorage.removeItem("satusite_active_prd");
+    } catch (e) {}
     setArchitectureStructure(null);
     setHasGenerated(false);
     setIsConfigCompleted(false);
@@ -1004,10 +1008,33 @@ export default function SatusiteStudioWorkspace() {
       });
     }
 
+    let initialMode: "fullstack" | "frontend" | "prd" = "fullstack";
+    let qPrompt: string | null = null;
+    let qId: string | null = null;
+
     try {
-      const savedPrd = localStorage.getItem("satusite_active_prd");
-      if (savedPrd && savedPrd.trim()) {
-        setActivePrdDoc(savedPrd);
+      const params = new URLSearchParams(window.location.search);
+      qPrompt = params.get("prompt");
+      qId = params.get("id");
+      const qMode = params.get("mode");
+
+      if (qMode === "frontend" || qMode === "fullstack" || qMode === "prd") {
+        initialMode = qMode;
+        setGenMode(qMode);
+      }
+
+      // Only restore activePrdDoc if we are explicitly in PRD mode AND not creating a new prompt
+      if (!qPrompt && !qId && initialMode === "prd") {
+        const savedPrd = localStorage.getItem("satusite_active_prd");
+        if (savedPrd && savedPrd.trim()) {
+          setActivePrdDoc(savedPrd);
+        }
+      } else if (qPrompt) {
+        // Fresh prompt: clear any stale PRD from previous sessions
+        setActivePrdDoc(null);
+        try {
+          localStorage.removeItem("satusite_active_prd");
+        } catch (e) {}
       }
     } catch (e) {}
 
@@ -1017,15 +1044,6 @@ export default function SatusiteStudioWorkspace() {
 
     try {
       const params = new URLSearchParams(window.location.search);
-      const qPrompt = params.get("prompt");
-      const qId = params.get("id");
-      const qMode = params.get("mode");
-
-      let initialMode: "fullstack" | "frontend" | "prd" = "fullstack";
-      if (qMode === "frontend" || qMode === "fullstack" || qMode === "prd") {
-        initialMode = qMode;
-        setGenMode(qMode);
-      }
 
       // Check if there are attached documents passed via sessionStorage from studio entrypoints
       let pendingDocsContext = "";
@@ -1070,6 +1088,11 @@ export default function SatusiteStudioWorkspace() {
           try {
             localStorage.setItem("satusite_active_prd", p.prd);
           } catch (e) {}
+        } else {
+          setActivePrdDoc(null);
+          try {
+            localStorage.removeItem("satusite_active_prd");
+          } catch (e) {}
         }
       } else if (qPrompt) {
         const newId = "proj_" + Date.now();
@@ -1079,6 +1102,10 @@ export default function SatusiteStudioWorkspace() {
         setProjectConfig(prev => ({ ...prev, webName: name }));
         setIsConfigCompleted(true);
         setHasGenerated(true);
+        setActivePrdDoc(null);
+        try {
+          localStorage.removeItem("satusite_active_prd");
+        } catch (e) {}
         const finalPrompt = qPrompt + pendingDocsContext;
         handleSendPrompt(finalPrompt, name, newId, initialMode);
       }
@@ -1473,6 +1500,12 @@ export default function SatusiteStudioWorkspace() {
           } catch (e) {}
         }
         setActiveTab("architecture");
+      } else {
+        // In Frontend / Fullstack mode, clear activePrdDoc so previous PRDs do not leak into this project
+        setActivePrdDoc(null);
+        try {
+          localStorage.removeItem("satusite_active_prd");
+        } catch (e) {}
       }
 
     } catch (err: any) {
@@ -3319,7 +3352,7 @@ export default function SatusiteStudioWorkspace() {
                   <Layers className="w-3 h-3 text-blue-400" />
                   <span>Rencana Plan</span>
                 </button>
-                {activePrdDoc && (
+                {genMode === "prd" && activePrdDoc && (
                   <button
                     type="button"
                     onClick={() => {
@@ -3398,8 +3431,8 @@ export default function SatusiteStudioWorkspace() {
                       </div>
                     )}
 
-                    {/* Persistent Saved PRD Card Widget in chat agent box */}
-                    {activePrdDoc && (
+                    {/* Persistent Saved PRD Card Widget - Only displayed in PRD mode */}
+                    {genMode === "prd" && activePrdDoc && (
                       <div className="p-3 rounded-2xl bg-amber-950/25 border border-amber-500/30 space-y-2 text-xs animate-fade-in shadow-md">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
