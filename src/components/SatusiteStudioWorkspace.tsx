@@ -68,6 +68,7 @@ import CardScrollReveal from "./ui/CardScrollReveal";
 import InteractiveArchitectureTree from "./ui/InteractiveArchitectureTree";
 import AgentPlanTree, { DEFAULT_STUDIO_TASKS, type Task, type Subtask } from "./ui/AgentPlanTree";
 import AgentChat, { type AgentMessage, type AttachedFile, type AttachedImage } from "./ui/AgentChat";
+import { PRESET_TEMPLATES } from "../data/presetTemplates";
 
 export interface ProjectConfig {
   webType: string;
@@ -1069,7 +1070,57 @@ export default function SatusiteStudioWorkspace() {
       const storeRaw = localStorage.getItem("satusite_projects_store") || localStorage.getItem("emergent_projects_store");
       const store = storeRaw ? JSON.parse(storeRaw) : null;
 
-      if (qId && store && store.projects && store.projects[qId]) {
+      const qTemplate = params.get("template") || params.get("tpl");
+      const matchedTpl = qTemplate ? PRESET_TEMPLATES.find(t => t.id === qTemplate) : null;
+
+      if (matchedTpl) {
+        const newId = "proj_" + Date.now();
+        setProjectId(newId);
+        setProjectName(matchedTpl.title);
+        setProjectConfig(prev => ({
+          ...prev,
+          webName: matchedTpl.title,
+          webType: matchedTpl.category,
+          theme: "Modern Sleek",
+          mainFeatures: matchedTpl.tags
+        }));
+        setIsConfigCompleted(true);
+        setHasGenerated(true);
+        setCode(matchedTpl.code);
+        const smartStruct = generateSmartStructureFromPrompt(matchedTpl.title, matchedTpl.title);
+        setArchitectureStructure(smartStruct);
+        const initialAgentMsg: ChatMessage = {
+          id: "msg_tpl_" + Date.now(),
+          role: "agent",
+          agentName: "AI Assistant",
+          text: `Template **${matchedTpl.title}** (${matchedTpl.category}) berhasil dimuat ke workspace! Kode sumber lengkap dan pratinjau interaktif telah siap. Anda dapat menguji fungsionalitas di canvas pratinjau sebelah kanan, memeriksa atau mengedit kode, atau menginstruksikan perubahan fitur lebih lanjut melalui input perintah di bawah.`,
+          timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
+          hasCodeUpdate: true,
+          steps: [
+            "Template produksi berhasil disuntikkan ke sandbox",
+            "Struktur arsitektur modul diinisialisasi",
+            "Live canvas hot-reload siap beroperasi"
+          ]
+        };
+        setMessages([initialAgentMsg]);
+        saveProjectState(matchedTpl.code, [initialAgentMsg], matchedTpl.title, smartStruct);
+        setLogs(prev => [
+          ...prev,
+          `[TEMPLATE-LOADER] Template "${matchedTpl.id}" dimuat (${matchedTpl.code.length} bytes)`,
+          `[SANDBOX] Live canvas preview aktif`
+        ]);
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.set("id", newId);
+          url.searchParams.delete("template");
+          url.searchParams.delete("tpl");
+          window.history.replaceState({}, "", url.toString());
+        } catch (e) {}
+        if (qPrompt) {
+          const finalPrompt = qPrompt + pendingDocsContext;
+          handleSendPrompt(finalPrompt, matchedTpl.title, newId, initialMode);
+        }
+      } else if (qId && store && store.projects && store.projects[qId]) {
         const p = store.projects[qId];
         setProjectId(qId);
         setProjectName(p.name || "Proyek Baru");
@@ -3608,25 +3659,75 @@ export default function SatusiteStudioWorkspace() {
               {/* TAB 1: CANVAS PREVIEW */}
               {activeTab === "preview" && (
                 <div className="flex-1 bg-[#060609] p-2 flex items-center justify-center overflow-auto relative">
-                  <div
-                    className={`transition-all duration-300 flex items-center justify-center ${
-                      viewport === "desktop"
-                        ? "w-full h-full"
-                        : viewport === "tablet"
-                        ? "device-tablet-frame"
-                        : "device-mobile-frame"
-                    }`}
-                  >
-                    {viewport === "mobile" && <div className="device-mobile-notch"></div>}
-                    
-                    <iframe
-                      ref={iframeRef}
-                      srcDoc={previewSrcDoc}
-                      title="Live Preview Canvas"
-                      sandbox="allow-scripts allow-modals allow-same-origin allow-popups allow-forms"
-                      className="w-full h-full bg-[#09090b] border-0 rounded"
-                    />
-                  </div>
+                  {code ? (
+                    <div
+                      className={`transition-all duration-300 flex items-center justify-center ${
+                        viewport === "desktop"
+                          ? "w-full h-full"
+                          : viewport === "tablet"
+                          ? "device-tablet-frame"
+                          : "device-mobile-frame"
+                      }`}
+                    >
+                      {viewport === "mobile" && <div className="device-mobile-notch"></div>}
+                      
+                      <iframe
+                        ref={iframeRef}
+                        srcDoc={previewSrcDoc}
+                        title="Live Preview Canvas"
+                        sandbox="allow-scripts allow-modals allow-same-origin allow-popups allow-forms"
+                        className="w-full h-full bg-[#09090b] border-0 rounded"
+                      />
+                    </div>
+                  ) : isGenerating ? (
+                    <div className="flex flex-col items-center justify-center text-center p-8 max-w-md mx-auto space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                      <div className="relative">
+                        <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                          <Loader2 className="w-8 h-8 animate-spin" />
+                        </div>
+                        <div className="absolute -inset-2 bg-blue-500/20 rounded-3xl blur-xl animate-pulse pointer-events-none" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <h3 className="text-base font-semibold text-white">AI Agent Sedang Merancang Aplikasi</h3>
+                        <p className="text-xs text-zinc-400 font-mono">
+                          {currentThinkingStep || "Menyusun struktur DOM, skema data, dan styling responsif..."}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-zinc-400">
+                        <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
+                        <span>Task {generationTaskIndex + 1} dari 4 Aktif</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-center p-6 max-w-lg mx-auto space-y-5 animate-in fade-in zoom-in-95 duration-200">
+                      <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 shadow-inner">
+                        <Layout className="w-7 h-7 text-zinc-300" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <h3 className="text-lg font-bold text-white tracking-tight">Canvas Siap Beroperasi</h3>
+                        <p className="text-xs text-zinc-400 leading-relaxed max-w-sm">
+                          Ketik instruksi di panel perintah sebelah kiri untuk menghasilkan web baru, atau pilih salah satu template produksi siap pakai.
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+                        <a
+                          href="/templates"
+                          className="px-3.5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-semibold flex items-center gap-2 transition-all shadow-md"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Pilih Template Produksi</span>
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => setIsConfigCompleted(false)}
+                          className="px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 text-xs font-medium flex items-center gap-2 transition-all cursor-pointer"
+                        >
+                          <SlidersHorizontal className="w-3.5 h-3.5" />
+                          <span>Buka Wizard Konfigurasi</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
