@@ -698,8 +698,9 @@ export const RouteManifest = {
 } as const;
 `;
 
-  // 22. src/server.ts
-  files["src/server.ts"] = `import { INITIAL_DATABASE } from './lib/db';
+  // 22. src/server.ts (Hanya diikutsertakan pada mode fullstack)
+  if (mode === "fullstack") {
+    files["src/server.ts"] = `import { INITIAL_DATABASE } from './lib/db';
 
 const server = Bun.serve({
   port: process.env.PORT || 3000,
@@ -730,6 +731,7 @@ const server = Bun.serve({
 
 console.log(\`[SERVER] Server berjalan pada http://localhost:\${server.port}\`);
 `;
+  }
 
   // 23. src/start.ts
   files["src/start.ts"] = `import React from 'react';
@@ -904,7 +906,7 @@ root = "src/test"
       dev: "vite",
       build: "tsc && vite build",
       preview: "vite preview",
-      server: "bun run src/server.ts",
+      ...(mode === "fullstack" ? { server: "bun run src/server.ts" } : {}),
       test: "bun test"
     },
     dependencies: {
@@ -928,9 +930,10 @@ root = "src/test"
   }, null, 2);
 
   // 34. README.md
+  const isFullstack = mode === "fullstack";
   files["README.md"] = `# ${projectName}
 
-Repositori web fullstack mandiri yang dihasilkan oleh Satusite Studio AI Agent.
+Repositori web ${isFullstack ? "fullstack mandiri" : "frontend modern (SPA)"} yang dihasilkan oleh Satusite Studio AI Agent.
 
 ## Struktur Repositori
 \`\`\`
@@ -948,8 +951,7 @@ src/
   ├── test/
   ├── router.tsx
   ├── routeTree.gen.ts
-  ├── server.ts
-  ├── start.ts
+${isFullstack ? "  ├── server.ts\n" : ""}  ├── start.ts
   └── styles.css
 .gitignore
 .prettierrc
@@ -967,7 +969,12 @@ tsconfig.json
 bun install
 bun run dev
 \`\`\`
-
+${isFullstack ? `
+### Menjalankan Backend Server (Mode Fullstack)
+\`\`\`bash
+bun run server
+\`\`\`
+` : ""}
 ### Menggunakan Node.js / NPM
 \`\`\`bash
 npm install

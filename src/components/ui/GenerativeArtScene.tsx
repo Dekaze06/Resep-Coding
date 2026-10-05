@@ -244,6 +244,9 @@ export function GenerativeArtScene({
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
       if (currentMount && renderer.domElement && currentMount.contains(renderer.domElement)) {
         currentMount.removeChild(renderer.domElement);
       }
