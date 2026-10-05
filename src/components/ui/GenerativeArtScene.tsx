@@ -1,6 +1,80 @@
 import React, { useRef, useEffect, Suspense } from "react";
 import * as THREE from "three";
 
+function createRhombus3DGeometry(rx = 1.25, hy = 1.6, rz = 1.25, seg = 16) {
+  const geom = new THREE.BufferGeometry();
+  const positions: number[] = [];
+  const indices: number[] = [];
+
+  const top = new THREE.Vector3(0, hy, 0);
+  const bottom = new THREE.Vector3(0, -hy, 0);
+  const pRight = new THREE.Vector3(rx, 0, 0);
+  const pFront = new THREE.Vector3(0, 0, rz);
+  const pLeft = new THREE.Vector3(-rx, 0, 0);
+  const pBack = new THREE.Vector3(0, 0, -rz);
+
+  const faces: [THREE.Vector3, THREE.Vector3, THREE.Vector3][] = [
+    // Top pyramid (4 faces)
+    [top, pFront, pRight],
+    [top, pLeft, pFront],
+    [top, pBack, pLeft],
+    [top, pRight, pBack],
+    // Bottom pyramid (4 faces)
+    [bottom, pRight, pFront],
+    [bottom, pFront, pLeft],
+    [bottom, pLeft, pBack],
+    [bottom, pBack, pRight],
+  ];
+
+  const vertexMap = new Map<string, number>();
+  let vertexCount = 0;
+
+  function getVertexIndex(v: THREE.Vector3): number {
+    const key = `${v.x.toFixed(4)},${v.y.toFixed(4)},${v.z.toFixed(4)}`;
+    const existing = vertexMap.get(key);
+    if (existing !== undefined) {
+      return existing;
+    }
+    positions.push(v.x, v.y, v.z);
+    vertexMap.set(key, vertexCount);
+    return vertexCount++;
+  }
+
+  for (const [a, b, c] of faces) {
+    const faceGrid: number[][] = [];
+    for (let i = 0; i <= seg; i++) {
+      faceGrid[i] = [];
+      for (let j = 0; j <= seg - i; j++) {
+        const k = seg - i - j;
+        const pt = new THREE.Vector3()
+          .addScaledVector(a, i / seg)
+          .addScaledVector(b, j / seg)
+          .addScaledVector(c, k / seg);
+        faceGrid[i][j] = getVertexIndex(pt);
+      }
+    }
+
+    for (let i = 0; i < seg; i++) {
+      for (let j = 0; j < seg - i; j++) {
+        const v1 = faceGrid[i][j];
+        const v2 = faceGrid[i + 1][j];
+        const v3 = faceGrid[i][j + 1];
+        indices.push(v1, v3, v2);
+
+        if (j < seg - i - 1) {
+          const v4 = faceGrid[i + 1][j + 1];
+          indices.push(v2, v3, v4);
+        }
+      }
+    }
+  }
+
+  geom.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geom.setIndex(indices);
+  geom.computeVertexNormals();
+  return geom;
+}
+
 export function GenerativeArtScene({
   className = "",
   color = "#1d4ed8",
@@ -29,7 +103,7 @@ export function GenerativeArtScene({
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     currentMount.appendChild(renderer.domElement);
 
-    const geometry = new THREE.IcosahedronGeometry(1.2, 64);
+    const geometry = createRhombus3DGeometry(1.25, 1.6, 1.25, 16);
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
@@ -92,7 +166,7 @@ export function GenerativeArtScene({
         void main() {
             vNormal = normal;
             vPosition = position;
-            float displacement = snoise(position * 2.0 + time * 0.5) * 0.2;
+            float displacement = snoise(position * 2.0 + time * 0.5) * 0.04;
             vec3 newPosition = position + normal * displacement;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
         }
@@ -131,8 +205,9 @@ export function GenerativeArtScene({
     let frameId: number;
     const animate = (t: number) => {
       material.uniforms.time.value = t * 0.0003;
-      mesh.rotation.y += 0.0005;
-      mesh.rotation.x += 0.0002;
+      mesh.rotation.y += 0.0012;
+      mesh.rotation.x = Math.sin(t * 0.0004) * 0.15 + 0.12;
+      mesh.rotation.z = Math.cos(t * 0.0003) * 0.08;
       renderer.render(scene, camera);
       frameId = requestAnimationFrame(animate);
     };
