@@ -16,11 +16,23 @@ export interface GitHubPushResult {
   error?: string;
 }
 
+function getGitHubAuthHeader(rawToken: string): string {
+  const token = (rawToken || '').trim();
+  if (token.startsWith('Bearer ') || token.startsWith('token ')) {
+    return token;
+  }
+  if (token.startsWith('github_pat_')) {
+    return `Bearer ${token}`;
+  }
+  return `token ${token}`;
+}
+
 export async function validateGitHubToken(token: string): Promise<{ valid: boolean; username?: string; error?: string }> {
   try {
+    const authHeader = getGitHubAuthHeader(token);
     const res = await fetch('https://api.github.com/user', {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': authHeader,
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'Satusite-Studio-App'
       }
@@ -40,8 +52,9 @@ export async function validateGitHubToken(token: string): Promise<{ valid: boole
 
 export async function pushToGitHub(payload: GitHubPushPayload): Promise<GitHubPushResult> {
   const { token, repoName, isPrivate = false, commitMessage, files } = payload;
+  const authHeader = getGitHubAuthHeader(token);
   const authHeaders = {
-    'Authorization': `Bearer ${token}`,
+    'Authorization': authHeader,
     'Accept': 'application/vnd.github.v3+json',
     'User-Agent': 'Satusite-Studio-App',
     'Content-Type': 'application/json'
@@ -51,14 +64,19 @@ export async function pushToGitHub(payload: GitHubPushPayload): Promise<GitHubPu
     // 1. Get user profile to determine owner
     const userRes = await fetch('https://api.github.com/user', { headers: authHeaders });
     if (!userRes.ok) {
-      return { success: false, error: 'Otentikasi token GitHub gagal.' };
+      const userErr = await userRes.json().catch(() => ({}));
+      return { success: false, error: userErr.message || 'Otentikasi token GitHub gagal. Pastikan token memiliki scope "repo".' };
     }
     const user = await userRes.json();
     const owner = user.login;
 
     // 2. Check if repo exists or create it
     let repoRes = await fetch(`https://api.github.com/repos/${owner}/${repoName}`, { headers: authHeaders });
-    if (!repoRes.ok && repoRes.status === 404) {
+    let repoData: any = null;
+
+    if (repoRes.ok) {
+      repoData = await repoRes.json();
+    } else if (repoRes.status === 404) {
       const createRes = await fetch('https://api.github.com/user/repos', {
         method: 'POST',
         headers: authHeaders,
@@ -73,23 +91,29 @@ export async function pushToGitHub(payload: GitHubPushPayload): Promise<GitHubPu
         const createErr = await createRes.json().catch(() => ({}));
         return { success: false, error: createErr.message || 'Gagal membuat repositori GitHub baru.' };
       }
-      repoRes = createRes;
+      repoData = await createRes.json();
+      // Wait for GitHub async repo initialization
+      await new Promise(r => setTimeout(r, 1500));
+    } else {
+      const repoErr = await repoRes.json().catch(() => ({}));
+      return { success: false, error: repoErr.message || 'Gagal memeriksa repositori GitHub.' };
     }
 
-    const repoData = await repoRes.json();
     const defaultBranch = repoData.default_branch || 'main';
 
     // 3. Put / commit each file using Contents API
+    let uploadFailures: string[] = [];
     for (const f of files) {
-      // Check if file exists to get SHA
       let sha: string | undefined = undefined;
-      const fileCheck = await fetch(`https://api.github.com/repos/${owner}/${repoName}/contents/${f.path}`, {
-        headers: authHeaders
-      });
-      if (fileCheck.ok) {
-        const fileInfo = await fileCheck.json();
-        sha = fileInfo.sha;
-      }
+      try {
+        const fileCheck = await fetch(`https://api.github.com/repos/${owner}/${repoName}/contents/${f.path}?ref=${defaultBranch}`, {
+          headers: authHeaders
+        });
+        if (fileCheck.ok) {
+          const fileInfo = await fileCheck.json();
+          sha = fileInfo.sha;
+        }
+      } catch (e) {}
 
       const contentBase64 = Buffer.from(f.content, 'utf8').toString('base64');
       const putRes = await fetch(`https://api.github.com/repos/${owner}/${repoName}/contents/${f.path}`, {
@@ -105,8 +129,15 @@ export async function pushToGitHub(payload: GitHubPushPayload): Promise<GitHubPu
 
       if (!putRes.ok) {
         const putErr = await putRes.json().catch(() => ({}));
-        console.warn(`[GitHub Push] Warning on file ${f.path}:`, putErr);
+        uploadFailures.push(`${f.path}: ${putErr.message || 'Error'}`);
       }
+    }
+
+    if (uploadFailures.length > 0 && uploadFailures.length === files.length) {
+      return {
+        success: false,
+        error: `Gagal mengunggah berkas ke repositori: ${uploadFailures.join(', ')}`
+      };
     }
 
     return {

@@ -62,7 +62,9 @@ import {
   Radio,
   Heart,
   Circle,
-  Archive
+  Archive,
+  Clock,
+  Activity
 } from "lucide-react";
 import CardScrollReveal from "./ui/CardScrollReveal";
 import InteractiveArchitectureTree from "./ui/InteractiveArchitectureTree";
@@ -549,6 +551,292 @@ export const FEATURE_OPTIONS = [
   }
 ];
 
+export interface StudioGenerationSubtask {
+  label: string;
+  detail: string;
+  engine: string;
+}
+
+export interface StudioGenerationTask {
+  title: string;
+  phase: string;
+  category: string;
+  subtasks: StudioGenerationSubtask[];
+}
+
+export const STUDIO_GENERATION_TASKS: Record<"frontend" | "fullstack" | "prd", StudioGenerationTask[]> = {
+  frontend: [
+    {
+      title: "Analisis Desain Sistem & Kategori Industri",
+      phase: "Fase 1 / 4",
+      category: "Sistem Desain",
+      subtasks: [
+        {
+          label: "Ekstraksi intent prompt & pemetaan entitas bisnis",
+          detail: "Membedah struktur kebutuhan pengguna, navigasi utama, & alur CTA bisnis",
+          engine: "Prompt-Parser"
+        },
+        {
+          label: "Penyusunan palet 60-30-10 & rasio kontras WCAG AA",
+          detail: "Mengunci formula 60% neutral dark/light, 30% background cards, 10% aksen tombol",
+          engine: "Color-Matrix"
+        },
+        {
+          label: "Inisialisasi tipografi modern & font icons",
+          detail: "Menghubungkan Google Fonts sans-serif modern & Lucide / FontAwesome vector iconset",
+          engine: "Typography-Kit"
+        }
+      ]
+    },
+    {
+      title: "Penyusunan Layout Responsif & Grid 12-Kolom",
+      phase: "Fase 2 / 4",
+      category: "Tata Letak & Navigasi",
+      subtasks: [
+        {
+          label: "Menyusun sticky navigation bar & anchor routes",
+          detail: "Membangun header fixed dengan mobile drawer & ID anchor terverifikasi",
+          engine: "Navigation-Builder"
+        },
+        {
+          label: "Merancang Hero section konversi & CTA dinamis",
+          detail: "Menyusun headline berbobot, badge status, & tombol tindakan direct order",
+          engine: "Hero-Renderer"
+        },
+        {
+          label: "Membangun showcase card grid dengan media WebP",
+          detail: "Menyusun grid katalog responsif dengan optimasi aspect-ratio & WebP visual assets",
+          engine: "Asset-Pipeline"
+        }
+      ]
+    },
+    {
+      title: "Integrasi Quick-View Modal & WhatsApp Cart",
+      phase: "Fase 3 / 4",
+      category: "Interaktivitas & Logika",
+      subtasks: [
+        {
+          label: "Merakit dialog modal interaktif & preview produk",
+          detail: "Menyuntikkan pop-up spesifikasi lengkap produk dengan backdrop blur & animasi halus",
+          engine: "Modal-Synthesizer"
+        },
+        {
+          label: "Menghubungkan keranjang checkout & WhatsApp direct order",
+          detail: "Memformat payload ringkasan pesanan menjadi teks tautan direct chat WhatsApp",
+          engine: "Checkout-Engine"
+        },
+        {
+          label: "Menyiapkan instant filter tabs & real-time search",
+          detail: "Menambahkan filter kategori instan & event listener pencarian instan",
+          engine: "Query-Filter"
+        }
+      ]
+    },
+    {
+      title: "Audit Navigasi Anchor & Validasi Interaksi",
+      phase: "Fase 4 / 4",
+      category: "Quality Assurance & Bundle",
+      subtasks: [
+        {
+          label: "Validasi anchor ID & smooth scrolling behavior",
+          detail: "Menguji seluruh tautan anchor ID agar tidak ada tautan buntu (dead links)",
+          engine: "Anchor-Auditor"
+        },
+        {
+          label: "Pemindaian kepatuhan zero-emoji & sanitasi teks",
+          detail: "Memastikan seluruh UI bebas dari emotikon dan karakter non-standar",
+          engine: "Sanitization-Guard"
+        },
+        {
+          label: "Kompilasi bundle final HTML, CSS & JavaScript",
+          detail: "Memaketkan seluruh markup semantik, stylesheet, dan skrip interaktif ke sandbox",
+          engine: "Sandbox-Compiler"
+        }
+      ]
+    }
+  ],
+  fullstack: [
+    {
+      title: "Analisis Arsitektur Domain & Model Data AppDB",
+      phase: "Fase 1 / 4",
+      category: "Pemodelan Data",
+      subtasks: [
+        {
+          label: "Pemodelan skema entitas relational (AppDB Schema)",
+          detail: "Mendefinisikan entitas Produk, Pelanggan, Transaksi, & struktur relasi data",
+          engine: "Schema-Architect"
+        },
+        {
+          label: "Inisialisasi seed mock dataset realistis",
+          detail: "Mengisi rekaman data awal yang realistis untuk pengujian storefront & tabel admin",
+          engine: "Seed-Generator"
+        },
+        {
+          label: "Penyiapan abstraksi repository & query helper",
+          detail: "Menyusun fungsi pembantu filter, pagination, dan kalkulasi ringkasan agregat",
+          engine: "Repository-Layer"
+        }
+      ]
+    },
+    {
+      title: "Penyusunan State Storage & Operasi CRUD",
+      phase: "Fase 2 / 4",
+      category: "Backend In-Memory",
+      subtasks: [
+        {
+          label: "Integrasi in-memory reactive store dengan sync localStorage",
+          detail: "Menjaga persistensi data di browser pengguna agar tidak hilang saat reload",
+          engine: "Storage-Bridge"
+        },
+        {
+          label: "Implementasi handler CRUD (Create, Read, Update, Delete)",
+          detail: "Menulis fungsi mutasi data untuk penambahan, pengeditan, dan penghapusan item",
+          engine: "CRUD-Engine"
+        },
+        {
+          label: "Validasi form input & proteksi sanitasi data",
+          detail: "Memeriksa kelengkapan field formulir dan mencegah injeksi skrip berbahaya",
+          engine: "Form-Validator"
+        }
+      ]
+    },
+    {
+      title: "Integrasi 4-Panel Switcher & KPI Charts",
+      phase: "Fase 3 / 4",
+      category: "Komponen Antarmuka",
+      subtasks: [
+        {
+          label: "Perakitan antarmuka storefront / POS untuk transaksi",
+          detail: "Membangun tampilan belanja interaktif dengan integrasi mutasi keranjang langsung",
+          engine: "POS-Interface"
+        },
+        {
+          label: "Penyusunan panel dashboard admin & tabel database",
+          detail: "Menghadirkan tabel data interaktif dengan fitur sortir, edit baris, dan hapus item",
+          engine: "Admin-Table"
+        },
+        {
+          label: "Kalkulasi metrik real-time KPI & grafik analitik",
+          detail: "Menghitung omzet, jumlah transaksi, dan merender visualisasi tren performa",
+          engine: "Analytics-Core"
+        }
+      ]
+    },
+    {
+      title: "Audit Anti-Slop Visual & UI Responsif",
+      phase: "Fase 4 / 4",
+      category: "Kepatuhan & Sandbox",
+      subtasks: [
+        {
+          label: "Verifikasi routing API mock & event bridge internal",
+          detail: "Menguji kelancaran komunikasi state antar panel storefront dan panel admin",
+          engine: "Event-Bus"
+        },
+        {
+          label: "Audit kepatuhan visual anti-slop & zero-emoji",
+          detail: "Memastikan tipografi sans-serif berkelas, warna proporsional, dan ikon profesional",
+          engine: "Design-Linter"
+        },
+        {
+          label: "Pengujian responsivitas & montir sandbox iframe",
+          detail: "Memvalidasi tampilan pada layar ponsel, tablet, desktop, serta hot-reloader aktif",
+          engine: "Sandbox-Deployer"
+        }
+      ]
+    }
+  ],
+  prd: [
+    {
+      title: "Analisis Kebutuhan Sistem & User Personas",
+      phase: "Fase 1 / 4",
+      category: "Spesifikasi Produk",
+      subtasks: [
+        {
+          label: "Ekstraksi problem statement & pemetaan persona pengguna",
+          detail: "Mengidentifikasi target pasar, kendala utama, dan alur kebutuhan pengguna inti",
+          engine: "PRD-Extractor"
+        },
+        {
+          label: "Pemetaan core value proposition & target use cases",
+          detail: "Menetapkan prioritas solusi dan matriks nilai tambah produk yang dibangun",
+          engine: "Value-Mapper"
+        },
+        {
+          label: "Penentuan batasan ruang lingkup MVP vs fase lanjutan",
+          detail: "Memisahkan fitur esensial rilis awal dari fitur iterasi pengembangan masa depan",
+          engine: "Scope-Definer"
+        }
+      ]
+    },
+    {
+      title: "Penyusunan Skema Relasi Database (ERD)",
+      phase: "Fase 2 / 4",
+      category: "Arsitektur Data",
+      subtasks: [
+        {
+          label: "Perancangan entitas database, primary/foreign keys & tipe data",
+          detail: "Menyusun skema tabel relasional dengan tipe data presisi dan relasi 1-to-many",
+          engine: "ERD-Architect"
+        },
+        {
+          label: "Definisi integritas referensial & indeks kueri",
+          detail: "Mengonfigurasi kunci unik, indeks pencarian cepat, dan batasan integritas data",
+          engine: "Constraint-Spec"
+        },
+        {
+          label: "Penyusunan diagram visual Mermaid.js topology",
+          detail: "Merender bagan relasi tabel visual interaktif untuk dokumentasi teknis",
+          engine: "Diagram-Renderer"
+        }
+      ]
+    },
+    {
+      title: "Spesifikasi REST API Contracts & Endpoint",
+      phase: "Fase 3 / 4",
+      category: "Kontrak API",
+      subtasks: [
+        {
+          label: "Perumusan spesifikasi endpoint HTTP (CRUD Restful)",
+          detail: "Menentukan path URI, method HTTP, headers, dan struktur rute endpoint",
+          engine: "API-Contract"
+        },
+        {
+          label: "Skema payload JSON request body & response status",
+          detail: "Mendokumentasikan contoh objek request dan respons status 200, 400, 404, 500",
+          engine: "Schema-Payload"
+        },
+        {
+          label: "Desain autentikasi bearer token & proteksi rate limit",
+          detail: "Menetapkan standar keamanan JWT token dan pembatasan frekuensi kueri",
+          engine: "Security-Spec"
+        }
+      ]
+    },
+    {
+      title: "Finalisasi Blueprint PRD & Live Demo",
+      phase: "Fase 4 / 4",
+      category: "Deliverable & Hand-off",
+      subtasks: [
+        {
+          label: "Penyusunan Acceptance Criteria terstruktur (Gherkin)",
+          detail: "Menulis kriteria pengujian Given-When-Then untuk setiap fitur utama",
+          engine: "Gherkin-Writer"
+        },
+        {
+          label: "Sintesis dashboard PRD interaktif dengan navigasi tab",
+          detail: "Menghadirkan dokumen blueprint yang dapat ditelusuri per bab secara langsung",
+          engine: "Dashboard-Builder"
+        },
+        {
+          label: "Validasi kelengkapan dokumen untuk developer hand-off",
+          detail: "Memastikan seluruh spesifikasi siap diekspor ke format Markdown (.md) standar",
+          engine: "Hand-off-Validator"
+        }
+      ]
+    }
+  ]
+};
+
 export default function SatusiteStudioWorkspace() {
   const [genMode, setGenMode] = useState<"fullstack" | "frontend" | "prd">("fullstack");
   const [showModeDropdown, setShowModeDropdown] = useState<"center" | "side" | null>(null);
@@ -585,6 +873,9 @@ export default function SatusiteStudioWorkspace() {
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [generationTaskIndex, setGenerationTaskIndex] = useState<number>(0);
+  const [generationSubTaskIndex, setGenerationSubTaskIndex] = useState<number>(0);
+  const [generationElapsedTime, setGenerationElapsedTime] = useState<number>(0);
+  const progressIntervalRef = useRef<any>(null);
   const [currentThinkingStep, setCurrentThinkingStep] = useState<string>("");
   const [copied, setCopied] = useState<boolean>(false);
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
@@ -1360,18 +1651,15 @@ export default function SatusiteStudioWorkspace() {
     setInputPrompt("");
     setIsGenerating(true);
     setGenerationTaskIndex(0);
+    setGenerationSubTaskIndex(0);
+    setGenerationElapsedTime(0);
 
     const effectiveMode = modeOverride || genMode;
     const isFull = effectiveMode === "fullstack";
     const isPrd = effectiveMode === "prd";
 
-    setCurrentThinkingStep(
-      isPrd
-        ? "AI Agent menganalisis kebutuhan sistem, arsitektur, & membuat PRD..."
-        : isFull
-        ? "AI Agent menganalisis model data, skema, & arsitektur fullstack..."
-        : "AI Agent menyusun tata letak visual & styling responsif..."
-    );
+    const initialTasks = STUDIO_GENERATION_TASKS[effectiveMode] || STUDIO_GENERATION_TASKS.frontend;
+    setCurrentThinkingStep(initialTasks[0]?.subtasks[0]?.detail || "Menyiapkan kompilasi arsitektur aplikasi...");
 
     const userMsgText = fileMetaLabels.length > 0
       ? `${rawText}\n\n[Lampiran: ${fileMetaLabels.join(", ")}]`
@@ -1387,54 +1675,60 @@ export default function SatusiteStudioWorkspace() {
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
 
-    const thinkingTimer1 = setTimeout(() => {
-      setGenerationTaskIndex(1);
-      setCurrentThinkingStep(
-        isPrd
-          ? "AI Agent menyusun entity-relationship & arsitektur data..."
-          : isFull
-          ? "AI Agent merancang database in-memory & fungsi CRUD..."
-          : "AI Agent merancang section halaman lengkap & navigasi..."
-      );
-      setLogs(prev => [
-        ...prev,
-        isPrd
-          ? `[SPEC-ENGINE] Product architecture & user persona specifications generated for "${text.slice(0, 25)}..."`
-          : isFull
-          ? `[ARCHITECT] In-memory database schema & CRUD endpoints configured for "${text.slice(0, 25)}..."`
-          : `[DESIGNER] Layout tokens, palette & responsive grid initialized for "${text.slice(0, 25)}..."`
-      ]);
-    }, 1100);
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
 
-    const thinkingTimer2 = setTimeout(() => {
-      setGenerationTaskIndex(2);
-      setCurrentThinkingStep(
-        isPrd
-          ? "AI Agent menyusun blueprint interaktif & spesifikasi teknis..."
-          : isFull
-          ? "AI Agent mengintegrasikan state storage & sinkronisasi UI..."
-          : "AI Agent menyempurnakan interaksi UI, animasi & modal..."
-      );
-      setLogs(prev => [
-        ...prev,
-        isPrd
-          ? `[BLUEPRINT] Interactive PRD dashboard, diagrams & MVP features ready`
-          : isFull
-          ? `[BACKEND] localStorage adapter & state synchronization connected`
-          : `[FRONTEND] Interactive components, modals, filters & views generated`
-      ]);
-    }, 2300);
+    const startTime = Date.now();
+    const taskSchedule = [
+      { tIdx: 0, sIdx: 0, threshold: 0 },
+      { tIdx: 0, sIdx: 1, threshold: 500 },
+      { tIdx: 0, sIdx: 2, threshold: 1100 },
+      { tIdx: 1, sIdx: 0, threshold: 1800 },
+      { tIdx: 1, sIdx: 1, threshold: 2600 },
+      { tIdx: 1, sIdx: 2, threshold: 3400 },
+      { tIdx: 2, sIdx: 0, threshold: 4300 },
+      { tIdx: 2, sIdx: 1, threshold: 5300 },
+      { tIdx: 2, sIdx: 2, threshold: 6400 },
+      { tIdx: 3, sIdx: 0, threshold: 7600 },
+      { tIdx: 3, sIdx: 1, threshold: 9000 },
+      { tIdx: 3, sIdx: 2, threshold: 10600 }
+    ];
 
-    const thinkingTimer3 = setTimeout(() => {
-      setGenerationTaskIndex(3);
-      setCurrentThinkingStep(
-        isPrd
-          ? "AI Agent memverifikasi Acceptance Criteria & kelengkapan blueprint..."
-          : isFull
-          ? "AI Agent memvalidasi operasi CRUD & audit anti-slop visual..."
-          : "AI Agent mengaudit interaktivitas, no emoji & format WebP..."
-      );
-    }, 3800);
+    let lastLoggedTaskIdx = -1;
+
+    progressIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      setGenerationElapsedTime(elapsed);
+
+      let currentSchedule = taskSchedule[0];
+      for (let i = taskSchedule.length - 1; i >= 0; i--) {
+        if (elapsed >= taskSchedule[i].threshold) {
+          currentSchedule = taskSchedule[i];
+          break;
+        }
+      }
+
+      setGenerationTaskIndex(currentSchedule.tIdx);
+      setGenerationSubTaskIndex(currentSchedule.sIdx);
+
+      const tasksForMode = STUDIO_GENERATION_TASKS[effectiveMode] || STUDIO_GENERATION_TASKS.frontend;
+      const activeTaskData = tasksForMode[currentSchedule.tIdx];
+      const activeSubData = activeTaskData?.subtasks[currentSchedule.sIdx];
+
+      if (activeSubData) {
+        setCurrentThinkingStep(activeSubData.detail);
+      }
+
+      if (currentSchedule.tIdx !== lastLoggedTaskIdx) {
+        lastLoggedTaskIdx = currentSchedule.tIdx;
+        setLogs(prev => [
+          ...prev,
+          `[ENGINE:${activeSubData?.engine || "PIPELINE"}] Fase ${currentSchedule.tIdx + 1}/4: ${activeTaskData?.title || "Memproses"}`
+        ]);
+      }
+    }, 100);
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -1461,9 +1755,13 @@ export default function SatusiteStudioWorkspace() {
         })
       });
 
-      clearTimeout(thinkingTimer1);
-      clearTimeout(thinkingTimer2);
-      clearTimeout(thinkingTimer3);
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+      setGenerationTaskIndex(3);
+      setGenerationSubTaskIndex(2);
+      setCurrentThinkingStep("Kompilasi selesai. Mengintegrasikan komponen ke canvas...");
 
       const data = await res.json();
 
@@ -1560,8 +1858,10 @@ export default function SatusiteStudioWorkspace() {
       }
 
     } catch (err: any) {
-      clearTimeout(thinkingTimer1);
-      clearTimeout(thinkingTimer2);
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
 
       if (err.name === "AbortError") {
         setLogs(prev => [...prev, `[AI AGENT] Proses dihentikan oleh pengguna.`]);
@@ -1592,6 +1892,10 @@ export default function SatusiteStudioWorkspace() {
       ]);
       setLogs(prev => [...prev, `[STATUS] ${userFriendlyError}`]);
     } finally {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
       abortControllerRef.current = null;
       setIsGenerating(false);
       setCurrentThinkingStep("");
@@ -2464,12 +2768,8 @@ export default function SatusiteStudioWorkspace() {
               <button
                 type="button"
                 onClick={() => {
-                  if (!isPaidUser) {
-                    setUpgradeFeatureName("Sinkronisasi GitHub Repository");
-                    setShowUpgradeModal(true);
-                  } else {
-                    window.location.href = `/github?id=${projectId}`;
-                  }
+                  saveProjectState(code, messages, projectName, architectureStructure);
+                  window.location.href = `/github?id=${projectId}`;
                 }}
                 className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
                 title="Push ke GitHub Repository"
@@ -2481,12 +2781,8 @@ export default function SatusiteStudioWorkspace() {
               <button
                 type="button"
                 onClick={() => {
-                  if (!isPaidUser) {
-                    setUpgradeFeatureName("1-Click Cloud Deployment");
-                    setShowUpgradeModal(true);
-                  } else {
-                    window.location.href = `/deploy?id=${projectId}`;
-                  }
+                  saveProjectState(code, messages, projectName, architectureStructure);
+                  window.location.href = `/deploy?id=${projectId}`;
                 }}
                 className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
                 title="Publikasikan ke Vercel/Netlify"
@@ -3515,78 +3811,182 @@ export default function SatusiteStudioWorkspace() {
                   </div>
                 }
                 footerWidget={
-                  isGenerating ? (
-                    <div className="bg-zinc-900/90 rounded-2xl p-3 border border-blue-500/30 space-y-2.5 animate-fade-in-up shadow-lg">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs text-blue-400 font-semibold">
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
-                          <span>
-                            {genMode === "prd"
-                              ? "Menyusun Blueprint PRD..."
-                              : genMode === "fullstack"
-                              ? "Membangun Aplikasi Fullstack..."
-                              : "Memproses Frontend UI..."}
+                  isGenerating ? (() => {
+                    const currentModeTasks = STUDIO_GENERATION_TASKS[genMode] || STUDIO_GENERATION_TASKS.frontend;
+                    const overallProgress = Math.min(98, Math.round(((generationTaskIndex * 3 + generationSubTaskIndex + 1) / 12) * 100));
+                    const currentActiveTask = currentModeTasks[generationTaskIndex] || currentModeTasks[0];
+                    const currentActiveSubtask = currentActiveTask?.subtasks[generationSubTaskIndex] || currentActiveTask?.subtasks[0];
+
+                    return (
+                      <div className="bg-zinc-900/95 backdrop-blur-md rounded-2xl p-3.5 border border-blue-500/40 space-y-3 animate-fade-in-up shadow-2xl">
+                        {/* Top Header with Mode, Elapsed Timer, and Step Pill */}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 text-xs text-blue-400 font-bold min-w-0">
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400 shrink-0" />
+                            <span className="truncate">
+                              {genMode === "prd"
+                                ? "Menyusun Blueprint PRD..."
+                                : genMode === "fullstack"
+                                ? "Membangun Aplikasi Fullstack..."
+                                : "Memproses Frontend UI..."}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-zinc-950/80 text-zinc-300 border border-zinc-800 text-[9.5px] font-mono font-medium">
+                              <Clock className="w-2.5 h-2.5 text-blue-400" />
+                              {(generationElapsedTime / 1000).toFixed(1)}s
+                            </span>
+                            <span className="px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30 text-[9px] font-mono font-bold tracking-wider uppercase">
+                              TASK {generationTaskIndex + 1}/4
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Overall Compilation Progress Bar */}
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-[10px] font-mono">
+                            <span className="text-zinc-400 flex items-center gap-1.5">
+                              <Activity className="w-3 h-3 text-blue-400" />
+                              <span>Status Pipeline Eksekusi</span>
+                            </span>
+                            <span className="text-blue-400 font-semibold">{overallProgress}% Selesai</span>
+                          </div>
+                          <div className="w-full bg-zinc-950 rounded-full h-1.5 overflow-hidden border border-zinc-800/80">
+                            <div
+                              className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-400 transition-all duration-300 rounded-full"
+                              style={{ width: `${overallProgress}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Granular Task & Subtask Tree */}
+                        <div className="space-y-2 pt-1 border-t border-zinc-800/60 max-h-72 overflow-y-auto pr-1">
+                          {currentModeTasks.map((task, tIdx) => {
+                            const isDone = tIdx < generationTaskIndex;
+                            const isCurrent = tIdx === generationTaskIndex;
+
+                            if (isDone) {
+                              return (
+                                <div
+                                  key={tIdx}
+                                  className="flex items-center justify-between py-1.5 px-2.5 rounded-xl bg-zinc-950/40 text-[10px] border border-zinc-800/50"
+                                >
+                                  <div className="flex items-center gap-2 truncate">
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                    <span className="text-zinc-300 truncate font-medium">{task.title}</span>
+                                  </div>
+                                  <span className="text-[8.5px] font-mono text-emerald-400 shrink-0 ml-2 font-medium flex items-center gap-1 bg-emerald-950/30 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                                    <Check className="w-2.5 h-2.5" /> 3/3 Selesai
+                                  </span>
+                                </div>
+                              );
+                            }
+
+                            if (isCurrent) {
+                              return (
+                                <div
+                                  key={tIdx}
+                                  className="rounded-xl border border-blue-500/40 bg-blue-950/20 p-2.5 space-y-2 transition-all shadow-sm"
+                                >
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2 text-[10.5px] font-semibold text-blue-400 truncate">
+                                      <Loader2 className="w-3.5 h-3.5 text-blue-400 animate-spin shrink-0" />
+                                      <span className="truncate">{task.title}</span>
+                                    </div>
+                                    <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[8.5px] font-mono font-bold uppercase tracking-wider shrink-0">
+                                      Subtask {generationSubTaskIndex + 1}/3
+                                    </span>
+                                  </div>
+
+                                  {/* Subtasks List */}
+                                  <div className="space-y-1.5 pl-3 border-l-2 border-blue-500/30 ml-1.5 pt-0.5">
+                                    {task.subtasks.map((sub, sIdx) => {
+                                      const isSubDone = sIdx < generationSubTaskIndex;
+                                      const isSubCurrent = sIdx === generationSubTaskIndex;
+                                      return (
+                                        <div key={sIdx} className="space-y-1">
+                                          <div
+                                            className={`flex items-center gap-2 text-[10px] transition-all ${
+                                              isSubDone
+                                                ? "text-zinc-400"
+                                                : isSubCurrent
+                                                ? "text-zinc-100 font-semibold"
+                                                : "text-zinc-600"
+                                            }`}
+                                          >
+                                            {isSubDone ? (
+                                              <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                                            ) : isSubCurrent ? (
+                                              <span className="relative flex h-2.5 w-2.5 shrink-0">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
+                                              </span>
+                                            ) : (
+                                              <Circle className="w-3 h-3 text-zinc-700 shrink-0" />
+                                            )}
+                                            <span className="truncate">{sub.label}</span>
+                                          </div>
+
+                                          {/* Subtask Real-Time Active Detail */}
+                                          {isSubCurrent && (
+                                            <div className="ml-5 p-2 rounded-lg bg-zinc-950/90 border border-blue-500/30 space-y-1 animate-fade-in">
+                                              <div className="flex items-center justify-between text-[8.5px] font-mono">
+                                                <span className="text-blue-400 font-semibold flex items-center gap-1">
+                                                  <TerminalIcon className="w-2.5 h-2.5 text-blue-400" />
+                                                  Modul: {sub.engine}
+                                                </span>
+                                                <span className="text-emerald-400 flex items-center gap-1 font-medium">
+                                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                                  Sedang Berjalan
+                                                </span>
+                                              </div>
+                                              <div className="text-[9.5px] text-zinc-300 font-mono leading-relaxed">
+                                                {sub.detail}
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              );
+                            }
+
+                            // Pending tasks
+                            return (
+                              <div
+                                key={tIdx}
+                                className="flex items-center justify-between py-1.5 px-2.5 rounded-xl text-[10px] text-zinc-600 bg-zinc-950/20"
+                              >
+                                <div className="flex items-center gap-2 truncate">
+                                  <Circle className="w-3.5 h-3.5 text-zinc-800 shrink-0" />
+                                  <span className="truncate">{task.title}</span>
+                                </div>
+                                <span className="text-[8.5px] font-mono text-zinc-600 shrink-0 ml-2 uppercase">
+                                  Antrean
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Bottom Real-time Execution Feed */}
+                        <div className="text-[10px] text-zinc-300 font-mono bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800/80 flex items-center justify-between">
+                          <div className="flex items-center gap-2 overflow-hidden truncate">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse shrink-0" />
+                            <span className="text-zinc-500 shrink-0">&gt;</span>
+                            <span className="text-zinc-300 truncate">
+                              {currentThinkingStep || currentActiveSubtask?.detail || "AI Agent memproses pipeline..."}
+                            </span>
+                          </div>
+                          <span className="text-[8px] text-blue-400 font-mono tracking-widest shrink-0 ml-2 uppercase font-semibold">
+                            HOT PIPELINE
                           </span>
                         </div>
-                        <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[9px] font-mono font-bold uppercase">
-                          Task {generationTaskIndex + 1}/4
-                        </span>
                       </div>
-
-                      {/* Live Step Progress List */}
-                      <div className="space-y-1.5 pt-1 border-t border-zinc-800/60">
-                        {(genMode === "prd"
-                          ? [
-                              "Analisis Kebutuhan Sistem & User Personas",
-                              "Penyusunan Skema Relasi Database (ERD)",
-                              "Spesifikasi REST API Contracts & Endpoint",
-                              "Finalisasi Blueprint PRD & Live Demo"
-                            ]
-                          : genMode === "fullstack"
-                          ? [
-                              "Analisis Arsitektur Domain & Model Data AppDB",
-                              "Penyusunan State Storage & Operasi CRUD",
-                              "Integrasi 4-Panel Switcher & KPI Charts",
-                              "Audit Anti-Slop Visual & UI Responsif"
-                            ]
-                          : [
-                              "Analisis Desain Sistem & Kategori Industri",
-                              "Penyusunan Layout Responsif & Palet 60-30-10",
-                              "Integrasi Quick-View Modal & WhatsApp Cart",
-                              "Audit Navigasi Anchor & Validasi Interaksi"
-                            ]
-                        ).map((taskTitle, tIdx) => {
-                          const isDone = tIdx < generationTaskIndex;
-                          const isCurrent = tIdx === generationTaskIndex;
-                          return (
-                            <div
-                              key={tIdx}
-                              className={`flex items-center gap-2 text-[10px] transition-all ${
-                                isDone
-                                  ? "text-zinc-300"
-                                  : isCurrent
-                                  ? "text-blue-400 font-medium"
-                                  : "text-zinc-600"
-                              }`}
-                            >
-                              {isDone ? (
-                                <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                              ) : isCurrent ? (
-                                <Loader2 className="w-3 h-3 text-blue-400 animate-spin shrink-0" />
-                              ) : (
-                                <Circle className="w-3 h-3 text-zinc-700 shrink-0" />
-                              )}
-                              <span className="truncate">{taskTitle}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      <div className="text-[10px] text-zinc-400 font-mono bg-zinc-950/80 px-2.5 py-1 rounded-lg border border-zinc-800/50 truncate">
-                        {currentThinkingStep}
-                      </div>
-                    </div>
-                  ) : null
+                    );
+                  })() : null
                 }
               />
             </div>

@@ -137,81 +137,85 @@ export default function GitHubPushHub() {
       return;
     }
 
+    if (!githubPat.trim()) {
+      alert('Masukkan GitHub Personal Access Token (PAT) terlebih dahulu.');
+      return;
+    }
+
+    try {
+      localStorage.setItem('satusite_github_pat', githubPat.trim());
+    } catch (e) {}
+
     setIsPushing(true);
     setPushStep(1);
     setPushSuccess(null);
     setGitLogs([
-      `$ git init`,
-      `Initialized empty Git repository in .satusite-staging/${repoName}/.git/`,
-      `$ git config user.name "satusite-agent"`,
-      `$ git config user.email "bot@satusite.studio"`,
-      `[INFO] Menghubungkan ke GitHub API dengan kredensial terenkripsi...`
+      `[INFO] Memverifikasi akun dan token GitHub...`,
+      `[INFO] Target Repositori: ${repoName} (${isPrivate ? 'Private' : 'Public'})`
     ]);
 
-    let serverRepoUrl = '';
-    let serverCloneUrl = '';
+    const projectCode = selectedProject?.code || '<!DOCTYPE html><html><body><h1>Satusite Web App</h1></body></html>';
+    const filesToPush = [
+      { path: 'index.html', content: projectCode },
+      { path: 'README.md', content: `# ${selectedProject?.name || repoName}\n\nAplikasi web mandiri dihasilkan otomatis oleh Satusite Studio AI Agent.\n\n## Panduan Menjalankan:\n1. Buka file \`index.html\` langsung di browser Anda.\n2. Hubungkan repositori ini ke Vercel atau Netlify untuk deployment otomatis gratis.` }
+    ];
+
     try {
+      setPushStep(2);
+      setGitLogs(prev => [
+        ...prev,
+        `[GIT] Menyiapkan struktur commit berkas proyek (${filesToPush.length} berkas)...`
+      ]);
+
       const res = await fetch('/api/github/push', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          projectId: selectedProjectId,
-          projectName: selectedProject?.name || 'satusite-app',
-          repoName,
-          branch,
-          commitMessage,
+          token: githubPat.trim(),
+          repoName: repoName.trim(),
+          branch: branch || 'main',
+          commitMessage: commitMessage.trim(),
           isPrivate,
-          pat: githubPat
+          files: filesToPush
         })
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.repoUrl) serverRepoUrl = data.repoUrl;
-        if (data.cloneUrl) serverCloneUrl = data.cloneUrl;
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setIsPushing(false);
+        setPushStep(0);
+        const errMsg = data.error || 'Terjadi kesalahan saat berkomunikasi dengan GitHub API.';
+        setGitLogs(prev => [
+          ...prev,
+          `[ERROR] ${errMsg}`
+        ]);
+        alert(`Gagal push ke GitHub: ${errMsg}`);
+        return;
       }
-    } catch (e) { }
 
-    setTimeout(() => {
-      setPushStep(2);
-      setGitLogs(prev => [
-        ...prev,
-        `$ git add index.html styles.css app.js README.md`,
-        `[INFO] Staging 4 files (${((selectedProject?.code?.length || 4000) / 1024).toFixed(1)} KB)`,
-        `$ git commit -m "${commitMessage}"`,
-        `[${branch} (root-commit) a1c4b92] ${commitMessage}`,
-        ` 4 files changed, 342 insertions(+)`
-      ]);
-    }, 1200);
-
-    setTimeout(() => {
-      setPushStep(3);
-      setGitLogs(prev => [
-        ...prev,
-        `$ git branch -M ${branch}`,
-        `$ git remote add origin https://github.com/user/${repoName}.git`,
-        `[INFO] Mengirim objek pack ke remote GitHub origin...`,
-        `Writing objects: 100% (4/4), 14.82 KiB | 7.41 MiB/s, done.`
-      ]);
-    }, 2400);
-
-    setTimeout(() => {
       setPushStep(4);
-      const finalRepoUrl = serverRepoUrl || `https://github.com/satusite-demo/${repoName}`;
-      const finalCloneUrl = serverCloneUrl || `git@github.com:satusite-demo/${repoName}.git`;
-
       setGitLogs(prev => [
         ...prev,
-        `To https://github.com/user/${repoName}.git`,
-        ` * [new branch]      ${branch} -> ${branch}`,
-        `Branch '${branch}' set up to track remote branch '${branch}' from 'origin'.`,
-        `[OK] PUSH BERHASIL! Repositori aktif di: ${finalRepoUrl}`
+        `[OK] Repositori berhasil disinkronisasi di GitHub`,
+        `[OK] Berkas index.html dan README.md berhasil dicommit ke branch "${branch}"`,
+        `[OK] PUSH BERHASIL! Repositori aktif di: ${data.repoUrl}`
       ]);
       setPushSuccess({
-        repoUrl: finalRepoUrl,
-        cloneUrl: finalCloneUrl
+        repoUrl: data.repoUrl,
+        cloneUrl: `${data.repoUrl}.git`
       });
       setIsPushing(false);
-    }, 3800);
+    } catch (err: any) {
+      setIsPushing(false);
+      setPushStep(0);
+      const errMsg = err.message || 'Gagal terhubung ke server.';
+      setGitLogs(prev => [
+        ...prev,
+        `[ERROR] Kesalahan koneksi: ${errMsg}`
+      ]);
+      alert(`Kesalahan koneksi: ${errMsg}`);
+    }
   };
 
   const handleCopyClone = (text: string) => {

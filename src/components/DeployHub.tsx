@@ -23,7 +23,10 @@ import {
   Settings2,
   Check,
   Zap,
-  ChevronRight
+  ChevronRight,
+  Eye,
+  EyeOff,
+  KeyRound
 } from 'lucide-react';
 
 interface SavedProject {
@@ -49,6 +52,8 @@ export default function DeployHub() {
   const [selectedProject, setSelectedProject] = useState<SavedProject | null>(null);
 
   const [provider, setProvider] = useState<'vercel' | 'netlify' | 'cloudflare' | 'github' | 'custom'>('vercel');
+  const [providerToken, setProviderToken] = useState<string>('');
+  const [showToken, setShowToken] = useState<boolean>(false);
   const [subdomain, setSubdomain] = useState<string>('');
   const [customDomain, setCustomDomain] = useState<string>('');
   const [envVars, setEnvVars] = useState<{ key: string; value: string }[]>([
@@ -86,6 +91,9 @@ export default function DeployHub() {
   // Load saved projects from localStorage
   useEffect(() => {
     try {
+      const savedVercel = localStorage.getItem('satusite_vercel_token') || '';
+      if (savedVercel) setProviderToken(savedVercel);
+
       const storeRaw = localStorage.getItem('satusite_projects_store') || localStorage.getItem('emergent_projects_store');
       if (storeRaw) {
         const store = JSON.parse(storeRaw);
@@ -133,89 +141,95 @@ export default function DeployHub() {
       return;
     }
 
+    const effectiveToken = providerToken.trim();
+    if (provider === 'vercel' && !effectiveToken) {
+      alert('Masukkan Vercel Personal Access Token untuk deploy otomatis langsung ke akun Vercel Anda.\n\nToken gratis dibuat di: https://vercel.com/account/tokens\n\nAtau gunakan opsi "Deploy via GitHub" atau "Netlify Drop" di bawah.');
+      return;
+    }
+
+    try {
+      if (provider === 'vercel') localStorage.setItem('satusite_vercel_token', effectiveToken);
+      if (provider === 'netlify') localStorage.setItem('satusite_netlify_token', effectiveToken);
+    } catch (e) {}
+
     setIsDeploying(true);
     setDeployStep(1);
     setDeployResult(null);
     setDeployLogs([
-      `[${new Date().toLocaleTimeString()}] Memulai pipeline deployment untuk: ${selectedProject?.name || 'Satusite Proyek'}`,
-      `[${new Date().toLocaleTimeString()}] Target Provider: ${provider.toUpperCase()} Global Edge Network`,
-      `[${new Date().toLocaleTimeString()}] Memvalidasi integritas file (HTML5/CSS3/JS)...`
+      `[${new Date().toLocaleTimeString()}] Menghubungkan ke ${provider.toUpperCase()} API...`,
+      `[${new Date().toLocaleTimeString()}] Memvalidasi token dan bundle berkas proyek: ${selectedProject?.name || 'Satusite Proyek'}`
     ]);
 
-    let serverLiveUrl = '';
     try {
+      setDeployStep(2);
+      setDeployLogs(prev => [
+        ...prev,
+        `[${new Date().toLocaleTimeString()}] Mengirim payload index.html ke edge network global...`
+      ]);
+
       const res = await fetch('/api/deploy/trigger', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           projectId: selectedProjectId,
           projectName: selectedProject?.name || 'satusite-app',
-          provider
+          provider,
+          token: effectiveToken,
+          code: selectedProject?.code || '<!DOCTYPE html><html><body><h1>Satusite Web App</h1></body></html>',
+          customDomain: customDomain.trim() || undefined
         })
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.liveUrl) serverLiveUrl = data.liveUrl;
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setIsDeploying(false);
+        setDeployStep(0);
+        const errMsg = data.error || 'Deployment gagal dieksekusi.';
+        setDeployLogs(prev => [
+          ...prev,
+          `[ERROR] ${errMsg}`
+        ]);
+        alert(`Gagal deploy: ${errMsg}`);
+        return;
       }
-    } catch (e) { }
 
-    setTimeout(() => {
-      setDeployStep(2);
-      setDeployLogs(prev => [
-        ...prev,
-        `[${new Date().toLocaleTimeString()}] [OK] File divalidasi (0 error, 0 warning)`,
-        `[${new Date().toLocaleTimeString()}] Membangun aset bundle & minifikasi skrip...`,
-        `[${new Date().toLocaleTimeString()}] Menginjeksi environment variables & meta tags...`
-      ]);
-    }, 1000);
-
-    setTimeout(() => {
-      setDeployStep(3);
-      setDeployLogs(prev => [
-        ...prev,
-        `[${new Date().toLocaleTimeString()}] [OK] Bundle selesai (Ukuran: 48.2 KB)`,
-        `[${new Date().toLocaleTimeString()}] Mengunggah ke 300+ Edge Data Centers ${provider}...`,
-        `[${new Date().toLocaleTimeString()}] Mengalokasikan sertifikat SSL/TLS Otomatis (Let's Encrypt)...`
-      ]);
-    }, 2000);
-
-    setTimeout(() => {
       setDeployStep(4);
-      const targetSlug = subdomain || 'satusite-app';
-      const finalUrl = serverLiveUrl || (
-        provider === 'vercel'
-          ? `https://${targetSlug}.satusite.vercel.app`
-          : provider === 'netlify'
-            ? `https://${targetSlug}.netlify.app`
-            : provider === 'cloudflare'
-              ? `https://${targetSlug}.pages.dev`
-              : `https://${targetSlug}.satusite.app`
-      );
+      const finalUrl = data.liveUrl;
+      const apiLogs = data.logs || [];
 
       setDeployLogs(prev => [
         ...prev,
-        `[${new Date().toLocaleTimeString()}] [OK] SSL/TLS Certificate aktif & terverifikasi (Grade A+)`,
-        `[${new Date().toLocaleTimeString()}] [OK] Propagasi DNS global selesai dalam 82ms`,
+        ...apiLogs,
         `[${new Date().toLocaleTimeString()}] [LIVE] DEPLOYMENT BERHASIL! Website telah live di: ${finalUrl}`
       ]);
+
       setDeployResult({
         url: finalUrl,
         qrUrl: `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(finalUrl)}`
       });
       setIsDeploying(false);
 
-      // Add to history
       const newRecord: DeploymentRecord = {
-        id: 'dep_' + Date.now(),
+        id: data.deploymentId || ('dep_' + Date.now()),
         projectName: selectedProject?.name || 'Proyek Baru',
         provider: `${provider.charAt(0).toUpperCase() + provider.slice(1)} Edge`,
         url: finalUrl,
         timestamp: 'Baru saja',
         status: 'active',
-        buildTime: '2.4s'
+        buildTime: 'Real Edge Deploy'
       };
       setHistory(prev => [newRecord, ...prev]);
-    }, 3800);
+    } catch (err: any) {
+      setIsDeploying(false);
+      setDeployStep(0);
+      const errMsg = err.message || 'Kesalahan jaringan saat deploy.';
+      setDeployLogs(prev => [
+        ...prev,
+        `[ERROR] ${errMsg}`
+      ]);
+      alert(`Kesalahan deploy: ${errMsg}`);
+    }
   };
 
   const handleCopyUrl = (url: string) => {
@@ -439,10 +453,80 @@ export default function DeployHub() {
               </div>
             </div>
 
-            {/* Step 3: Domain & Slug Setup */}
+            {/* Step 3: Provider Token & Authentication */}
+            <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center text-xs font-bold font-mono">3</div>
+                  <h3 className="text-sm font-semibold text-white">Autentikasi {provider === 'vercel' ? 'Vercel' : 'Provider'} Token</h3>
+                </div>
+                {provider === 'vercel' && (
+                  <a
+                    href="https://vercel.com/account/tokens"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[11px] text-blue-400 hover:text-blue-300 underline flex items-center gap-1"
+                  >
+                    <span>Buat Vercel Token Gratis</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <div className="relative">
+                  <input
+                    type={showToken ? 'text' : 'password'}
+                    value={providerToken}
+                    onChange={(e) => setProviderToken(e.target.value)}
+                    placeholder={provider === 'vercel' ? 'Tempel Vercel Personal Access Token Anda di sini...' : 'Tempel Access Token provider Anda...'}
+                    className="w-full bg-zinc-950 border border-zinc-800 focus:border-zinc-600 rounded-xl py-2.5 pl-3.5 pr-10 text-xs text-white placeholder-zinc-600 focus:outline-none font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowToken(!showToken)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 cursor-pointer"
+                  >
+                    {showToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                <p className="text-[11px] text-zinc-500 leading-relaxed">
+                  Token disimpan aman di peramban lokal Anda untuk mempublikasikan kode HTML/JS ke edge server Vercel secara nyata.
+                </p>
+              </div>
+
+              {/* Alternative Quick Deployment Cards: Netlify Drop & GitHub */}
+              <div className="pt-2 border-t border-zinc-800/60 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <a
+                  href="https://app.netlify.com/drop"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-3 rounded-xl bg-zinc-950 hover:bg-zinc-800/60 border border-zinc-800 transition-colors flex items-center justify-between text-zinc-300 hover:text-white"
+                >
+                  <div>
+                    <div className="font-semibold text-white">Netlify Drop (Tanpa Token)</div>
+                    <div className="text-[10px] text-zinc-500">Drag & drop HTML/ZIP instan</div>
+                  </div>
+                  <ExternalLink className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                </a>
+
+                <a
+                  href={selectedProjectId ? `/github?id=${selectedProjectId}` : '/github'}
+                  className="p-3 rounded-xl bg-zinc-950 hover:bg-zinc-800/60 border border-zinc-800 transition-colors flex items-center justify-between text-zinc-300 hover:text-white"
+                >
+                  <div>
+                    <div className="font-semibold text-white">Deploy via GitHub Repo</div>
+                    <div className="text-[10px] text-zinc-500">Push repo & sambungkan ke Vercel</div>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                </a>
+              </div>
+            </div>
+
+            {/* Step 4: Domain & Slug Setup */}
             <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-5 space-y-4">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center text-xs font-bold font-mono">3</div>
+                <div className="w-6 h-6 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-200 flex items-center justify-center text-xs font-bold font-mono">4</div>
                 <h3 className="text-sm font-semibold text-white">Konfigurasi Alamat URL & Domain</h3>
               </div>
 
@@ -487,7 +571,7 @@ export default function DeployHub() {
               </div>
             </div>
 
-            {/* Step 4: Action Button */}
+            {/* Step 5: Action Button */}
             <div className="pt-2">
               <button
                 type="button"
