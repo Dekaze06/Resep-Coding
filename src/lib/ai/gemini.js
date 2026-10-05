@@ -5,11 +5,14 @@
 // - Deterministic post-processing (emoji stripping)
 import { SystemConfigDB } from '../db.ts';
 
-const DEFAULT_MODELS = ['gemini-3.7-flash', 'gemini-3.8-flash'];
+const DEFAULT_MODELS = [
+    'gemini-3.7-flash',
+    'gemini-3.8-flash',
+];
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 export function getApiKey() {
-    return import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
+    return (typeof import.meta !== 'undefined' && import.meta.env?.GEMINI_API_KEY) || (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) || '';
 }
 
 /** Resolve model order from admin system config, falling back to defaults. */
