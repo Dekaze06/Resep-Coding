@@ -27,6 +27,7 @@ import {
   ShieldCheck,
   ChevronRight
 } from 'lucide-react';
+import { generateProjectFiles } from '../lib/projectStructure';
 
 interface SavedProject {
   id: string;
@@ -155,10 +156,15 @@ export default function GitHubPushHub() {
     ]);
 
     const projectCode = selectedProject?.code || '<!DOCTYPE html><html><body><h1>Satusite Web App</h1></body></html>';
-    const filesToPush = [
-      { path: 'index.html', content: projectCode },
-      { path: 'README.md', content: `# ${selectedProject?.name || repoName}\n\nAplikasi web mandiri dihasilkan otomatis oleh Satusite Studio AI Agent.\n\n## Panduan Menjalankan:\n1. Buka file \`index.html\` langsung di browser Anda.\n2. Hubungkan repositori ini ke Vercel atau Netlify untuk deployment otomatis gratis.` }
-    ];
+    const projectFilesMap = generateProjectFiles({
+      projectName: selectedProject?.name || repoName,
+      htmlCode: projectCode,
+      mode: 'fullstack'
+    });
+    const filesToPush = Object.entries(projectFilesMap).map(([path, content]) => ({
+      path,
+      content
+    }));
 
     try {
       setPushStep(2);
