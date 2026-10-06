@@ -9,6 +9,9 @@ import {
   ShieldCheck,
   Zap,
   Activity,
+  Database,
+  FileText,
+  LayoutTemplate,
   Settings,
   BookOpen,
   Plus,
@@ -290,7 +293,12 @@ export default function ClientPortal() {
   const filteredProjects = projects.filter(p => {
     const matchesQuery = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          (p.prompt && p.prompt.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory === 'Semua' || p.category === selectedCategory || p.mode === selectedCategory.toLowerCase();
+    const matchesCategory = selectedCategory === 'Semua' || 
+                            p.category === selectedCategory || 
+                            p.mode === selectedCategory.toLowerCase() ||
+                            (selectedCategory === 'Planning' && p.mode === 'prd') ||
+                            (selectedCategory === 'Build App' && p.mode === 'fullstack') ||
+                            (selectedCategory === 'Desain' && p.mode === 'frontend');
     return matchesQuery && matchesCategory;
   });
 
@@ -372,37 +380,36 @@ export default function ClientPortal() {
             </a>
           </div>
 
-          {/* GROUP 2: DEVOPS & DISTRIBUSI */}
+          {/* GROUP 2: PRODUK STUDIO */}
           <div className="space-y-1">
             <div className="px-2.5 py-1 text-[10px] font-mono uppercase text-zinc-500 tracking-wider">
-              DevOps & Launch
+              Produk Studio
             </div>
 
             <a
-              href="/deploy"
+              href="/studio/prd"
               className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50 transition-colors text-left"
             >
               <div className="flex items-center gap-2.5">
-                <Rocket className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Deploy & Cloud Edge</span>
+                <FileText className="w-3.5 h-3.5 text-amber-400" />
+                <span>1. Planning (PRD)</span>
               </div>
-              <span className="text-[10px] font-mono text-zinc-400">Live</span>
             </a>
 
             <a
-              href="/github"
+              href="/studio/fullstack"
               className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50 transition-colors text-left"
             >
-              <GitBranch className="w-3.5 h-3.5 text-zinc-400" />
-              <span>GitHub Push Hub</span>
+              <Database className="w-3.5 h-3.5 text-emerald-400" />
+              <span>2. Build App (Fullstack)</span>
             </a>
 
             <a
-              href="/testing"
+              href="/studio/frontend"
               className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50 transition-colors text-left"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Testing & QA Suite</span>
+              <LayoutTemplate className="w-3.5 h-3.5 text-blue-400" />
+              <span>3. Desain (Figma Canvas)</span>
             </a>
           </div>
 
@@ -559,53 +566,53 @@ export default function ClientPortal() {
                 </div>
               </div>
 
-              {/* Quick Action Cards Banner */}
+              {/* Quick Action Cards: 3 Produk Studio */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <a
-                  href="/app"
-                  className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 hover:border-zinc-700 transition-all group space-y-2"
+                  href="/studio/prd"
+                  className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 hover:border-amber-500/40 transition-all group space-y-2"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-200">
-                    <Sparkles className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                    <FileText className="w-4 h-4" />
                   </div>
                   <div className="font-semibold text-white text-xs flex items-center justify-between">
-                    <span>Studio AI Generator</span>
+                    <span>1. Planning (PRD)</span>
                     <ArrowRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-colors" />
                   </div>
                   <p className="text-[11px] text-zinc-400 leading-relaxed">
-                    Hasilkan kode Fullstack, Frontend, dan PRD interaktif hanya dari satu deskripsi teks.
+                    Fungsi penyusunan dokumen PRD komprehensif & blueprint arsitektur sistem.
                   </p>
                 </a>
 
                 <a
-                  href="/deploy"
-                  className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 hover:border-zinc-700 transition-all group space-y-2"
+                  href="/studio/fullstack"
+                  className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 hover:border-emerald-500/40 transition-all group space-y-2"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-200">
-                    <Rocket className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <Database className="w-4 h-4" />
                   </div>
                   <div className="font-semibold text-white text-xs flex items-center justify-between">
-                    <span>Deploy & Cloud Edge</span>
+                    <span>2. Build App (Fullstack)</span>
                     <ArrowRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-colors" />
                   </div>
                   <p className="text-[11px] text-zinc-400 leading-relaxed">
-                    Hubungkan domain kustom dan publikasikan aplikasi secara instan ke Vercel atau Netlify.
+                    Fungsi membuat aplikasi fullstack lengkap dengan state in-memory & CRUD.
                   </p>
                 </a>
 
                 <a
-                  href="/testing"
-                  className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 hover:border-zinc-700 transition-all group space-y-2"
+                  href="/studio/frontend"
+                  className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 hover:border-blue-500/40 transition-all group space-y-2"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-200">
-                    <ShieldCheck className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                    <LayoutTemplate className="w-4 h-4" />
                   </div>
                   <div className="font-semibold text-white text-xs flex items-center justify-between">
-                    <span>Testing & QA Suite</span>
+                    <span>3. Desain (Figma Canvas)</span>
                     <ArrowRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-colors" />
                   </div>
                   <p className="text-[11px] text-zinc-400 leading-relaxed">
-                    Uji performa, aksesibilitas, SEO, dan keamanan kode sebelum dirilis ke publik.
+                    Fitur kanvas visual interaktif layaknya Figma untuk merancang UI/UX.
                   </p>
                 </a>
               </div>
@@ -657,7 +664,7 @@ export default function ClientPortal() {
                         : isFront
                         ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
                         : 'bg-purple-500/10 text-purple-400 border-purple-500/30';
-                      const modeLabel = isPrd ? 'PRD Blueprint' : isFront ? 'Frontend UI' : 'Fullstack App';
+                      const modeLabel = isPrd ? 'Planning (PRD)' : isFront ? 'Desain' : 'Build App';
 
                       return (
                         <div key={p.id} className="p-4 rounded-xl bg-zinc-950 border border-zinc-800/70 space-y-3 hover:border-zinc-700 transition-all flex flex-col justify-between">
@@ -727,7 +734,7 @@ export default function ClientPortal() {
                 </div>
 
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-                  {['Semua', 'Fullstack', 'Frontend', 'PRD', 'Dashboard', 'E-Commerce'].map(cat => (
+                  {['Semua', 'Planning', 'Build App', 'Desain', 'Dashboard', 'E-Commerce'].map(cat => (
                     <button
                       key={cat}
                       type="button"
@@ -764,7 +771,7 @@ export default function ClientPortal() {
                       : isFront
                       ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
                       : 'bg-purple-500/10 text-purple-400 border-purple-500/30';
-                    const modeLabel = isPrd ? 'PRD' : isFront ? 'Frontend' : 'Fullstack';
+                    const modeLabel = isPrd ? 'Planning (PRD)' : isFront ? 'Desain' : 'Build App';
 
                     return (
                       <div key={p.id} className="p-5 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 space-y-4 hover:border-zinc-700 transition-all flex flex-col justify-between">

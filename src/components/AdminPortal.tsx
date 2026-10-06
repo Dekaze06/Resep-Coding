@@ -949,7 +949,7 @@ export default function AdminPortal() {
                     <div className="space-y-2 text-xs">
                       <div>
                         <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                          <span>Fullstack Web Apps & Dashboards ({fullstackCount})</span>
+                          <span>Build App (Fullstack Web Apps & DB) ({fullstackCount})</span>
                           <span>{fullstackPct}%</span>
                         </div>
                         <div className="w-full h-2 rounded-full bg-zinc-950 overflow-hidden">
@@ -958,7 +958,7 @@ export default function AdminPortal() {
                       </div>
                       <div>
                         <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                          <span>Frontend UI Interfaces ({frontendCount})</span>
+                          <span>Desain (Figma-like Visual Canvas) ({frontendCount})</span>
                           <span>{frontendPct}%</span>
                         </div>
                         <div className="w-full h-2 rounded-full bg-zinc-950 overflow-hidden">
@@ -967,7 +967,7 @@ export default function AdminPortal() {
                       </div>
                       <div>
                         <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                          <span>PRD & Blueprint Arsitektur ({prdCount})</span>
+                          <span>Planning (PRD & Arsitektur Sistem) ({prdCount})</span>
                           <span>{prdPct}%</span>
                         </div>
                         <div className="w-full h-2 rounded-full bg-zinc-950 overflow-hidden">
@@ -1119,8 +1119,8 @@ export default function AdminPortal() {
                           <td className="py-3 px-4 text-zinc-400 font-sans">{p.owner}</td>
                           <td className="py-3 px-4 text-zinc-300 font-sans">{p.category}</td>
                           <td className="py-3 px-4">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-300 bg-zinc-900 border border-zinc-800 uppercase">
-                              {p.mode}
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-300 bg-zinc-900 border border-zinc-800">
+                              {p.mode === 'prd' ? 'Planning (PRD)' : p.mode === 'frontend' ? 'Desain' : 'Build App'}
                             </span>
                           </td>
                           <td className="py-3 px-4 font-sans">

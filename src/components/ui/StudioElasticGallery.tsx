@@ -18,7 +18,7 @@ export interface StudioItemProps {
   title: string;
   shortTitle: string;
   subtitle: string;
-  mode: "ai-recommended" | "prd" | "frontend" | "fullstack";
+  mode: "prd" | "frontend" | "fullstack";
   href: string;
   badge: string;
   trialBadge: string;
@@ -45,125 +45,57 @@ export interface StudioItemProps {
 const studioItems: StudioItemProps[] = [
   {
     id: "01",
-    title: "AI Recommended Studio",
-    shortTitle: "AI Recommended",
-    subtitle: "Auto",
-    mode: "ai-recommended",
-    href: "/app?mode=ai-recommended",
-    badge: "AUTO",
-    trialBadge: "Coba 1x Gratis",
+    title: "Planning",
+    shortTitle: "Planning",
+    subtitle: "Fungsi Membuat PRD",
+    mode: "prd",
+    href: "/studio/prd",
+    badge: "PLANNING",
+    trialBadge: "PRD & Blueprint",
     description:
-      "Panduan konfigurasi otomatis mudah 7 langkah. Tentukan nama website, kategori bisnis, gaya desain, target audiens, dan fitur utama secara terstruktur.",
+      "Perancangan dokumen Product Requirement Document (PRD) komprehensif, arsitektur modul sistem, dan peta jalan teknis siap koding.",
     features: [
-      "Wizard 7 langkah otomatis ramah pemula",
-      "Preset tema warna, tipografi & audiens bisnis",
-      "Akses coba 1x gratis dengan hasil instan"
+      "Analisis kebutuhan sistem & user stories",
+      "Visualisasi pohon hierarki modul arsitektur",
+      "Ekspor dokumen PRD (.md) siap implementasi"
     ],
     imageSrc:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=75",
-    btnText: "Buka AI Recommended",
-    iconType: "sparkles",
+      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=75",
+    btnText: "Buka Planning",
+    iconType: "fileText",
     accent: {
       text: "text-white",
-      iconBg: "bg-zinc-900 border-zinc-800",
-      iconText: "text-zinc-200",
+      iconBg: "bg-amber-500/15 border-amber-500/30",
+      iconText: "text-amber-400",
       badge: "bg-zinc-800/90 text-zinc-200 border-zinc-700/60",
-      btn: "bg-white hover:bg-zinc-100 border-zinc-200/80 text-zinc-950",
-      btnHover: "hover:bg-zinc-100",
+      btn: "bg-amber-500 hover:bg-amber-400 border-amber-400 text-zinc-950",
+      btnHover: "hover:bg-amber-400",
       btnText: "text-zinc-950 font-bold",
-      btnArrowBg: "bg-zinc-950/10 group-hover/cta:bg-zinc-950/15",
-      btnArrowText: "text-zinc-800 group-hover/cta:text-zinc-950",
-      topStrip: "via-zinc-500/40",
-      borderActive: "border-zinc-800"
+      btnArrowBg: "bg-zinc-950/15 group-hover/cta:bg-zinc-950/20",
+      btnArrowText: "text-zinc-950",
+      topStrip: "via-amber-500/50",
+      borderActive: "border-amber-500/30"
     }
   },
   {
     id: "02",
-    title: "Studio PRD & Arsitektur",
-    shortTitle: "Studio PRD",
-    subtitle: "Blueprint & Spesifikasi",
-    mode: "prd",
-    href: "/studio/prd",
-    badge: "PRO",
-    trialBadge: "Coba 1x Gratis",
-    description:
-      "Kolom chat AI Agent khusus perancangan dokumen Product Requirement Document (PRD), spesifikasi modul teknis, dan diagram hierarki arsitektur.",
-    features: [
-      "Analisis kebutuhan sistem & user stories",
-      "Visualisasi pohon hierarki modul arsitektur",
-      "Tersedia untuk tier PRO (Coba 1x gratis)"
-    ],
-    imageSrc:
-      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=75",
-    btnText: "Buka Studio PRD",
-    iconType: "fileText",
-    accent: {
-      text: "text-white",
-      iconBg: "bg-orange-500/15 border-orange-500/30",
-      iconText: "text-orange-400",
-      badge: "bg-zinc-800/90 text-zinc-200 border-zinc-700/60",
-      btn: "bg-orange-500 hover:bg-orange-400 border-orange-400 text-zinc-950",
-      btnHover: "hover:bg-orange-400",
-      btnText: "text-zinc-950 font-bold",
-      btnArrowBg: "bg-zinc-950/15 group-hover/cta:bg-zinc-950/20",
-      btnArrowText: "text-zinc-950",
-      topStrip: "via-orange-500/50",
-      borderActive: "border-orange-500/30"
-    }
-  },
-  {
-    id: "03",
-    title: "Studio Frontend UI/UX",
-    shortTitle: "Studio Frontend",
-    subtitle: "Desain Visual Responsif",
-    mode: "frontend",
-    href: "/studio/frontend",
-    badge: "PRO",
-    trialBadge: "Coba 1x Gratis",
-    description:
-      "Kolom chat AI Agent khusus perancangan estetika visual, komponen responsif multi-device, micro-interactions, dan styling CSS modern.",
-    features: [
-      "Prompt builder visual UI/UX & layout responsif",
-      "Pratinjau langsung mobile, tablet, dan desktop",
-      "Tersedia untuk tier PRO (Coba 1x gratis)"
-    ],
-    imageSrc:
-      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=75",
-    btnText: "Buka Studio Frontend",
-    iconType: "layout",
-    accent: {
-      text: "text-white",
-      iconBg: "bg-blue-500/15 border-blue-500/30",
-      iconText: "text-blue-400",
-      badge: "bg-zinc-800/90 text-zinc-200 border-zinc-700/60",
-      btn: "bg-blue-500 hover:bg-blue-400 border-blue-400 text-zinc-950",
-      btnHover: "hover:bg-blue-400",
-      btnText: "text-zinc-950 font-bold",
-      btnArrowBg: "bg-zinc-950/15 group-hover/cta:bg-zinc-950/20",
-      btnArrowText: "text-zinc-950",
-      topStrip: "via-blue-500/50",
-      borderActive: "border-blue-500/30"
-    }
-  },
-  {
-    id: "04",
-    title: "Studio Fullstack App",
-    shortTitle: "Studio Fullstack",
-    subtitle: "Database & Logika End-to-End",
+    title: "Build App",
+    shortTitle: "Build App",
+    subtitle: "Fungsi Membuat Fullstack",
     mode: "fullstack",
     href: "/studio/fullstack",
-    badge: "MAX",
-    trialBadge: "Tier MAX",
+    badge: "BUILD APP",
+    trialBadge: "Fullstack & DB",
     description:
-      "Kolom chat AI Agent khusus pengembangan aplikasi lengkap dengan database in-memory, logika aksi CRUD, manipulasi state, dan panel admin.",
+      "Pengembangan aplikasi web end-to-end lengkap dengan database in-memory, logika aksi CRUD terintegrasi, dan panel admin.",
     features: [
       "Logika data, manipulasi state & CRUD terintegrasi",
-      "Penyimpanan data lokal, pencarian & export data",
-      "Fitur mutakhir khusus paket MAX"
+      "Penyimpanan database browser & ekspor data",
+      "Panel admin bawaan untuk operasional bisnis"
     ],
     imageSrc:
       "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=75",
-    btnText: "Buka Studio Fullstack",
+    btnText: "Buka Build App",
     iconType: "database",
     accent: {
       text: "text-white",
@@ -177,6 +109,40 @@ const studioItems: StudioItemProps[] = [
       btnArrowText: "text-zinc-950",
       topStrip: "via-purple-500/50",
       borderActive: "border-purple-500/30"
+    }
+  },
+  {
+    id: "03",
+    title: "Desain",
+    shortTitle: "Desain",
+    subtitle: "Fitur Desain Seperti Figma",
+    mode: "frontend",
+    href: "/studio/frontend",
+    badge: "DESAIN",
+    trialBadge: "Figma Canvas",
+    description:
+      "Fitur kanvas visual interaktif layaknya Figma untuk merancang wireframe, mockup responsif multi-device, komponen modern, dan styling CSS.",
+    features: [
+      "Kanvas desain visual responsif seperti Figma",
+      "Pratinjau langsung mobile, tablet, dan desktop",
+      "Styling modern CSS, Tailwind, dan animasi mikro"
+    ],
+    imageSrc:
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=75",
+    btnText: "Buka Desain",
+    iconType: "layout",
+    accent: {
+      text: "text-white",
+      iconBg: "bg-blue-500/15 border-blue-500/30",
+      iconText: "text-blue-400",
+      badge: "bg-zinc-800/90 text-zinc-200 border-zinc-700/60",
+      btn: "bg-blue-500 hover:bg-blue-400 border-blue-400 text-zinc-950",
+      btnHover: "hover:bg-blue-400",
+      btnText: "text-zinc-950 font-bold",
+      btnArrowBg: "bg-zinc-950/15 group-hover/cta:bg-zinc-950/20",
+      btnArrowText: "text-zinc-950",
+      topStrip: "via-blue-500/50",
+      borderActive: "border-blue-500/30"
     }
   }
 ];

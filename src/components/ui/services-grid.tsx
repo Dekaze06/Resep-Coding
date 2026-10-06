@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Database, LayoutTemplate, Network, Rocket, GitBranch, ShieldCheck, ArrowRight, Check } from "lucide-react";
+import { Database, LayoutTemplate, Network, ArrowRight, Check } from "lucide-react";
 
 interface ServiceItem {
   icon: React.ElementType;
@@ -16,64 +16,34 @@ interface ServiceItem {
 
 const services: ServiceItem[] = [
   {
+    icon: Network,
+    title: "Planning (PRD)",
+    description: "Fungsi untuk membuat Product Requirement Document (PRD) & blueprint arsitektur sistem.",
+    bullets: ["Graph Tree Node", "Dokumen PRD"],
+    ctaText: "Mulai Planning",
+    ctaHref: "/studio/prd",
+    imageSrc:
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=75",
+  },
+  {
     icon: Database,
-    title: "Fullstack AI",
-    description: "Sistem web lengkap skema data relasional, CRUD, & storage browser.",
+    title: "Build App",
+    description: "Fungsi untuk membuat Fullstack app lengkap dengan database relasional & CRUD.",
     bullets: ["Mock DB JSON", "Logika Bisnis"],
-    ctaText: "Coba Fullstack",
+    ctaText: "Buka Build App",
     ctaHref: "/studio/fullstack",
     imageSrc:
       "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&auto=format&fit=crop&q=75",
   },
   {
     icon: LayoutTemplate,
-    title: "Desain UI/UX",
-    description: "Antarmuka modern responsif, animasi halus, & tombol WhatsApp.",
-    bullets: ["Kurasi Tipografi", "Integrasi WA"],
-    ctaText: "Rancang UI",
+    title: "Desain (Figma)",
+    description: "Fitur desain visual seperti Figma untuk merancang mockup, styling CSS & kanvas.",
+    bullets: ["Kanvas Layaknya Figma", "Desain Responsif"],
+    ctaText: "Buka Desain",
     ctaHref: "/studio/frontend",
     imageSrc:
       "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=75",
-  },
-  {
-    icon: Network,
-    title: "Arsitektur PRD",
-    description: "Dokumen kebutuhan produk komprehensif & mindmap interaktif.",
-    bullets: ["Graph Tree Node", "Sync Kode AI"],
-    ctaText: "Buat PRD",
-    ctaHref: "/studio/prd",
-    imageSrc:
-      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=75",
-  },
-  {
-    icon: Rocket,
-    title: "Cloud Deploy",
-    description: "Publikasi instan ke Vercel, Netlify, & Cloudflare dengan SSL.",
-    bullets: ["Custom Domain", "Live Build Log"],
-    ctaText: "Deploy Hub",
-    ctaHref: "/deploy",
-    imageSrc:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=75",
-  },
-  {
-    icon: GitBranch,
-    title: "Push GitHub",
-    description: "Push bundle kode HTML/CSS/JS mandiri ke repositori GitHub.",
-    bullets: ["AI Commit Msg", "Staging Tree"],
-    ctaText: "GitHub Hub",
-    ctaHref: "/github",
-    imageSrc:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=75",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Testing & QA",
-    description: "Audit performa Core Web Vitals & kepatuhan aksesibilitas A11y.",
-    bullets: ["Lighthouse Real-time", "0 Console Error"],
-    ctaText: "Uji QA",
-    ctaHref: "/testing",
-    imageSrc:
-      "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&auto=format&fit=crop&q=75",
   },
 ];
 

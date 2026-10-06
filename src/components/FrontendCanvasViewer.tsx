@@ -53,7 +53,7 @@ const DEFAULT_SAMPLE_HTML = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Frontend Preview</title>
+  <title>Desain Preview - Figma Canvas Studio</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -103,7 +103,7 @@ const DEFAULT_SAMPLE_HTML = `<!DOCTYPE html>
   <main class="max-w-6xl mx-auto px-6 py-20 text-center flex-1 flex flex-col items-center justify-center">
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-cyan-400 mb-6">
       <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-      AI-Powered Frontend Canvas
+      Fitur Desain Seperti Figma
     </div>
     <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
       Bangun & Tinjau Web Impian <br/>
@@ -259,7 +259,7 @@ export default function FrontendCanvasViewer() {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
 
   // Canvas content & history state
-  const [canvasTitle, setCanvasTitle] = useState("Web Canvas Workspace");
+  const [canvasTitle, setCanvasTitle] = useState("Desain - Figma Canvas Studio");
   const [code, setCode] = useState(DEFAULT_SAMPLE_HTML);
   const [history, setHistory] = useState<string[]>([DEFAULT_SAMPLE_HTML]);
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -269,7 +269,7 @@ export default function FrontendCanvasViewer() {
     {
       id: "msg_init",
       role: "agent",
-      text: "Halo! Saya adalah **Frontend AI Assistant** Anda di Web Canvas Studio.\n\nAnda dapat meminta saya membuatkan tampilan website, menambahkan komponen baru, mengganti tema warna, atau sekadar berdiskusi dan berkonsultasi seputar ide website impian Anda.",
+      text: "Halo! Saya adalah **AI Design Assistant** Anda di Canvas Desain (fitur desain seperti Figma).\n\nAnda dapat meminta saya merancang tata letak antarmuka, membuat mockup visual, menambahkan section komponen, mengganti skema warna, atau berdiskusi seputar estetika website impian Anda.",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     },
   ]);
@@ -854,7 +854,7 @@ export default function FrontendCanvasViewer() {
                       Autonomous
                     </span>
                   </div>
-                  <p className="text-[10px] text-neutral-400">Diskusi & Generator Web Visual</p>
+                  <p className="text-[10px] text-neutral-400">Diskusi & Desain Visual (Figma Canvas)</p>
                 </div>
               </div>
 

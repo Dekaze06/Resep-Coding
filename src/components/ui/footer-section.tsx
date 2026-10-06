@@ -27,16 +27,6 @@ const footerLinks: FooterSection[] = [
 		],
 	},
 	{
-		label: 'Resource',
-		links: [
-			{ title: 'Deploy Cloud Hub', href: '/deploy' },
-			{ title: 'GitHub Sync', href: '/github' },
-			{ title: 'Testing QA Suite', href: '/testing' },
-			{ title: 'Tutorial & Panduan', href: '/tutorial' },
-			{ title: 'Connectors & API', href: '/connectors' },
-		],
-	},
-	{
 		label: 'Platform',
 		links: [
 			{ title: 'Paket & Harga', href: '/pricing' },

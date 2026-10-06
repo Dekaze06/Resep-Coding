@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import {
   FileText,
   Layout,
   Database,
   ArrowRight,
 } from "lucide-react";
-import { BoltIcon, type BoltIconHandle } from "@/components/ui/bolt-icon";
 import { cn } from "@/lib/utils";
 
 interface StudioItemConfig {
@@ -24,43 +23,33 @@ interface StudioItemConfig {
 const studioItems: StudioItemConfig[] = [
   {
     id: "01",
-    icon: BoltIcon,
-    name: "AI Recommended Studio",
-    label: "Auto",
-    tagline: "Wizard Otomatis Cerdas",
-    href: "/app?mode=ai-recommended",
-    description: "Panduan konfigurasi otomatis mudah 7 langkah untuk merancang website terstruktur ramah pemula.",
+    icon: FileText,
+    name: "Planning",
+    label: "Planning",
+    tagline: "Fungsi Membuat PRD",
+    href: "/studio/prd",
+    description: "Fungsi untuk membuat dokumen Product Requirement Document (PRD) komprehensif & hierarki arsitektur modul.",
     accent: "from-amber-400 to-orange-400",
   },
   {
     id: "02",
-    icon: FileText,
-    name: "Studio PRD & Blueprint",
-    label: "Planing",
-    tagline: "Spesifikasi & Arsitektur",
-    href: "/studio/prd",
-    description: "Perancangan dokumen Product Requirement Document (PRD) komprehensif & hierarki arsitektur modul.",
-    accent: "from-emerald-400 to-teal-400",
+    icon: Database,
+    name: "Build App",
+    label: "Build App",
+    tagline: "Fungsi Membuat Fullstack",
+    href: "/studio/fullstack",
+    description: "Fungsi untuk membuat aplikasi web fullstack lengkap dengan in-memory database, logika CRUD, dan panel admin.",
+    accent: "from-indigo-400 to-purple-500",
   },
   {
     id: "03",
     icon: Layout,
-    name: "Studio Frontend UI/UX",
+    name: "Desain",
     label: "Desain",
-    tagline: "Desain Visual Responsif",
+    tagline: "Fitur Desain Seperti Figma",
     href: "/studio/frontend",
-    description: "Perancangan tata letak visual responsif multi-device, komponen interaktif, dan styling modern.",
+    description: "Fitur desain visual seperti Figma untuk merancang wireframe, mockup interaktif, styling CSS, dan prototipe kanvas.",
     accent: "from-sky-400 to-blue-500",
-  },
-  {
-    id: "04",
-    icon: Database,
-    name: "Studio Fullstack App",
-    label: "Fullstack",
-    tagline: "Database & Logika App",
-    href: "/studio/fullstack",
-    description: "Pengembangan aplikasi web lengkap dengan in-memory database, logika CRUD terintegrasi, dan panel admin.",
-    accent: "from-indigo-400 to-purple-500",
   },
 ];
 
@@ -70,15 +59,6 @@ interface HeroDockProps {
 
 export default function HeroDock({ className }: HeroDockProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const boltRef = useRef<BoltIconHandle>(null);
-
-  useEffect(() => {
-    if (hoveredId === "01") {
-      boltRef.current?.startAnimation();
-    } else {
-      boltRef.current?.stopAnimation();
-    }
-  }, [hoveredId]);
 
   const activeStudio = studioItems.find((s) => s.id === hoveredId);
 
@@ -111,24 +91,13 @@ export default function HeroDock({ className }: HeroDockProps) {
               >
                 {/* Icon */}
                 <div className="relative flex items-center justify-center">
-                  {item.id === "01" ? (
-                    <BoltIcon
-                      ref={boltRef}
-                      size={26}
-                      className={cn(
-                        "transition-all duration-300 group-hover:scale-110",
-                        isHovered ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"
-                      )}
-                    />
-                  ) : (
-                    <Icon
-                      className={cn(
-                        "w-6 h-6 sm:w-7 sm:h-7 transition-all duration-300 group-hover:scale-110",
-                        isHovered ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"
-                      )}
-                      strokeWidth={1.8}
-                    />
-                  )}
+                  <Icon
+                    className={cn(
+                      "w-6 h-6 sm:w-7 sm:h-7 transition-all duration-300 group-hover:scale-110",
+                      isHovered ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"
+                    )}
+                    strokeWidth={1.8}
+                  />
                 </div>
 
                 {/* Specific Studio Label */}
