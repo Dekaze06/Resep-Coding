@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { PrdSheetViewer } from "./PrdSheetViewer";
+import { PrdSheetViewer, MarkdownDocumentView } from "./PrdSheetViewer";
 import {
   Code2,
   Eye,
@@ -329,6 +329,154 @@ function generateSmartStructureFromPrompt(promptText: string, projectName: strin
   };
 }
 
+function generateRealTasksForProject(projectName: string, promptText: string, mode: string, hasPrd: boolean): { steps: string[], planTasks: Task[] } {
+  const cleanName = projectName && projectName !== "Proyek Baru" ? projectName : "Aplikasi Web";
+
+  let steps: string[] = [];
+  if (hasPrd) {
+    steps = [
+      `Analisis spesifikasi & requirement dokumen PRD "${cleanName}" selesai`,
+      `Perancangan model data entitas domain & in-memory reactive store siap`,
+      `Perakitan antarmuka pengguna responsif & panel kontrol administrasi aktif`,
+      `Integrasi operasi CRUD, validasi formulir & audit navigasi terverifikasi`
+    ];
+  } else if (mode === "fullstack") {
+    steps = [
+      `Analisis arsitektur sistem & pemodelan entitas data "${cleanName}" selesai`,
+      `Konfigurasi state storage browser & handler operasi CRUD (AppDB) aktif`,
+      `Penyusunan antarmuka aplikasi interaktif & dashboard manajemen data siap`,
+      `Validasi sinkronisasi data lokal & pengujian responsif multi-device lolos`
+    ];
+  } else if (mode === "prd") {
+    steps = [
+      `Ekstraksi kebutuhan fungsional & pemetaan persona pengguna "${cleanName}"`,
+      `Perancangan skema relasi database (ERD) & spesifikasi REST API siap`,
+      `Penyusunan acceptance criteria terstruktur & alur interaksi produk`,
+      `Finalisasi dokumen blueprint PRD komprehensif (.md) siap ekspor`
+    ];
+  } else {
+    steps = [
+      `Analisis hierarki visual & sistem tata letak komponen "${cleanName}"`,
+      `Implementasi layout responsif desktop/mobile & palet warna harmonis`,
+      `Penyusunan section interaktif, modal navigasi & aksi pengguna aktif`,
+      `Audit kepatuhan visual profesional, tipografi modern & performa lolos`
+    ];
+  }
+
+  const planTasks: Task[] = [
+    {
+      id: "task_1",
+      title: `Analisis Spesifikasi & Ruang Lingkup (${cleanName})`,
+      description: `Menganalisis instruksi ${hasPrd ? "dokumen PRD terlampir" : "kebutuhan pengguna"} dan merumuskan spesifikasi teknis inti`,
+      status: "completed",
+      priority: "high",
+      level: 0,
+      dependencies: [],
+      subtasks: [
+        {
+          id: "sub_1_1",
+          title: "Ekstraksi fitur utama & batasan ruang lingkup",
+          description: "Mengidentifikasi fitur esensial, alur pengguna, dan struktur navigasi aplikasi",
+          status: "completed",
+          priority: "high",
+          tools: ["spec-parser", "requirements-analyzer"]
+        },
+        {
+          id: "sub_1_2",
+          title: "Pemetaan persona pengguna & kriteria penerimaan",
+          description: "Menetapkan standar kualitas tampilan dan interaksi pengguna",
+          status: "completed",
+          priority: "medium",
+          tools: ["ux-planner"]
+        }
+      ]
+    },
+    {
+      id: "task_2",
+      title: "Pemodelan Data Domain & State Layer",
+      description: "Menyusun skema data relasional dan lapisan persistensi browser",
+      status: "completed",
+      priority: "high",
+      level: 0,
+      dependencies: ["task_1"],
+      subtasks: [
+        {
+          id: "sub_2_1",
+          title: "Definisi entitas data & seed dataset realistis",
+          description: "Mendefinisikan atribut field dan rekaman data awal yang relevan untuk pengujian",
+          status: "completed",
+          priority: "high",
+          tools: ["data-architect", "seed-generator"]
+        },
+        {
+          id: "sub_2_2",
+          title: "Integrasi in-memory storage & localStorage sync",
+          description: "Memastikan data tetap tersimpan saat halaman dimuat ulang di peramban pengguna",
+          status: "completed",
+          priority: "medium",
+          tools: ["storage-bridge"]
+        }
+      ]
+    },
+    {
+      id: "task_3",
+      title: "Penyusunan Antarmuka & Panel Manajemen",
+      description: "Membangun tampilan antarmuka utama dan dashboard kontrol interaktif",
+      status: "completed",
+      priority: "high",
+      level: 0,
+      dependencies: ["task_2"],
+      subtasks: [
+        {
+          id: "sub_3_1",
+          title: "Perakitan antarmuka visual utama responsif",
+          description: "Membangun layout adaptif dengan tipografi modern dan palet warna terkurasi",
+          status: "completed",
+          priority: "high",
+          tools: ["ui-composer", "style-system"]
+        },
+        {
+          id: "sub_3_2",
+          title: "Panel manajemen & formulir input data",
+          description: "Menghadirkan tabel data interaktif dengan fungsi pencarian, filter, dan modal input",
+          status: "completed",
+          priority: "medium",
+          tools: ["dashboard-engine"]
+        }
+      ]
+    },
+    {
+      id: "task_4",
+      title: "Logika Mutasi CRUD & Audit Kualitas",
+      description: "Menghubungkan operasi data, validasi form, dan audit performa sandbox",
+      status: "completed",
+      priority: "high",
+      level: 0,
+      dependencies: ["task_3"],
+      subtasks: [
+        {
+          id: "sub_4_1",
+          title: "Implementasi handler CRUD (Create, Read, Update, Delete)",
+          description: "Menghubungkan tombol aksi formulir dengan pembaruan state reaktif",
+          status: "completed",
+          priority: "high",
+          tools: ["crud-handler"]
+        },
+        {
+          id: "sub_4_2",
+          title: "Audit responsivitas & sanitasi tampilan profesional",
+          description: "Memvalidasi seluruh tampilan bebas cacat visual dan siap dijalankan mandiri",
+          status: "completed",
+          priority: "medium",
+          tools: ["code-auditor", "sandbox-runner"]
+        }
+      ]
+    }
+  ];
+
+  return { steps, planTasks };
+}
+
 interface ChatMessage {
   id: string;
   role: "user" | "agent";
@@ -339,6 +487,8 @@ interface ChatMessage {
   steps?: string[];
   planTasks?: Task[];
   showPlanTree?: boolean;
+  hasAttachedPrd?: boolean;
+  attachedPrdName?: string;
 }
 
 export const WEB_TYPE_OPTIONS = [
@@ -662,18 +812,18 @@ export const STUDIO_GENERATION_TASKS: Record<"frontend" | "fullstack" | "prd", S
   ],
   fullstack: [
     {
-      title: "Analisis Arsitektur Domain & Model Data AppDB",
+      title: "Analisis Arsitektur Domain & Model Data",
       phase: "Fase 1 / 4",
       category: "Pemodelan Data",
       subtasks: [
         {
-          label: "Pemodelan skema entitas relational (AppDB Schema)",
-          detail: "Mendefinisikan entitas Produk, Pelanggan, Transaksi, & struktur relasi data",
+          label: "Pemodelan skema entitas relational domain aplikasi",
+          detail: "Mendefinisikan entitas data, atribut field, dan relasi tabel spesifik domain",
           engine: "Schema-Architect"
         },
         {
           label: "Inisialisasi seed mock dataset realistis",
-          detail: "Mengisi rekaman data awal yang realistis untuk pengujian storefront & tabel admin",
+          detail: "Mengisi rekaman data awal yang relevan untuk pengujian antarmuka dan panel manajemen",
           engine: "Seed-Generator"
         },
         {
@@ -695,51 +845,51 @@ export const STUDIO_GENERATION_TASKS: Record<"frontend" | "fullstack" | "prd", S
         },
         {
           label: "Implementasi handler CRUD (Create, Read, Update, Delete)",
-          detail: "Menulis fungsi mutasi data untuk penambahan, pengeditan, dan penghapusan item",
+          detail: "Menulis fungsi mutasi data untuk penambahan, pengeditan, dan penghapusan rekaman",
           engine: "CRUD-Engine"
         },
         {
           label: "Validasi form input & proteksi sanitasi data",
-          detail: "Memeriksa kelengkapan field formulir dan mencegah injeksi skrip berbahaya",
+          detail: "Memeriksa kelengkapan field formulir dan mencegah inkonsistensi data",
           engine: "Form-Validator"
         }
       ]
     },
     {
-      title: "Integrasi 4-Panel Switcher & KPI Charts",
+      title: "Penyusunan Antarmuka Pengguna & Panel Manajemen",
       phase: "Fase 3 / 4",
       category: "Komponen Antarmuka",
       subtasks: [
         {
-          label: "Perakitan antarmuka storefront / POS untuk transaksi",
-          detail: "Membangun tampilan belanja interaktif dengan integrasi mutasi keranjang langsung",
-          engine: "POS-Interface"
+          label: "Perakitan antarmuka utama aplikasi & interaksi pengguna",
+          detail: "Membangun tampilan utama interaktif dengan integrasi mutasi data langsung",
+          engine: "UI-Interface"
         },
         {
-          label: "Penyusunan panel dashboard admin & tabel database",
-          detail: "Menghadirkan tabel data interaktif dengan fitur sortir, edit baris, dan hapus item",
+          label: "Penyusunan panel dashboard admin & manajemen rekaman",
+          detail: "Menghadirkan tabel data interaktif dengan fitur sortir, edit baris, dan formulir input",
           engine: "Admin-Table"
         },
         {
-          label: "Kalkulasi metrik real-time KPI & grafik analitik",
-          detail: "Menghitung omzet, jumlah transaksi, dan merender visualisasi tren performa",
+          label: "Kalkulasi metrik real-time & visualisasi analitik",
+          detail: "Menghitung ringkasan statistik, total metrik, dan visualisasi tren performa",
           engine: "Analytics-Core"
         }
       ]
     },
     {
-      title: "Audit Anti-Slop Visual & UI Responsif",
+      title: "Audit Kualitas Sandbox & Kompilasi Akhir",
       phase: "Fase 4 / 4",
       category: "Kepatuhan & Sandbox",
       subtasks: [
         {
-          label: "Verifikasi routing API mock & event bridge internal",
-          detail: "Menguji kelancaran komunikasi state antar panel storefront dan panel admin",
+          label: "Verifikasi alur data & event handler internal",
+          detail: "Menguji kelancaran komunikasi state antar tampilan publik dan panel manajemen",
           engine: "Event-Bus"
         },
         {
-          label: "Audit kepatuhan visual anti-slop & zero-emoji",
-          detail: "Memastikan tipografi sans-serif berkelas, warna proporsional, dan ikon profesional",
+          label: "Audit kepatuhan visual profesional & tipografi",
+          detail: "Memastikan tipografi sans-serif modern, warna proporsional, dan ikon profesional",
           engine: "Design-Linter"
         },
         {
@@ -874,7 +1024,7 @@ export default function SatusiteStudioWorkspace() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [activePrdDoc, setActivePrdDoc] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState<"preview" | "code" | "architecture" | "database" | "logs">("preview");
+  const [activeTab, setActiveTab] = useState<"preview" | "prd" | "code" | "architecture" | "database" | "logs">("preview");
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [generationTaskIndex, setGenerationTaskIndex] = useState<number>(0);
@@ -1344,13 +1494,23 @@ export default function SatusiteStudioWorkspace() {
     try {
       const params = new URLSearchParams(window.location.search);
 
-      // Check if there are attached documents passed via sessionStorage from studio entrypoints
       let pendingDocsContext = "";
+      let pendingPrdContent = "";
+      let pendingPrdFileName = "";
       try {
         const pendingRaw = sessionStorage.getItem("satusite_pending_attached_docs");
         if (pendingRaw) {
           const pendingFiles = JSON.parse(pendingRaw);
           if (Array.isArray(pendingFiles) && pendingFiles.length > 0) {
+            const firstWithContent = pendingFiles.find((f: any) => f.content);
+            if (firstWithContent) {
+              pendingPrdContent = firstWithContent.content;
+              pendingPrdFileName = firstWithContent.name || "Dokumen PRD";
+              setActivePrdDoc(firstWithContent.content);
+              try {
+                localStorage.setItem("satusite_active_prd", firstWithContent.content);
+              } catch (e) {}
+            }
             const snippets = pendingFiles
               .filter((f: any) => f.content)
               .map((f: any) => `=== LAMPIRAN DOKUMEN / PRD: ${f.name} ===\n${f.content}`)
@@ -1458,12 +1618,13 @@ export default function SatusiteStudioWorkspace() {
         setProjectConfig(prev => ({ ...prev, webName: name }));
         setIsConfigCompleted(true);
         setHasGenerated(true);
-        setActivePrdDoc(null);
-        try {
-          localStorage.removeItem("satusite_active_prd");
-        } catch (e) {}
-        const finalPrompt = qPrompt + pendingDocsContext;
-        handleSendPrompt(finalPrompt, name, newId, initialMode);
+        if (!pendingPrdContent) {
+          setActivePrdDoc(null);
+          try {
+            localStorage.removeItem("satusite_active_prd");
+          } catch (e) {}
+        }
+        handleSendPrompt(qPrompt, name, newId, initialMode, pendingDocsContext);
       }
     } catch (err) {
       console.warn("Error parsing init query params:", err);
@@ -1532,10 +1693,47 @@ export default function SatusiteStudioWorkspace() {
   }, [uploadedFiles]);
 
   const formattedAgentMessages: AgentMessage[] = useMemo(() => {
-    return messages.map((m) => {
+    return messages.map((m, mIdx) => {
       const parts: any[] = [
         { type: "text", text: m.text }
       ];
+
+      if (m.role === "user" && (m.hasAttachedPrd || (activePrdDoc && mIdx === 0))) {
+        parts.push({
+          type: "widget",
+          content: (
+            <div className="mt-2.5 p-3 rounded-xl bg-amber-950/25 border border-amber-500/30 flex items-center justify-between gap-3 text-xs animate-fade-in shadow-sm">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-semibold text-white text-xs truncate">
+                    {m.attachedPrdName || "Dokumen Spesifikasi PRD (.md)"}
+                  </div>
+                  <div className="text-[10px] text-zinc-400 truncate">
+                    Spesifikasi & Blueprint Acuan Sistem
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCanvas(true);
+                    setActiveTab("prd");
+                  }}
+                  className="px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 hover:text-amber-200 text-[11px] font-semibold border border-amber-500/35 transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+                  title="Tampilkan Dokumen PRD di Layar Canvas"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>Buka di Canvas</span>
+                </button>
+              </div>
+            </div>
+          )
+        });
+      }
 
       if (m.steps && m.steps.length > 0) {
         parts.push({
@@ -1548,7 +1746,7 @@ export default function SatusiteStudioWorkspace() {
                   <span>Detail Task Selesai</span>
                 </span>
                 <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 font-bold">
-                  4/4 Selesai
+                  {m.steps.length}/{m.steps.length} Selesai
                 </span>
               </div>
               {m.steps.map((s, idx) => (
@@ -1596,17 +1794,17 @@ export default function SatusiteStudioWorkspace() {
                   <span>Lihat Hasil di Canvas</span>
                 </button>
               )}
-              {(activePrdDoc || genMode === "prd") && (
+              {activePrdDoc && (
                 <button
                   type="button"
                   onClick={() => {
-                    const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
-                    window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
+                    setShowCanvas(true);
+                    setActiveTab("prd");
                   }}
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-[10px] text-amber-300 hover:text-amber-200 font-semibold border border-amber-500/30 transition-all cursor-pointer"
                 >
                   <FileText className="w-3 h-3 text-amber-400" />
-                  <span>Buka Dokumen PRD (.md)</span>
+                  <span>Lihat PRD di Canvas</span>
                 </button>
               )}
             </div>
@@ -1647,8 +1845,17 @@ export default function SatusiteStudioWorkspace() {
     let text = rawText || "Mohon rancang dan bangun aplikasi sesuai dengan spesifikasi pada dokumen/PRD terlampir.";
     let fileMetaLabels: string[] = [];
     let attachedDocsContext = prdContextOverride || "";
+    let extractedPrdFileName = "";
     if (uploadedFiles.length > 0) {
       fileMetaLabels = uploadedFiles.map(f => `${f.name} (${f.size})`);
+      const firstWithContent = uploadedFiles.find(f => f.content);
+      if (firstWithContent && firstWithContent.content) {
+        extractedPrdFileName = firstWithContent.name;
+        setActivePrdDoc(firstWithContent.content);
+        try {
+          localStorage.setItem("satusite_active_prd", firstWithContent.content);
+        } catch (e) {}
+      }
       const docsContext = uploadedFiles
         .filter(f => f.content)
         .map(f => `=== LAMPIRAN DOKUMEN / PRD: ${f.name} ===\n${f.content}`)
@@ -1674,15 +1881,31 @@ export default function SatusiteStudioWorkspace() {
     const initialTasks = STUDIO_GENERATION_TASKS[effectiveMode] || STUDIO_GENERATION_TASKS.frontend;
     setCurrentThinkingStep(initialTasks[0]?.subtasks[0]?.detail || "Menyiapkan kompilasi arsitektur aplikasi...");
 
-    const userMsgText = fileMetaLabels.length > 0
-      ? `${rawText}\n\n[Lampiran: ${fileMetaLabels.join(", ")}]`
-      : rawText;
+    let cleanDisplayPrompt = text;
+    if (cleanDisplayPrompt.includes("=== LAMPIRAN DOKUMEN / PRD:")) {
+      cleanDisplayPrompt = cleanDisplayPrompt.split("=== LAMPIRAN DOKUMEN / PRD:")[0].trim();
+    }
+    const lampiranMatch = cleanDisplayPrompt.match(/\[(?:Lampiran|Dokumen Terlampir):\s*([^\]]+)\]/i);
+    if (lampiranMatch && lampiranMatch[1] && !extractedPrdFileName) {
+      extractedPrdFileName = lampiranMatch[1];
+    }
+    cleanDisplayPrompt = cleanDisplayPrompt.replace(/\[(?:Lampiran|Dokumen Terlampir)[^\]]*\]/gi, "").trim();
+
+    if (!cleanDisplayPrompt) {
+      cleanDisplayPrompt = extractedPrdFileName
+        ? `Rancang dan bangun aplikasi sesuai spesifikasi dokumen: ${extractedPrdFileName}`
+        : "Rancang dan bangun aplikasi sesuai dengan spesifikasi dokumen PRD terlampir.";
+    }
+
+    const hasAttachedPrd = Boolean(extractedPrdFileName || attachedDocsContext || activePrdDoc);
 
     const userMsg: ChatMessage = {
       id: "msg_" + Date.now(),
       role: "user",
-      text: userMsgText,
-      timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
+      text: cleanDisplayPrompt,
+      timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
+      hasAttachedPrd,
+      attachedPrdName: extractedPrdFileName || (activePrdDoc ? "Dokumen PRD Terlampir (.md)" : undefined)
     };
 
     const updatedMessages = [...messages, userMsg];
@@ -1815,26 +2038,15 @@ export default function SatusiteStudioWorkspace() {
         text: agentResponseText,
         timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
         hasCodeUpdate: data.hasCodeUpdate,
-        steps: isPrd
-          ? [
-              "Analisis Kebutuhan Sistem & User Personas selesai",
-              "Skema Database ERD & REST API Contracts siap",
-              "Dashboard PRD Interaktif & Topology Diagram aktif",
-              "Ekspor Markdown & Acceptance Criteria terverifikasi"
-            ]
-          : isFull
-          ? [
-              "Analisis Arsitektur Domain & Model Data AppDB siap",
-              "Handler CRUD (Create/Read/Update/Delete) & localStorage aktif",
-              "Integrasi 4-Panel Switcher (Katalog POS, CRUD, KPI Chart, API Inspector)",
-              "Audit Anti-Slop Visual, Tipografi Modern Sans & WebP lolos"
-            ]
-          : [
-              "Analisis Desain Sistem & Kategori Industri selesai",
-              "Layout Responsif (Desktop/Tablet/Mobile) & Palet 60-30-10 terpasang",
-              "Section Lengkap, Quick-View Modal & WhatsApp Cart aktif",
-              "Audit Navigasi Anchor, Tanpa Emoji & Format WebP terverifikasi"
-            ]
+        ...(() => {
+          const { steps: realSteps, planTasks: realPlanTasks } = generateRealTasksForProject(
+            customName || projectConfig.webName || projectName,
+            text,
+            effectiveMode,
+            Boolean(activePrdDoc || attachedDocsContext || extractedPrdFileName)
+          );
+          return { steps: realSteps, planTasks: realPlanTasks };
+        })()
       };
 
       const finalMessages = [...updatedMessages, agentMsg];
@@ -3677,18 +3889,18 @@ export default function SatusiteStudioWorkspace() {
                   <Layers className="w-3 h-3 text-blue-400" />
                   <span>Rencana Plan</span>
                 </button>
-                {genMode === "prd" && activePrdDoc && (
+                {activePrdDoc && (
                   <button
                     type="button"
                     onClick={() => {
-                      const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
-                      window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
+                      setShowCanvas(true);
+                      setActiveTab("prd");
                     }}
                     className="px-2 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-[11px] text-amber-300 hover:text-amber-200 flex items-center gap-1 border border-amber-500/30 transition-colors cursor-pointer"
-                    title="Buka Dokumen PRD (.md)"
+                    title="Buka Dokumen PRD di Canvas"
                   >
                     <FileText className="w-3 h-3 text-amber-400" />
-                    <span>Dokumen PRD (.md)</span>
+                    <span>Dokumen PRD</span>
                   </button>
                 )}
                 <button
@@ -3756,34 +3968,48 @@ export default function SatusiteStudioWorkspace() {
                       </div>
                     )}
 
-                    {/* Persistent Saved PRD Card Widget - Only displayed in PRD mode */}
-                    {genMode === "prd" && activePrdDoc && (
-                      <div className="p-3 rounded-2xl bg-amber-950/25 border border-amber-500/30 space-y-2 text-xs animate-fade-in shadow-md">
+                    {/* Persistent Saved PRD Card Widget */}
+                    {activePrdDoc && (
+                      <div className="p-3 rounded-2xl bg-amber-950/25 border border-amber-500/30 space-y-2.5 text-xs animate-fade-in shadow-md">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
                               <FileText className="w-4 h-4" />
                             </div>
                             <div>
-                              <div className="font-bold text-white text-[11px]">Dokumen PRD (.md) Tersimpan</div>
-                              <div className="text-[10px] text-zinc-400">Blueprint Arsitektur & Spesifikasi</div>
+                              <div className="font-bold text-white text-[11px]">Dokumen PRD (.md) Aktif</div>
+                              <div className="text-[10px] text-zinc-400">Blueprint Arsitektur & Spesifikasi Sistem</div>
                             </div>
                           </div>
                           <span className="text-[9px] font-mono font-bold text-amber-300 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30">
                             .md
                           </span>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
-                            window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
-                          }}
-                          className="w-full py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
-                        >
-                          <FileText className="w-3.5 h-3.5" />
-                          <span>Buka Dokumen PRD (.md)</span>
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowCanvas(true);
+                              setActiveTab("prd");
+                            }}
+                            className="flex-1 py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Buka di Canvas</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const md = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
+                              window.dispatchEvent(new CustomEvent("open-prd-sheet", { detail: { markdown: md } }));
+                            }}
+                            className="py-1.5 px-2.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-medium text-[11px] flex items-center justify-center gap-1 border border-zinc-700/80 transition-all cursor-pointer"
+                            title="Buka Slide-Over Sheet"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Slide Panel</span>
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -3979,6 +4205,7 @@ export default function SatusiteStudioWorkspace() {
                 <div className="flex items-center gap-0.5">
                   {[
                     { key: "preview" as const, icon: Eye, label: "Canvas" },
+                    ...(activePrdDoc ? [{ key: "prd" as const, icon: FileText, label: "Dokumen PRD" }] : []),
                     { key: "code" as const, icon: Code2, label: "Code" },
                     { key: "architecture" as const, icon: Workflow, label: "Struktur" },
                     { key: "database" as const, icon: Database, label: "Data" },
@@ -3989,12 +4216,16 @@ export default function SatusiteStudioWorkspace() {
                       onClick={() => setActiveTab(key)}
                       className={`px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1 transition-all ${
                         activeTab === key
-                          ? "bg-zinc-800/80 text-white"
+                          ? key === "prd"
+                            ? "bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/40"
+                            : "bg-zinc-800/80 text-white"
+                          : key === "prd"
+                          ? "text-amber-400/90 hover:text-amber-300 hover:bg-amber-500/10"
                           : "text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/30"
                       }`}
                     >
                       <Icon className="w-3 h-3" />
-                      <span className={key === "preview" || key === "code" ? "" : "hidden sm:inline"}>{label}</span>
+                      <span className={key === "preview" || key === "code" || key === "prd" ? "" : "hidden sm:inline"}>{label}</span>
                     </button>
                   ))}
                 </div>
@@ -4106,6 +4337,91 @@ export default function SatusiteStudioWorkspace() {
                       </div>
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* TAB PRD: DOKUMEN SPESIFIKASI PRD */}
+              {activeTab === "prd" && (
+                <div className="flex-1 bg-[#090a0f] flex flex-col overflow-hidden relative">
+                  {/* PRD Toolbar */}
+                  <div className="px-4 py-2.5 bg-zinc-950/80 border-b border-zinc-800/60 flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-6 h-6 rounded-md bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                        <FileText className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-white flex items-center gap-2">
+                          <span>Dokumen Spesifikasi PRD (.md)</span>
+                          <span className="text-[9px] font-mono font-bold text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30">
+                            BLUEPRINT ACUAN
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-zinc-400">
+                          {projectName || "Proyek"} - Panduan & Arsitektur Rekayasa Sistem
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          const doc = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
+                          navigator.clipboard.writeText(doc);
+                          setCopied(true);
+                          setTimeout(() => setCopied(false), 2000);
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs border border-zinc-800 flex items-center gap-1.5 transition-colors cursor-pointer"
+                        title="Salin Isi Dokumen Markdown ke Clipboard"
+                      >
+                        {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        <span>{copied ? "Tersalin" : "Salin Dokumen"}</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          const doc = activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) || "";
+                          const blob = new Blob([doc], { type: "text/markdown;charset=utf-8;" });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = `${(projectName || "dokumen-prd").toLowerCase().replace(/[^a-z0-9]/g, "-")}-prd.md`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs border border-amber-500/35 flex items-center gap-1.5 transition-colors cursor-pointer font-medium"
+                        title="Unduh Berkas Markdown (.md)"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Unduh .md</span>
+                      </button>
+                      {code && (
+                        <button
+                          onClick={() => setActiveTab("preview")}
+                          className="px-2.5 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 text-xs border border-blue-500/30 flex items-center gap-1.5 transition-colors cursor-pointer font-medium"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Lihat Canvas</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* PRD Content Body */}
+                  <div className="flex-1 overflow-y-auto p-4 sm:p-8">
+                    <div className="max-w-4xl mx-auto bg-zinc-950/70 border border-zinc-800/80 rounded-2xl p-6 sm:p-10 shadow-2xl backdrop-blur-sm">
+                      {activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") : null) ? (
+                        <MarkdownDocumentView markdown={activePrdDoc || (typeof localStorage !== "undefined" ? localStorage.getItem("satusite_active_prd") || "" : "")} />
+                      ) : (
+                        <div className="text-center py-16 space-y-3">
+                          <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto">
+                            <FileText className="w-6 h-6" />
+                          </div>
+                          <div className="text-sm font-semibold text-white">Belum Ada Dokumen PRD</div>
+                          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
+                            Unggah atau lampirkan berkas PRD saat memulai proyek di Studio untuk meninjau blueprint spesifikasi di sini.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
 

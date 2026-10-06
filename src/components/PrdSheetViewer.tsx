@@ -31,7 +31,7 @@ declare global {
 }
 
 // Markdown renderer helper for PRD documents
-function MarkdownDocumentView({ markdown }: { markdown: string }) {
+export function MarkdownDocumentView({ markdown }: { markdown: string }) {
   const lines = useMemo(() => markdown.split("\n"), [markdown])
 
   const renderLine = (line: string, idx: number) => {
