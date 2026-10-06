@@ -8,6 +8,11 @@ import { SystemConfigDB } from '../db.ts';
 const DEFAULT_MODELS = [
     'gemini-3.7-flash',
     'gemini-3.8-flash',
+    'gemini-3.6-flash',
+    'gemini-3.5-flash',
+    'gemini-flash-latest',
+    'gemini-3.1-flash-lite',
+    'gemini-flash-lite-latest',
 ];
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models';
 
@@ -15,13 +20,13 @@ export function getApiKey() {
     return (typeof import.meta !== 'undefined' && import.meta.env?.GEMINI_API_KEY) || (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) || '';
 }
 
-/** Resolve model order from admin system config, falling back to defaults. */
+/** Resolve model order from admin system config, cascading seamlessly to verified fallbacks. */
 export async function resolveModels() {
     try {
         const cfg = await SystemConfigDB.getAsync();
-        const list = [cfg?.primaryModel, cfg?.fallbackModel].filter(Boolean);
-        const unique = [...new Set(list)];
-        return unique.length ? unique : DEFAULT_MODELS;
+        const configured = [cfg?.primaryModel, cfg?.fallbackModel].filter(Boolean);
+        const combined = [...new Set([...configured, ...DEFAULT_MODELS])];
+        return combined.length ? combined : DEFAULT_MODELS;
     } catch {
         return DEFAULT_MODELS;
     }
@@ -93,6 +98,7 @@ export async function generate({
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
                     body,
+                    signal: AbortSignal.timeout(60000),
                 });
 
                 if (res.ok) {
@@ -106,12 +112,15 @@ export async function generate({
 
                 const errText = await res.text();
                 console.warn(`[Gemini] ${model} attempt ${attempt} -> ${res.status}: ${errText.slice(0, 160)}`);
+                // If model is experiencing high demand (503), failover immediately to next model in cascade
+                if (res.status === 503) break;
                 const transient = res.status === 429 || res.status >= 500;
                 if (!transient) break; // 400/403/404: retrying the same model will not help
                 if (attempt < attemptsPerModel) await sleep(1200 * attempt);
             } catch (err) {
-                console.warn(`[Gemini] ${model} attempt ${attempt} network error: ${err?.message || err}`);
-                if (attempt < attemptsPerModel) await sleep(1000 * attempt);
+                console.warn(`[Gemini] ${model} attempt ${attempt} error/timeout: ${err?.message || err}`);
+                // On timeout or network abort, switch to next model immediately
+                break;
             }
         }
     }

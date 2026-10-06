@@ -1446,7 +1446,14 @@ export default function SatusiteStudioWorkspace() {
       } else if (qPrompt) {
         const newId = "proj_" + Date.now();
         setProjectId(newId);
-        const name = qPrompt.slice(0, 30) + (qPrompt.length > 30 ? "..." : "");
+        let rawName = qPrompt;
+        const lampiranMatch = rawName.match(/\[(?:Lampiran|Dokumen Terlampir):\s*(?:PRD-v[\d.]+-)?([^.\]\n]+)/i);
+        if (lampiranMatch && lampiranMatch[1]) {
+          rawName = lampiranMatch[1].replace(/[-_]/g, " ").trim();
+        } else {
+          rawName = rawName.replace(/\[(?:Lampiran|Dokumen Terlampir)[^\]]*\]/gi, "").trim();
+        }
+        const name = (rawName.slice(0, 35) + (rawName.length > 35 ? "..." : "")).trim() || "Proyek Baru";
         setProjectName(name);
         setProjectConfig(prev => ({ ...prev, webName: name }));
         setIsConfigCompleted(true);
@@ -1633,12 +1640,13 @@ export default function SatusiteStudioWorkspace() {
     });
   }, [messages, activePrdDoc, genMode]);
 
-  const handleSendPrompt = async (promptToSend?: string, customName?: string, customId?: string, modeOverride?: "fullstack" | "frontend" | "prd") => {
+  const handleSendPrompt = async (promptToSend?: string, customName?: string, customId?: string, modeOverride?: "fullstack" | "frontend" | "prd", prdContextOverride?: string) => {
     const rawText = (promptToSend || inputPrompt).trim();
     if ((!rawText && uploadedFiles.length === 0) || isGenerating) return;
 
     let text = rawText || "Mohon rancang dan bangun aplikasi sesuai dengan spesifikasi pada dokumen/PRD terlampir.";
     let fileMetaLabels: string[] = [];
+    let attachedDocsContext = prdContextOverride || "";
     if (uploadedFiles.length > 0) {
       fileMetaLabels = uploadedFiles.map(f => `${f.name} (${f.size})`);
       const docsContext = uploadedFiles
@@ -1646,9 +1654,7 @@ export default function SatusiteStudioWorkspace() {
         .map(f => `=== LAMPIRAN DOKUMEN / PRD: ${f.name} ===\n${f.content}`)
         .join("\n\n");
       if (docsContext) {
-        text = rawText
-          ? `${rawText}\n\n${docsContext}`
-          : `Mohon rancang dan bangun aplikasi sesuai dengan spesifikasi pada dokumen/PRD terlampir:\n\n${docsContext}`;
+        attachedDocsContext = docsContext;
       }
       setUploadedFiles([]);
     }
@@ -1747,6 +1753,7 @@ export default function SatusiteStudioWorkspace() {
         signal: controller.signal,
         body: JSON.stringify({
           prompt: text,
+          prdContext: attachedDocsContext || undefined,
           projectName: customName || projectConfig.webName || projectName,
           projectConfig: {
             webType: projectConfig.webType === "Kustom (Tulis Sendiri...)" ? (projectConfig.customWebType || "Web Kustom") : projectConfig.webType,

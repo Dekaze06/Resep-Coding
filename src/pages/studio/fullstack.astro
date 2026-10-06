@@ -19,7 +19,11 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
 
     <!-- Subtle Ambient Purple & Fuchsia Gradients -->
     <div
-        class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-purple-600/15 rounded-full blur-[140px] pointer-events-none z-0"
+        class="fixed top-[-10%] left-[20%] w-[500px] h-[400px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none z-0"
+    >
+    </div>
+    <div
+        class="fixed top-[20%] left-1/2 -translate-x-1/2 w-[650px] h-[350px] bg-purple-600/10 rounded-full blur-[130px] pointer-events-none z-0"
     >
     </div>
     <div
@@ -28,12 +32,12 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
     </div>
 
     <div class="relative z-10 flex flex-col min-h-screen bg-black text-white selection:bg-purple-500/30 selection:text-purple-200">
-        <!-- SLEEK COMPACT STUDIO TOPBAR (HEADER HIDDEN) -->
+        <!-- SLEEK COMPACT STUDIO TOPBAR -->
         <header class="h-14 sm:h-16 px-4 sm:px-8 border-b border-zinc-800/60 bg-zinc-950/70 backdrop-blur-xl flex items-center justify-between z-20 shrink-0">
             <div class="flex items-center gap-3">
                 <a
                     href="/studio"
-                    class="px-2.5 py-1.5 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800/90 hover:border-zinc-700 text-zinc-400 hover:text-white text-xs font-medium transition-all flex items-center gap-2 cursor-pointer group"
+                    class="px-3 py-1.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800/90 hover:border-zinc-700 text-zinc-300 hover:text-white text-xs font-medium transition-all flex items-center gap-2 cursor-pointer group shadow-sm"
                     title="Kembali ke Pilihan Studio"
                 >
                     <i class="fa-solid fa-arrow-left text-[11px] group-hover:-translate-x-0.5 transition-transform"></i>
@@ -48,8 +52,9 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
 
             <!-- Right Status Indicator -->
             <div class="flex items-center gap-2">
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-zinc-900 text-zinc-300 border border-zinc-800">
-                    BUILD APP AI AGENT
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-mono font-semibold bg-zinc-900/90 text-zinc-300 border border-zinc-800 shadow-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse"></span>
+                    <span>BUILD APP AI AGENT</span>
                 </span>
             </div>
         </header>
@@ -57,28 +62,39 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
         <!-- HERO SECTION: DEDICATED FULLSTACK PROMPT STUDIO -->
         <section
             id="fullstack-prompt-studio"
-            class="relative flex-1 flex flex-col justify-center py-12 sm:py-16 md:py-20 px-4 sm:px-6 text-center overflow-hidden"
+            class="relative flex-1 flex flex-col justify-center py-10 sm:py-14 md:py-16 px-4 sm:px-6 text-center overflow-hidden"
         >
-            <!-- 3D GENERATIVE MATTER SPHERE (Behind AI Chat Agent Box) -->
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] sm:w-[480px] sm:h-[480px] md:w-[720px] md:h-[720px] pointer-events-none z-0 flex items-center justify-center overflow-hidden opacity-60">
+            <!-- 3D GENERATIVE MATTER SPHERE (Smooth radial mask blend) -->
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] sm:w-[500px] sm:h-[500px] md:w-[680px] md:h-[680px] pointer-events-none z-0 flex items-center justify-center overflow-hidden opacity-40"
+                style="mask-image: radial-gradient(circle at center, black 30%, transparent 70%); -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 70%);"
+            >
                 <GenerativeArtScene client:only="react" color="#a855f7" />
             </div>
 
             <div class="relative z-10 max-w-4xl mx-auto w-full space-y-4 sm:space-y-6">
-                
-                <!-- Title with Smooth Blur Fade Up Rotation -->
-                <div class="space-y-2 flex items-center justify-center min-h-[44px] sm:min-h-[52px]">
+                <!-- Title Header Area -->
+                <div class="space-y-2.5 flex flex-col items-center justify-center">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium backdrop-blur-md shadow-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles text-[11px] text-purple-400"></i>
+                        <span>Studio Arsitektur Fullstack Web App</span>
+                    </div>
                     <h1
-                        id="fullstack-animated-title"
-                        class="text-xl sm:text-2xl md:text-3xl font-normal tracking-tight text-zinc-100 font-sans leading-tight animate-title-in transition-all"
+                        class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white font-sans leading-tight"
                     >
-                        Build App: Fullstack Web App
+                        Bangun Aplikasi Web Fullstack
                     </h1>
+                    <p
+                        id="fullstack-animated-subtitle"
+                        class="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto font-normal leading-relaxed transition-opacity duration-300 min-h-[22px]"
+                    >
+                        Frontend responsif, logika CRUD in-memory, dan panel kontrol interaktif langsung dari prompt Anda.
+                    </p>
                 </div>
 
-                <!-- PROMPT STUDIO BOX (FULLSTACK DEDICATED) -->
+                <!-- PROMPT STUDIO BOX (UNIFIED CLEAN GLASS CARD) -->
                 <div
-                    class="mt-4 sm:mt-6 max-w-3xl mx-auto bg-zinc-900/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 text-left shadow-2xl backdrop-blur-xl"
+                    class="mt-2 sm:mt-4 max-w-3xl mx-auto rounded-2xl bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700/80 focus-within:border-purple-500/50 focus-within:ring-2 focus-within:ring-purple-500/15 p-4 sm:p-5 text-left shadow-2xl shadow-purple-950/20 backdrop-blur-xl transition-all duration-300"
                 >
                     <form id="studio-prompt-form" class="space-y-3.5">
                         <div class="relative">
@@ -86,17 +102,17 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                 id="studio-prompt-input"
                                 rows="3"
                                 placeholder="Tuliskan ide aplikasi atau fitur sistem..."
-                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-purple-500/60 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none transition-all resize-none font-sans"
+                                class="w-full bg-transparent border-0 p-0 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-0 transition-all resize-none font-sans leading-relaxed min-h-[68px]"
                             ></textarea>
                         </div>
 
                         <!-- Prompt controls bar -->
-                        <div class="flex items-center justify-between gap-3 pt-1">
+                        <div class="flex items-center justify-between gap-3 pt-2.5 border-t border-zinc-800/50">
                             <!-- Left: File Upload & Mode Indicator -->
-                            <div class="flex items-center gap-1.5">
+                            <div class="flex items-center gap-2 flex-wrap">
                                 <label
                                     for="studio-file-upload"
-                                    class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
+                                    class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors flex items-center justify-center cursor-pointer"
                                     title="Upload Skema / File Data"
                                 >
                                     <i class="fa-solid fa-paperclip text-xs"></i>
@@ -109,23 +125,34 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                 </label>
                                 <span
                                     id="studio-file-indicator"
-                                    class="hidden text-[11px] text-zinc-300 bg-zinc-800 px-2 py-0.5 rounded truncate max-w-[140px]"
-                                ></span>
+                                    class="hidden text-[11px] text-purple-300 bg-purple-950/60 border border-purple-800/60 px-2.5 py-1 rounded-lg truncate max-w-[160px] inline-flex items-center gap-1.5 shadow-sm"
+                                >
+                                    <i class="fa-solid fa-file-lines text-[10px] text-purple-400 shrink-0"></i>
+                                    <span id="studio-file-name" class="truncate"></span>
+                                    <button
+                                        type="button"
+                                        id="btn-remove-attached-file"
+                                        class="hover:text-white text-purple-400 ml-0.5 cursor-pointer shrink-0"
+                                        title="Hapus lampiran"
+                                    >
+                                        <i class="fa-solid fa-xmark text-[10px]"></i>
+                                    </button>
+                                </span>
 
-                                <!-- Static Fullstack Mode Badge with White Text -->
-                                <div class="h-8 px-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-white flex items-center gap-1.5 shadow-sm">
-                                    <i class="fa-solid fa-database text-xs text-zinc-300 shrink-0"></i>
-                                    <span class="text-white font-medium">Build App (Fullstack)</span>
+                                <!-- Static Fullstack Mode Badge -->
+                                <div class="h-8 px-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-zinc-200 flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-database text-xs text-purple-400 shrink-0"></i>
+                                    <span>Build App (Fullstack)</span>
                                 </div>
                             </div>
 
                             <!-- Right: Voice Icon & Generate Button -->
-                            <div class="flex items-center gap-1.5">
+                            <div class="flex items-center gap-2">
                                 <!-- Voice Dictation Icon -->
                                 <button
                                     type="button"
                                     id="btn-studio-voice"
-                                    class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
+                                    class="w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors flex items-center justify-center cursor-pointer"
                                     title="Input Suara"
                                 >
                                     <i
@@ -138,72 +165,118 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                 <button
                                     type="submit"
                                     id="btn-studio-generate"
-                                    class="w-8 h-8 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 flex items-center justify-center transition-all cursor-pointer shadow-md"
+                                    class="w-8 h-8 rounded-lg bg-purple-600 hover:bg-purple-500 active:scale-95 text-white flex items-center justify-center transition-all cursor-pointer shadow-md shadow-purple-600/30"
                                     title="Generate Fullstack"
                                 >
                                     <i
                                         id="btn-studio-generate-icon"
-                                        class="fa-solid fa-arrow-up text-xs text-zinc-950"
+                                        class="fa-solid fa-arrow-up text-xs text-white"
                                     ></i>
                                 </button>
                             </div>
                         </div>
                     </form>
                 </div>
+
+                <!-- QUICK PROMPT SUGGESTION CHIPS -->
+                <div class="flex items-center justify-center gap-2 flex-wrap pt-1 text-xs">
+                    <span class="text-zinc-500 text-[11px] font-medium">Contoh Ide:</span>
+                    <button
+                        type="button"
+                        class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-900/50 hover:bg-zinc-800/80 border border-zinc-800 hover:border-purple-500/40 text-zinc-400 hover:text-zinc-200 text-[11px] transition-all cursor-pointer"
+                        data-prompt="Buat aplikasi Kasir POS & Resto lengkap dengan keranjang belanja, cetak struk, dan panel laporan omzet"
+                    >
+                        Sistem Kasir POS
+                    </button>
+                    <button
+                        type="button"
+                        class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-900/50 hover:bg-zinc-800/80 border border-zinc-800 hover:border-purple-500/40 text-zinc-400 hover:text-zinc-200 text-[11px] transition-all cursor-pointer"
+                        data-prompt="Buat sistem Manajemen Inventori Multi-Gudang dengan pencatatan stok masuk keluar dan alert restock"
+                    >
+                        Inventory Multi-Gudang
+                    </button>
+                    <button
+                        type="button"
+                        class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-900/50 hover:bg-zinc-800/80 border border-zinc-800 hover:border-purple-500/40 text-zinc-400 hover:text-zinc-200 text-[11px] transition-all cursor-pointer"
+                        data-prompt="Buat aplikasi CRM Leads & Manajemen Prospek Klien dengan pipeline kanban stage dan catatan follow up"
+                    >
+                        CRM Pipeline & Leads
+                    </button>
+                    <button
+                        type="button"
+                        class="prompt-chip px-2.5 py-1 rounded-lg bg-zinc-900/50 hover:bg-zinc-800/80 border border-zinc-800 hover:border-purple-500/40 text-zinc-400 hover:text-zinc-200 text-[11px] transition-all cursor-pointer"
+                        data-prompt="Buat portal Pendaftaran Siswa PPDB Online dengan form verifikasi berkas, kuota jurusan, dan portal admin seleksi"
+                    >
+                        PPDB Online Sekolah
+                    </button>
+                </div>
             </div>
         </section>
 
-        <!-- SUB-HEADER SECTION / FEATURES -->
-        <section class="max-w-4xl mx-auto px-4 py-8 sm:py-12 border-t border-zinc-800/60">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
-                    <div class="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/40 text-purple-400 flex items-center justify-center mb-3">
+        <!-- SUB-HEADER SECTION / FEATURES HIGHLIGHTS -->
+        <section class="max-w-4xl mx-auto w-full px-4 py-6 sm:py-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 sm:p-5 rounded-2xl bg-zinc-900/30 hover:bg-zinc-900/60 border border-zinc-800/70 hover:border-purple-500/30 backdrop-blur-sm transition-all duration-300 group flex items-start gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-purple-500/20 transition-all">
                         <i class="fa-solid fa-database text-sm"></i>
                     </div>
-                    <h3 class="text-sm font-bold text-white mb-1.5">In-Memory Database & LocalStorage</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed">
-                        Manajemen data multi-tabel relasional dengan sinkronisasi otomatis ke penyimpanan browser Anda.
-                    </p>
+                    <div class="space-y-1">
+                        <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-purple-300 transition-colors">In-Memory Database & LocalStorage</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Manajemen data multi-tabel relasional dengan sinkronisasi otomatis ke penyimpanan browser Anda.
+                        </p>
+                    </div>
                 </div>
 
-                <div class="p-5 sm:p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80">
-                    <div class="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/40 text-purple-400 flex items-center justify-center mb-3">
+                <div class="p-4 sm:p-5 rounded-2xl bg-zinc-900/30 hover:bg-zinc-900/60 border border-zinc-800/70 hover:border-purple-500/30 backdrop-blur-sm transition-all duration-300 group flex items-start gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-purple-500/20 transition-all">
                         <i class="fa-solid fa-chart-line text-sm"></i>
                     </div>
-                    <h3 class="text-sm font-bold text-white mb-1.5">4-Panel Switcher & Live Analytics</h3>
-                    <p class="text-xs text-zinc-400 leading-relaxed">
-                        Beralih cepat antara panel Kasir POS, Manajemen Master CRUD, Dashboard KPI, dan REST API Console.
-                    </p>
+                    <div class="space-y-1">
+                        <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-purple-300 transition-colors">4-Panel Switcher & Live Analytics</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Beralih cepat antara panel Kasir POS, Manajemen Master CRUD, Dashboard KPI, dan REST API Console.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- DAFTAR PROYEK FULLSTACK YANG SUDAH DI-GENERATE (List2 Style Layout) -->
-        <section id="fullstack-history-list-section" class="max-w-5xl mx-auto px-4 pb-20 pt-4">
-            <div class="space-y-6">
+        <!-- DAFTAR PROYEK FULLSTACK YANG SUDAH DI-GENERATE -->
+        <section id="fullstack-history-list-section" class="max-w-4xl mx-auto w-full px-4 pb-20 pt-2">
+            <div class="space-y-4">
                 <!-- Header with Title and Search Filter at the Top -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800/80">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800/60">
                     <div class="flex items-center gap-2.5">
-                        <span class="w-8 h-8 rounded-lg bg-purple-600/20 text-purple-400 border border-purple-500/30 flex items-center justify-center text-xs">
+                        <span class="w-7 h-7 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-xs">
                             <i class="fa-solid fa-database"></i>
                         </span>
-                        <h2 class="text-xl sm:text-2xl font-semibold text-white tracking-tight">Daftar Proyek Build App</h2>
+                        <h2 class="text-base sm:text-lg font-semibold text-white tracking-tight">Daftar Proyek Build App</h2>
+                        <span id="fullstack-project-count-badge" class="px-2 py-0.5 rounded-full bg-zinc-800/80 border border-zinc-700/60 text-[11px] font-mono font-medium text-zinc-400">0</span>
                     </div>
 
                     <!-- Search Filter Input -->
-                    <div class="relative w-full sm:w-72">
+                    <div class="relative w-full sm:w-64">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500"></i>
                         <input
                             type="text"
                             id="search-fullstack-history"
                             placeholder="Cari proyek build app..."
-                            class="w-full pl-8 pr-3 py-2 rounded-xl bg-zinc-900/90 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500/50 transition-colors shadow-inner"
+                            class="w-full pl-8 pr-8 py-1.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all"
                         />
+                        <button
+                            type="button"
+                            id="btn-clear-fullstack-search"
+                            class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 text-xs transition-colors cursor-pointer"
+                            title="Hapus pencarian"
+                        >
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
                 </div>
 
-                <!-- History Rows Container with Separator layout -->
-                <div id="fullstack-history-container" class="flex flex-col divide-y divide-zinc-800/80 border-y border-zinc-800/80">
+                <!-- History Rows Container -->
+                <div id="fullstack-history-container" class="space-y-3">
                     <div class="py-12 text-center text-zinc-500 text-xs">
                         <i class="fa-solid fa-circle-notch fa-spin text-sm text-purple-400 mb-2"></i>
                         <p>Memuat daftar proyek build app...</p>
@@ -262,9 +335,25 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                     content: content
                 }];
                 if (fileIndicator) {
-                    fileIndicator.textContent = file.name;
+                    const nameSpan = document.getElementById("studio-file-name");
+                    if (nameSpan) {
+                        nameSpan.textContent = file.name;
+                    } else {
+                        fileIndicator.textContent = file.name;
+                    }
                     fileIndicator.classList.remove("hidden");
                 }
+            }
+
+            const removeFileBtn = document.getElementById("btn-remove-attached-file");
+            if (removeFileBtn) {
+                removeFileBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    attachedFiles = [];
+                    if (fileUpload) fileUpload.value = "";
+                    if (fileIndicator) fileIndicator.classList.add("hidden");
+                });
             }
 
             if (fileUpload) {
@@ -345,7 +434,47 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
             // --- FULLSTACK PROJECTS HISTORY FETCHER & RENDERER ---
             const fullstackHistoryContainer = document.getElementById("fullstack-history-container");
             const searchFullstackInput = document.getElementById("search-fullstack-history");
+            const clearSearchBtn = document.getElementById("btn-clear-fullstack-search");
+            const countBadge = document.getElementById("fullstack-project-count-badge");
             let allFullstackProjects = [];
+
+            // Sanitize and clean raw titles & prompts (e.g. uploaded PRD document dumps)
+            function formatProjectTitle(name, prompt) {
+                let raw = (name || "").trim();
+                if (!raw || raw.toLowerCase().startsWith("aplikasi fullstack") || raw.length < 3) {
+                    raw = (prompt || "").trim();
+                }
+                raw = raw.replace(/\[(?:Lampiran|Dokumen Terlampir)[^\]]*\]/gi, "");
+                raw = raw.replace(/===.*?===/gi, "");
+                raw = raw.replace(/[I|V|X]+\.\s*LAMPIRAN\s*DOKUMEN[^\n]*/gi, "");
+                raw = raw.replace(/[*_#`>]/g, "");
+                raw = raw.trim();
+
+                if (!raw || raw.length < 2) {
+                    const orig = name || prompt || "";
+                    const m = orig.match(/\[(?:Lampiran|Dokumen Terlampir):\s*([^\]]+)\]/i);
+                    if (m && m[1]) {
+                        return m[1].replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ").trim();
+                    }
+                    return "Aplikasi Fullstack Web App";
+                }
+                return raw;
+            }
+
+            function formatProjectExcerpt(prompt, name) {
+                let raw = (prompt || "").trim();
+                raw = raw.replace(/\[(?:Lampiran|Dokumen Terlampir)[^\]]*\]/gi, "");
+                raw = raw.replace(/===.*?===/gi, "");
+                raw = raw.replace(/[I|V|X]+\.\s*LAMPIRAN\s*DOKUMEN[^\n]*/gi, "");
+                raw = raw.replace(/^#+\s+/gm, "");
+                raw = raw.replace(/[*_#`>]/g, " ");
+                raw = raw.replace(/\s+/g, " ").trim();
+
+                if (!raw || raw.length < 6) {
+                    return "Aplikasi web mandiri dengan database in-memory, logika CRUD multi-tabel, dan panel kontrol terintegrasi.";
+                }
+                return raw;
+            }
 
             async function loadFullstackHistory() {
                 if (!fullstackHistoryContainer) return;
@@ -393,58 +522,68 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
             function renderFullstackHistoryList(list) {
                 if (!fullstackHistoryContainer) return;
 
+                if (countBadge) {
+                    countBadge.textContent = `${list.length}`;
+                }
+
                 if (!list || list.length === 0) {
                     fullstackHistoryContainer.innerHTML = `
-                        <div class="py-16 text-center text-zinc-500 text-xs">
-                            <i class="fa-solid fa-database text-2xl text-zinc-600 mb-2 block"></i>
-                            <p class="font-medium text-zinc-400">Belum ada proyek Build App yang dibuat</p>
-                            <p class="text-[11px] text-zinc-600 mt-1">Tulis deskripsi ide sistem di atas untuk mulai membuat proyek Build App pertama Anda.</p>
+                        <div class="py-14 px-4 text-center rounded-2xl bg-zinc-900/20 border border-zinc-800/40">
+                            <div class="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-500 flex items-center justify-center mx-auto mb-3">
+                                <i class="fa-solid fa-database text-lg"></i>
+                            </div>
+                            <p class="font-medium text-zinc-300 text-xs sm:text-sm">Belum ada proyek Build App yang sesuai</p>
+                            <p class="text-[11px] text-zinc-500 mt-1 max-w-sm mx-auto">Tuliskan ide aplikasi di atas atau coba kata kunci pencarian yang lain.</p>
                         </div>
                     `;
                     return;
                 }
 
                 fullstackHistoryContainer.innerHTML = list.map((item, idx) => {
-                    const title = item.name || "Aplikasi Fullstack Web App";
+                    const rawTitle = item.name || "Aplikasi Fullstack Web App";
+                    const rawPrompt = item.prompt || "";
+                    const cleanTitleStr = formatProjectTitle(rawTitle, rawPrompt);
+                    const cleanDescStr = formatProjectExcerpt(rawPrompt, rawTitle);
                     const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "Tersimpan";
-                    const promptText = item.prompt ? item.prompt.replace(/[*_#`]/g, "").trim() : "Aplikasi web mandiri dengan database in-memory, logika CRUD & panel manajemen.";
 
                     return `
-                        <div data-row-full-idx="${idx}" class="grid items-center gap-4 px-3 sm:px-5 py-4 sm:py-5 grid-cols-1 md:grid-cols-4 hover:bg-zinc-900/40 transition-colors group cursor-pointer">
-                            <!-- Col 1: Icon/Badge + Title + Meta -->
-                            <div class="order-2 md:order-none flex items-center gap-3 min-w-0">
-                                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 text-purple-400 shadow-sm group-hover:border-purple-500/30 group-hover:bg-purple-500/10 transition-all">
+                        <div data-row-full-idx="${idx}" class="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/40 hover:bg-zinc-900/80 border border-zinc-800/80 hover:border-purple-500/40 backdrop-blur-sm transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-purple-950/20 cursor-pointer">
+                            <div class="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+                                <div class="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-purple-500/20 transition-all shadow-sm">
                                     <i class="fa-solid fa-database text-sm"></i>
-                                </span>
-                                <div class="flex flex-col gap-0.5 min-w-0">
-                                    <h3 class="font-semibold text-white text-xs sm:text-sm truncate group-hover:text-purple-300 transition-colors">${title}</h3>
-                                    <p class="text-[11px] text-zinc-500 flex items-center gap-1.5 flex-wrap">
-                                        <span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">Build App</span>
-                                        <span>•</span>
-                                        <span>${dateStr}</span>
+                                </div>
+                                <div class="min-w-0 flex-1 space-y-1">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <h3 class="font-semibold text-white text-sm sm:text-base group-hover:text-purple-300 transition-colors truncate max-w-[280px] sm:max-w-[420px]">
+                                            ${cleanTitleStr}
+                                        </h3>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                                            Build App
+                                        </span>
+                                        <span class="text-zinc-600 text-xs hidden sm:inline">•</span>
+                                        <span class="text-[11px] text-zinc-500 font-medium flex items-center gap-1">
+                                            <i class="fa-regular fa-clock text-[10px]"></i>
+                                            <span>${dateStr}</span>
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-zinc-400 line-clamp-1 sm:line-clamp-2 leading-relaxed">
+                                        ${cleanDescStr}
                                     </p>
                                 </div>
                             </div>
-
-                            <!-- Col 2: Description / Prompt (col-span-2) -->
-                            <p class="order-1 md:order-none md:col-span-2 text-xs sm:text-sm font-normal text-zinc-300 line-clamp-2 leading-relaxed">
-                                ${promptText}
-                            </p>
-
-                            <!-- Col 3: Actions -->
-                            <div class="order-3 md:order-none flex items-center justify-end gap-1.5 ml-auto shrink-0" onclick="event.stopPropagation()">
+                            <div class="flex items-center gap-2 shrink-0 self-end sm:self-center pt-2 sm:pt-0" onclick="event.stopPropagation()">
                                 <a
                                     href="/app?id=${item.id}"
-                                    class="px-3 py-1.5 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-200 hover:text-white border border-zinc-700/60 flex items-center gap-1.5 text-xs transition-colors"
+                                    class="px-3.5 py-1.5 rounded-xl bg-zinc-800/90 hover:bg-purple-600 text-zinc-200 hover:text-white border border-zinc-700/80 hover:border-purple-500 flex items-center gap-2 text-xs font-medium transition-all shadow-sm group/btn"
                                     title="Buka di Studio Canvas"
                                 >
                                     <span>Studio</span>
-                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
                                 </a>
                                 <button
                                     type="button"
                                     data-download-full-idx="${idx}"
-                                    class="w-8 h-8 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700/60 flex items-center justify-center transition-colors cursor-pointer"
+                                    class="w-8 h-8 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700/70 flex items-center justify-center transition-all cursor-pointer"
                                     title="Unduh HTML"
                                 >
                                     <i class="fa-solid fa-download text-xs"></i>
@@ -452,8 +591,8 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                                 <button
                                     type="button"
                                     data-delete-full-id="${item.id}"
-                                    data-delete-full-title="${title.replace(/"/g, '&quot;')}"
-                                    class="w-8 h-8 rounded-xl bg-zinc-800/80 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 border border-zinc-700/60 flex items-center justify-center transition-colors cursor-pointer"
+                                    data-delete-full-title="${cleanTitleStr.replace(/"/g, '&quot;')}"
+                                    class="w-8 h-8 rounded-xl bg-zinc-800/80 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 border border-zinc-700/70 hover:border-red-500/30 flex items-center justify-center transition-all cursor-pointer"
                                     title="Hapus Proyek"
                                 >
                                     <i class="fa-solid fa-trash-can text-xs"></i>
@@ -526,6 +665,10 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
             if (searchFullstackInput) {
                 searchFullstackInput.addEventListener("input", (e) => {
                     const q = (e.target.value || "").toLowerCase().trim();
+                    if (clearSearchBtn) {
+                        if (q) clearSearchBtn.classList.remove("hidden");
+                        else clearSearchBtn.classList.add("hidden");
+                    }
                     if (!q) {
                         renderFullstackHistoryList(allFullstackProjects);
                         return;
@@ -539,28 +682,45 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
                 });
             }
 
+            if (clearSearchBtn && searchFullstackInput) {
+                clearSearchBtn.addEventListener("click", () => {
+                    searchFullstackInput.value = "";
+                    clearSearchBtn.classList.add("hidden");
+                    renderFullstackHistoryList(allFullstackProjects);
+                    searchFullstackInput.focus();
+                });
+            }
+
+            // Quick Prompt Suggestion Chips handler
+            document.querySelectorAll(".prompt-chip").forEach(chip => {
+                chip.addEventListener("click", () => {
+                    if (input) {
+                        input.value = chip.getAttribute("data-prompt") || chip.textContent.trim();
+                        input.focus();
+                    }
+                });
+            });
+
             loadFullstackHistory();
 
-            // Smooth Blur Fade Up Rotating Titles
-            const titles = [
-                "Build App: Fullstack Web App",
-                "Logika CRUD & Database In-Memory",
-                "Panel Admin & Manajemen Data",
-                "Alur Sistem & Operasi Backend"
+            // Smooth Rotating Subtitles
+            const subtitles = [
+                "Frontend responsif, logika CRUD in-memory, dan panel kontrol interaktif.",
+                "Database relasional multi-tabel dengan sinkronisasi instan ke browser.",
+                "Beralih instan antara panel Kasir POS, Manajemen Master, dan REST API Console.",
+                "Arsitektur mandiri siap unduh HTML tanpa dependensi server eksternal."
             ];
-            let currentTitleIdx = 0;
-            const titleEl = document.getElementById("fullstack-animated-title");
-            if (titleEl) {
+            let subIdx = 0;
+            const subEl = document.getElementById("fullstack-animated-subtitle");
+            if (subEl) {
                 setInterval(() => {
-                    titleEl.classList.remove("animate-title-in");
-                    titleEl.classList.add("animate-title-out");
+                    subEl.style.opacity = "0";
                     setTimeout(() => {
-                        currentTitleIdx = (currentTitleIdx + 1) % titles.length;
-                        titleEl.textContent = titles[currentTitleIdx];
-                        titleEl.classList.remove("animate-title-out");
-                        titleEl.classList.add("animate-title-in");
-                    }, 400);
-                }, 3500);
+                        subIdx = (subIdx + 1) % subtitles.length;
+                        subEl.textContent = subtitles[subIdx];
+                        subEl.style.opacity = "1";
+                    }, 300);
+                }, 4500);
             }
 
             // Form Submission
@@ -656,35 +816,16 @@ import GenerativeArtScene from "../../components/ui/GenerativeArtScene";
     </script>
 
     <style>
-        @keyframes titleFadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(12px);
-                filter: blur(6px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-                filter: blur(0);
-            }
+        /* Smooth micro-interactions & subtle glow accents */
+        #studio-prompt-input::-webkit-scrollbar {
+            width: 4px;
         }
-        @keyframes titleFadeOutUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-                filter: blur(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-12px);
-                filter: blur(6px);
-            }
+        #studio-prompt-input::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.2);
+            border-radius: 9999px;
         }
-        .animate-title-in {
-            animation: titleFadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .animate-title-out {
-            animation: titleFadeOutUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        #studio-prompt-input::-webkit-scrollbar-thumb:hover {
+            background: rgba(168, 85, 247, 0.4);
         }
     </style>
 </Layout>

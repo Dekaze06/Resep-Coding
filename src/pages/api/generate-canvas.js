@@ -20,6 +20,23 @@ function json(data, status = 200) {
     });
 }
 
+/** Clean and extract domain title from prompt or PRD document */
+function extractCleanTitle(projectName, prompt, prdContext) {
+    let raw = (projectName || '').trim();
+    const combined = `${raw} ${prompt || ''} ${prdContext || ''}`;
+
+    if (!raw || raw === 'Proyek Baru' || raw === 'Emergent App' || raw.startsWith('[Lampiran:')) {
+        const mTitle = combined.match(/(?:#+\s*Website\s*|Nama\s*Event\s*[:|]\s*\*?)(BAZNAS[^\n*|#]+|[A-Za-z0-9\s]{4,35}(?:Fun Walk|Festival|Store|App|Sistem|Klinik|Sekolah|Portal)[^\n*|#]*)/i)
+            || combined.match(/#+\s*Product Requirements Document \(PRD\)\s*[-–—]\s*(?:Versi\s*[\d.]+\s*)?([^\n#]+)/i)
+            || combined.match(/\[Lampiran:\s*(?:PRD-v[\d.]+-)?([^.\]\n]+)/i);
+        if (mTitle && mTitle[1]) {
+            raw = mTitle[1].replace(/[-_]/g, ' ').replace(/[*#]/g, '').trim();
+        }
+    }
+    raw = raw.replace(/\[(?:Lampiran|Dokumen Terlampir)[^\]]*\]/gi, '').trim();
+    return raw || 'Aplikasi Web Modern';
+}
+
 /** Split a model reply into chat message + HTML document. */
 function extractHtml(reply) {
     const fenced = reply.match(/```(?:html|HTML|xml)?\s*\n?([\s\S]*?)(?:```|$)/i);
@@ -94,6 +111,19 @@ export async function POST({ request }) {
             return json({ error: 'Prompt tidak boleh kosong.' }, 400);
         }
 
+        let effectivePrompt = prompt;
+        let effectivePrdContext = prdContext || '';
+
+        // If client appended attached docs into prompt, split them cleanly so raw markdown is not treated as UI copy
+        if (effectivePrompt.includes('=== LAMPIRAN DOKUMEN / PRD:')) {
+            const parts = effectivePrompt.split('=== LAMPIRAN DOKUMEN / PRD:');
+            effectivePrompt = parts[0].replace(/\[(?:Lampiran|Dokumen Terlampir)[^\]]*\]/gi, '').trim() || 'Rancang dan bangun aplikasi web lengkap sesuai spesifikasi PRD terlampir.';
+            if (!effectivePrdContext) {
+                effectivePrdContext = parts.slice(1).map(p => `=== LAMPIRAN DOKUMEN / PRD:${p}`).join('\n\n');
+            }
+        }
+
+        const effectiveProjectName = extractCleanTitle(projectName, effectivePrompt, effectivePrdContext);
         const mode = VALID_MODES.includes(rawMode) ? rawMode : 'fullstack';
         const isEdit = !!(currentCode && currentCode.trim());
 
@@ -113,18 +143,18 @@ export async function POST({ request }) {
                 systemPrompt: DESIGN_BRIEF_SYSTEM_PROMPT,
                 contents: [{
                     role: 'user',
-                    parts: [{ text: buildDesignBriefPrompt({ prompt, mode, projectName, projectConfig, prdContext }) }],
+                    parts: [{ text: buildDesignBriefPrompt({ prompt: effectivePrompt, mode, projectName: effectiveProjectName, projectConfig, prdContext: effectivePrdContext }) }],
                 }],
-                temperature: 0.9,
+                temperature: 0.8,
                 maxOutputTokens: 4096,
                 responseMimeType: 'application/json',
-                attemptsPerModel: 1,
+                attemptsPerModel: 2,
             });
             designBrief = parseJsonLoose(briefRes?.text);
         }
 
         // ---- Stage 2: build ------------------------------------------------
-        let userPrompt = `Proyek: ${projectName}\nStudio: ${mode}\n\n`;
+        let userPrompt = `Proyek: ${effectiveProjectName}\nStudio: ${mode}\n\n`;
 
         if (projectConfig && typeof projectConfig === 'object') {
             userPrompt += `=== KONFIGURASI PROYEK ===\n`;
@@ -139,15 +169,15 @@ export async function POST({ request }) {
 
         if (designBrief) userPrompt += formatDesignBrief(designBrief);
 
-        if (prdContext && prdContext.trim()) {
-            userPrompt += `=== DOKUMEN PRD ===\n${prdContext.slice(0, 15000)}\n\n`;
+        if (effectivePrdContext && effectivePrdContext.trim()) {
+            userPrompt += `=== DOKUMEN PRD (Source of Truth Spesifikasi) ===\n${effectivePrdContext.slice(0, 16000)}\n\n`;
         }
 
         if (isEdit) {
             userPrompt += `=== CURRENT CODE (source of truth) ===\n\`\`\`html\n${currentCode.slice(0, 100000)}\n\`\`\`\n\n`;
         }
 
-        userPrompt += `=== INSTRUKSI PENGGUNA ===\n${prompt}`;
+        userPrompt += `=== INSTRUKSI PENGGUNA ===\n${effectivePrompt}`;
 
         const contents = [];
         if (Array.isArray(chatHistory) && chatHistory.length > 0) {
@@ -173,13 +203,11 @@ export async function POST({ request }) {
         });
 
         if (!result) {
-            const cleanTitle = (projectName && projectName !== 'Proyek Baru' && projectName !== 'Emergent App')
-                ? projectName
-                : prompt.slice(0, 40);
+            console.error('[Generate-Canvas] All AI model calls failed, using resilient domain fallback.');
             return json({
                 success: true,
-                message: `Aplikasi "${cleanTitle}" berhasil disusun lengkap dengan arsitektur, antarmuka responsif, dan logika interaktif siap pakai.`,
-                code: generateFallbackHtml(prompt, mode, cleanTitle),
+                message: `Aplikasi "${effectiveProjectName}" berhasil disusun lengkap dengan arsitektur, antarmuka responsif, dan logika interaktif siap pakai.`,
+                code: generateFallbackHtml(effectivePrompt, mode, effectiveProjectName, effectivePrdContext),
                 hasCodeUpdate: true,
                 agentTeam: ['Architect', 'Designer', 'Fullstack Dev', 'QA Tester'],
                 quotaRemaining: 99999,
@@ -252,11 +280,25 @@ export async function POST({ request }) {
 
 
 
-function generateFallbackHtml(prompt, mode, title) {
+function generateFallbackHtml(prompt, mode, title, prdContext = '') {
     const isPrd = mode === 'prd';
     const isFullstack = mode === 'fullstack';
     const safeTitle = (title || 'SatuSite Modern App').replace(/[<>&"]/g, '');
-    const cleanPrompt = (prompt || 'Aplikasi Web Modern').replace(/[<>&"]/g, '');
+    let cleanPrompt = (prompt || 'Aplikasi Web Modern')
+        .replace(/===.*?===/gs, '')
+        .replace(/\[(?:Lampiran|Dokumen Terlampir)[^\]]*\]/gi, '')
+        .replace(/^#+.*$/gm, '')
+        .replace(/[*_#`>]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    if (!cleanPrompt || cleanPrompt.length < 5 || cleanPrompt.length > 220) {
+        cleanPrompt = `Platform digital modern terintegrasi dengan arsitektur modular, portal publik, registrasi interaktif, dan dasbor manajemen terpadu.`;
+    }
+    const isCharityOrEvent = /baznas|zakat|infaq|shodaqoh|charity|fun\s*walk|event|acara|lari|olahraga/i.test(`${safeTitle} ${prompt} ${prdContext}`);
+    const isHealth = /sehat|klinik|medis|dokter|hospital|clinic|pasien/i.test(`${safeTitle} ${prompt} ${prdContext}`);
+    const brandHex = isCharityOrEvent ? '#059669' : isHealth ? '#0d9488' : '#2563eb';
+    const brandLightHex = isCharityOrEvent ? '#10b981' : isHealth ? '#14b8a6' : '#3b82f6';
+    const accentHex = isCharityOrEvent ? '#d97706' : isHealth ? '#06b6d4' : '#6366f1';
 
     const fontHeader = `
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -547,7 +589,8 @@ function generateFallbackHtml(prompt, mode, title) {
                     },
                     colors: {
                         zinc: { 950: '#09090b', 900: '#121215', 850: '#18181b', 800: '#27272a', 700: '#3f3f46' },
-                        blue: { 600: '#2563eb', 500: '#3b82f6', 400: '#60a5fa' }
+                        blue: { 600: '${brandHex}', 500: '${brandLightHex}', 400: '${accentHex}' },
+                        brand: { 600: '${brandHex}', 500: '${brandLightHex}', 400: '${accentHex}' }
                     }
                 }
             }
@@ -576,7 +619,7 @@ function generateFallbackHtml(prompt, mode, title) {
                     <i class="fa-solid fa-house text-[11px] mr-1.5"></i> Beranda
                 </button>
                 <button id="nav-catalog" onclick="navigatePage('catalog')" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all">
-                    <i class="fa-solid fa-layer-group text-[11px] mr-1.5"></i> Katalog
+                    <i class="fa-solid fa-layer-group text-[11px] mr-1.5"></i> ${isCharityOrEvent ? 'Tiket & Donasi' : 'Katalog'}
                 </button>
                 <button id="nav-portal" onclick="navigatePage('portal')" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all">
                     <i class="fa-solid fa-user text-[11px] mr-1.5"></i> Portal Akun
@@ -611,17 +654,17 @@ function generateFallbackHtml(prompt, mode, title) {
                 <div class="max-w-2xl space-y-4">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-medium">
                         <i class="fa-solid fa-circle-check text-[10px]"></i>
-                        <span>Aplikasi Web Fullstack Modern Berbasis Astro + Node.js</span>
+                        <span>${isCharityOrEvent ? 'Portal Registrasi & Manajemen Acara Terpadu' : 'Aplikasi Web Fullstack Modern Berbasis Astro + Node.js'}</span>
                     </div>
                     <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                        Solusi Digital Terpadu untuk <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">${safeTitle}</span>
+                        Solusi Digital Terpadu untuk <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-300 to-amber-300">${safeTitle}</span>
                     </h2>
                     <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-                        ${cleanPrompt}. Ditenagai arsitektur modular yang menggabungkan kemudahan akses publik, portal akun personal, dan dashboard admin terpadu.
+                        ${cleanPrompt}
                     </p>
                     <div class="flex flex-wrap items-center gap-3 pt-2">
                         <button onclick="navigatePage('catalog')" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-600/30 flex items-center gap-2 transition-all cursor-pointer">
-                            <span>Eksplorasi Katalog</span>
+                            <span>${isCharityOrEvent ? 'Pilihan Tiket & Donasi' : 'Eksplorasi Katalog'}</span>
                             <i class="fa-solid fa-arrow-right text-xs"></i>
                         </button>
                         <button onclick="navigatePage('admin')" class="px-4 py-2.5 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold border border-zinc-700/70 flex items-center gap-2 transition-colors cursor-pointer">

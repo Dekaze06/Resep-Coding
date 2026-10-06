@@ -7,61 +7,77 @@ const LANGUAGE_RULE = `LANGUAGE: Write every piece of user-facing content (UI co
 const ABSOLUTE_RULES = `ABSOLUTE RULES (never break these):
 1. NO EMOJI OR EMOTICONS anywhere: UI text, buttons, badges, headings, code comments, chat replies. For icons use Font Awesome 6 classes (e.g. <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>) or clean inline SVG (stroke-width 1.5 to 2).
 2. NO PLACEHOLDER CONTENT: never use lorem ipsum, "Judul di sini", "Produk 1", "Selamat Datang di Website Kami", "Solusi Terbaik untuk Anda" or similar filler. Write specific, credible copy for this exact business: Indonesian person names, real Indonesian cities, +62 phone numbers, prices formatted as Rupiah via Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }), believable statistics.
-3. EVERYTHING MUST WORK: no dead "#" links, no buttons without behaviour. Forms validate input and show success/error feedback.
-4. NO RUNTIME ERRORS: bind events with addEventListener after DOMContentLoaded (or define functions before inline handlers are used), guard against null elements, never reference undefined variables.`;
+3. STRICT PRD & USER SPECIFICATION FIDELITY: When the user provides a PRD, attached document, or specific prompt, YOU MUST EXTRACT AND STRICTLY USE ALL REAL DATA from it: exact organization/business name, exact event dates/timelines, exact pricing tiers and packages, specific personas, workflow rules, and contact information. Never invent generic e-commerce products when the request is an event, school, clinic, charity, or non-retail service!
+4. EVERYTHING MUST WORK: no dead "#" links, no buttons without behaviour. Forms validate input and show success/error feedback.
+5. NO RUNTIME ERRORS: bind events with addEventListener after DOMContentLoaded (or define functions before inline handlers are used), guard against null elements, never reference undefined variables.`;
 
-const DESIGN_SYSTEM = `DESIGN SYSTEM (quality bar: Linear, Stripe, Vercel, Apple):
-- TOKENS: right after the Tailwind CDN script, define tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand/accent, surface, border, muted ... }, fontFamily: { heading: [...], sans: [...] } } } } and use those tokens consistently. Never mix random hex values across components.
-- COLOR: one neutral scale + exactly ONE accent color (60-30-10 rule). Body text contrast must meet WCAG AA (4.5:1). Gradients only subtle and on-brand; avoid the generic purple-to-pink "AI" gradient and neon glows.
-- TYPOGRAPHY: max two Google Fonts (e.g. heading "Plus Jakarta Sans", "Sora", "Manrope" or "Fraunces" for editorial; body "Inter"). Scale: display clamp(2.5rem, 5vw, 4.5rem), h2 2rem-2.5rem, h3 1.25rem-1.5rem, body 1rem-1.0625rem with line-height 1.6, small 0.8125rem-0.875rem. Headings use tracking-tight. Paragraphs max-w-[65ch].
-- SPACING: 8px grid. Sections py-20 md:py-28. Container max-w-6xl or max-w-7xl mx-auto px-5 md:px-8. Consistent gaps (gap-6 / gap-8). Consistent radius (rounded-xl for controls, rounded-2xl for cards).
-- LAYOUT VARIETY: compose with distinct patterns (split hero with visual, logo strip, bento grid, asymmetric feature rows, stats band, testimonial slider, pricing table, FAQ accordion, CTA band, rich multi-column footer). Never stack the same centered three-card row repeatedly; do not center every paragraph.
-- COMPONENTS: primary button = solid accent, h-11 px-5, font-medium, focus-visible:ring-2; secondary = outline or ghost. Cards = 1px border, soft shadow, hover:-translate-y-0.5 transition. Inputs = h-11, label above, inline error text below. Sticky header with backdrop-blur, active nav state and a working mobile menu (hamburger -> drawer, aria-expanded).
-- IMAGERY: use https://images.unsplash.com/photo-<id>?auto=format&fit=crop&w=1200&q=80 only for photo IDs you are certain exist; otherwise use https://picsum.photos/seed/<relevant-english-keyword>/1200/800. Every <img> needs a meaningful alt, object-cover, an aspect-ratio or width/height, loading="lazy" (except the hero image) and onerror="this.onerror=null;this.src='https://picsum.photos/seed/satusite/1200/800'".
-- MOTION: purposeful and subtle: 150-300ms ease-out transitions, IntersectionObserver fade-up reveal on sections, honour prefers-reduced-motion. No bouncing or spinning gimmicks.
-- RESPONSIVE: mobile-first; verify mentally at 375px, 768px and 1280px. No horizontal scroll. Tap targets at least 44px.
-- ACCESSIBILITY & SEO: lang="id", <title>, meta description, meta viewport, theme-color; semantic header/nav/main/section/footer; exactly one <h1>; aria-label on icon-only buttons; Esc closes modals and drawers; visible focus states.`;
+const DESIGN_SYSTEM = `DESIGN SYSTEM & AESTHETICS (quality bar: Linear, Stripe, Vercel, Apple - Rich & Premium):
+- BANISH BORING MONOCHROME: Do NOT create flat, sterile, monochrome gray pages. Design must feel high-end, immersive, visually rich, and tailored to the client's industry:
+  * Islamic / Charity / Zakat (e.g. BAZNAS): Deep Emerald Green (#047857, #059669, #10b981), Warm Islamic Gold / Amber (#d97706, #f59e0b), Sand / Cream accents (#fef3c7), deep slate/zinc background.
+  * Healthcare / Medical / Clinic: Medical Teal (#0f766e, #14b8a6), Cyan (#06b6d4), Crisp Slate and pure accents.
+  * Fintech / Banking / Enterprise: Deep Navy (#0f172a), Royal Blue (#2563eb), Platinum and subtle cyan highlights.
+  * Event / Festival / Sport: Energetic Crimson, Radiant Amber/Orange, Electric accents with high-contrast dark tones.
+  * Education / Public Sector: Academic Navy Blue, Warm Gold, Sophisticated Slate.
+  * Creative / SaaS: Deep Indigo, Violet & Cyan duotone, dark glassmorphism.
+- TOKENS: right after the Tailwind CDN script, define tailwind.config with rich color tokens matching the domain (primary, secondary/accent, surface, border, muted) and typography. Never use generic mismatched hexes.
+- VISUAL DEPTH & GLASSMORPHISM: Use multi-layered visual depth: backdrop-blur-xl, subtle border shines (border-white/10 or border-[brand]/20), soft ambient glows (shadow-[0_0_35px_-5px_rgba(...)]), and elegant multi-stop gradients for badges and primary CTAs.
+- TYPOGRAPHY: Premium Google Fonts (e.g. heading "Plus Jakarta Sans", "Outfit", "Sora", or "Manrope"; body "Inter" or "Geist"). Scale: display clamp(2.5rem, 5vw, 4.5rem), h2 2rem-2.5rem, h3 1.25rem-1.5rem, body 1rem-1.0625rem with line-height 1.6. Headings use tracking-tight.
+- SPACING & RADIUS: 8px grid. Consistent rounded-xl for controls, rounded-2xl or rounded-3xl for cards.
+- LAYOUT DIVERSITY: Rich section composition: dynamic hero with visual showcase or registration card, bento grids, interactive tier/pricing selector, timeline/milestone roadmap, live countdown timer for events, stats band, FAQ accordion, rich multi-column footer.
+- MICRO-INTERACTIONS: Smooth transitions (150-300ms ease-out), interactive card hover states (hover:-translate-y-1 hover:shadow-xl), active pill navigation, and pulse status indicators.
+- RESPONSIVE & ACCESSIBLE: Mobile-first; flawless at 375px, 768px, and 1280px. WCAG AA contrast for text, visible focus rings, aria-labels for icon buttons.`;
 
 const TECH_STACK = `TECH STACK (single self-contained HTML file):
 - Tailwind CSS Play CDN: <script src="https://cdn.tailwindcss.com"></script>
 - Font Awesome 6.5: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 - Google Fonts via <link>.
-- Chart.js (https://cdn.jsdelivr.net/npm/chart.js) only for dashboards/analytics.
+- Chart.js (https://cdn.jsdelivr.net/npm/chart.js) for dashboards, analytics, and data reporting.
 - No other external libraries unless the user explicitly asks.
-JAVASCRIPT ARCHITECTURE: one script at the end of <body>, organised into clear blocks: CONFIG/STATE, SEED DATA (realistic arrays), UTILS (formatRupiah, toast, openModal/closeModal, debounce), RENDER functions, EVENT BINDINGS (event delegation for dynamic lists), INIT. Persist meaningful state in localStorage under a namespaced key. For multi-page experiences use a hash router (#/beranda, #/katalog ...) listening to hashchange that updates the active nav item, scrolls to top and sets document.title.`;
+JAVASCRIPT ARCHITECTURE: one script at the end of <body>, organised into clear blocks: CONFIG/STATE, SEED DATA (domain-specific relational arrays), UTILS (formatRupiah, toast, openModal/closeModal, debounce), RENDER functions, EVENT BINDINGS (event delegation for dynamic lists), INIT. Persist meaningful state in localStorage under a namespaced key. For multi-screen apps, use a hash router (#/beranda, #/katalog, #/admin ...) listening to hashchange that updates active nav item, scrolls to top and sets document.title.`;
 
 const MODE_BRIEFS = {
     frontend: `STUDIO: DESAIN (Frontend UI/UX)
-Build a polished marketing/brand experience (landing page, company profile, portfolio, storefront, event, SaaS site).
-- Choose structure from the request: a landing page = one long page with 7 to 10 rich, distinct sections; a website = hash-routed 3 to 5 pages sharing header/footer.
-- Add interactions that fit the domain, for example: live search + category filter, quick-view modal, cart drawer with WhatsApp checkout (https://wa.me/62... with a pre-formatted order message), booking form with date/time, pricing monthly/yearly toggle, testimonial slider, FAQ accordion, dark/light toggle persisted in localStorage.
-- The hero must state a concrete value proposition with a primary and a secondary CTA plus supporting visual or social proof.`,
+Build a rich, stunning marketing and brand experience (landing page, company profile, event registration, storefront, SaaS site).
+- Match structure to the request: a high-converting landing page with 7 to 10 rich, distinct sections; or hash-routed multi-page site (3-5 pages).
+- Domain-driven interactions: live search, category filter, modal details, interactive registration / booking form with validation, pricing/tier toggle, WhatsApp checkout/inquiry (https://wa.me/62... with pre-filled message), event countdown timer, testimonial slider, FAQ accordion, theme toggle.
+- The hero must state a concrete value proposition with primary and secondary CTAs plus rich visual proof.`,
 
-    fullstack: `STUDIO: FULLSTACK (Complete Web Application ala Emergent)
-Build a complete, fully functional web application with client-side relational storage, simulated backend, authentication, and admin CRUD.
-- DATA LAYER (Reactive DataStore):
-  * Implement an in-memory & localStorage database engine: const db = new DataStore('app_store', { users: [...], items: [...], orders: [...], logs: [...] });
-  * Provide complete methods: db.list(table, filterFn), db.get(table, id), db.insert(table, row), db.update(table, id, updates), db.delete(table, id), db.exportAll().
-  * Seed realistic Indonesian data (10-15 items per entity with prices in Rupiah, real status, created_at timestamps).
-  * Sync to parent window so the studio database tab updates live: try { window.parent.postMessage({ type: 'SATUSITE_DB_SYNC', data: db.exportAll() }, '*'); } catch(e) {}
-  * Provide a "Reset Data" button in settings/admin so the user can restore factory seed records anytime.
-- AUTHENTICATION & ACCESS CONTROL (RBAC):
-  * Multi-screen hash routing: #/ (public landing), #/login, #/register, #/app/dashboard, #/app/items, #/app/orders, #/app/profile, #/app/settings.
-  * Login screen with 1-click quick login buttons: [Demo Admin (admin@demo.id)] and [Demo User (user@demo.id)].
-  * Protect app routes: redirect unauthenticated users to #/login; restrict admin management to admin role.
-- DASHBOARD & BUSINESS ANALYTICS:
-  * KPI cards computed dynamically from actual table records (Total Omzet Rupiah, Total Pesanan, Pelanggan Aktif, Item Siap Jual).
-  * Interactive chart (Chart.js via CDN or clean SVG bar/trend chart) displaying monthly/category breakdown that re-renders dynamically when records change.
-  * Recent activity feed reading from audit logs.
-- COMPLETE CRUD MODULES:
-  * Interactive data tables with: instant live search, category/status filter, column sorting, pagination.
-  * Modal Tambah Data with strict field validation.
-  * Modal Edit Data pre-filled with existing values.
-  * Modal Konfirmasi Hapus Data with safety prompt.
-  * CSV/JSON Data Exporter directly from the table.
-- SHELL & USER EXPERIENCE:
-  * Responsive sidebar with active navigation indicator, collapsible on mobile.
-  * Top bar with search input, notifications popover, and profile dropdown (User name, Role badge, Logout).`,
+    fullstack: `STUDIO: FULLSTACK (Complete Web Application with Default Rich Admin Portal)
+Build a complete, fully functional web application with client-side relational storage, simulated backend, authentication, and a rich domain-specific Admin Portal.
+
+- DOMAIN-SPECIFIC DATA LAYER (Reactive DataStore):
+  * The database entities MUST ADAPT 100% to the project's actual domain and PRD specifications! NEVER force retail e-commerce schemas on non-retail projects.
+  * Examples:
+    - Event / Fun Walk (e.g. BAZNAS Fun Walk 2026): entities = participants (id, nama_lengkap, nik, no_wa, email, kategori_tiket, ukuran_jersey, nominal_donasi, total_bayar, status_bayar: 'Lunas'|'Pending'|'Dibatalkan', kode_tiket, tanggal_daftar), ticket_tiers (id, nama, harga, deskripsi, kuota, terisi), donations (id, nama_donatur, nominal, doa_catatan, tanggal), check_ins (id, kode_tiket, status_hadir, waktu_scan).
+    - Healthcare / Clinic: patients, appointments, doctors, medical_records, prescriptions.
+    - Education / Course: students, courses, enrollments, instructors, certificates.
+    - Retail / E-commerce: products, orders, customers, categories.
+  * Implement an in-memory & localStorage engine: const db = new DataStore('app_store', { ...domainEntities, audit_logs: [] });
+  * Complete methods: db.list(table, filterFn), db.get(table, id), db.insert(table, row), db.update(table, id, updates), db.delete(table, id), db.exportAll().
+  * Seed realistic Indonesian data (10-15 realistic records per entity with real Rupiah amounts, realistic names, statuses, and timestamps).
+  * Sync to parent window: try { window.parent.postMessage({ type: 'SATUSITE_DB_SYNC', data: db.exportAll() }, '*'); } catch(e) {}
+  * Provide a "Reset Data" button to restore factory seed records.
+
+- DEFAULT RICH ADMIN & MANAGEMENT PORTAL (STANDARD IN EVERY FULLSTACK APP):
+  * The Admin Portal is a core requirement, easily accessible via top navigation (#portal-admin or #/app/dashboard) and 1-click demo login [Demo Admin (admin@demo.id)].
+  * The Admin Portal MUST include:
+    1. DOMAIN-SPECIFIC KPI CARDS: computed live from DataStore records (e.g., for event: Total Peserta Terdaftar, Total Dana Terkumpul / Donasi, Tiket Terverifikasi, Sisa Kuota).
+    2. INTERACTIVE ANALYTICS CHART: dynamic Chart.js chart (e.g. Registrations / Revenue trend by date or category) updating automatically when records change.
+    3. COMPREHENSIVE DATA MANAGEMENT TABLE:
+       - Instant live search filter across all fields.
+       - Category & Status filter dropdowns (e.g. Semua, Lunas, Pending).
+       - Modal Tambah Data with strict field validation.
+       - Modal Edit Data pre-filled with existing record values.
+       - Modal Detail / Preview (e.g. view e-ticket with QR code, print view).
+       - Modal Konfirmasi Hapus Data with safety confirmation and toast feedback.
+       - Quick Workflow Action buttons (e.g. "Verifikasi Pembayaran", "Kirim WA Konfirmasi", "Tandai Hadir").
+       - Export to CSV / JSON directly from the table.
+    4. AUDIT TRAIL / ACTIVITY FEED: real-time log of recent registrations, edits, and verification actions.
+
+- PUBLIC EXPERIENCE & USER FLOW:
+  * Public landing section (#/beranda) with hero, event/service details, ticket/package pricing tiers, registration/booking form, FAQ, and contact info.
+  * Seamless hash routing: #/beranda, #/daftar, #/cek-tiket (or personal portal), #/admin, #/login.
+  * Role-Based Access: quick 1-click login buttons for testing: [Demo Admin (admin@demo.id)] and [Demo User (peserta@demo.id)].`,
 
     prd: `STUDIO: PLANNING (PRD rendered as HTML document)
 Produce a beautifully typeset product requirements document as an HTML page: sticky table of contents sidebar on desktop, readable 70ch column, styled tables, callout boxes, print-friendly @media print styles. Cover: executive summary, problem & goals with measurable KPIs, personas, user stories with acceptance criteria, sitemap & user flows, prioritised features (MoSCoW), functional and non-functional requirements, data model tables, API endpoints table, design system (palette hex, typography, components), tech stack, milestones, risks & mitigations, open questions.`,
@@ -107,25 +123,36 @@ export function buildCanvasSystemPrompt(mode = 'fullstack', isEdit = false) {
 // single biggest lever against generic output.
 // ---------------------------------------------------------------------------
 export const DESIGN_BRIEF_SYSTEM_PROMPT = `You are a senior brand strategist and art director at SATUSITE STUDIO.
-Turn the user's request into a precise, opinionated creative brief for a web build. Be specific to the business; avoid generic choices.
+Turn the user's request and PRD into a precise, opinionated creative brief for a web build. Be specific to the business and domain; avoid generic choices.
 ${LANGUAGE_RULE}
-No emoji. Return ONLY valid JSON (no comments, no trailing commas). The inline notes after "//" below are guidance only. Shape:
+No emoji. Return ONLY valid JSON (no comments, no trailing commas). Shape:
 {
   "productName": string,
   "tagline": string,
   "industry": string,
   "audience": string,
   "brandPersonality": [string, string, string],
-  "visualDirection": string,            // 1-2 sentences describing the art direction
-  "colorMode": "light" | "dark",
-  "palette": { "background": hex, "surface": hex, "border": hex, "text": hex, "muted": hex, "accent": hex, "accentHover": hex },
+  "visualDirection": string,            // 1-2 sentences describing the rich art direction and mood
+  "colorMode": "dark" | "light",
+  "palette": {
+    "background": hex,
+    "surface": hex,
+    "border": hex,
+    "text": hex,
+    "muted": hex,
+    "primary": hex,
+    "primaryHover": hex,
+    "secondaryAccent": hex,             // Supporting brand accent (e.g. Gold/Amber for BAZNAS, Cyan for tech, Coral for creative)
+    "gradient": string                  // CSS gradient string for hero CTAs or badges
+  },
   "typography": { "heading": string, "body": string },   // Google Fonts family names
   "structure": "landing" | "multipage" | "app",
   "pages": [ { "id": string, "title": string, "sections": [string] } ],
   "keyInteractions": [string],
-  "dataEntities": [ { "name": string, "fields": [string] } ],   // empty array if not an app
+  "dataEntities": [ { "name": string, "fields": [string] } ],   // Domain-specific entities extracted from request/PRD
+  "adminModules": [string],             // Specific admin modules (e.g. ["Verifikasi Peserta", "Rekap Donasi", "Scan Tiket"])
   "copy": { "heroHeadline": string, "heroSubheadline": string, "primaryCta": string, "secondaryCta": string },
-  "contentFacts": [string]              // 4-8 realistic facts: prices, stats, locations, services
+  "contentFacts": [string]              // 4-8 realistic facts from request/PRD: dates, ticket prices, locations, quotas
 }`;
 
 export function buildDesignBriefPrompt({ prompt, mode, projectName, projectConfig, prdContext }) {
